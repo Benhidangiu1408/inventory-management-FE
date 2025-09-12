@@ -17,6 +17,16 @@ import {
   TableIcon,
   UserCircleIcon,
 } from "../icons/index";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {
+  faWarehouse,
+} from '@fortawesome/free-solid-svg-icons';
+import {
+  faHouse,
+} from '@fortawesome/free-regular-svg-icons';
+import {
+  faSlack,
+} from '@fortawesome/free-brands-svg-icons';
 import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
@@ -29,7 +39,7 @@ type NavItem = {
 // các link nav trong mục Menu
 const navItems: NavItem[] = [
   {
-    icon: <GridIcon />,
+    icon: <FontAwesomeIcon icon={faWarehouse} size="lg"/>,
     name: "Inventory Check",
     path: "/inventory-check",
   },
@@ -51,12 +61,12 @@ const navItems: NavItem[] = [
 
   {
     name: "Forms",
-    icon: <ListIcon />,
+    icon: <FontAwesomeIcon icon={faHouse} />,
     subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
   },
   {
     name: "Tables",
-    icon: <TableIcon />,
+    icon: <FontAwesomeIcon icon={faSlack} />,
     subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
   },
   {
