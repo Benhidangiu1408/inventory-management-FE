@@ -19,6 +19,8 @@ import {
 } from "../icons/index";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
+  faBoxesStacked,
+  faTruckMoving,
   faWarehouse,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -38,6 +40,16 @@ type NavItem = {
 
 // các link nav trong mục Menu
 const navItems: NavItem[] = [
+  {
+    icon: <FontAwesomeIcon icon={faBoxesStacked} size="lg"/>,
+    name: "Import",
+    path: "/import"
+  },
+  {
+    icon: <FontAwesomeIcon icon={faTruckMoving} size="lg"/>,
+    name: "Export",
+    path: "/export"
+  },
   {
     icon: <FontAwesomeIcon icon={faWarehouse} size="lg"/>,
     name: "Inventory Check",
