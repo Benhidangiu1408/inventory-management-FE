@@ -10,25 +10,20 @@ import {
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  ListIcon,
   PageIcon,
   PieChartIcon,
   PlugInIcon,
-  TableIcon,
   UserCircleIcon,
 } from "../icons/index";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
   faBoxesStacked,
+  faFilePen,
+  faLayerGroup,
+  faTriangleExclamation,
   faTruckMoving,
   faWarehouse,
 } from '@fortawesome/free-solid-svg-icons';
-import {
-  faHouse,
-} from '@fortawesome/free-regular-svg-icons';
-import {
-  faSlack,
-} from '@fortawesome/free-brands-svg-icons';
 import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
@@ -51,9 +46,29 @@ const navItems: NavItem[] = [
     path: "/export"
   },
   {
-    icon: <FontAwesomeIcon icon={faWarehouse} size="lg"/>,
+    icon: <FontAwesomeIcon icon={faFilePen} size="lg"/>,
     name: "Inventory Check",
     path: "/inventory-check",
+  },
+  {
+    icon: <FontAwesomeIcon icon={faTriangleExclamation} size="lg"/>,
+    name: "Fault Order",
+    path: "/fault-order"
+  },
+  {
+    icon: <FontAwesomeIcon icon={faLayerGroup} size="lg"/>,
+    name: "Category",
+    path: "/category"
+  },
+  {
+    icon: <FontAwesomeIcon icon={faBoxesStacked} size="lg"/>,
+    name: "Product",
+    path: "/product"
+  },
+  {
+    icon: <FontAwesomeIcon icon={faWarehouse} size="lg"/>,
+    name: "Warehouse",
+    path: "/warehouse"
   },
   {
     icon: <GridIcon />,
@@ -73,13 +88,8 @@ const navItems: NavItem[] = [
 
   {
     name: "Forms",
-    icon: <FontAwesomeIcon icon={faHouse} />,
+    icon: <FontAwesomeIcon icon={faWarehouse} />,
     subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  },
-  {
-    name: "Tables",
-    icon: <FontAwesomeIcon icon={faSlack} />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
   },
   {
     name: "Pages",
