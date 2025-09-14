@@ -8,15 +8,15 @@ import React, { useState } from "react";
 import { warehouseTableData } from "@/components/Ky_components/TableData";
 import { warehouseTableHeader } from "@/components/Ky_components/TableHeader";
 
-export default function WarehousePage() {
+export default function CategoryPage() {
   const [page, setPage] = useState(1);
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Inventory Check List" />
+      <PageBreadcrumb pageTitle="Category List" />
       <div>
         <div className="rounded-2xl border border-[#E4E7EC] bg-white">
-          <Filter type="inventory check" />
+          <Filter type="category" />
           <CustomizableTable headers={warehouseTableHeader} data={warehouseTableData}></CustomizableTable>
           <Pagination currentPage={page} totalPages={6} onPageChange={setPage}></Pagination>
         </div>

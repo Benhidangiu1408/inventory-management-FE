@@ -9,13 +9,16 @@ const Pagination: React.FC<PaginationProps> = ({
   totalPages,
   onPageChange,
 }) => {
+  const start = Math.max(currentPage - 1, 1);
+  const end = Math.min(start + 2, totalPages);
+
   const pagesAroundCurrent = Array.from(
-    { length: Math.min(3, totalPages) },
-    (_, i) => i + Math.max(currentPage - 1, 1)
+    { length: end - start + 1 },
+    (_, i) => start + i
   );
 
   return (
-    <div className="flex items-center ">
+    <div className="flex items-center justify-center my-3">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}

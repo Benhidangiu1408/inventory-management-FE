@@ -13,10 +13,10 @@ export default function WarehousePage() {
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Inventory Check List" />
+      <PageBreadcrumb pageTitle="Warehouse List" />
       <div>
         <div className="rounded-2xl border border-[#E4E7EC] bg-white">
-          <Filter type="inventory check" />
+          <Filter type="warehouse" />
           <CustomizableTable headers={warehouseTableHeader} data={warehouseTableData}></CustomizableTable>
           <Pagination currentPage={page} totalPages={6} onPageChange={setPage}></Pagination>
         </div>

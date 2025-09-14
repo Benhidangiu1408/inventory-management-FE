@@ -8,7 +8,7 @@ import DatePicker from "../form/date-picker";
 import Button from "../ui/button/Button";
 
 interface FilterProps {
-  type: "import" | "export";
+  type: "import" | "export" | "warehouse" | "product" | "category" | "inventory check" | "fault order";
 }
 
 export default function Filter({ type }: FilterProps) {
@@ -80,8 +80,9 @@ export default function Filter({ type }: FilterProps) {
         size="sm"
         variant="primary"
         startIcon={<FontAwesomeIcon icon={faPlus} />}
+        className="capitalize"
       >
-        New {type === "import" ? "Import" : "Export"}
+        New {type}
       </Button>
     </div>
   );
