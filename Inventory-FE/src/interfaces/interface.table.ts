@@ -6,16 +6,32 @@ export type Column<T> = {
   render?: (value: T[keyof T], row: T) => ReactNode;
 };
 
-export interface TableProps<T extends Record<string, unknown>> {
-  title: string;
+export interface TableProps<T> {
   columns: Column<T>[];
   data: T[];
 }
 
-export interface TableBoxProps {
-  title: string;
-  headers: string[];
-  data: ProductRow[] | StorageLocationRow[];
+export interface ImportRow {
+  batchId: string;
+  date: string;
+  supplier: string;
+  createdBy: string;
+  totalQuantity: number;
+  totalValue: number;
+  status: string;
+  actions?: ReactNode;
+}
+
+export interface ExportRow {
+  batchId: string;
+  date: string;
+  warehouse: string;
+  receiver: string;
+  createdBy: string;
+  totalQuantity: number;
+  totalValue: number;
+  status: string;
+  actions?: ReactNode;
 }
 
 export interface ProductRow {
@@ -34,4 +50,17 @@ export interface StorageLocationRow {
   expectedQuantity: number;
   actualQuantity: number;
   storageLocation: string;
+}
+
+export interface ProductTempRow {
+  name: string;
+  expectedQuantity: number;
+}
+
+export interface QuantityCheckRow {
+  name: string;
+  expectedQuantity: number;
+  actualQuantity: number;
+  variance: number;
+  reason: string;
 }

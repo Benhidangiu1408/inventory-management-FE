@@ -1,11 +1,3 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
-import { ReactNode } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -18,113 +10,112 @@ import {
   Pagination,
 } from "../ui/pagination";
 import Link from "next/link";
+import { Column, ExportRow, ImportRow } from "@/interfaces/interface.table";
+import CustomTable from "../TA_common/CustomTable";
 
 interface ListProps {
   type: "import" | "export";
 }
 
+const ActionsButton = ({ item }: { item: ExportRow | ImportRow }) => {
+  return (
+    <div className="flex gap-3">
+      <Link href={`/export/${item.batchId}`}>
+        <FontAwesomeIcon
+          icon={faEye}
+          className="cursor-pointer hover:text-blue-500"
+        />
+      </Link>
+      <FontAwesomeIcon icon={faPen} className="cursor-pointer" />
+    </div>
+  );
+};
+
 export default function List({ type }: ListProps) {
-  interface ImportData {
-    batchNumber: string;
-    date: string;
-    supplier: string;
-    createdBy: string;
-    totalQuantity: number;
-    totalValue: number;
-    status: string;
-    actions?: ReactNode;
-  }
-
-  interface ExportData {
-    batchNumber: string;
-    date: string;
-    warehouse: string;
-    receiver: string;
-    createdBy: string;
-    totalQuantity: number;
-    totalValue: number;
-    status: string;
-    actions?: ReactNode;
-  }
-
-  const tableHeaderForExport = [
+  const tableHeaderForExport: Column<ExportRow>[] = [
     {
-      label: "Batch Number",
-      key: "batchNumber",
+      key: "batchId",
+      header: "Batch Number",
     },
     {
-      label: "Date",
       key: "date",
+      header: "Date",
     },
     {
-      label: "Warehouse",
       key: "warehouse",
+      header: "Warehouse",
     },
     {
-      label: "Receiver",
+      header: "Receiver",
       key: "receiver",
     },
     {
-      label: "Created By",
+      header: "Created By",
       key: "createdBy",
     },
     {
-      label: "Total Quantity",
+      header: "Total Quantity",
       key: "totalQuantity",
     },
     {
-      label: "Total Value",
+      header: "Total Value",
       key: "totalValue",
     },
     {
-      label: "Status",
+      header: "Status",
       key: "status",
     },
     {
-      label: "Actions",
+      header: "Actions",
       key: "actions",
+      render: (value: ExportRow[keyof ExportRow], row: ExportRow) => (
+        <ActionsButton item={row} />
+      ),
     },
   ];
 
-  const tableHeaderForImport = [
+  const tableHeaderForImport: Column<ImportRow>[] = [
     {
-      label: "Batch Number",
-      key: "batchNumber",
+      header: "Batch Number",
+      key: "batchId",
     },
 
     {
-      label: "Date",
+      header: "Date",
       key: "date",
     },
     {
-      label: "Supplier",
+      header: "Supplier",
       key: "supplier",
     },
     {
-      label: "Created By",
+      header: "Created By",
       key: "createdBy",
     },
     {
-      label: "Total Quantity",
+      header: "Total Quantity",
       key: "totalQuantity",
     },
     {
-      label: "Total Value",
+      header: "Total Value",
       key: "totalValue",
     },
     {
-      label: "Status",
+      header: "Status",
       key: "status",
     },
     {
-      label: "Actions",
+      header: "Actions",
       key: "actions",
+      render: (value: ImportRow[keyof ImportRow], row: ImportRow) => (
+        <ActionsButton item={row} />
+      ),
     },
   ];
 
-  const tableImportData: ImportData[] = [
+  const tableImportData: ImportRow[] = [
     {
-      batchNumber: "1234567891",
+      batchId: "1234567891",
       date: "2025-01-01",
       supplier: "Supplier 1",
       createdBy: "John Doe",
@@ -133,7 +124,7 @@ export default function List({ type }: ListProps) {
       status: "Active",
     },
     {
-      batchNumber: "1234567892",
+      batchId: "1234567892",
       date: "2025-01-01",
       supplier: "Supplier 1",
       createdBy: "John Doe",
@@ -142,7 +133,7 @@ export default function List({ type }: ListProps) {
       status: "Pending",
     },
     {
-      batchNumber: "1234567893",
+      batchId: "1234567893",
       date: "2025-01-01",
       supplier: "Supplier 1",
       createdBy: "John Doe",
@@ -152,9 +143,9 @@ export default function List({ type }: ListProps) {
     },
   ];
 
-  const tableExportData: ExportData[] = [
+  const tableExportData: ExportRow[] = [
     {
-      batchNumber: "1234567891",
+      batchId: "1234567891",
       date: "2025-01-01",
       warehouse: "Warehouse 1",
       receiver: "Receiver 1",
@@ -164,7 +155,7 @@ export default function List({ type }: ListProps) {
       status: "Pending",
     },
     {
-      batchNumber: "1234567892",
+      batchId: "1234567892",
       date: "2025-01-01",
       warehouse: "Warehouse 1",
       receiver: "Receiver 1",
@@ -174,7 +165,7 @@ export default function List({ type }: ListProps) {
       status: "Pending",
     },
     {
-      batchNumber: "1234567893",
+      batchId: "1234567893",
       date: "2025-01-01",
       warehouse: "Warehouse 1",
       receiver: "Receiver 1",
@@ -187,117 +178,17 @@ export default function List({ type }: ListProps) {
 
   return (
     <div className="p-6">
-      <Table className="mb-6">
-        {/* Table Header */}
-        <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-          <TableRow>
-            {type === "import"
-              ? tableHeaderForImport.map((header) => (
-                  <TableCell
-                    isHeader
-                    key={header.key}
-                    className="text-theme-sm px-5 py-3 text-start font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    {header.label}
-                  </TableCell>
-                ))
-              : tableHeaderForExport.map((header) => (
-                  <TableCell
-                    isHeader
-                    key={header.key}
-                    className="text-theme-sm px-5 py-3 text-start font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    {header.label}
-                  </TableCell>
-                ))}
-          </TableRow>
-        </TableHeader>
-        {/* Table Body */}
-        <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-          {type === "import"
-            ? tableImportData.map((order) => (
-                <TableRow key={order.batchNumber}>
-                  <TableCell className="px-5 py-4 text-start sm:px-6">
-                    {order.batchNumber}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-start text-gray-500 dark:text-gray-400">
-                    {order.date}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-start text-gray-500 dark:text-gray-400">
-                    {order.supplier}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-start text-gray-500 dark:text-gray-400">
-                    {order.createdBy}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-gray-500 dark:text-gray-400">
-                    {order.totalQuantity}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-gray-500 dark:text-gray-400">
-                    {order.totalValue}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-gray-500 dark:text-gray-400">
-                    {order.status}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-gray-500 dark:text-gray-400">
-                    <div className="flex gap-3">
-                      <Link href={`/import/${order.batchNumber}`}>
-                        <FontAwesomeIcon
-                          icon={faEye}
-                          className="cursor-pointer hover:text-blue-500"
-                        />
-                      </Link>
-                      <FontAwesomeIcon
-                        icon={faPen}
-                        className="cursor-pointer"
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            : tableExportData.map((order) => (
-                <TableRow key={order.batchNumber}>
-                  <TableCell className="px-5 py-4 text-start sm:px-6">
-                    {order.batchNumber}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-start text-gray-500 dark:text-gray-400">
-                    {order.date}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-start text-gray-500 dark:text-gray-400">
-                    {order.warehouse}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-start text-gray-500 dark:text-gray-400">
-                    {order.receiver}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-start text-gray-500 dark:text-gray-400">
-                    {order.createdBy}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-start text-gray-500 dark:text-gray-400">
-                    {order.totalQuantity}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-start text-gray-500 dark:text-gray-400">
-                    {order.totalValue}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-start text-gray-500 dark:text-gray-400">
-                    {order.status}
-                  </TableCell>
-                  <TableCell className="text-theme-sm px-4 py-3 text-start text-gray-500 dark:text-gray-400">
-                    <div className="flex gap-3">
-                      <Link href={`/export/${order.batchNumber}`}>
-                        <FontAwesomeIcon
-                          icon={faEye}
-                          className="cursor-pointer hover:text-blue-500"
-                        />
-                      </Link>
-                      <FontAwesomeIcon
-                        icon={faPen}
-                        className="cursor-pointer"
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-        </TableBody>
-      </Table>
+      {type === "import" ? (
+        <CustomTable<ImportRow>
+          columns={tableHeaderForImport}
+          data={tableImportData}
+        />
+      ) : (
+        <CustomTable<ExportRow>
+          columns={tableHeaderForExport}
+          data={tableExportData}
+        />
+      )}
 
       <Pagination>
         <PaginationContent>
