@@ -4,14 +4,14 @@ interface InfoBoxProps {
   icon: ReactNode;
   title: string;
   description?: string;
-  content: ReactNode;
+  children: ReactNode;
 }
 
 export default function InfoBox({
   icon,
   title,
   description = "",
-  content,
+  children,
 }: InfoBoxProps) {
   return (
     <div className="rounded-2xl border border-gray-200">
@@ -25,7 +25,7 @@ export default function InfoBox({
         )}
       </div>
 
-      {content}
+      {children}
     </div>
   );
 }

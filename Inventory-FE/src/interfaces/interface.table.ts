@@ -64,3 +64,18 @@ export interface QuantityCheckRow {
   variance: number;
   reason: string;
 }
+
+export interface QualityCheckRow {
+  name: string;
+  quantity: number;
+  qualityStatus: "Pass" | "Fail" | "Skip" | "Exempt";
+  reason: string;
+  notes: string;
+}
+
+export interface StorageLocationCheckRow {
+  name: string;
+  quantity: number;
+  storageLocation: string;
+  notes: string;
+}

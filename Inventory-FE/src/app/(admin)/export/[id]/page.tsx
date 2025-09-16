@@ -5,11 +5,7 @@ import OrderSummary from "@/components/TA_common/OrderSummary";
 import TableBox from "@/components/TA_common/TableBox";
 import UtilityBar from "@/components/TA_common/UtilityBar";
 import Badge from "@/components/ui/badge/Badge";
-import {
-  Column,
-  ProductRow,
-  TableBoxProps,
-} from "@/interfaces/interface.table";
+import { Column, ProductRow, TableProps } from "@/interfaces/interface.table";
 
 export default function ExportDetailPage() {
   const productColumn: Column<ProductRow>[] = [
@@ -80,7 +76,7 @@ export default function ExportDetailPage() {
     },
   ];
 
-  const productTableBox: TableBoxProps<ProductRow> = {
+  const productTableBox: TableProps<ProductRow> = {
     columns: productColumn,
     data: productData,
   };
