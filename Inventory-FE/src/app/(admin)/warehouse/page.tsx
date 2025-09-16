@@ -6,7 +6,7 @@ import Pagination from "@/components/tables/Pagination";
 
 import React, { useState } from "react";
 import { warehouseTableData } from "@/components/Ky_components/TableData";
-import { warehouseTableHeader } from "@/components/Ky_components/TableHeader";
+import { WarehouseRow, warehouseTableHeader } from "@/components/Ky_components/TableHeader";
 
 export default function WarehousePage() {
   const [page, setPage] = useState(1);
@@ -17,7 +17,7 @@ export default function WarehousePage() {
       <div>
         <div className="rounded-2xl border border-[#E4E7EC] bg-white">
           <Filter type="warehouse" />
-          <CustomizableTable headers={warehouseTableHeader} data={warehouseTableData}></CustomizableTable>
+          <CustomizableTable<WarehouseRow> headers={warehouseTableHeader} data={warehouseTableData}/>
           <Pagination currentPage={page} totalPages={6} onPageChange={setPage}></Pagination>
         </div>
       </div>

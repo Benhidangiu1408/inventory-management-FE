@@ -9,8 +9,8 @@ import { ReactNode } from "react";
 
 export interface Column<T> {
   label: string;             // header text
-  key: string;              // which field to read
-  render?: (value: any, row: T) => ReactNode; // optional custom cell renderer
+  key: keyof T;              // which field to read
+  render?: (value: T[keyof T], row: T) => ReactNode; // optional custom cell renderer
 }
 
 interface TableProps<T> {
@@ -18,7 +18,7 @@ interface TableProps<T> {
   data: T[];
 }
 
-export default function CustomizableTable<T extends object>({ headers, data }: TableProps<T>) {
+export default function CustomizableTable<T>({ headers, data }: TableProps<T>) {
   return (
     <div className="p-6">
       <Table className="mb-6">
@@ -44,8 +44,8 @@ export default function CustomizableTable<T extends object>({ headers, data }: T
                 {headers.map((h) => (
                   <TableCell key={String(h.key)} className="text-theme-sm px-4 py-3 text-gray-500 dark:text-gray-400">
                     {h.render 
-                      ? h.render((row as any)[h.key], row)
-                      : (row as any)[h.key]}
+                      ? h.render(row[h.key], row)
+                      : String(row[h.key])}
                   </TableCell>
                 ))}
               </TableRow>
