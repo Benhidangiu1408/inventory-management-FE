@@ -1,7 +1,9 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import CustomTable from "@/components/TA_common/CustomTable";
 import InfoBox from "@/components/TA_create_page/InfoBox";
+import InfoList from "@/components/TA_create_page/InfoList";
 import InfoPagination from "@/components/TA_create_page/InfoPagination";
+import SmallInfoBox from "@/components/TA_create_page/SmallInfoBox";
 import { Column, ProductTempRow } from "@/interfaces/interface.table";
 import {
   faCircleInfo,
@@ -9,37 +11,6 @@ import {
   faDollarSign,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-const SmallInfoBox = ({
-  title = "",
-  warehouse = "",
-  name = "",
-  address = "",
-  location = "",
-  status = "",
-}: {
-  title: string;
-  warehouse: string;
-  name: string;
-  address: string;
-  location: string;
-  status: string;
-}) => {
-  return (
-    <div className="w-full rounded-2xl border border-gray-200">
-      <div className="border-b border-gray-200 px-6 py-3 text-center font-bold uppercase">
-        {title}
-      </div>
-      <ul className="p-6">
-        <li>Warehouse: {warehouse}</li>
-        <li>Name: {name}</li>
-        <li>Address: {address}</li>
-        <li>Location: {location}</li>
-        <li>Status: {status}</li>
-      </ul>
-    </div>
-  );
-};
 
 export default async function ImportProcessLayout({
   params,
@@ -114,32 +85,38 @@ export default async function ImportProcessLayout({
           description={description}
         >
           {type === "purchase-order" ? (
-            <ul className="flex flex-col gap-3 p-6 text-base">
-              <li>Name: ABCXYZ</li>
-              <li>Email: abcxyz@gmail.com</li>
-              <li>Address: 1234567890</li>
-              <li>Phone: 0909090909</li>
-              <li>Status: Active</li>
-            </ul>
+            <InfoList
+              data={{
+                name: "ABCXYZ",
+                email: "abcxyz@gmail.com",
+                address: "1234567890",
+                phone: "0909090909",
+                status: "Active",
+              }}
+            />
           ) : (
             <>
               <div className="">
                 <div className="flex gap-5 p-6">
                   <SmallInfoBox
                     title="FROM"
-                    warehouse="Warehouse 1"
-                    name="Name 1"
-                    address="Address 1"
-                    location="Location 1"
-                    status="Status 1"
+                    data={{
+                      warehouse: "Warehouse 1",
+                      name: "Name 1",
+                      address: "Address 1",
+                      location: "Location 1",
+                      status: "Status 1",
+                    }}
                   />
                   <SmallInfoBox
                     title="TO"
-                    warehouse="Warehouse 2"
-                    name="Name 2"
-                    address="Address 2"
-                    location="Location 2"
-                    status="Status 2"
+                    data={{
+                      warehouse: "Warehouse 2",
+                      name: "Name 2",
+                      address: "Address 2",
+                      location: "Location 2",
+                      status: "Status 2",
+                    }}
                   />
                 </div>
               </div>

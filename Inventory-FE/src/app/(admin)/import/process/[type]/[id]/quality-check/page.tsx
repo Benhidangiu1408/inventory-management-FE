@@ -62,7 +62,7 @@ export default function QualityCheckPage() {
             columns={qualityCheckColumn}
             data={qualityCheckData}
           />
-          <InfoPagination totalPages={4} />
+          <InfoPagination totalPages={4} paginationType="progress" />
         </div>
       </InfoBox>
     </div>
