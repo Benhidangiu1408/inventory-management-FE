@@ -1,26 +1,24 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
-import {
-  PaginationContent,
-  PaginationPrevious,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  Pagination,
-} from "../ui/pagination";
 import Link from "next/link";
 import { Column, ExportRow, ImportRow } from "@/interfaces/interface.table";
 import CustomTable from "../TA_common/CustomTable";
+import InfoPagination from "../TA_create_page/InfoPagination";
 
 interface ListProps {
   type: "import" | "export";
 }
 
-const ActionsButton = ({ item }: { item: ExportRow | ImportRow }) => {
+const ActionsButton = ({
+  item,
+  type,
+}: {
+  item: ExportRow | ImportRow;
+  type: "import" | "export";
+}) => {
   return (
     <div className="flex gap-3">
-      <Link href={`/export/${item.batchId}`}>
+      <Link href={`/${type}/details/${item.batchId}`}>
         <FontAwesomeIcon
           icon={faEye}
           className="cursor-pointer hover:text-blue-500"
@@ -69,7 +67,7 @@ export default function List({ type }: ListProps) {
       header: "Actions",
       key: "actions",
       render: (value: ExportRow[keyof ExportRow], row: ExportRow) => (
-        <ActionsButton item={row} />
+        <ActionsButton item={row} type="export" />
       ),
     },
   ];
@@ -108,7 +106,7 @@ export default function List({ type }: ListProps) {
       header: "Actions",
       key: "actions",
       render: (value: ImportRow[keyof ImportRow], row: ImportRow) => (
-        <ActionsButton item={row} />
+        <ActionsButton item={row} type="import" />
       ),
     },
   ];
@@ -190,22 +188,7 @@ export default function List({ type }: ListProps) {
         />
       )}
 
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <InfoPagination totalPages={10} />
     </div>
   );
 }

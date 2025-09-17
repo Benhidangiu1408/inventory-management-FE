@@ -19,19 +19,28 @@ export default function NewImportPage() {
           <h2>Please Choose Your Type Of Export</h2>
         </div>
         <div className="flex flex-col items-center gap-3 p-6">
-          <Link className="w-[50%]" href="/import/new/manufacturer">
+          <Link
+            className="w-[50%]"
+            href="/import/process/manufacturer/quantity-check"
+          >
             <Button className="w-full gap-3 p-6">
               <FontAwesomeIcon icon={faIndustry} />
               <h3>Manufacturer</h3>
             </Button>
           </Link>
-          <Link className="w-[50%]" href="/import/new/transfer">
+          <Link
+            className="w-[50%]"
+            href="/import/process/transfer/quantity-check"
+          >
             <Button className="w-full gap-3 p-6">
               <FontAwesomeIcon icon={faArrowRightArrowLeft} />
               <h3>Transfer</h3>
             </Button>
           </Link>
-          <Link className="w-[50%]" href="/import/new/purchase-order">
+          <Link
+            className="w-[50%]"
+            href="/import/process/purchase-order/quantity-check"
+          >
             <Button className="w-full gap-3 p-6">
               <FontAwesomeIcon icon={faDollarSign} />
               <h3>Purchase Order</h3>

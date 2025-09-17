@@ -79,3 +79,13 @@ export interface StorageLocationCheckRow {
   storageLocation: string;
   notes: string;
 }
+
+export interface ExportConfirmRow {
+  batchId: string;
+  productName: string;
+  currentStock: number;
+  actualQuantity: number;
+  location: string;
+  totalValue: number;
+  reason: string;
+}
