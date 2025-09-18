@@ -21,7 +21,7 @@ export default function NewImportPage() {
         <div className="flex flex-col items-center gap-3 p-6">
           <Link
             className="w-[50%]"
-            href="/import/process/manufacturer/quantity-check"
+            href="/import/process/manufacturer/1/quantity-check"
           >
             <Button className="w-full gap-3 p-6">
               <FontAwesomeIcon icon={faIndustry} />
@@ -30,7 +30,7 @@ export default function NewImportPage() {
           </Link>
           <Link
             className="w-[50%]"
-            href="/import/process/transfer/quantity-check"
+            href="/import/process/transfer/1/quantity-check"
           >
             <Button className="w-full gap-3 p-6">
               <FontAwesomeIcon icon={faArrowRightArrowLeft} />
@@ -39,7 +39,7 @@ export default function NewImportPage() {
           </Link>
           <Link
             className="w-[50%]"
-            href="/import/process/purchase-order/quantity-check"
+            href="/import/process/purchase-order/1/quantity-check"
           >
             <Button className="w-full gap-3 p-6">
               <FontAwesomeIcon icon={faDollarSign} />

@@ -6,9 +6,17 @@ import Input from "../form/input/InputField";
 import Select from "../form/Select";
 import DatePicker from "../form/date-picker";
 import Button from "../ui/button/Button";
+import Link from "next/link";
 
 interface FilterProps {
-  type: "import" | "export" | "warehouse" | "product" | "category" | "inventory check" | "fault order";
+  type:
+    | "import"
+    | "export"
+    | "warehouse"
+    | "product"
+    | "category"
+    | "inventory check"
+    | "fault order";
 }
 
 export default function Filter({ type }: FilterProps) {
@@ -76,14 +84,16 @@ export default function Filter({ type }: FilterProps) {
           </div>
         ))}
       </div>
-      <Button
-        size="sm"
-        variant="primary"
-        startIcon={<FontAwesomeIcon icon={faPlus} />}
-        className="capitalize"
-      >
-        New {type}
-      </Button>
+      <Link href={`/${type}/new`}>
+        <Button
+          size="sm"
+          variant="primary"
+          startIcon={<FontAwesomeIcon icon={faPlus} />}
+          className="capitalize"
+        >
+          New {type}
+        </Button>
+      </Link>
     </div>
   );
 }

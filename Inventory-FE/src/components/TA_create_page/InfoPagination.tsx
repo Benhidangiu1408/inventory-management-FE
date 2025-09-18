@@ -3,10 +3,11 @@
 import { useState } from "react";
 import Pagination from "../tables/Pagination";
 import ProgressPagination from "../TA_common/ProgressPagination";
+import ProcessPagination from "@/components/TA_common/ProcessPagination";
 
 interface InfoPaginationProps {
-  totalPages: number;
-  paginationType?: "info" | "progress";
+  totalPages?: number;
+  paginationType?: "info" | "progress" | "process";
 }
 
 export default function InfoPagination({
@@ -27,12 +28,14 @@ export default function InfoPagination({
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
-      ) : (
+      ) : paginationType === "progress" ? (
         <ProgressPagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
+      ) : (
+        <ProcessPagination />
       )}
     </div>
   );

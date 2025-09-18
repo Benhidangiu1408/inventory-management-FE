@@ -14,7 +14,7 @@ export interface TableProps<T> {
 export interface ImportRow {
   batchId: string;
   date: string;
-  supplier: string;
+  type: string;
   createdBy: string;
   totalQuantity: number;
   totalValue: number;
@@ -25,6 +25,7 @@ export interface ImportRow {
 export interface ExportRow {
   batchId: string;
   date: string;
+  type: string;
   warehouse: string;
   receiver: string;
   createdBy: string;
