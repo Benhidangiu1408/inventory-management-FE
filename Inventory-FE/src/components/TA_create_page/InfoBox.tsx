@@ -24,7 +24,6 @@ export default function InfoBox({
           <div className="mt-2 text-sm text-gray-500">{description}</div>
         )}
       </div>
-
       {children}
     </div>
   );
