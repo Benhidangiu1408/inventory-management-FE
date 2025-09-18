@@ -20,7 +20,7 @@ interface TableProps<T> {
 
 export default function CustomizableTable<T>({ headers, data }: TableProps<T>) {
   return (
-    <div className="p-6">
+    <div className="p-6 overflow-auto">
       <Table className="mb-6">
         {/* Table Header */}
         <TableHeader className="px-6 py-3.5 border-t border-gray-100 border-y bg-gray-50 dark:border-white/[0.05] dark:bg-gray-900">
