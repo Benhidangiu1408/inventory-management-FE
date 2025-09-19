@@ -1,51 +1,51 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import GeneralInformation from "@/components/TA_common/GeneralInformation";
 import OrderSummary from "@/components/TA_common/OrderSummary";
 import TableBox from "@/components/TA_common/TableBox";
 import InfoBox from "@/components/TA_create_page/InfoBox";
 import InfoList from "@/components/TA_create_page/InfoList";
 import Button from "@/components/ui/button/Button";
+import { ExportConfirmRow } from "@/interfaces/interface.table";
 import {
   Column,
-  ExportConfirmRow,
   TableProps,
-} from "@/interfaces/interface.table";
+} from "@/components/Ky_components/CustomizableTable";
 import {
   faArrowRight,
   faCircleInfo,
   faDollarSign,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
 
 export default function ConfirmPage() {
   const columns: Column<ExportConfirmRow>[] = [
     {
       key: "batchId",
-      header: "Batch ID",
+      label: "Batch ID",
     },
     {
       key: "productName",
-      header: "Product Name",
+      label: "Product Name",
     },
     {
       key: "currentStock",
-      header: "Current Stock",
+      label: "Current Stock",
     },
     {
       key: "actualQuantity",
-      header: "Actual Quantity",
+      label: "Actual Quantity",
     },
     {
       key: "location",
-      header: "Location",
+      label: "Location",
     },
     {
       key: "totalValue",
-      header: "Total Value",
+      label: "Total Value",
     },
     {
       key: "reason",
-      header: "Reason",
+      label: "Reason",
     },
   ];
 
@@ -71,7 +71,7 @@ export default function ConfirmPage() {
   ];
 
   const tableProps: TableProps<ExportConfirmRow> = {
-    columns,
+    headers: columns,
     data,
   };
 
@@ -103,7 +103,26 @@ export default function ConfirmPage() {
 
         <div className="flex gap-6">
           <div className="flex flex-3 flex-col gap-6">
-            <GeneralInformation />
+            <GeneralInfoSection
+              items={[
+                {
+                  label: "Stock-out Code",
+                  value: "SO-2025-001",
+                },
+                {
+                  label: "Stock-out Date",
+                  value: "2025-01-01",
+                },
+                {
+                  label: "Stock-out By",
+                  value: "John Doe",
+                },
+                {
+                  label: "Customer",
+                  value: "Customer 1",
+                },
+              ]}
+            />
             <TableBox title="Export Confirm" table={tableProps} />
           </div>
           <div className="flex flex-1 flex-col gap-6">

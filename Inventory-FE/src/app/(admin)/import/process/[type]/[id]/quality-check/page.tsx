@@ -1,9 +1,11 @@
 import Input from "@/components/form/input/InputField";
-import CustomTable from "@/components/TA_common/CustomTable";
 import InfoBox from "@/components/TA_create_page/InfoBox";
 import InfoPagination from "@/components/TA_create_page/InfoPagination";
 import Button from "@/components/ui/button/Button";
-import { Column, QualityCheckRow } from "@/interfaces/interface.table";
+import { QualityCheckRow } from "@/interfaces/interface.table";
+import CustomizableTable, {
+  Column,
+} from "@/components/Ky_components/CustomizableTable";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -11,15 +13,15 @@ export default function QualityCheckPage() {
   const qualityCheckColumn: Column<QualityCheckRow>[] = [
     {
       key: "name",
-      header: "Product Name",
+      label: "Product Name",
     },
     {
       key: "quantity",
-      header: "Quantity",
+      label: "Quantity",
     },
     {
       key: "qualityStatus",
-      header: "Quality Status",
+      label: "Quality Status",
       render: () => (
         <div className="inline-flex gap-2">
           <Button variant="success_outline">Pass</Button>
@@ -31,12 +33,12 @@ export default function QualityCheckPage() {
     },
     {
       key: "reason",
-      header: "Reason",
+      label: "Reason",
       render: () => <Input />,
     },
     {
       key: "notes",
-      header: "Notes",
+      label: "Notes",
       render: () => <Input />,
     },
   ];
@@ -58,8 +60,8 @@ export default function QualityCheckPage() {
         title="Quantity Check"
       >
         <div className="p-6">
-          <CustomTable<QualityCheckRow>
-            columns={qualityCheckColumn}
+          <CustomizableTable<QualityCheckRow>
+            headers={qualityCheckColumn}
             data={qualityCheckData}
           />
           <InfoPagination totalPages={4} paginationType="progress" />

@@ -1,11 +1,13 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import CustomTable from "@/components/TA_common/CustomTable";
 import InfoBox from "@/components/TA_create_page/InfoBox";
 import InfoList from "@/components/TA_create_page/InfoList";
 import InfoPagination from "@/components/TA_create_page/InfoPagination";
 import SmallInfoBox from "@/components/TA_create_page/SmallInfoBox";
 import { ProcessProvider } from "@/context/ProcessContext";
-import { Column, ProductTempRow } from "@/interfaces/interface.table";
+import { ProductTempRow } from "@/interfaces/interface.table";
+import CustomizableTable, {
+  Column,
+} from "@/components/Ky_components/CustomizableTable";
 import {
   faCircleInfo,
   faCube,
@@ -39,11 +41,11 @@ export default async function ImportProcessLayout({
   const productTempColumn: Column<ProductTempRow>[] = [
     {
       key: "name",
-      header: "Product Name",
+      label: "Product Name",
     },
     {
       key: "expectedQuantity",
-      header: "Expected Quantity",
+      label: "Expected Quantity",
     },
   ];
 
@@ -131,8 +133,8 @@ export default async function ImportProcessLayout({
             title="Product List"
           >
             <div className="p-6">
-              <CustomTable<ProductTempRow>
-                columns={productTempColumn}
+              <CustomizableTable<ProductTempRow>
+                headers={productTempColumn}
                 data={productTempData}
               />
             </div>

@@ -5,35 +5,38 @@ import OrderSummary from "@/components/TA_common/OrderSummary";
 import TableBox from "@/components/TA_common/TableBox";
 import UtilityBar from "@/components/TA_common/UtilityBar";
 import Badge from "@/components/ui/badge/Badge";
-import { Column, ProductRow, TableProps } from "@/interfaces/interface.table";
+import { ProductRow } from "@/interfaces/interface.table";
+import {
+  Column,
+  TableProps,
+} from "@/components/Ky_components/CustomizableTable";
 
 export default function ExportDetailPage() {
   const productColumn: Column<ProductRow>[] = [
     {
       key: "batchId",
-      header: "Batch ID",
+      label: "Batch ID",
     },
     {
       key: "productName",
-      header: "Product Name",
+      label: "Product Name",
     },
     {
       key: "expectedQuantity",
-      header: "Expected Quantity",
+      label: "Expected Quantity",
     },
     {
       key: "actualQuantity",
-      header: "Actual Quantity",
+      label: "Actual Quantity",
     },
     {
       key: "totalValue",
-      header: "Total Value",
+      label: "Total Value",
     },
     {
       key: "qcResult",
-      header: "QC Result",
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      render: (value: ProductRow[keyof ProductRow], row: ProductRow) =>
+      label: "QC Result",
+      render: (value: ProductRow[keyof ProductRow]) =>
         value.toString().toLowerCase() === "pass" ? (
           <Badge color="success">{value}</Badge>
         ) : (
@@ -42,7 +45,7 @@ export default function ExportDetailPage() {
     },
     {
       key: "reason",
-      header: "Reason",
+      label: "Reason",
     },
   ];
 
@@ -77,7 +80,7 @@ export default function ExportDetailPage() {
   ];
 
   const productTableBox: TableProps<ProductRow> = {
-    columns: productColumn,
+    headers: productColumn,
     data: productData,
   };
 

@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import { Column, ExportRow, ImportRow } from "@/interfaces/interface.table";
-import CustomTable from "@/components/TA_common/CustomTable";
+import { ExportRow, ImportRow } from "@/interfaces/interface.table";
 import InfoPagination from "@/components/TA_create_page/InfoPagination";
+import CustomizableTable, { Column } from "../Ky_components/CustomizableTable";
 
 interface ListProps {
   type: "import" | "export";
@@ -39,15 +39,15 @@ export default function List({ type }: ListProps) {
   const tableHeaderForExport: Column<ExportRow>[] = [
     {
       key: "batchId",
-      header: "Batch Number",
+      label: "Batch Number",
     },
     {
       key: "date",
-      header: "Date",
+      label: "Date",
     },
     {
       key: "type",
-      header: "Type",
+      label: "Type",
       render: (value: ExportRow[keyof ExportRow]) => {
         if (typeof value === "string") {
           const formattedValue = value.replace("-", " ");
@@ -57,31 +57,31 @@ export default function List({ type }: ListProps) {
     },
     {
       key: "warehouse",
-      header: "Warehouse",
+      label: "Warehouse",
     },
     {
-      header: "Receiver",
       key: "receiver",
+      label: "Receiver",
     },
     {
-      header: "Created By",
       key: "createdBy",
+      label: "Created By",
     },
     {
-      header: "Total Quantity",
       key: "totalQuantity",
+      label: "Total Quantity",
     },
     {
-      header: "Total Value",
       key: "totalValue",
+      label: "Total Value",
     },
     {
-      header: "Status",
       key: "status",
+      label: "Status",
     },
     {
-      header: "Actions",
       key: "actions",
+      label: "Actions",
       render: (value: ExportRow[keyof ExportRow], row: ExportRow) => (
         <ActionsButton processType={row.type} item={row} type="export" />
       ),
@@ -90,16 +90,16 @@ export default function List({ type }: ListProps) {
 
   const tableHeaderForImport: Column<ImportRow>[] = [
     {
-      header: "Batch Number",
+      label: "Batch Number",
       key: "batchId",
     },
 
     {
-      header: "Date",
+      label: "Date",
       key: "date",
     },
     {
-      header: "Type",
+      label: "Type",
       key: "type",
       render: (value: ImportRow[keyof ImportRow]) => {
         if (typeof value === "string") {
@@ -110,23 +110,23 @@ export default function List({ type }: ListProps) {
       },
     },
     {
-      header: "Created By",
+      label: "Created By",
       key: "createdBy",
     },
     {
-      header: "Total Quantity",
+      label: "Total Quantity",
       key: "totalQuantity",
     },
     {
-      header: "Total Value",
+      label: "Total Value",
       key: "totalValue",
     },
     {
-      header: "Status",
+      label: "Status",
       key: "status",
     },
     {
-      header: "Actions",
+      label: "Actions",
       key: "actions",
       render: (value: ImportRow[keyof ImportRow], row: ImportRow) => (
         <ActionsButton processType={row.type} item={row} type="import" />
@@ -203,13 +203,13 @@ export default function List({ type }: ListProps) {
   return (
     <div className="p-6">
       {type === "import" ? (
-        <CustomTable<ImportRow>
-          columns={tableHeaderForImport}
+        <CustomizableTable<ImportRow>
+          headers={tableHeaderForImport}
           data={tableImportData}
         />
       ) : (
-        <CustomTable<ExportRow>
-          columns={tableHeaderForExport}
+        <CustomizableTable<ExportRow>
+          headers={tableHeaderForExport}
           data={tableExportData}
         />
       )}

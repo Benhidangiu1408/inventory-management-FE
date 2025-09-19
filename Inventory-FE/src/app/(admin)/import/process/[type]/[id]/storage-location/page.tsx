@@ -2,9 +2,11 @@
 
 import Input from "@/components/form/input/InputField";
 import Select from "@/components/form/Select";
-import CustomTable from "@/components/TA_common/CustomTable";
+import CustomizableTable, {
+  Column,
+} from "@/components/Ky_components/CustomizableTable";
 import InfoBox from "@/components/TA_create_page/InfoBox";
-import { Column, StorageLocationCheckRow } from "@/interfaces/interface.table";
+import { StorageLocationCheckRow } from "@/interfaces/interface.table";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import {
   faBoxOpen,
@@ -35,20 +37,20 @@ export default function StorageLocationPage() {
   const storageLocationColumn: Column<StorageLocationCheckRow>[] = [
     {
       key: "name",
-      header: "Name",
+      label: "Name",
     },
     {
       key: "quantity",
-      header: "Quantity",
+      label: "Quantity",
     },
     {
       key: "storageLocation",
-      header: "Storage Location",
+      label: "Storage Location",
       render: () => <Select options={[]} onChange={() => {}} />,
     },
     {
       key: "notes",
-      header: "Notes",
+      label: "Notes",
       render: () => <Input />,
     },
   ];
@@ -95,8 +97,8 @@ export default function StorageLocationPage() {
             title="Passed Products"
             quantity={storageLocationData.length}
           />
-          <CustomTable<StorageLocationCheckRow>
-            columns={storageLocationColumn}
+          <CustomizableTable<StorageLocationCheckRow>
+            headers={storageLocationColumn}
             data={storageLocationData}
           />
         </div>
@@ -106,8 +108,8 @@ export default function StorageLocationPage() {
             title="Failed Products"
             quantity={storageLocationData.length}
           />
-          <CustomTable<StorageLocationCheckRow>
-            columns={storageLocationColumn}
+          <CustomizableTable<StorageLocationCheckRow>
+            headers={storageLocationColumn}
             data={storageDefectiveLocationData}
           />
         </div>

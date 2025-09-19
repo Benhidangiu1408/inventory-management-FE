@@ -1,43 +1,41 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import TableBox from "@/components/TA_common/TableBox";
 import UtilityBar from "@/components/TA_common/UtilityBar";
-import {
-  Column,
-  ProductRow,
-  StorageLocationRow,
-  TableProps,
-} from "@/interfaces/interface.table";
+import { ProductRow, StorageLocationRow } from "@/interfaces/interface.table";
 import ActivityLog from "@/components/TA_common/ActivityLog";
 import GeneralInformation from "@/components/TA_common/GeneralInformation";
 import Badge from "@/components/ui/badge/Badge";
+import {
+  Column,
+  TableProps,
+} from "@/components/Ky_components/CustomizableTable";
 
 export default function ImportDetailPage() {
   const productColumn: Column<ProductRow>[] = [
     {
       key: "batchId",
-      header: "Batch ID",
+      label: "Batch ID",
     },
     {
       key: "productName",
-      header: "Product Name",
+      label: "Product Name",
     },
     {
       key: "expectedQuantity",
-      header: "Expected Quantity",
+      label: "Expected Quantity",
     },
     {
       key: "actualQuantity",
-      header: "Actual Quantity",
+      label: "Actual Quantity",
     },
     {
       key: "totalValue",
-      header: "Total Value",
+      label: "Total Value",
     },
     {
       key: "qcResult",
-      header: "QC Result",
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      render: (value: ProductRow[keyof ProductRow], row: ProductRow) =>
+      label: "QC Result",
+      render: (value: ProductRow[keyof ProductRow]) =>
         value.toString().toLowerCase() === "pass" ? (
           <Badge color="success">{value}</Badge>
         ) : (
@@ -46,7 +44,7 @@ export default function ImportDetailPage() {
     },
     {
       key: "reason",
-      header: "Reason",
+      label: "Reason",
     },
   ];
 
@@ -83,23 +81,23 @@ export default function ImportDetailPage() {
   const storageLocationColumn: Column<StorageLocationRow>[] = [
     {
       key: "batchId",
-      header: "Batch ID",
+      label: "Batch ID",
     },
     {
       key: "productName",
-      header: "Product Name",
+      label: "Product Name",
     },
     {
       key: "expectedQuantity",
-      header: "Expected Quantity",
+      label: "Expected Quantity",
     },
     {
       key: "actualQuantity",
-      header: "Actual Quantity",
+      label: "Actual Quantity",
     },
     {
       key: "storageLocation",
-      header: "Storage Location",
+      label: "Storage Location",
     },
   ];
 
@@ -128,12 +126,12 @@ export default function ImportDetailPage() {
   ];
 
   const productTableProps: TableProps<ProductRow> = {
-    columns: productColumn,
+    headers: productColumn,
     data: productData,
   };
 
   const storageLocationTableProps: TableProps<StorageLocationRow> = {
-    columns: storageLocationColumn,
+    headers: storageLocationColumn,
     data: storageLocationData,
   };
 

@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import CustomTable from "@/components/TA_common/CustomTable";
 import InfoBox from "@/components/TA_create_page/InfoBox";
-import { Column, QuantityCheckRow } from "@/interfaces/interface.table";
+import { QuantityCheckRow } from "@/interfaces/interface.table";
+import CustomizableTable, {
+  Column,
+} from "@/components/Ky_components/CustomizableTable";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "@/components/form/input/InputField";
@@ -11,33 +12,27 @@ export default function ImportProcessPage() {
   const quantityCheckColumn: Column<QuantityCheckRow>[] = [
     {
       key: "name",
-      header: "Product Name",
+      label: "Product Name",
     },
     {
       key: "expectedQuantity",
-      header: "Expected Quantity",
+      label: "Expected Quantity",
     },
     {
       key: "actualQuantity",
-      header: "Actual Quantity",
-      render: (
-        value: QuantityCheckRow[keyof QuantityCheckRow],
-        row: QuantityCheckRow,
-      ) => {
+      label: "Actual Quantity",
+      render: () => {
         return <Input />;
       },
     },
     {
       key: "variance",
-      header: "Variance",
+      label: "Variance",
     },
     {
       key: "reason",
-      header: "Reason",
-      render: (
-        value: QuantityCheckRow[keyof QuantityCheckRow],
-        row: QuantityCheckRow,
-      ) => {
+      label: "Reason",
+      render: () => {
         return <Input />;
       },
     },
@@ -60,8 +55,8 @@ export default function ImportProcessPage() {
         title="Quantity Check"
       >
         <div className="p-6">
-          <CustomTable<QuantityCheckRow>
-            columns={quantityCheckColumn}
+          <CustomizableTable<QuantityCheckRow>
+            headers={quantityCheckColumn}
             data={quantityCheckData}
           />
           <InfoPagination totalPages={4} />
