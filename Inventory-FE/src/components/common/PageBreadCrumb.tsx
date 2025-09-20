@@ -1,18 +1,23 @@
 import Link from "next/link";
-import React from "react";
+import React, { ReactNode } from "react";
 
 interface BreadcrumbProps {
   pageTitle: string;
+  status?: ReactNode;
 }
 
-const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pageTitle }) => {
+const PageBreadcrumb: React.FC<BreadcrumbProps> = ({
+  pageTitle,
+  status = null,
+}) => {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
       <h2
-        className="text-xl font-semibold text-gray-800 dark:text-white/90"
+        className="flex flex-col gap-1 text-xl font-semibold text-gray-800 dark:text-white/90"
         x-text="pageName"
       >
         {pageTitle}
+        {status ? status : null}
       </h2>
       <nav>
         <ol className="flex items-center gap-1.5">

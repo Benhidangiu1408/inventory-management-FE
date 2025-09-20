@@ -3,14 +3,29 @@ import TableBox from "@/components/TA_common/TableBox";
 import UtilityBar from "@/components/TA_common/UtilityBar";
 import { ProductRow, StorageLocationRow } from "@/interfaces/interface.table";
 import ActivityLog from "@/components/TA_common/ActivityLog";
-import GeneralInformation from "@/components/TA_common/GeneralInformation";
 import Badge from "@/components/ui/badge/Badge";
 import {
   Column,
   TableProps,
 } from "@/components/Ky_components/CustomizableTable";
+import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
 
 export default function ImportDetailPage() {
+  const generalInfoItems = [
+    {
+      label: "Import ID",
+      value: "1234567891",
+    },
+    {
+      label: "Import Date",
+      value: "2021-01-01",
+    },
+    {
+      label: "Import Status",
+      value: "Pending",
+    },
+  ];
+
   const productColumn: Column<ProductRow>[] = [
     {
       key: "batchId",
@@ -142,7 +157,10 @@ export default function ImportDetailPage() {
         <UtilityBar />
         <div className="flex justify-between gap-6">
           <div className="flex flex-3 flex-col gap-6">
-            <GeneralInformation />
+            <GeneralInfoSection
+              title="General Information"
+              items={generalInfoItems}
+            />
             <TableBox<ProductRow>
               title="Product List"
               table={productTableProps}
