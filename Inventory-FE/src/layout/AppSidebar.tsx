@@ -24,6 +24,7 @@ import {
   faTriangleExclamation,
   faTruckMoving,
   faWarehouse,
+  faUserTie,
 } from "@fortawesome/free-solid-svg-icons";
 import SidebarWidget from "./SidebarWidget";
 
@@ -75,6 +76,16 @@ const navItems: NavItem[] = [
     icon: <FontAwesomeIcon icon={faBell} size="lg" />,
     name: "Notification",
     path: "/notification",
+  },
+  {
+    icon: <FontAwesomeIcon icon={faUserTie} size="lg" />,
+    name: "User management",
+    path: "/admin/user-management",
+  },
+  {
+    icon: <FontAwesomeIcon icon={faUserTie} size="lg" />,
+    name: "Role management",
+    path: "/admin/role-management",
   },
   {
     icon: <GridIcon />,

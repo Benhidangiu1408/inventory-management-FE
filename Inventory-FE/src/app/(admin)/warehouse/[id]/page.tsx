@@ -1,53 +1,40 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import ActivityLog from "@/components/TA_common/ActivityLog";
-import GeneralInformation from "@/components/TA_common/GeneralInformation";
-import OrderSummary from "@/components/TA_common/OrderSummary";
-import TableBox from "@/components/TA_common/TableBox";
+
 import UtilityBar from "@/components/TA_common/UtilityBar";
-import { TableBoxProps } from "@/interfaces/interface.table";
+import CustomizableTable from "@/components/Ky_components/CustomizableTable";
+import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
+import { storedProductHeaders } from "@/components/Ky_components/TableHeader";
+import { storedProductData } from "@/components/Ky_components/TableData";
 
 export default function WarehouseDetailPage() {
-  const productTableBox: TableBoxProps = {
-    title: "Product",
-    headers: [
-      "Batch ID",
-      "Product Name",
-      "Expected Quantity",
-      "Actual Quantity",
-      "Total Value",
-      "QC Result",
-      "Reason",
-    ],
-    data: [
-      {
-        batchId: "1",
-        productName: "Product 1",
-        expectedQuantity: 100,
-        actualQuantity: 100,
-        totalValue: 100,
-        qcResult: "Pass",
-        reason: "Reason 1",
-      },
-      {
-        batchId: "2",
-        productName: "Product 2",
-        expectedQuantity: 200,
-        actualQuantity: 200,
-        totalValue: 200,
-        qcResult: "Fail",
-        reason: "Reason 2",
-      },
-      {
-        batchId: "3",
-        productName: "Product 3",
-        expectedQuantity: 300,
-        actualQuantity: 300,
-        totalValue: 300,
-        qcResult: "Pass",
-        reason: "Reason 3",
-      },
-    ],
-  };
+  const generalInfoItems = [
+    {
+      label: "Warehouse Code",
+      value: "WH-001",
+    },
+    {
+      label: "Warehouse Name",
+      value: "Warehouse 1",
+    },
+    {
+      label: "Location",
+      value: "Los Angeles",
+    },
+    {
+      label: "Manager",
+      value: "John Doe",
+    },
+    {
+      label: "Status",
+      value: "Active",
+    },
+    {
+      label: "Type",
+      value: "Temporary Storage",
+    },
+  ];
+
   return (
     <div>
       <PageBreadcrumb pageTitle="Warehouse Detail" />
@@ -55,12 +42,20 @@ export default function WarehouseDetailPage() {
         <UtilityBar />
         <div className="flex justify-between gap-6">
           <div className="flex flex-3 flex-col gap-6">
-            <GeneralInformation />
-            <TableBox {...productTableBox} />
+            <GeneralInfoSection
+              title="General Information"
+              items={generalInfoItems}
+            />
+            <div className="rounded-2xl border border-gray-200 p-6">
+              <h2 className="mb-3 font-medium">Storage Products</h2>
+              <CustomizableTable
+                headers={storedProductHeaders}
+                data={storedProductData}
+              />
+            </div>
           </div>
           <div className="flex flex-1 flex-col gap-6">
             <ActivityLog />
-            <OrderSummary />
           </div>
         </div>
       </div>

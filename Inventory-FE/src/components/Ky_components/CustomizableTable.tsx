@@ -8,8 +8,8 @@ import {
 import { ReactNode } from "react";
 
 export interface Column<T> {
-  label: string; // header text
-  key: keyof T; // which field to read
+  label: string; // header displayed text
+  key: keyof T; // header/attribute key
   render?: (value: T[keyof T], row: T) => ReactNode; // optional custom cell renderer
 }
 
@@ -29,7 +29,7 @@ export default function CustomizableTable<T>({ headers, data }: TableProps<T>) {
               <TableCell
                 isHeader
                 key={String(h.key)}
-                className="text-theme-sm px-5 py-3 text-start font-medium text-gray-500 dark:text-gray-400"
+                className="text-theme-sm px-5 py-3 text-center font-medium text-gray-500 dark:text-gray-400"
               >
                 {h.label}
               </TableCell>
@@ -43,7 +43,7 @@ export default function CustomizableTable<T>({ headers, data }: TableProps<T>) {
               {headers.map((h) => (
                 <TableCell
                   key={String(h.key)}
-                  className="text-theme-sm px-4 py-3 text-gray-500 dark:text-gray-400"
+                  className="text-theme-sm px-4 py-3 text-center text-gray-500 dark:text-gray-400"
                 >
                   {h.render ? h.render(row[h.key], row) : String(row[h.key])}
                 </TableCell>

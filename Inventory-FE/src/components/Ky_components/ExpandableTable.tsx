@@ -13,10 +13,10 @@ import { faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import Button from "../ui/button/Button";
 
 interface ExpandableTableProps<T, D> {
-  headers: Column<T>[];
-  data: T[];
-  subTableData: keyof T;
-  subTableHeaders: Column<D>[];
+  headers: Column<T>[]; //main headers data of type Column
+  data: T[]; //full data
+  subTableData: keyof T; //sub table data in full data
+  subTableHeaders: Column<D>[]; //headers of sub table
 }
 
 export default function ExpandableTable<T extends { id: string }, D>({
@@ -36,6 +36,7 @@ export default function ExpandableTable<T extends { id: string }, D>({
         <Button className="m-2 h-10">Confirm</Button>
       </div>
       <Table className="mb-6">
+        {/* Main table headers */}
         <TableHeader className="border-y border-t border-gray-100 bg-gray-200 px-6 py-3.5 dark:border-white/[0.05] dark:bg-gray-950">
           <TableRow>
             <TableCell className="w-0.5" isHeader>
@@ -52,11 +53,13 @@ export default function ExpandableTable<T extends { id: string }, D>({
             ))}
           </TableRow>
         </TableHeader>
+        {/* Main table Body */}
         <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
           {data.map((row) => {
             const subTable = row[subTableData] as D[];
             return (
               <Fragment key={row.id}>
+                {/* Main table row/accordion */}
                 <TableRow className="bg-gray-50 dark:bg-gray-900">
                   <TableCell className="text-theme-sm px-5 py-3 text-start font-medium text-gray-500 dark:text-gray-400">
                     <button onClick={() => toggle(row.id)}>
@@ -77,7 +80,7 @@ export default function ExpandableTable<T extends { id: string }, D>({
                     </TableCell>
                   ))}
                 </TableRow>
-
+                {/* Accordion body */}
                 {openRow[row.id] && (
                   <TableRow>
                     <TableCell
@@ -85,6 +88,7 @@ export default function ExpandableTable<T extends { id: string }, D>({
                       className="text-theme-sm text-start font-medium text-gray-500 dark:text-gray-400"
                     >
                       <Table>
+                        {/* Subtable Header */}
                         <TableHeader className="bg-gray-40 border-y border-t border-gray-100 px-6 py-3.5 dark:border-white/[0.05] dark:bg-gray-800">
                           <TableRow>
                             <TableCell className="w-0.5" isHeader>
@@ -101,6 +105,7 @@ export default function ExpandableTable<T extends { id: string }, D>({
                             ))}
                           </TableRow>
                         </TableHeader>
+                        {/* Subtable Body */}
                         <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                           {subTable.map((subRow, idx) => (
                             <TableRow key={idx}>
