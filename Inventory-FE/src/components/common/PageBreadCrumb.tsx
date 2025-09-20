@@ -1,15 +1,20 @@
+"use client";
 import Link from "next/link";
 import React, { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 interface BreadcrumbProps {
   pageTitle: string;
+  filters?: string[];
   status?: ReactNode;
 }
 
 const PageBreadcrumb: React.FC<BreadcrumbProps> = ({
   pageTitle,
+  filters = [],
   status = null,
 }) => {
+  const pathArr: string[] = usePathname().split("/").slice(0, -1);
   return (
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
       <h2
@@ -21,30 +26,36 @@ const PageBreadcrumb: React.FC<BreadcrumbProps> = ({
       </h2>
       <nav>
         <ol className="flex items-center gap-1.5">
-          <li>
-            <Link
-              className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
-              href="/"
-            >
-              Home
-              <svg
-                className="stroke-current"
-                width="17"
-                height="16"
-                viewBox="0 0 17 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366"
-                  stroke=""
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </Link>
-          </li>
+          {pathArr.map((val, idx) => {
+            return (
+              !filters.includes(val) && (
+                <li key={idx}>
+                  <Link
+                    className="inline-flex items-center gap-1.5 text-sm text-gray-500 capitalize dark:text-gray-400"
+                    href={"/" + val}
+                  >
+                    {val == "" ? "Home" : val.split(/[-_]/).join(" ")}
+                    <svg
+                      className="stroke-current"
+                      width="17"
+                      height="16"
+                      viewBox="0 0 17 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366"
+                        stroke=""
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </Link>
+                </li>
+              )
+            );
+          })}
           <li className="text-sm text-gray-800 dark:text-white/90">
             {pageTitle}
           </li>
