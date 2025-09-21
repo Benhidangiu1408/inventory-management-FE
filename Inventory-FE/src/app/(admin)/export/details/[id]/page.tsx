@@ -106,7 +106,11 @@ export default function ExportDetailPage() {
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Export Detail" status={<StatusBox />} />
+      <PageBreadcrumb
+        pageTitle="Export Detail"
+        status={<StatusBox />}
+        filters={["details"]}
+      />
       <div className="flex flex-col gap-6">
         <UtilityBar />
         <div className="flex justify-between gap-6">

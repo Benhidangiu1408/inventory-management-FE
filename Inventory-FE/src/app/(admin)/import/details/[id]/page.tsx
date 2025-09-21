@@ -152,7 +152,7 @@ export default function ImportDetailPage() {
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Import Detail" />
+      <PageBreadcrumb pageTitle="Import Detail" filters={["details"]} />
       <div className="flex flex-col gap-6">
         <UtilityBar />
         <div className="flex justify-between gap-6">

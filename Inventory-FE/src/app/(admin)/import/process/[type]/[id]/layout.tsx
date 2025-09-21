@@ -20,9 +20,9 @@ export default async function ImportProcessLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-  params: { type: string };
+  params: { type: string; id: string };
 }>) {
-  const { type } = await params;
+  const { type, id } = await params;
 
   const title =
     type === "purchase-order"
@@ -75,7 +75,10 @@ export default async function ImportProcessLayout({
   return (
     <ProcessProvider>
       <div>
-        <PageBreadcrumb pageTitle="Import Process" />
+        <PageBreadcrumb
+          pageTitle="Import Process"
+          filters={["process", type, id]}
+        />
 
         <div className="flex flex-col gap-6">
           <div className="flex items-center text-base text-gray-500">

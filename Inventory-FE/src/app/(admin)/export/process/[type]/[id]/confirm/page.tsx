@@ -17,7 +17,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
 
-export default function ConfirmPage() {
+export default async function ConfirmPage({
+  params,
+}: {
+  params: { type: string; id: string };
+}) {
+  const { type, id } = await params;
+
   const columns: Column<ExportConfirmRow>[] = [
     {
       key: "batchId",
@@ -77,7 +83,10 @@ export default function ConfirmPage() {
 
   return (
     <>
-      <PageBreadcrumb pageTitle="Export Process" />
+      <PageBreadcrumb
+        pageTitle="Export Process"
+        filters={["process", type, id]}
+      />
 
       <div className="flex flex-col gap-6">
         <div className="flex items-center text-base text-gray-500">
