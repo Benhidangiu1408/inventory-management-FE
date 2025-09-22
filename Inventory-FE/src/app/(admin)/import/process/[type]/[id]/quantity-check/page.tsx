@@ -59,7 +59,7 @@ export default function ImportProcessPage() {
             headers={quantityCheckColumn}
             data={quantityCheckData}
           />
-          <InfoPagination totalPages={4} />
+          <InfoPagination totalPages={4} paginationType="progress" />
         </div>
       </InfoBox>
     </div>
