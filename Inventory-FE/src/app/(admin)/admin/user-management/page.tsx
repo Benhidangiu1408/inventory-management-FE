@@ -15,10 +15,12 @@ export default function UserManagementPage() {
       <PageBreadcrumb pageTitle="User Management" />
       <div className="rounded-2xl border border-[#E4E7EC] bg-white">
         <Filter type="category" />
-        <CustomizableTable
-          headers={userColumns}
-          data={userData}
-        ></CustomizableTable>
+        <div className="p-6">
+          <CustomizableTable
+            headers={userColumns}
+            data={userData}
+          ></CustomizableTable>
+        </div>
         <Pagination
           currentPage={page}
           totalPages={6}

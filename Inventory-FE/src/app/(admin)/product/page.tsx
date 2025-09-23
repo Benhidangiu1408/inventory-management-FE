@@ -17,10 +17,12 @@ export default function ProductPage() {
       <div>
         <div className="rounded-2xl border border-[#E4E7EC] bg-white">
           <Filter type="product" />
-          <CustomizableTable
-            headers={productMasterColumns}
-            data={productMasterData}
-          ></CustomizableTable>
+          <div className="p-6">
+            <CustomizableTable
+              headers={productMasterColumns}
+              data={productMasterData}
+            ></CustomizableTable>
+          </div>
           <Pagination
             currentPage={page}
             totalPages={6}
