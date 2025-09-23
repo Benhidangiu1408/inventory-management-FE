@@ -1,5 +1,6 @@
 "use client";
 
+import { PROCESS_MAP } from "@/constants/constants";
 import { useProcessContext } from "@/context/ProcessContext";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -8,7 +9,7 @@ import { useEffect } from "react";
 export default function ProcessPagination() {
   const params = useParams<{ type: string; id: string }>();
   const { type, id } = params;
-  const { process, setProcess } = useProcessContext();
+  const { process, setProcess, setProcessOrder } = useProcessContext();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -16,8 +17,9 @@ export default function ProcessPagination() {
     const currentStep = segments[segments.length - 1];
     if (currentStep && currentStep !== process) {
       setProcess(currentStep);
+      setProcessOrder(PROCESS_MAP[currentStep as keyof typeof PROCESS_MAP]);
     }
-  }, [pathname, process, setProcess]);
+  }, [pathname, process, setProcess, setProcessOrder]);
 
   const processList: { label: string; value: string }[] = [
     {

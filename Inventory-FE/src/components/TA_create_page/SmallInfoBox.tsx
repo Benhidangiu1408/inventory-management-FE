@@ -10,7 +10,13 @@ const SmallInfoBox = ({
 }) => {
   return (
     <ComponentCard className="w-full" title={title}>
-      <InfoList data={data} />
+      <InfoList>
+        {Object.entries(data).map(([key, value]) => (
+          <div key={key}>
+            <span className="font-bold capitalize">{key}</span>: {value}
+          </div>
+        ))}
+      </InfoList>
     </ComponentCard>
   );
 };

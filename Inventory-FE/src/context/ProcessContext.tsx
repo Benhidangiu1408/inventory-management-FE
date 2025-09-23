@@ -1,10 +1,14 @@
 "use client";
 
+import { PROCESS_MAP } from "@/constants/constants";
+import { usePathname } from "next/navigation";
 import { createContext, useContext, useState } from "react";
 
 export type ProcessContextType = {
   process: string;
   setProcess: (process: string) => void;
+  processOrder: number;
+  setProcessOrder: (processOrder: number) => void;
 };
 
 export const ProcessContext = createContext<ProcessContextType | undefined>(
@@ -12,10 +16,19 @@ export const ProcessContext = createContext<ProcessContextType | undefined>(
 );
 
 export function ProcessProvider({ children }: { children: React.ReactNode }) {
-  const [process, setProcess] = useState("quantity-check");
+  const pathname = usePathname();
+  const segments = pathname.split("/").filter(Boolean);
+  const initialProcess = segments[segments.length - 1];
+
+  const [process, setProcess] = useState(initialProcess ?? "quantity-check");
+  const [processOrder, setProcessOrder] = useState(
+    PROCESS_MAP[initialProcess as keyof typeof PROCESS_MAP] ?? 1,
+  );
 
   return (
-    <ProcessContext.Provider value={{ process, setProcess }}>
+    <ProcessContext.Provider
+      value={{ process, setProcess, processOrder, setProcessOrder }}
+    >
       {children}
     </ProcessContext.Provider>
   );

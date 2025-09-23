@@ -12,10 +12,13 @@ import {
 import {
   faArrowRight,
   faCircleInfo,
-  faDollarSign,
+  faIndustry,
+  faRightLeft,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
+import InfoBoxStatus from "@/components/TA_create_page/InfoBoxStatus";
 
 export default async function ConfirmPage({
   params,
@@ -23,6 +26,35 @@ export default async function ConfirmPage({
   params: { type: string; id: string };
 }) {
   const { type, id } = await params;
+
+  const sampleData = {
+    name: "ABCXYZ",
+    email: "abcxyz@gmail.com",
+    address: "1234567890",
+    phone: "0909090909",
+    status: "Active",
+  };
+
+  const title =
+    type === "manufacturer"
+      ? "Manufacturer Information"
+      : type === "transfer"
+        ? "Transfer Information"
+        : "Customer Information";
+
+  const description =
+    type === "manufacturer"
+      ? "Manufacturer Information Description"
+      : type === "transfer"
+        ? "Transfer Information Description"
+        : "Customer Information Description";
+
+  const icon =
+    type === "manufacturer"
+      ? faIndustry
+      : type === "transfer"
+        ? faRightLeft
+        : faUser;
 
   const columns: Column<ExportConfirmRow>[] = [
     {
@@ -86,28 +118,22 @@ export default async function ConfirmPage({
       <PageBreadcrumb
         pageTitle="Export Process"
         filters={["process", type, id]}
+        status={<InfoBoxStatus icon={icon} type={type} />}
       />
 
       <div className="flex flex-col gap-6">
-        <div className="flex items-center text-base text-gray-500">
-          <FontAwesomeIcon icon={faDollarSign} />
-          <h3>Export Process</h3>
-        </div>
-
         <InfoBox
           icon={<FontAwesomeIcon icon={faCircleInfo} />}
-          title={"Export Process"}
-          description={"Export Process Description"}
+          title={title}
+          description={description}
         >
-          <InfoList
-            data={{
-              name: "ABCXYZ",
-              email: "abcxyz@gmail.com",
-              address: "1234567890",
-              phone: "0909090909",
-              status: "Active",
-            }}
-          />
+          <InfoList>
+            {Object.entries(sampleData).map(([key, value]) => (
+              <div key={key}>
+                <span className="font-bold capitalize">{key}</span>: {value}
+              </div>
+            ))}
+          </InfoList>
         </InfoBox>
 
         <div className="flex gap-6">

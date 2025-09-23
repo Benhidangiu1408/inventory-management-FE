@@ -57,7 +57,7 @@ export default function QualityCheckPage() {
     <div>
       <InfoBox
         icon={<FontAwesomeIcon icon={faCircleCheck} />}
-        title="Quantity Check"
+        title="Quality Check"
       >
         <div className="p-6">
           <CustomizableTable<QualityCheckRow>

@@ -19,7 +19,7 @@ const ActionsButton = ({
   processType: string;
 }) => {
   return (
-    <div className="flex gap-3">
+    <div className="flex justify-center gap-3">
       <Link href={`/${type}/details/${item.batchId}`}>
         <FontAwesomeIcon
           icon={faEye}

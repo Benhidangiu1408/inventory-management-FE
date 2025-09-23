@@ -2,13 +2,14 @@
 
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import ComponentCard from "@/components/common/ComponentCard";
-import CustomTable from "@/components/TA_common/CustomTable";
-import { Column } from "@/interfaces/interface.table";
 import Button from "@/components/ui/button/Button";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faPen, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { ReactNode } from "react";
+import CustomizableTable, {
+  Column,
+} from "@/components/Ky_components/CustomizableTable";
 
 type NotificationRow = {
   id: string;
@@ -22,14 +23,14 @@ type NotificationRow = {
 
 export default function NotificationPage() {
   const columns: Column<NotificationRow>[] = [
-    { key: "title", header: "Title" },
-    { key: "message", header: "Message" },
-    { key: "channel", header: "Channel" },
-    { key: "frequency", header: "Frequency" },
-    { key: "status", header: "Status" },
+    { key: "title", label: "Title" },
+    { key: "message", label: "Message" },
+    { key: "channel", label: "Channel" },
+    { key: "frequency", label: "Frequency" },
+    { key: "status", label: "Status" },
     {
       key: "actions",
-      header: "Actions",
+      label: "Actions",
       render: (
         _: NotificationRow[keyof NotificationRow],
         row: NotificationRow,
@@ -97,7 +98,7 @@ export default function NotificationPage() {
       </div>
 
       <ComponentCard title="All Notifications">
-        <CustomTable<NotificationRow> columns={columns} data={data} />
+        <CustomizableTable<NotificationRow> headers={columns} data={data} />
       </ComponentCard>
     </div>
   );
