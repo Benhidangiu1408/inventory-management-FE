@@ -15,7 +15,7 @@ interface FilterProps {
     | "warehouse"
     | "product"
     | "category"
-    | "inventory check"
+    | "inventory-check"
     | "fault order";
 }
 
@@ -91,7 +91,7 @@ export default function Filter({ type }: FilterProps) {
           startIcon={<FontAwesomeIcon icon={faPlus} />}
           className="capitalize"
         >
-          New {type}
+          New {type.split(/[-_]/).join(" ")}
         </Button>
       </Link>
     </div>
