@@ -79,3 +79,12 @@ export interface ExportConfirmRow {
   totalValue: number;
   reason: string;
 }
+
+export interface ImportCreateRow {
+  checkBox: boolean;
+  productId: string;
+  name: string;
+  stock: number;
+  unit: string;
+  quantity: string;
+}

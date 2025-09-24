@@ -79,8 +79,16 @@ export default function Filter({ type }: FilterProps) {
           />
         </div>
         {selectList.map((item, index) => (
-          <div key={index} className="flex-1">
-            <Select options={item.options} onChange={() => {}} />
+          <div key={index} className="relative flex-1">
+            <FontAwesomeIcon
+              icon={faMagnifyingGlass}
+              className="absolute top-1/2 left-4 -translate-y-1/2"
+            />
+            <Select
+              options={item.options}
+              onChange={() => {}}
+              className="pl-12"
+            />
           </div>
         ))}
       </div>
