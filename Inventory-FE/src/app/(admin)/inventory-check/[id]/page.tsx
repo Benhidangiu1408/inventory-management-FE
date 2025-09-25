@@ -34,12 +34,15 @@ export default async function InventoryCheckDetailPage({
             />
           </div>
         </div>
-        <ExpandableTable<Product, Batch>
-          headers={productColumns}
-          subTableHeaders={batchColumns}
-          data={productData}
-          subTableData="batches"
-        ></ExpandableTable>
+        <div className="rounded-2xl border border-gray-200 p-6">
+          <ExpandableTable<Product, Batch>
+            headers={productColumns}
+            subTableHeaders={batchColumns}
+            data={productData}
+            subTableData="batches"
+            title="Products & Batches"
+          ></ExpandableTable>
+        </div>
       </div>
     </div>
   );

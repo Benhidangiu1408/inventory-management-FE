@@ -27,12 +27,13 @@ const PageBreadcrumb: React.FC<BreadcrumbProps> = ({
       <nav>
         <ol className="flex items-center gap-1.5">
           {pathArr.map((val, idx) => {
+            const href = pathArr.slice(0, idx + 1).join("/");
             return (
               !filters.includes(val) && (
                 <li key={idx}>
                   <Link
                     className="inline-flex items-center gap-1.5 text-sm text-gray-500 capitalize dark:text-gray-400"
-                    href={"/" + val}
+                    href={href}
                   >
                     {val == "" ? "Home" : val.split(/[-_]/).join(" ")}
                     <svg

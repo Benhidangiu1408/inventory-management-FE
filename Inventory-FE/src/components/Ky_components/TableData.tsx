@@ -1,4 +1,4 @@
-import { Product } from "./ExpandableTableHeaders";
+import { Product, WarehouseProduct } from "./ExpandableTableHeaders";
 import {
   WarehouseRow,
   InventoryCheckOrder,
@@ -8,6 +8,9 @@ import {
   CategoryRow,
   CategoryProductRow,
   UserRow,
+  OrderRow,
+  FaultBatch,
+  ProcessingOrder,
 } from "./TableHeader";
 
 export const inventoryCheckOrders: InventoryCheckOrder[] = [
@@ -318,5 +321,211 @@ export const userData: UserRow[] = [
     status: "Suspended",
     lastLogin: "2025-08-30 18:47",
     actions: ["d", "r"],
+  },
+];
+
+export const orderData: OrderRow[] = [
+  {
+    orderId: "ER-2025-001",
+    date: "01-01-2025",
+    warehouse: "Warehouse 1",
+    priority: "High",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-002",
+    date: "02-02-2025",
+    warehouse: "Warehouse 1",
+    priority: "Low",
+    handle: "Completed",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-003",
+    date: "03-03-2025",
+    warehouse: "Warehouse 2",
+    priority: "High",
+    handle: "In progress",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-004",
+    date: "04-04-2025",
+    warehouse: "Warehouse 3",
+    priority: "Medium",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+];
+export const warehouseProducts: WarehouseProduct[] = [
+  {
+    id: "P-2001",
+    name: "Premium Arabica Coffee Beans",
+    totalQty: 240,
+    unit: "kg",
+    batches: [
+      {
+        code: "CB-001",
+        quantity: 100,
+        unit: "kg",
+        position: "Aisle A1-Shelf 2",
+        note: "Stored in cool area",
+      },
+      {
+        code: "CB-002",
+        quantity: 140,
+        unit: "kg",
+        position: "Aisle A1-Shelf 3",
+        note: "New shipment",
+      },
+    ],
+  },
+  {
+    id: "P-2002",
+    name: "Organic Jasmine Rice",
+    totalQty: 500,
+    unit: "kg",
+    batches: [
+      {
+        code: "JR-101",
+        quantity: 250,
+        unit: "kg",
+        position: "Aisle B2-Pallet 1",
+        note: "Sealed bags",
+      },
+      {
+        code: "JR-102",
+        quantity: 250,
+        unit: "kg",
+        position: "Aisle B2-Pallet 2",
+        note: "Backup stock",
+      },
+    ],
+  },
+  {
+    id: "P-2003",
+    name: "LED Light Bulbs 10W",
+    totalQty: 300,
+    unit: "pcs",
+    batches: [
+      {
+        code: "LB-050",
+        quantity: 120,
+        unit: "pcs",
+        position: "Aisle C1-Rack 4",
+      },
+      {
+        code: "LB-051",
+        quantity: 180,
+        unit: "pcs",
+        position: "Aisle C2-Rack 1",
+      },
+    ],
+  },
+  {
+    id: "P-2004",
+    name: "Mineral Water 500ml",
+    totalQty: 1200,
+    unit: "bottles",
+    batches: [
+      {
+        code: "MW-220",
+        quantity: 600,
+        unit: "bottles",
+        position: "Cold Room CR-1",
+        note: "Chilled section",
+      },
+      {
+        code: "MW-221",
+        quantity: 600,
+        unit: "bottles",
+        position: "Cold Room CR-2",
+        note: "Overflow storage",
+      },
+    ],
+  },
+];
+
+export const faultBatchData: FaultBatch[] = [
+  {
+    id: "SI-2025-001",
+    date: "01-01-2025",
+    status: "Pending",
+    priority: "High",
+    checked: true,
+  },
+  {
+    id: "SI-2025-002",
+    date: "02-02-2025",
+    status: "Completed",
+    priority: "Low",
+    checked: true,
+  },
+  {
+    id: "SI-2025-003",
+    date: "03-03-2025",
+    status: "In progress",
+    priority: "High",
+    checked: true,
+  },
+  {
+    id: "SI-2025-004",
+    date: "04-04-2025",
+    status: "Approve",
+    priority: "Medium",
+    checked: true,
+  },
+];
+export const faultBatchData2: FaultBatch[] = [
+  {
+    id: "SI-2025-001",
+    date: "01-01-2025",
+    status: "Pending",
+    priority: "High",
+    checked: false,
+  },
+  {
+    id: "SI-2025-002",
+    date: "02-02-2025",
+    status: "Completed",
+    priority: "Low",
+    checked: false,
+  },
+  {
+    id: "SI-2025-003",
+    date: "03-03-2025",
+    status: "In progress",
+    priority: "High",
+    checked: false,
+  },
+  {
+    id: "SI-2025-004",
+    date: "04-04-2025",
+    status: "Approve",
+    priority: "Medium",
+    checked: false,
+  },
+];
+export const processingOrderData: ProcessingOrder[] = [
+  {
+    orderId: "SI-2025-001",
+    orderType: "Returned",
+    action: "",
+  },
+  {
+    orderId: "SI-2025-002",
+    orderType: "Canceled",
+    action: "",
+  },
+  {
+    orderId: "SI-2025-003",
+    orderType: "Other",
+    action: "",
+  },
+  {
+    orderId: "SI-2025-004",
+    orderType: "Canceled",
+    action: "",
   },
 ];

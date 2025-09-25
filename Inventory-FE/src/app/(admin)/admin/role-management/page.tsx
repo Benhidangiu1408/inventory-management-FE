@@ -1,4 +1,5 @@
 "use client";
+import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Input from "@/components/form/input/InputField";
 import Filter from "@/components/TA_List/Filter";
@@ -43,65 +44,63 @@ export default function RoleManagementPage() {
         {/* Role Assignment */}
         <div className="flex p-6">
           <div className="flex w-full flex-col">
-            <div className="relative">
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                className="absolute top-1/2 left-4 -translate-y-1/2"
-              />
-              <Input
-                type="text"
-                placeholder="Search or type command..."
-                className="pl-12"
-              />
-            </div>
-            <div className="m-3 text-center text-2xl font-bold">
-              UNASSIGNED PERMISSION
-            </div>
-            <div className="m-5 flex flex-col gap-2">
-              {coreAdminPermissions.map((val, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between gap-3 rounded-xl p-4 hover:bg-blue-300"
-                >
-                  <div className="block font-medium text-gray-700 dark:text-gray-400">
-                    {val}
+            <ComponentCard title="Ungranted" className="h-full">
+              <div className="relative">
+                <FontAwesomeIcon
+                  icon={faMagnifyingGlass}
+                  className="absolute top-1/2 left-4 -translate-y-1/2"
+                />
+                <Input
+                  type="text"
+                  placeholder="Search or type command..."
+                  className="pl-12"
+                />
+              </div>
+              <div className="m-5 grid grid-cols-2">
+                {coreAdminPermissions.map((val, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-start gap-3 rounded-xl p-4 hover:bg-blue-300"
+                  >
+                    <FontAwesomeIcon icon={faPlus} />
+                    <div className="block font-medium text-gray-700 dark:text-gray-400">
+                      {val}
+                    </div>
                   </div>
-                  <FontAwesomeIcon icon={faPlus} />
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </ComponentCard>
           </div>
-          <div className="flex items-center">
-            <FontAwesomeIcon icon={faRightLeft} />
+          <div className="m-6 flex items-center">
+            <FontAwesomeIcon icon={faRightLeft} size="lg" />
           </div>
           <div className="flex w-full flex-col">
-            <div className="relative">
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                className="absolute top-1/2 left-4 -translate-y-1/2"
-              />
-              <Input
-                type="text"
-                placeholder="Search or type command..."
-                className="pl-12"
-              />
-            </div>
-            <div className="m-3 text-center text-2xl font-bold">
-              ASSIGNED PERMISSION
-            </div>
-            <div className="m-5 flex flex-col gap-2">
-              {warehouseAdminPermissions.map((val, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between gap-3 rounded-xl p-4 hover:bg-blue-300"
-                >
-                  <div className="block font-medium text-gray-700 dark:text-gray-400">
-                    {val}
+            <ComponentCard title="Granted" className="h-full">
+              <div className="relative">
+                <FontAwesomeIcon
+                  icon={faMagnifyingGlass}
+                  className="absolute top-1/2 left-4 -translate-y-1/2"
+                />
+                <Input
+                  type="text"
+                  placeholder="Search or type command..."
+                  className="pl-12"
+                />
+              </div>
+              <div className="m-5 grid grid-cols-2 gap-2">
+                {warehouseAdminPermissions.map((val, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-start gap-3 rounded-xl p-4 hover:bg-blue-300"
+                  >
+                    <FontAwesomeIcon icon={faMinus} />
+                    <div className="block font-medium text-gray-700 dark:text-gray-400">
+                      {val}
+                    </div>
                   </div>
-                  <FontAwesomeIcon icon={faMinus} />
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </ComponentCard>
           </div>
         </div>
       </div>
