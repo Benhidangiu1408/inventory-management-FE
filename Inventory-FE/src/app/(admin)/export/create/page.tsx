@@ -12,7 +12,6 @@ import FilterItem from "@/components/TA_common/FilterItem";
 import Pagination from "@/components/tables/Pagination";
 import Button from "@/components/ui/button/Button";
 import { ImportCreateRow } from "@/interfaces/interface.table";
-// import Filter from "@/components/TA_List/Filter";
 import {
   faBoxOpen,
   faCalendar,
@@ -90,7 +89,7 @@ export default function CreateImportPage() {
 
   return (
     <>
-      <PageBreadcrumb pageTitle="Create Import" />
+      <PageBreadcrumb pageTitle="Create Export" />
 
       <div className="flex flex-col gap-6">
         {/* <ComponentCard
@@ -139,7 +138,7 @@ export default function CreateImportPage() {
                 </div>
               </div>
 
-              <Link href="/import/new" className="">
+              <Link href="/export/new" className="">
                 <Button
                   startIcon={<FontAwesomeIcon icon={faBoxOpen} />}
                   variant="primary"

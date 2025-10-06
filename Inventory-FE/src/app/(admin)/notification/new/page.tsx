@@ -43,6 +43,10 @@ export default function NewNotification() {
             <Input type="text" id="message" />
           </div>
           <div>
+            <Label htmlFor="shortenMessage">Shortened Message</Label>
+            <Input type="text" id="shortenMessage" placeholder="Brief version for limited display" />
+          </div>
+          <div>
             <Label>Icon</Label>
             <Select options={[]} onChange={() => {}} />
           </div>

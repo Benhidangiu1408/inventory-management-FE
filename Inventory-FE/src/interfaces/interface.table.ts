@@ -86,5 +86,6 @@ export interface ImportCreateRow {
   name: string;
   stock: number;
   unit: string;
-  quantity: string;
+  quantity: number | string; // can be number or string for easy input in
+  pickQuantity: number | string; // can be number or string for easy input in
 }
