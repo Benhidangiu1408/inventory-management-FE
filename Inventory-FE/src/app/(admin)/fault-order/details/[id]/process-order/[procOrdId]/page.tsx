@@ -65,29 +65,29 @@ export default function FaultOrderDetailPage() {
             </div>
             <h2 className="m-3 font-medium">Reasons</h2>
             <div>
-              <Label>What?</Label>
+              <Label>Why is it happening?</Label>
               <FileInput />
             </div>
             <div>
-              <Label>Why?</Label>
+              <Label>Why is that?</Label>
               <FileInput />
             </div>
             <div>
-              <Label>When?</Label>
+              <Label>Why is that?</Label>
               <FileInput />
             </div>
             <div>
-              <Label>Who?</Label>
+              <Label>Why is that?</Label>
               <FileInput />
             </div>
             <div>
-              <Label>Where?</Label>
+              <Label>Why is that?</Label>
               <FileInput />
             </div>
-            <div>
+            {/* <div>
               <Label>How?</Label>
               <FileInput />
-            </div>
+            </div> */}
             <h2 className="mt-3 font-medium">Root Causes</h2>
             <Input />
             {/* Action Table */}
