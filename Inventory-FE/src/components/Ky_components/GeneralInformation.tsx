@@ -13,7 +13,7 @@ export default function GeneralInfoSection({
   items,
 }: GeneralInfoSectionProps) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+    <div className="w-full rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
       {title && <div className="mb-3">{title}</div>}
       <div className="grid grid-cols-2 gap-5">
         {items.map((item) => (

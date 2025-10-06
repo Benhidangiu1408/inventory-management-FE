@@ -45,3 +45,34 @@ export const productColumns: Column<Product>[] = [
     },
   },
 ];
+
+export type LocationBatch = {
+  code: string; // unique batch code
+  quantity: number; // quantity stored in this batch
+  unit: string; // unit of measurement
+  position: string; // physical warehouse position (aisle/shelf/pallet)
+  note?: string; // optional remarks (e.g., storage condition)
+};
+
+export type WarehouseProduct = {
+  id: string; // product ID
+  name: string; // product name
+  totalQty: number; // total quantity across all batches
+  unit: string; // unit of measurement
+  batches: LocationBatch[];
+};
+
+// --------- Table Column Definitions ---------
+export const warehouseBatchColumns: Column<LocationBatch>[] = [
+  { label: "Batch Code", key: "code" },
+  { label: "Quantity", key: "quantity" },
+  { label: "Unit", key: "unit" },
+  { label: "Position", key: "position" },
+  { label: "Note", key: "note" },
+];
+
+export const warehouseProductColumns: Column<WarehouseProduct>[] = [
+  { label: "Product Name", key: "name" },
+  { label: "Total Quantity", key: "totalQty" },
+  { label: "Unit", key: "unit" },
+];

@@ -2,10 +2,13 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import ActivityLog from "@/components/TA_common/ActivityLog";
 
 import UtilityBar from "@/components/TA_common/UtilityBar";
-import CustomizableTable from "@/components/Ky_components/CustomizableTable";
 import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
-import { storedProductHeaders } from "@/components/Ky_components/TableHeader";
-import { storedProductData } from "@/components/Ky_components/TableData";
+import ExpandableTable from "@/components/Ky_components/ExpandableTable";
+import {
+  warehouseBatchColumns,
+  warehouseProductColumns,
+} from "@/components/Ky_components/ExpandableTableHeaders";
+import { warehouseProducts } from "@/components/Ky_components/TableData";
 
 export default function WarehouseDetailPage() {
   const generalInfoItems = [
@@ -47,10 +50,13 @@ export default function WarehouseDetailPage() {
               items={generalInfoItems}
             />
             <div className="rounded-2xl border border-gray-200 p-6">
-              <h2 className="mb-3 font-medium">Storage Products</h2>
-              <CustomizableTable
-                headers={storedProductHeaders}
-                data={storedProductData}
+              <ExpandableTable
+                headers={warehouseProductColumns}
+                subTableHeaders={warehouseBatchColumns}
+                data={warehouseProducts}
+                subTableData="batches"
+                needCheckBox={false}
+                title="Warehouse Storage"
               />
             </div>
           </div>

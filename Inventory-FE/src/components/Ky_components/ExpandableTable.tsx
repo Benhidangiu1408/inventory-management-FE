@@ -17,6 +17,8 @@ interface ExpandableTableProps<T, D> {
   data: T[]; //full data
   subTableData: keyof T; //sub table data in full data
   subTableHeaders: Column<D>[]; //headers of sub table
+  needCheckBox?: boolean;
+  title?: string;
 }
 
 export default function ExpandableTable<T extends { id: string }, D>({
@@ -24,16 +26,18 @@ export default function ExpandableTable<T extends { id: string }, D>({
   data,
   subTableData,
   subTableHeaders,
+  needCheckBox = true,
+  title,
 }: ExpandableTableProps<T, D>) {
   const [openRow, setOpenRow] = useState<Record<string, boolean>>({});
   const toggle = (id: string) =>
     setOpenRow((prev) => ({ ...prev, [id]: !prev[id] }));
 
   return (
-    <div className="overflow-auto rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
-      <div className="flex justify-between">
-        <h1 className="mb-4 text-xl font-semibold">Products & Batches</h1>
-        <Button className="m-2 h-10">Confirm</Button>
+    <div className="overflow-auto rounded-2xl bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+      <div className="flex items-center justify-between">
+        <h2 className="m-3 text-center font-medium">{title}</h2>
+        {needCheckBox && <Button className="m-2 h-10">Confirm</Button>}
       </div>
       <Table className="mb-6">
         {/* Main table headers */}
@@ -110,7 +114,11 @@ export default function ExpandableTable<T extends { id: string }, D>({
                           {subTable.map((subRow, idx) => (
                             <TableRow key={idx}>
                               <TableCell className="text-theme-sm px-5 py-3 text-start font-medium text-gray-500 dark:text-gray-400">
-                                <input type="checkbox" name="" id="" />
+                                {needCheckBox ? (
+                                  <input type="checkbox" name="" id="" />
+                                ) : (
+                                  " "
+                                )}
                               </TableCell>
                               {subTableHeaders.map((d) => (
                                 <TableCell
