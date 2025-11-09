@@ -5,12 +5,12 @@ import {
   StoredProduct,
   StorageBatch,
   ProductMaster,
-  CategoryRow,
   CategoryProductRow,
   UserRow,
   OrderRow,
   FaultBatch,
   ProcessingOrder,
+  CategoryRow,
 } from "./TableHeader";
 
 export const inventoryCheckOrders: InventoryCheckOrder[] = [
@@ -258,26 +258,26 @@ export const productMasterData: ProductMaster[] = [
   },
 ];
 
-export const categoryData: CategoryRow[] = [
-  {
-    id: "CAT-001",
-    name: "Beverages",
-    description: "Soft drinks, coffees, teas, beers",
-    productCount: 42,
-    createdBy: "Alice",
-    lastUpdated: "2025-09-10",
-    actions: ["r", "w"],
-  },
-  {
-    id: "CAT-002",
-    name: "Snacks",
-    description: "Chips, nuts, and crackers",
-    productCount: 18,
-    createdBy: "Bob",
-    lastUpdated: "2025-09-05",
-    actions: ["r", "w"],
-  },
-];
+// export const categoryData: CategoryRow[] = [
+//   {
+//     id: "CAT-001",
+//     name: "Beverages",
+//     description: "Soft drinks, coffees, teas, beers",
+//     productCount: 42,
+//     createdBy: "Alice",
+//     lastUpdated: "2025-09-10",
+//     actions: ["r", "w"],
+//   },
+//   {
+//     id: "CAT-002",
+//     name: "Snacks",
+//     description: "Chips, nuts, and crackers",
+//     productCount: 18,
+//     createdBy: "Bob",
+//     lastUpdated: "2025-09-05",
+//     actions: ["r", "w"],
+//   },
+// ];
 
 export const categoryProductData: CategoryProductRow[] = [
   {
@@ -527,5 +527,104 @@ export const processingOrderData: ProcessingOrder[] = [
     orderId: "SI-2025-004",
     orderType: "Canceled",
     action: "",
+  },
+];
+
+export const categoryData: CategoryRow[] = [
+  {
+    id: "CAT-001",
+    name: "Electronics",
+    description: "Devices, gadgets, and accessories",
+    productCount: 120,
+    createdBy: "admin",
+    lastUpdated: "2025-10-20",
+    actions: ["r", "w"],
+    subcategories: [
+      {
+        id: "SUB-001",
+        name: "Mobile Phones",
+        description: "Smartphones and accessories",
+        productCount: 45,
+        createdBy: "admin",
+        lastUpdated: "2025-10-21",
+        actions: ["r", "w"],
+      },
+      {
+        id: "SUB-002",
+        name: "Laptops",
+        description: "Portable computers and peripherals",
+        productCount: 30,
+        createdBy: "manager1",
+        lastUpdated: "2025-10-22",
+        actions: ["r", "w"],
+      },
+      {
+        id: "SUB-003",
+        name: "Cameras",
+        description: "DSLR and mirrorless cameras",
+        productCount: 25,
+        createdBy: "staff2",
+        lastUpdated: "2025-10-23",
+        actions: ["r", "w"],
+      },
+    ],
+  },
+  {
+    id: "CAT-002",
+    name: "Home Appliances",
+    description: "Appliances for kitchen and household use",
+    productCount: 80,
+    createdBy: "manager2",
+    lastUpdated: "2025-10-18",
+    actions: ["r", "w"],
+    subcategories: [
+      {
+        id: "SUB-004",
+        name: "Refrigerators",
+        description: "Single and double-door fridges",
+        productCount: 20,
+        createdBy: "admin",
+        lastUpdated: "2025-10-19",
+        actions: ["r", "w"],
+      },
+      {
+        id: "SUB-005",
+        name: "Microwaves",
+        description: "Convection and grill types",
+        productCount: 15,
+        createdBy: "manager2",
+        lastUpdated: "2025-10-21",
+        actions: ["r", "w"],
+      },
+    ],
+  },
+  {
+    id: "CAT-003",
+    name: "Furniture",
+    description: "Home and office furniture",
+    productCount: 60,
+    createdBy: "staff1",
+    lastUpdated: "2025-10-25",
+    actions: ["r", "w"],
+    subcategories: [
+      {
+        id: "SUB-006",
+        name: "Office Chairs",
+        description: "Ergonomic and executive chairs",
+        productCount: 10,
+        createdBy: "staff1",
+        lastUpdated: "2025-10-25",
+        actions: ["r", "w"],
+      },
+      {
+        id: "SUB-007",
+        name: "Tables",
+        description: "Dining and office tables",
+        productCount: 12,
+        createdBy: "admin",
+        lastUpdated: "2025-10-25",
+        actions: ["r", "w"],
+      },
+    ],
   },
 ];
