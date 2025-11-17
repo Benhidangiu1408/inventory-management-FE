@@ -91,15 +91,7 @@ export default function CreateImportPage() {
   return (
     <>
       <PageBreadcrumb pageTitle="Create Import" />
-
       <div className="flex flex-col gap-6">
-        {/* <ComponentCard
-          title="Choose your Warehouse"
-          startIcon={<FontAwesomeIcon icon={faWarehouse} />}
-        >
-          <Select options={[]} onChange={() => {}} />
-        </ComponentCard> */}
-
         <div className="rounded-2xl border border-[#E4E7EC] bg-white">
           <CustomFilter>
             <FilterItem

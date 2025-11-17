@@ -11,6 +11,7 @@ interface ImportSummaryItemProps {
   title: string;
   value: string | number;
   icon: IconDefinition;
+  textColor?: string;
 }
 
 interface SummaryItem {
@@ -20,9 +21,16 @@ interface SummaryItem {
   render?: (value: SummaryItem) => ReactNode;
 }
 
-const SummaryItem = ({ title, value, icon }: ImportSummaryItemProps) => {
+const SummaryItem = ({
+  title,
+  value,
+  icon,
+  textColor = "text-brand-500",
+}: ImportSummaryItemProps) => {
   return (
-    <div className="flex flex-1 items-center justify-between rounded-2xl bg-[#F2F4F7] p-5">
+    <div
+      className={`${textColor} flex flex-1 items-center justify-between rounded-2xl border p-5`}
+    >
       <div>
         <div className="text-sm">{title}</div>
         <div className="text-3xl font-bold">{value}</div>
@@ -44,33 +52,13 @@ export default function Summary() {
       value: 23,
       icon: faFileLines,
     },
-    {
-      title: "Total Value",
-      value: 2456789,
-      icon: faDollarSign,
-      render: (item) => {
-        const formattedValue: string = item.value.toLocaleString();
-        return (
-          <SummaryItem
-            key={item.title}
-            title={item.title}
-            value={formattedValue}
-            icon={item.icon}
-          />
-        );
-      },
-    },
   ];
 
   return (
-    <div className="flex justify-between gap-4 border-b border-gray-200 p-6">
-      {importSummaryItems.map((item) =>
-        item.render ? (
-          item.render(item)
-        ) : (
-          <SummaryItem key={item.title} {...item} />
-        ),
-      )}
+    <div className="flex justify-between gap-4">
+      {importSummaryItems.map((item) => (
+        <SummaryItem key={item.title} {...item} />
+      ))}
     </div>
   );
 }

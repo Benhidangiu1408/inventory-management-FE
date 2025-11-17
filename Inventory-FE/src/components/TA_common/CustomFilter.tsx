@@ -34,7 +34,7 @@ export default function CustomFilter({
 }: CustomFilterProps) {
   return (
     <>
-      <div className="flex items-center justify-between gap-20 border-b border-[#E4E7EC] p-6">
+      <div className="flex items-center justify-between gap-20 p-6">
         <div className="flex flex-1 gap-3">{children}</div>
         {listButton &&
           listButton.map((button, index) => {

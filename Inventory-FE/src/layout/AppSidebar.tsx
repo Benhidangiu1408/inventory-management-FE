@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
+// import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
@@ -25,8 +25,9 @@ import {
   faTruckMoving,
   faWarehouse,
   faUserTie,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
-import SidebarWidget from "./SidebarWidget";
+// import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -37,6 +38,11 @@ type NavItem = {
 
 // các link nav trong mục Menu
 const navItems: NavItem[] = [
+  {
+    icon: <GridIcon />,
+    name: "Dashboard",
+    subItems: [{ name: "Ecommerce", path: "/", pro: false }],
+  },
   {
     icon: <FontAwesomeIcon icon={faBoxesStacked} size="lg" />,
     name: "Import",
@@ -78,20 +84,29 @@ const navItems: NavItem[] = [
     path: "/notification",
   },
   {
-    icon: <FontAwesomeIcon icon={faUserTie} size="lg" />,
-    name: "User management",
-    path: "/admin/user-management",
+    name: "Users & Access Control",
+    icon: <FontAwesomeIcon icon={faUsers} />,
+    subItems: [
+      {
+        name: "User Management",
+        path: "/admin/user-management",
+      },
+      {
+        name: "Role Management",
+        path: "/admin/role-management",
+      },
+    ],
   },
-  {
-    icon: <FontAwesomeIcon icon={faUserTie} size="lg" />,
-    name: "Role management",
-    path: "/admin/role-management",
-  },
-  {
-    icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "/", pro: false }],
-  },
+  // {
+  //   icon: <FontAwesomeIcon icon={faUserTie} size="lg" />,
+
+  // },
+  // {
+  //   icon: <FontAwesomeIcon icon={faUserTie} size="lg" />,
+  //   name: "Role management",
+  //   path: "/admin/role-management",
+  // },
+
   {
     icon: <CalenderIcon />,
     name: "Calendar",

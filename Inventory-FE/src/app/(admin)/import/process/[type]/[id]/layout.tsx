@@ -4,10 +4,6 @@ import InfoList from "@/components/TA_create_page/InfoList";
 import InfoPagination from "@/components/TA_create_page/InfoPagination";
 import SmallInfoBox from "@/components/TA_create_page/SmallInfoBox";
 import { ProcessProvider } from "@/context/ProcessContext";
-import { ProductTempRow } from "@/interfaces/interface.table";
-import CustomizableTable, {
-  Column,
-} from "@/components/Ky_components/CustomizableTable";
 import {
   faCircleInfo,
   faCube,
@@ -17,6 +13,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ProgressBar from "@/components/TA_create_page/ProgressBar";
 import InfoBoxStatus from "@/components/TA_create_page/InfoBoxStatus";
+import ProductListInfoBox from "@/components/TA_create_page/ProductListInfoBox";
 
 export default async function ImportProcessLayout({
   params,
@@ -55,40 +52,6 @@ export default async function ImportProcessLayout({
       : type === "transfer"
         ? faCube
         : faIndustry;
-
-  const productTempColumn: Column<ProductTempRow>[] = [
-    {
-      key: "name",
-      label: "Product Name",
-    },
-    {
-      key: "expectedQuantity",
-      label: "Expected Quantity",
-    },
-  ];
-
-  const productTempData: ProductTempRow[] = [
-    {
-      name: "Product 1",
-      expectedQuantity: 10,
-    },
-    {
-      name: "Product 2",
-      expectedQuantity: 20,
-    },
-    {
-      name: "Product 3",
-      expectedQuantity: 30,
-    },
-    {
-      name: "Product 4",
-      expectedQuantity: 40,
-    },
-    {
-      name: "Product 5",
-      expectedQuantity: 50,
-    },
-  ];
 
   return (
     <ProcessProvider>
@@ -141,17 +104,7 @@ export default async function ImportProcessLayout({
             )}
           </InfoBox>
 
-          <InfoBox
-            icon={<FontAwesomeIcon icon={faCube} />}
-            title="Product List"
-          >
-            <div className="p-6">
-              <CustomizableTable<ProductTempRow>
-                headers={productTempColumn}
-                data={productTempData}
-              />
-            </div>
-          </InfoBox>
+          <ProductListInfoBox />
 
           <ProgressBar />
 

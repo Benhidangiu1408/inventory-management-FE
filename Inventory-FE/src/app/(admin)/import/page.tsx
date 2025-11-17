@@ -14,60 +14,63 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function ImportPage() {
   return (
-    <div>
+    <div className="flex flex-col gap-6">
       <PageBreadcrumb pageTitle="Import Page" />
-      <div>
-        <div className="rounded-2xl border border-[#E4E7EC] bg-white">
-          {/* <Filter type="import" /> */}
-          <CustomFilter
-            listButton={[
-              {
-                size: "sm",
-                type: "link",
-                title: "New Import",
-                href: "/import/create",
-                startIcon: <FontAwesomeIcon icon={faPlus} />,
-              },
-            ]}
-          >
-            <FilterItem
-              type="input"
-              label="Search"
-              placeholder="Search"
-              icon={faMagnifyingGlass}
-            />
-            <FilterItem
-              type="select"
-              label="Status"
-              placeholder="Status"
-              icon={faFilter}
-              options={[{ label: "Active", value: "active" }]}
-            />
-            <FilterItem
-              type="select"
-              label="Status"
-              placeholder="Status"
-              icon={faFilter}
-              options={[{ label: "Active", value: "active" }]}
-            />
-            <FilterItem
-              type="select"
-              label="Status"
-              placeholder="Status"
-              icon={faFilter}
-              options={[{ label: "Active", value: "active" }]}
-            />
-            <FilterItem
-              type="date"
-              label="Date"
-              placeholder="Date"
-              icon={faCalendar}
-            />
-          </CustomFilter>
 
-          <Summary />
-          <List type="import" />
-        </div>
+      <div className="rounded-2xl border">
+        <CustomFilter
+          listButton={[
+            {
+              size: "sm",
+              type: "link",
+              title: "New Import",
+              href: "/import/create",
+              startIcon: <FontAwesomeIcon icon={faPlus} />,
+            },
+          ]}
+        >
+          <FilterItem
+            type="input"
+            label="Search"
+            placeholder="Search"
+            icon={faMagnifyingGlass}
+          />
+          <FilterItem
+            type="select"
+            label="Status"
+            placeholder="Status"
+            icon={faFilter}
+            options={[{ label: "Active", value: "active" }]}
+          />
+          <FilterItem
+            type="select"
+            label="Status"
+            placeholder="Status"
+            icon={faFilter}
+            options={[{ label: "Active", value: "active" }]}
+          />
+          <FilterItem
+            type="select"
+            label="Status"
+            placeholder="Status"
+            icon={faFilter}
+            options={[{ label: "Active", value: "active" }]}
+          />
+          <FilterItem
+            type="date"
+            label="Date"
+            placeholder="Date"
+            icon={faCalendar}
+          />
+        </CustomFilter>
+      </div>
+
+      <div>
+        <Summary />
+      </div>
+
+      <div className="rounded-2xl border">
+        <List type="import" />
       </div>
     </div>
   );
