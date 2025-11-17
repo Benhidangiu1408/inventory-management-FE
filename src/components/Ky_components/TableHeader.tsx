@@ -72,7 +72,7 @@ export interface InventoryCheckOrder {
   warehouse: string;
   inspector: string;
   scheduledDate: string;
-  status: "Pending" | "Scanning" | "Completed";
+  status: "In progress" | "Open" | "Closed";
   createdBy: string;
   actions: string[];
 }
@@ -221,48 +221,48 @@ export const productMasterColumns: Column<ProductMaster>[] = [
   },
 ];
 
-export interface CategoryRow {
-  id: string;
-  name: string;
-  description: string;
-  productCount: number;
-  createdBy: string;
-  lastUpdated: string;
-  actions: string[];
-}
+// export interface CategoryRow {
+//   id: string;
+//   name: string;
+//   description: string;
+//   productCount: number;
+//   createdBy: string;
+//   lastUpdated: string;
+//   actions: string[];
+// }
 
-export const categoryColumns: Column<CategoryRow>[] = [
-  { label: "Category ID", key: "id" },
-  { label: "Name", key: "name" },
-  { label: "Description", key: "description" },
-  { label: "Products", key: "productCount" },
-  { label: "Created By", key: "createdBy" },
-  { label: "Last Updated", key: "lastUpdated" },
-  {
-    label: "Actions",
-    key: "actions",
-    render: (data, row) => (
-      <div className="flex gap-3">
-        {Array.isArray(data) && data.includes("r") && (
-          <Link href={`/category/${row.id}`}>
-            <FontAwesomeIcon
-              icon={faEye}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-        {Array.isArray(data) && data.includes("w") && (
-          <Link href={`/category`}>
-            <FontAwesomeIcon
-              icon={faPen}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-      </div>
-    ),
-  },
-];
+// export const categoryColumns: Column<CategoryRow>[] = [
+//   { label: "Category ID", key: "id" },
+//   { label: "Name", key: "name" },
+//   { label: "Description", key: "description" },
+//   { label: "Products", key: "productCount" },
+//   { label: "Created By", key: "createdBy" },
+//   { label: "Last Updated", key: "lastUpdated" },
+//   {
+//     label: "Actions",
+//     key: "actions",
+//     render: (data, row) => (
+//       <div className="flex gap-3">
+//         {Array.isArray(data) && data.includes("r") && (
+//           <Link href={`/category/${row.id}`}>
+//             <FontAwesomeIcon
+//               icon={faEye}
+//               className="cursor-pointer hover:text-blue-500"
+//             />
+//           </Link>
+//         )}
+//         {Array.isArray(data) && data.includes("w") && (
+//           <Link href={`/category`}>
+//             <FontAwesomeIcon
+//               icon={faPen}
+//               className="cursor-pointer hover:text-blue-500"
+//             />
+//           </Link>
+//         )}
+//       </div>
+//     ),
+//   },
+// ];
 
 export interface CategoryProductRow {
   productCode: string;
@@ -503,4 +503,91 @@ export const taskColumns: Column<TaskItem>[] = [
   { label: "Owner", key: "owner" },
   { label: "Due Date", key: "dueDate" },
   { label: "Status", key: "status" },
+];
+
+export type SubCategoryRow = {
+  id: string;
+  name: string;
+  description?: string;
+  productCount: number;
+  createdBy: string;
+  lastUpdated: string;
+  actions: string[];
+};
+
+export type CategoryRow = {
+  id: string;
+  name: string;
+  description?: string;
+  productCount: number;
+  createdBy: string;
+  lastUpdated: string;
+  subcategories: SubCategoryRow[];
+  actions: string[];
+};
+
+export const categoryColumns: Column<CategoryRow>[] = [
+  { label: "Category ID", key: "id" },
+  { label: "Name", key: "name" },
+  { label: "Description", key: "description" },
+  { label: "Products", key: "productCount" },
+  { label: "Created By", key: "createdBy" },
+  { label: "Last Updated", key: "lastUpdated" },
+  {
+    label: "Actions",
+    key: "actions",
+    render: (data, row) => (
+      <div className="flex gap-3">
+        {Array.isArray(data) && data.includes("r") && (
+          <Link href={`/category/${row.id}`}>
+            <FontAwesomeIcon
+              icon={faEye}
+              className="cursor-pointer hover:text-blue-500"
+            />
+          </Link>
+        )}
+        {Array.isArray(data) && data.includes("w") && (
+          <Link href={`/category`}>
+            <FontAwesomeIcon
+              icon={faPen}
+              className="cursor-pointer hover:text-blue-500"
+            />
+          </Link>
+        )}
+      </div>
+    ),
+  },
+];
+
+export const subCategoryColumns: Column<SubCategoryRow>[] = [
+  { label: "Subcategory ID", key: "id" },
+  { label: "Name", key: "name" },
+  { label: "Description", key: "description" },
+  { label: "Products", key: "productCount" },
+  { label: "Created By", key: "createdBy" },
+  { label: "Last Updated", key: "lastUpdated" },
+  {
+    label: "Actions",
+    key: "actions",
+    render: (data, row) => (
+      <div className="flex gap-3">
+        {Array.isArray(data) && data.includes("r") && (
+          <Link href={`/subcategory/${row.id}`}>
+            <FontAwesomeIcon
+              icon={faEye}
+              className="cursor-pointer hover:text-blue-500"
+            />
+          </Link>
+        )}
+        {Array.isArray(data) && data.includes("w") && (
+          <Link href={`/subcategory`}>
+            <FontAwesomeIcon
+              icon={faPen}
+              className="cursor-pointer hover:text-blue-500"
+            />
+          </Link>
+        )}
+      </div>
+    ),
+  },
 ];

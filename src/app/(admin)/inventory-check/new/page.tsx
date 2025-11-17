@@ -89,7 +89,7 @@ export default function NewInventoryAuditPage() {
               <div className="w-[70%]">
                 <Label>Scheduled Date</Label>
                 <Input
-                  type="date"
+                  type="datetime-local"
                   defaultValue={formData.date}
                   onChange={(e) =>
                     setFormData({ ...formData, date: e.target.value })

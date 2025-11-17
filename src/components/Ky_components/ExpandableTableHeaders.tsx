@@ -1,4 +1,5 @@
 "use client";
+import Checkbox from "../form/input/Checkbox";
 import { Column } from "./CustomizableTable";
 
 export type Batch = {
@@ -6,6 +7,7 @@ export type Batch = {
   scannedQty: number;
   systemQty: number;
   scannedBy: string;
+  isFaulty: boolean;
   note: string;
   status: "awaiting" | "scanning" | "confirmed";
 };
@@ -24,6 +26,17 @@ export const batchColumns: Column<Batch>[] = [
   { label: "Batch Code", key: "code" },
   { label: "Scanned Quantity", key: "scannedQty" },
   { label: "System Quantity", key: "systemQty" },
+  {
+    label: "Has Fault",
+    key: "isFaulty",
+    render(value) {
+      return (
+        <div className="flex justify-center">
+          <Checkbox onChange={() => {}} checked={Boolean(value)} />
+        </div>
+      );
+    },
+  },
   { label: "Note", key: "note" },
   { label: "Status", key: "status" },
 ];
