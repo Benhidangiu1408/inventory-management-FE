@@ -72,7 +72,7 @@ export interface InventoryCheckOrder {
   warehouse: string;
   inspector: string;
   scheduledDate: string;
-  status: "Pending" | "Scanning" | "Completed";
+  status: "In progress" | "Open" | "Closed";
   createdBy: string;
   actions: string[];
 }
