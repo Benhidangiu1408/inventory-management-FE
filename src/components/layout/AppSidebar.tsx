@@ -156,6 +156,7 @@ const othersItems: NavItem[] = [
       { name: "Buttons", path: "/buttons", pro: false },
       { name: "Images", path: "/images", pro: false },
       { name: "Videos", path: "/videos", pro: false },
+      { name: "Modals", path: "/modals" },
     ],
   },
 ];
@@ -391,12 +392,14 @@ const AppSidebar: React.FC = () => {
               />
             </div>
           ) : (
-            <Image
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
+            <div className={"flex h-[40px] justify-center"}>
+              <Image
+                src="/images/logo/logo-icon.svg"
+                alt="Logo"
+                width={32}
+                height={32}
+              />
+            </div>
           )}
         </Link>
       </div>
