@@ -1,14 +1,14 @@
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import ActivityLog from "@/components/TA_common/ActivityLog";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import ActivityLog from "@/default_components/TA_common/ActivityLog";
 
-import UtilityBar from "@/components/TA_common/UtilityBar";
-import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
-import ExpandableTable from "@/components/Ky_components/ExpandableTable";
+import UtilityBar from "@/default_components/TA_common/UtilityBar";
+import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
+import ExpandableTable from "@/default_components/Ky_components/ExpandableTable";
 import {
   warehouseBatchColumns,
   warehouseProductColumns,
-} from "@/components/Ky_components/ExpandableTableHeaders";
-import { warehouseProducts } from "@/components/Ky_components/TableData";
+} from "@/default_components/Ky_components/ExpandableTableHeaders";
+import { warehouseProducts } from "@/default_components/Ky_components/TableData";
 
 export default function WarehouseDetailPage() {
   const generalInfoItems = [

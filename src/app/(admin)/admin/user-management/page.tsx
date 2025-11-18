@@ -1,10 +1,10 @@
 "use client";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import CustomizableTable from "@/components/Ky_components/CustomizableTable";
-import { userData } from "@/components/Ky_components/TableData";
-import { userColumns } from "@/components/Ky_components/TableHeader";
-import Filter from "@/components/TA_List/Filter";
-import Pagination from "@/components/tables/Pagination";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import CustomizableTable from "@/default_components/Ky_components/CustomizableTable";
+import { userData } from "@/default_components/Ky_components/TableData";
+import { userColumns } from "@/default_components/Ky_components/TableHeader";
+import Filter from "@/default_components/TA_List/Filter";
+import Pagination from "@/default_components/tables/Pagination";
 import { useState } from "react";
 
 export default function UserManagementPage() {

@@ -1,15 +1,15 @@
 "use client";
 
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import ComponentCard from "@/components/common/ComponentCard";
-import Button from "@/components/ui/button/Button";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import ComponentCard from "@/default_components/common/ComponentCard";
+import Button from "@/default_components/ui/button/Button";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faPen, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { ReactNode } from "react";
 import CustomizableTable, {
   Column,
-} from "@/components/Ky_components/CustomizableTable";
+} from "@/default_components/Ky_components/CustomizableTable";
 
 type NotificationRow = {
   id: string;

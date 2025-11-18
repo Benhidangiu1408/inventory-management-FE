@@ -1,11 +1,11 @@
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import ActivityLog from "@/components/TA_common/ActivityLog";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import ActivityLog from "@/default_components/TA_common/ActivityLog";
 
-import UtilityBar from "@/components/TA_common/UtilityBar";
-import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
-import CustomizableTable from "@/components/Ky_components/CustomizableTable";
-import { categoryProductColumns } from "@/components/Ky_components/TableHeader";
-import { categoryProductData } from "@/components/Ky_components/TableData";
+import UtilityBar from "@/default_components/TA_common/UtilityBar";
+import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
+import CustomizableTable from "@/default_components/Ky_components/CustomizableTable";
+import { categoryProductColumns } from "@/default_components/Ky_components/TableHeader";
+import { categoryProductData } from "@/default_components/Ky_components/TableData";
 
 export default function CategoryDetailPage() {
   const generalInfoItems = [

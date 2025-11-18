@@ -1,16 +1,16 @@
 "use client";
 
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import Checkbox from "@/components/form/input/Checkbox";
-import Input from "@/components/form/input/InputField";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import Checkbox from "@/default_components/form/input/Checkbox";
+import Input from "@/default_components/form/input/InputField";
 import CustomizableTable, {
   Column,
   TableProps,
-} from "@/components/Ky_components/CustomizableTable";
-import CustomFilter from "@/components/TA_common/CustomFilter";
-import FilterItem from "@/components/TA_common/FilterItem";
-import Pagination from "@/components/tables/Pagination";
-import Button from "@/components/ui/button/Button";
+} from "@/default_components/Ky_components/CustomizableTable";
+import CustomFilter from "@/default_components/TA_common/CustomFilter";
+import FilterItem from "@/default_components/TA_common/FilterItem";
+import Pagination from "@/default_components/tables/Pagination";
+import Button from "@/default_components/ui/button/Button";
 import { ImportCreateRow } from "@/interfaces/interface.table";
 import {
   faBoxOpen,

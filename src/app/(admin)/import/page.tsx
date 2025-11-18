@@ -1,9 +1,9 @@
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import CustomFilter from "@/components/TA_common/CustomFilter";
-import FilterItem from "@/components/TA_common/FilterItem";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import CustomFilter from "@/default_components/TA_common/CustomFilter";
+import FilterItem from "@/default_components/TA_common/FilterItem";
 // import Filter from "@/components/TA_List/Filter";
-import List from "@/components/TA_List/List";
-import Summary from "@/components/TA_List/Summary";
+import List from "@/default_components/TA_List/List";
+import Summary from "@/default_components/TA_List/Summary";
 import {
   faCalendar,
   faFilter,

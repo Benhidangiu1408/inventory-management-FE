@@ -1,19 +1,19 @@
 "use client";
 import { useRouter, usePathname } from "next/navigation";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 
-import UtilityBar from "@/components/TA_common/UtilityBar";
-import CustomizableTable from "@/components/Ky_components/CustomizableTable";
+import UtilityBar from "@/default_components/TA_common/UtilityBar";
+import CustomizableTable from "@/default_components/Ky_components/CustomizableTable";
 import {
   faultBatchColumns,
   processingOrderColumns,
-} from "@/components/Ky_components/TableHeader";
+} from "@/default_components/Ky_components/TableHeader";
 import {
   faultBatchData,
   processingOrderData,
-} from "@/components/Ky_components/TableData";
-import StatusBox from "@/components/TA_common/StatusBox";
-import Button from "@/components/ui/button/Button";
+} from "@/default_components/Ky_components/TableData";
+import StatusBox from "@/default_components/TA_common/StatusBox";
+import Button from "@/default_components/ui/button/Button";
 
 export default function FaultOrderDetailPage() {
   const route = useRouter();

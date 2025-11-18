@@ -1,8 +1,8 @@
 "use client";
-import ComponentCard from "@/components/common/ComponentCard";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import Input from "@/components/form/input/InputField";
-import Filter from "@/components/TA_List/Filter";
+import ComponentCard from "@/default_components/common/ComponentCard";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import Input from "@/default_components/form/input/InputField";
+import Filter from "@/default_components/TA_List/Filter";
 import {
   faMagnifyingGlass,
   faRightLeft,

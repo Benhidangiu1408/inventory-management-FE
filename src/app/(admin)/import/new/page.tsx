@@ -1,5 +1,5 @@
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import Button from "@/components/ui/button/Button";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import Button from "@/default_components/ui/button/Button";
 import {
   faArrowRightArrowLeft,
   faDollarSign,

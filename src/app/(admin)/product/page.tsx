@@ -1,12 +1,12 @@
 "use client";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import CustomizableTable from "@/components/Ky_components/CustomizableTable";
-import Filter from "@/components/TA_List/Filter";
-import Pagination from "@/components/tables/Pagination";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import CustomizableTable from "@/default_components/Ky_components/CustomizableTable";
+import Filter from "@/default_components/TA_List/Filter";
+import Pagination from "@/default_components/tables/Pagination";
 
 import React, { useState } from "react";
-import { productMasterData } from "@/components/Ky_components/TableData";
-import { productMasterColumns } from "@/components/Ky_components/TableHeader";
+import { productMasterData } from "@/default_components/Ky_components/TableData";
+import { productMasterColumns } from "@/default_components/Ky_components/TableHeader";
 
 export default function ProductPage() {
   const [page, setPage] = useState(1);

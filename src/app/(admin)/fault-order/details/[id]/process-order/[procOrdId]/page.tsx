@@ -1,18 +1,18 @@
 "use client";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 
-import UtilityBar from "@/components/TA_common/UtilityBar";
-import CustomizableTable from "@/components/Ky_components/CustomizableTable";
+import UtilityBar from "@/default_components/TA_common/UtilityBar";
+import CustomizableTable from "@/default_components/Ky_components/CustomizableTable";
 import {
   faultBatchColumns,
   taskColumns,
-} from "@/components/Ky_components/TableHeader";
-import { faultBatchData2 } from "@/components/Ky_components/TableData";
-import Button from "@/components/ui/button/Button";
-import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
-import FileInput from "@/components/form/input/FileInput";
-import Label from "@/components/form/Label";
-import Input from "@/components/form/input/InputField";
+} from "@/default_components/Ky_components/TableHeader";
+import { faultBatchData2 } from "@/default_components/Ky_components/TableData";
+import Button from "@/default_components/ui/button/Button";
+import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
+import FileInput from "@/default_components/form/input/FileInput";
+import Label from "@/default_components/form/Label";
+import Input from "@/default_components/form/input/InputField";
 
 export default function FaultOrderDetailPage() {
   const handleInfoItems = [

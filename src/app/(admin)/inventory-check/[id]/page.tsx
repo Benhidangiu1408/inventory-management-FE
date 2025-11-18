@@ -1,14 +1,14 @@
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import UtilityBar from "@/components/TA_common/UtilityBar";
-import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
-import ExpandableTable from "@/components/Ky_components/ExpandableTable";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import UtilityBar from "@/default_components/TA_common/UtilityBar";
+import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
+import ExpandableTable from "@/default_components/Ky_components/ExpandableTable";
 import {
   Product,
   Batch,
   productColumns,
   batchColumns,
-} from "@/components/Ky_components/ExpandableTableHeaders";
-import { productData } from "@/components/Ky_components/TableData";
+} from "@/default_components/Ky_components/ExpandableTableHeaders";
+import { productData } from "@/default_components/Ky_components/TableData";
 
 export default async function InventoryCheckDetailPage({
   params,
