@@ -399,6 +399,16 @@
 .flatpickr-months .flatpickr-next-month.flatpickr-next-month {
   @apply !right-7;
 }
+
+/* Customizable table tweaks */
+.customizable-table .ag-header-cell .ag-header-cell-label {
+  justify-content: center;
+}
+
+.customizable-table .ag-header-cell .ag-header-cell-text {
+  text-align: center;
+  width: 100%;
+}
 .flatpickr-days {
   @apply !border-0;
 }

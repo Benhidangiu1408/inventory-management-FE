@@ -1,57 +1,94 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
-import { ReactNode } from "react";
+"use client";
 
-export interface Column<T> {
+import { ReactNode, useMemo } from "react";
+import type {
+  ColDef,
+  ColDefField,
+  ICellRendererParams,
+} from "ag-grid-community";
+import { AgGridReact, type AgGridReactProps } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+
+export interface Column<T extends object> {
   label: string; // header displayed text
-  key: keyof T; // header/attribute key
+  key: keyof T & string; // header/attribute key
   render?: (value: T[keyof T], row: T) => ReactNode; // optional custom cell renderer
 }
 
-export interface TableProps<T> {
+export interface TableProps<T extends object>
+  extends Omit<AgGridReactProps<T>, "rowData" | "columnDefs" | "theme"> {
   headers: Column<T>[];
   data: T[];
+  theme?: string;
+  height?: number | string;
 }
 
-export default function CustomizableTable<T>({ headers, data }: TableProps<T>) {
+export default function CustomizableTable<T extends object>({
+  headers,
+  data,
+  className,
+  theme = "ag-theme-quartz",
+  height = "auto",
+  defaultColDef,
+  ...gridProps
+}: TableProps<T>) {
+  const columnDefs = useMemo<ColDef<T>[]>(
+    () =>
+      headers.map((header) => {
+        const renderCell = header.render;
+        const cellRenderer = renderCell
+          ? (params: ICellRendererParams<T, T[keyof T]>) =>
+              renderCell(params.value as T[keyof T], params.data as T)
+          : undefined;
+
+        const field = header.key as unknown as ColDefField<T>;
+
+        return {
+          headerName: header.label,
+          field,
+          flex: 1,
+          wrapText: true,
+          autoHeight: true,
+          sortable: true,
+          filter: true,
+          resizable: true,
+          cellRenderer,
+        } satisfies ColDef<T>;
+      }),
+    [headers],
+  );
+
+  const mergedDefaultColDef = useMemo<ColDef>(
+    () => ({
+      sortable: true,
+      filter: true,
+      resizable: true,
+      wrapText: true,
+      autoHeight: true,
+      ...defaultColDef,
+    }),
+    [defaultColDef],
+  );
+
+  const wrapperClassName = useMemo(
+    () =>
+      ["customizable-table", theme, className]
+        .filter((value): value is string => Boolean(value && value.trim()))
+        .join(" "),
+    [className, theme],
+  );
+
   return (
-    <div className="overflow-auto">
-      <Table className="mb-6">
-        {/* Table Header */}
-        <TableHeader className="border-y border-t border-gray-100 bg-gray-50 px-6 py-3.5 dark:border-white/[0.05] dark:bg-gray-900">
-          <TableRow>
-            {headers.map((h) => (
-              <TableCell
-                isHeader
-                key={String(h.key)}
-                className="text-theme-sm px-5 py-3 text-center font-medium text-gray-500 dark:text-gray-400"
-              >
-                {h.label}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHeader>
-        {/* Table Body */}
-        <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-          {data.map((row, i) => (
-            <TableRow key={i}>
-              {headers.map((h) => (
-                <TableCell
-                  key={String(h.key)}
-                  className="text-theme-sm px-4 py-3 text-center text-gray-500 dark:text-gray-400"
-                >
-                  {h.render ? h.render(row[h.key], row) : String(row[h.key])}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div className={wrapperClassName} style={{ width: "100%", height }}>
+      <AgGridReact<T>
+        rowData={data}
+        columnDefs={columnDefs}
+        defaultColDef={mergedDefaultColDef}
+        suppressCellFocus
+        domLayout={height === "auto" ? "autoHeight" : "normal"}
+        {...gridProps}
+      />
     </div>
   );
 }

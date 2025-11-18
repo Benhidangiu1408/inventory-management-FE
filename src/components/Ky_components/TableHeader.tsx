@@ -313,19 +313,21 @@ export const userColumns: Column<UserRow>[] = [
     label: "Status",
     key: "status",
     render: (value) => (
-      <Badge
-        color={
-          value === "Active"
-            ? "success"
-            : value === "Suspended"
-              ? "warning"
-              : "error"
-        }
-        size="sm"
-        variant="solid"
-      >
-        {value}
-      </Badge>
+      <div className="m-3 flex w-full justify-center">
+        <Badge
+          color={
+            value === "Active"
+              ? "success"
+              : value === "Suspended"
+                ? "warning"
+                : "error"
+          }
+          size="sm"
+          variant="solid"
+        >
+          {value}
+        </Badge>
+      </div>
     ),
   },
   { label: "Last Login", key: "lastLogin" },

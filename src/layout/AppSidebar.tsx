@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
@@ -26,7 +25,6 @@ import {
   faWarehouse,
   faUserTie,
 } from "@fortawesome/free-solid-svg-icons";
-import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
