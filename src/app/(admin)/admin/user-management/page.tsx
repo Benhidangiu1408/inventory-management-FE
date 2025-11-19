@@ -1,24 +1,46 @@
 "use client";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import CustomizableTable from "@/components/Ky_components/CustomizableTable";
-import { userData } from "@/components/Ky_components/TableData";
-import { userColumns } from "@/components/Ky_components/TableHeader";
-import Filter from "@/components/TA_List/Filter";
-import Pagination from "@/components/tables/Pagination";
-import { useState } from "react";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import CustomizableTable from "@/components/table/CustomizableTable";
+import { userData } from "@/default_components/Ky_components/TableData";
+import { userColumns } from "@/components/table/TableHeader";
+import Filter, { DateRange } from "@/components/Filter";
+import Pagination from "@/default_components/tables/Pagination";
+import { useMemo, useState } from "react";
+import { isDateWithinRange, parseFlexibleDate } from "@/lib/utils";
 
 export default function UserManagementPage() {
   const [page, setPage] = useState(1);
+  const [dateRange, setDateRange] = useState<DateRange>({});
+
+  const filteredUsers = useMemo(() => {
+    if (!dateRange.from && !dateRange.to) {
+      return userData;
+    }
+
+    return userData.filter((row) =>
+      isDateWithinRange(parseFlexibleDate(row.lastLogin), dateRange),
+    );
+  }, [dateRange]);
 
   return (
     <div>
       <PageBreadcrumb pageTitle="User Management" />
       <div className="rounded-2xl border border-[#E4E7EC] bg-white">
-        <Filter type="category" />
+        <Filter
+          type="user"
+          onDateRangeChange={(range) => {
+            setDateRange(range);
+            setPage(1);
+          }}
+          dateRangePlaceholder={{
+            from: "Last login (from)",
+            to: "Last login (to)",
+          }}
+        />
         <div className="p-6">
           <CustomizableTable
             headers={userColumns}
-            data={userData}
+            data={filteredUsers}
           ></CustomizableTable>
         </div>
         <Pagination

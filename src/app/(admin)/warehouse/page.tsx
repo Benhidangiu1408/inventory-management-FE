@@ -1,15 +1,15 @@
 "use client";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import CustomizableTable from "@/components/Ky_components/CustomizableTable";
-import Filter from "@/components/TA_List/Filter";
-import Pagination from "@/components/tables/Pagination";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import CustomizableTable from "@/components/table/CustomizableTable";
+import Filter from "@/components/Filter";
+import Pagination from "@/default_components/tables/Pagination";
 
 import React, { useState } from "react";
-import { warehouseTableData } from "@/components/Ky_components/TableData";
+import { warehouseTableData } from "@/default_components/Ky_components/TableData";
 import {
   WarehouseRow,
   warehouseTableHeader,
-} from "@/components/Ky_components/TableHeader";
+} from "@/components/table/TableHeader";
 
 export default function WarehousePage() {
   const [page, setPage] = useState(1);

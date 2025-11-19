@@ -1,7 +1,7 @@
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import ComponentCard from "@/components/common/ComponentCard";
-import Badge from "@/components/ui/badge/Badge";
-import Button from "@/components/ui/button/Button";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import ComponentCard from "@/default_components/common/ComponentCard";
+import Badge from "@/default_components/ui/badge/Badge";
+import Button from "@/default_components/ui/button/Button";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {

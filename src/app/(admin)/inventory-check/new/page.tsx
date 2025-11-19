@@ -1,14 +1,14 @@
 "use client";
-import Input from "@/components/form/input/InputField";
-import Label from "@/components/form/Label";
-import MultiSelect from "@/components/form/MultiSelect";
-import Select from "@/components/form/Select";
-import Checkbox from "@/components/form/input/Checkbox";
-import { ChevronDownIcon } from "@/icons";
+import Input from "@/default_components/form/input/InputField";
+import Label from "@/default_components/form/Label";
+import MultiSelect from "@/default_components/form/MultiSelect";
+import Select from "@/default_components/form/Select";
+import Checkbox from "@/default_components/form/input/Checkbox";
+import { ChevronDownIcon } from "../../../../icons";
 import { useState } from "react";
-import Calendar from "@/components/calendar/Calendar";
-import Button from "@/components/ui/button/Button";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import Calendar from "@/default_components/calendar/Calendar";
+import Button from "@/default_components/ui/button/Button";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 
 export default function NewInventoryAuditPage() {
   const [formData, setFormData] = useState({

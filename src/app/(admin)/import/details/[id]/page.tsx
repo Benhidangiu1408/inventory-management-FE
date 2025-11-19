@@ -1,14 +1,11 @@
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import TableBox from "@/components/TA_common/TableBox";
-import UtilityBar from "@/components/TA_common/UtilityBar";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import TableBox from "@/default_components/TA_common/TableBox";
+import UtilityBar from "@/default_components/TA_common/UtilityBar";
 import { ProductRow, StorageLocationRow } from "@/interfaces/interface.table";
-import ActivityLog from "@/components/TA_common/ActivityLog";
-import Badge from "@/components/ui/badge/Badge";
-import {
-  Column,
-  TableProps,
-} from "@/components/Ky_components/CustomizableTable";
-import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
+import ActivityLog from "@/default_components/TA_common/ActivityLog";
+import Badge from "@/default_components/ui/badge/Badge";
+import { Column, TableProps } from "@/components/table/CustomizableTable";
+import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
 
 export default function ImportDetailPage() {
   const generalInfoItems = [

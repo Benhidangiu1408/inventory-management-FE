@@ -1,11 +1,11 @@
-import Input from "@/components/form/input/InputField";
-import InfoBox from "@/components/TA_create_page/InfoBox";
-import InfoPagination from "@/components/TA_create_page/InfoPagination";
-import Button from "@/components/ui/button/Button";
+import Input from "@/default_components/form/input/InputField";
+import InfoBox from "@/default_components/TA_create_page/InfoBox";
+import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
+import Button from "@/default_components/ui/button/Button";
 import { QualityCheckRow } from "@/interfaces/interface.table";
 import CustomizableTable, {
   Column,
-} from "@/components/Ky_components/CustomizableTable";
+} from "@/components/table/CustomizableTable";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 

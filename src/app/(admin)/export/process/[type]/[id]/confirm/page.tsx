@@ -1,14 +1,11 @@
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import OrderSummary from "@/components/TA_common/OrderSummary";
-import TableBox from "@/components/TA_common/TableBox";
-import InfoBox from "@/components/TA_create_page/InfoBox";
-import InfoList from "@/components/TA_create_page/InfoList";
-import Button from "@/components/ui/button/Button";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import OrderSummary from "@/default_components/TA_common/OrderSummary";
+import TableBox from "@/default_components/TA_common/TableBox";
+import InfoBox from "@/default_components/TA_create_page/InfoBox";
+import InfoList from "@/default_components/TA_create_page/InfoList";
+import Button from "@/default_components/ui/button/Button";
 import { ExportConfirmRow } from "@/interfaces/interface.table";
-import {
-  Column,
-  TableProps,
-} from "@/components/Ky_components/CustomizableTable";
+import { Column, TableProps } from "@/components/table/CustomizableTable";
 import {
   faArrowRight,
   faCircleInfo,
@@ -17,8 +14,8 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import GeneralInfoSection from "@/components/Ky_components/GeneralInformation";
-import InfoBoxStatus from "@/components/TA_create_page/InfoBoxStatus";
+import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
+import InfoBoxStatus from "@/default_components/TA_create_page/InfoBoxStatus";
 
 export default async function ConfirmPage({
   params,

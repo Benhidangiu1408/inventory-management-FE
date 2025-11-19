@@ -1,14 +1,14 @@
 "use client";
 
-import ComponentCard from "@/components/common/ComponentCard";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import Form from "@/components/form/Form";
-import PhoneInput from "@/components/form/group-input/PhoneInput";
-import Checkbox from "@/components/form/input/Checkbox";
-import Input from "@/components/form/input/InputField";
-import Label from "@/components/form/Label";
-import Select from "@/components/form/Select";
-import Button from "@/components/ui/button/Button";
+import ComponentCard from "@/default_components/common/ComponentCard";
+import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import Form from "@/default_components/form/Form";
+import PhoneInput from "@/default_components/form/group-input/PhoneInput";
+import Checkbox from "@/default_components/form/input/Checkbox";
+import Input from "@/default_components/form/input/InputField";
+import Label from "@/default_components/form/Label";
+import Select from "@/default_components/form/Select";
+import Button from "@/default_components/ui/button/Button";
 import {
   faComment,
   faEnvelope,
@@ -44,7 +44,11 @@ export default function NewNotification() {
           </div>
           <div>
             <Label htmlFor="shortenMessage">Shortened Message</Label>
-            <Input type="text" id="shortenMessage" placeholder="Brief version for limited display" />
+            <Input
+              type="text"
+              id="shortenMessage"
+              placeholder="Brief version for limited display"
+            />
           </div>
           <div>
             <Label>Icon</Label>
