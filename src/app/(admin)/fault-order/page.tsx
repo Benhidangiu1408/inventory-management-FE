@@ -27,7 +27,7 @@ export default function FaultOrderPage() {
     <div>
       <PageBreadcrumb pageTitle="Fault Order List" />
       <div>
-        <div className="rounded-2xl border border-[#E4E7EC] bg-white">
+        <div className="rounded-2xl border border-[#E4E7EC] bg-white dark:border-gray-800 dark:bg-white/[0.03]">
           <Filter
             type="fault order"
             onDateRangeChange={(range) => {

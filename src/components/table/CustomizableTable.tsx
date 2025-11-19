@@ -7,10 +7,13 @@ import type {
   ICellRendererParams,
 } from "ag-grid-community";
 import { AgGridReact, type AgGridReactProps } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import { ModuleRegistry } from "ag-grid-community";
-import { AllCommunityModule } from "ag-grid-community";
+import {
+  ModuleRegistry,
+  themeQuartz,
+  colorSchemeDarkBlue,
+  AllCommunityModule,
+} from "ag-grid-community";
+import { useTheme } from "@/context/ThemeContext";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -20,6 +23,7 @@ export interface Column<T extends object> {
   render?: (value: T[keyof T], row: T) => ReactNode; // optional custom cell renderer
   width?: number;
   sortable?: boolean;
+  stopCenterData?: boolean;
 }
 
 export interface TableProps<T extends object>
@@ -39,6 +43,13 @@ export default function CustomizableTable<T extends object>({
   defaultColDef,
   ...gridProps
 }: TableProps<T>) {
+  const { theme } = useTheme();
+  const agTheme = useMemo(() => {
+    return theme === "light"
+      ? themeQuartz
+      : themeQuartz.withPart(colorSchemeDarkBlue);
+  }, [theme]);
+
   const columnDefs = useMemo<ColDef<T>[]>(
     () =>
       headers.map((header) => {
@@ -54,13 +65,12 @@ export default function CustomizableTable<T extends object>({
         return {
           headerName: header.label,
           field,
-          flex: header.width ? undefined : 1,
+          flex: header.width ? 0 : 1,
           width: header.width,
           wrapText: true,
           autoHeight: true,
           sortable: header.sortable ?? true,
-          filter: true,
-          resizable: true,
+          cellClass: header.stopCenterData ? "" : "text-center",
           cellRenderer,
         } satisfies ColDef<T>;
       }),
@@ -69,9 +79,8 @@ export default function CustomizableTable<T extends object>({
 
   const mergedDefaultColDef = useMemo<ColDef>(
     () => ({
-      sortable: true,
       filter: true,
-      resizable: true,
+      minWidth: 150,
       ...defaultColDef,
     }),
     [defaultColDef],
@@ -80,13 +89,14 @@ export default function CustomizableTable<T extends object>({
   const wrapperClassName = useMemo(
     () =>
       [
-        "ag-theme-quartz dark:ag-theme-quartz-dark w-full overflow-auto",
+        "w-full overflow-auto",
         // Centers the flex container (Label + Icon)
         "[&_.ag-header-cell-label]:justify-center",
-        // Centers the text span itself
+        // // Centers the text span itself
         "[&_.ag-header-cell-text]:text-center",
-        // Forces the text span to take full width (so it can center)
+        // // Forces the text span to take full width (so it can center)
         "[&_.ag-header-cell-text]:w-full",
+        "[&_.ag-header-cell-text]:font-semibold",
         className,
       ]
         .filter((value): value is string => Boolean(value && value.trim()))
@@ -95,13 +105,16 @@ export default function CustomizableTable<T extends object>({
   );
 
   return (
-    <div className={wrapperClassName} style={{ height }}>
+    <div
+      className={wrapperClassName}
+      style={{ height: height === "auto" ? undefined : height }}
+    >
       <AgGridReact<T>
-        theme={"legacy"}
+        theme={agTheme}
         rowData={data}
         columnDefs={columnDefs}
         defaultColDef={mergedDefaultColDef}
-        suppressCellFocus
+        suppressCellFocus={true}
         domLayout={height === "auto" ? "autoHeight" : "normal"}
         pagination={pagination}
         paginationPageSize={10}

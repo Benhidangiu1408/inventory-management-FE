@@ -103,7 +103,7 @@ export default function Filter({
   // ];
 
   return (
-    <div className="flex items-center justify-between gap-20 border-b border-[#E4E7EC] p-6">
+    <div className="flex items-center justify-between gap-20 border-b border-[#E4E7EC] p-6 dark:border-gray-800">
       <div className="flex flex-1 gap-3">
         {type != "role" && (
           <div className="flex-1">
