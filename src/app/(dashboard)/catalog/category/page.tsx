@@ -3,9 +3,8 @@ import Filter from "@/components/Filter";
 import Pagination from "@/default_components/tables/Pagination";
 
 import ExpandableTable from "@/components/table/ExpandableTable";
-import { Badge } from "lucide-react";
 
-export default function CategoryPage() {
+export default async function CategoryPage() {
   return (
     <div>
       <PageBreadcrumb pageTitle="Category" filters={["catalog"]} />
