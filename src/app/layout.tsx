@@ -19,7 +19,7 @@ export default function RootLayout({
       <head>
         <title>WMS - Warehouse Management System</title>
       </head>
-      <body className={`${outfit.className} dark:bg-gray-900`}>
+      <body className={`${outfit.className} bg-[#f9fafb] dark:bg-gray-900`}>
         <ThemeProvider>
           <SidebarProvider>{children}</SidebarProvider>
         </ThemeProvider>

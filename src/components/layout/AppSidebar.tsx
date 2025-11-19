@@ -23,7 +23,13 @@ import {
   faTruckMoving,
   faWarehouse,
 } from "@fortawesome/free-solid-svg-icons";
-import { Package, Settings, UserRoundCog, Warehouse } from "lucide-react";
+import {
+  FileBox,
+  Package,
+  Settings,
+  UserRoundCog,
+  Warehouse,
+} from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -38,6 +44,14 @@ export const navItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Dashboard",
     path: "/",
+  },
+  {
+    icon: <FileBox />,
+    name: "Catalog",
+    subItems: [
+      { name: "Category", path: "/catalog/category" },
+      { name: "Product", path: "/s" },
+    ],
   },
   {
     icon: <Warehouse />,
