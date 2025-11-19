@@ -33,7 +33,7 @@ type NavItem = {
 };
 
 // các link nav trong mục Menu
-const navItems: NavItem[] = [
+export const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
@@ -121,7 +121,7 @@ const navItems: NavItem[] = [
 ];
 
 // các link nav trong mục Other
-const othersItems: NavItem[] = [
+export const othersItems: NavItem[] = [
   {
     icon: <CalenderIcon />,
     name: "Calendar",

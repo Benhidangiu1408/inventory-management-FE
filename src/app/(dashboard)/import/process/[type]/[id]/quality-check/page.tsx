@@ -1,3 +1,5 @@
+"use client";
+
 import Input from "@/default_components/form/input/InputField";
 import InfoBox from "@/default_components/TA_create_page/InfoBox";
 import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
@@ -23,7 +25,7 @@ export default function QualityCheckPage() {
       key: "qualityStatus",
       label: "Quality Status",
       render: () => (
-        <div className="inline-flex gap-2">
+        <div className="flex inline-flex gap-2">
           <Button variant="success_outline">Pass</Button>
           <Button variant="danger_outline">Fail</Button>
           <Button variant="warning_outline">Skip</Button>

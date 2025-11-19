@@ -5,12 +5,73 @@ import UserDropdown from "@/default_components/header/UserDropdown";
 import { useSidebar } from "@/context/SidebarContext";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  ChangeEvent,
+  useMemo,
+  useCallback,
+} from "react";
+import { navItems } from "@/components/layout/AppSidebar";
+import SearchResultList from "@/components/search/SearchResultList";
+
+export interface NavItemSearch {
+  parentName: null | string;
+  name: string;
+  path: string | undefined;
+}
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
+  const [resultList, setResultList] = useState<NavItemSearch[]>([]);
+  const [inputValue, setInputValue] = useState<string>("");
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+
+  const buildNavItemArray: NavItemSearch[] = useMemo(() => {
+    const list: NavItemSearch[] = [];
+
+    navItems.forEach((item) => {
+      if (!item.subItems) {
+        list.push({
+          parentName: null,
+          name: item.name.toLowerCase(),
+          path: item.path,
+        });
+      } else {
+        item.subItems.forEach((subItem) => {
+          list.push({
+            parentName: item.name.toLowerCase(),
+            name: subItem.name.toLowerCase(),
+            path: subItem.path,
+          });
+        });
+      }
+    });
+
+    return list;
+  }, [navItems]);
+
+  const filterBasedOnSearch = useCallback(
+    (value: string) => {
+      const filteredValue = value.toLowerCase();
+      const filteredList: NavItemSearch[] = buildNavItemArray.filter((item) => {
+        // Check if the item name matches (for both parent and child items)
+        if (item.name.includes(filteredValue)) {
+          return true;
+        }
+        // Check if the parent name matches (for child items)
+        if (item.parentName?.includes(filteredValue)) {
+          return true;
+        }
+        return false;
+      });
+
+      return filteredList;
+    },
+    [buildNavItemArray],
+  );
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) {
@@ -20,10 +81,33 @@ const AppHeader: React.FC = () => {
     }
   };
 
+  const handlePress = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+
+    if (newValue === "") {
+      setResultList([]);
+      return;
+    }
+    setResultList(filterBasedOnSearch(newValue));
+  };
+
   const toggleApplicationMenu = () => {
     setApplicationMenuOpen(!isApplicationMenuOpen);
   };
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  const hideSearchResults = () => {
+    setResultList([]);
+  };
+
+  const showSearchResults = () => {
+    if (!inputValue) {
+      return;
+    }
+    setResultList(filterBasedOnSearch(inputValue));
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -37,6 +121,23 @@ const AppHeader: React.FC = () => {
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        hideSearchResults();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -123,7 +224,7 @@ const AppHeader: React.FC = () => {
 
           <div className="hidden lg:block">
             <form>
-              <div className="relative">
+              <div className="relative" ref={searchContainerRef}>
                 <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2">
                   <svg
                     className="fill-gray-500 dark:fill-gray-400"
@@ -143,6 +244,9 @@ const AppHeader: React.FC = () => {
                 </span>
                 {/*Search bar*/}
                 <input
+                  onChange={handlePress}
+                  onFocus={showSearchResults}
+                  value={inputValue}
                   ref={inputRef}
                   type="text"
                   placeholder="Search or type command..."
@@ -153,6 +257,12 @@ const AppHeader: React.FC = () => {
                   <span> ⌘ </span>
                   <span> K </span>
                 </button>
+                {resultList.length > 0 && inputValue && (
+                  <SearchResultList
+                    resultList={resultList}
+                    onItemClick={hideSearchResults}
+                  />
+                )}
               </div>
             </form>
           </div>
