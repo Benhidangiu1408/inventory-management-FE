@@ -1,7 +1,7 @@
 "use client";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import CustomizableTable from "@/default_components/Ky_components/CustomizableTable";
-import Filter from "@/default_components/TA_List/Filter";
+import CustomizableTable from "@/components/table/CustomizableTable";
+import Filter from "@/components/Filter";
 import Pagination from "@/default_components/tables/Pagination";
 // import Label from "@/components/form/Label";
 // import Input from "@/components/form/input/InputField";
@@ -11,7 +11,7 @@ import Pagination from "@/default_components/tables/Pagination";
 
 import React, { useState } from "react";
 import { inventoryCheckOrders } from "@/default_components/Ky_components/TableData";
-import { inventoryCheckOrderHeaders } from "@/default_components/Ky_components/TableHeader";
+import { inventoryCheckOrderHeaders } from "@/components/table/TableHeader";
 // import CustomContentModalBox from "@/components/Ky_components/CustomContentModalBox";
 
 export default function WarehousePage() {

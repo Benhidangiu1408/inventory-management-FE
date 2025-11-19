@@ -3,11 +3,11 @@ import { useRouter, usePathname } from "next/navigation";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 
 import UtilityBar from "@/default_components/TA_common/UtilityBar";
-import CustomizableTable from "@/default_components/Ky_components/CustomizableTable";
+import CustomizableTable from "@/components/table/CustomizableTable";
 import {
   faultBatchColumns,
   processingOrderColumns,
-} from "@/default_components/Ky_components/TableHeader";
+} from "@/components/table/TableHeader";
 import {
   faultBatchData,
   processingOrderData,

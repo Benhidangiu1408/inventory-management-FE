@@ -6,7 +6,7 @@ import Input from "@/default_components/form/input/InputField";
 import CustomizableTable, {
   Column,
   TableProps,
-} from "@/default_components/Ky_components/CustomizableTable";
+} from "@/components/table/CustomizableTable";
 import CustomFilter from "@/default_components/TA_common/CustomFilter";
 import FilterItem from "@/default_components/TA_common/FilterItem";
 import Pagination from "@/default_components/tables/Pagination";

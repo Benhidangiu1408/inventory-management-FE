@@ -1,6 +1,6 @@
 import CustomizableTable, {
   TableProps,
-} from "../Ky_components/CustomizableTable";
+} from "../../components/table/CustomizableTable";
 
 export default function TableBox<T>({
   title,

@@ -2,11 +2,8 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 
 import UtilityBar from "@/default_components/TA_common/UtilityBar";
-import CustomizableTable from "@/default_components/Ky_components/CustomizableTable";
-import {
-  faultBatchColumns,
-  taskColumns,
-} from "@/default_components/Ky_components/TableHeader";
+import CustomizableTable from "@/components/table/CustomizableTable";
+import { faultBatchColumns, taskColumns } from "@/components/table/TableHeader";
 import { faultBatchData2 } from "@/default_components/Ky_components/TableData";
 import Button from "@/default_components/ui/button/Button";
 import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";

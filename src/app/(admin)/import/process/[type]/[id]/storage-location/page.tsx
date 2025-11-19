@@ -4,7 +4,7 @@ import Input from "@/default_components/form/input/InputField";
 import Select from "@/default_components/form/Select";
 import CustomizableTable, {
   Column,
-} from "@/default_components/Ky_components/CustomizableTable";
+} from "@/components/table/CustomizableTable";
 import InfoBox from "@/default_components/TA_create_page/InfoBox";
 import { StorageLocationCheckRow } from "@/interfaces/interface.table";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";

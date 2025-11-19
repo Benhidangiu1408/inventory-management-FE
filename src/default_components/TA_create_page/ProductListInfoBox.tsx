@@ -6,7 +6,9 @@ import { faCube, faPlus } from "@fortawesome/free-solid-svg-icons";
 import CustomContentModalBox from "../Ky_components/CustomContentModalBox";
 import CreateModal from "./CreateModal";
 import { ProductTempRow } from "../../interfaces/interface.table";
-import CustomizableTable, { Column } from "../Ky_components/CustomizableTable";
+import CustomizableTable, {
+  Column,
+} from "../../components/table/CustomizableTable";
 
 export default function ProductListInfoBox() {
   const productTempColumn: Column<ProductTempRow>[] = [

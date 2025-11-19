@@ -1,6 +1,6 @@
 "use client";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import Filter from "@/default_components/TA_List/Filter";
+import Filter from "@/components/Filter";
 import Pagination from "@/default_components/tables/Pagination";
 
 import React, { useState } from "react";
@@ -8,7 +8,7 @@ import { categoryData } from "@/default_components/Ky_components/TableData";
 import {
   categoryColumns,
   subCategoryColumns,
-} from "@/default_components/Ky_components/TableHeader";
+} from "@/components/table/TableHeader";
 import ExpandableTable from "@/default_components/Ky_components/ExpandableTable";
 
 export default function CategoryPage() {

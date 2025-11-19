@@ -9,7 +9,7 @@ import { faEye, faPen, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { ReactNode } from "react";
 import CustomizableTable, {
   Column,
-} from "@/default_components/Ky_components/CustomizableTable";
+} from "@/components/table/CustomizableTable";
 
 type NotificationRow = {
   id: string;

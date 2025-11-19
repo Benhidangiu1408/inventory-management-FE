@@ -1,6 +1,6 @@
 "use client";
 import Checkbox from "../form/input/Checkbox";
-import { Column } from "./CustomizableTable";
+import { Column } from "../../components/table/CustomizableTable";
 
 export type Batch = {
   code: string;

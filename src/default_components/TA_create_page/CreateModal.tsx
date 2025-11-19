@@ -12,7 +12,7 @@ import { ImportCreateRow } from "../../interfaces/interface.table";
 import CustomizableTable, {
   Column,
   TableProps,
-} from "../Ky_components/CustomizableTable";
+} from "../../components/table/CustomizableTable";
 import Pagination from "@/default_components/tables/Pagination";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";

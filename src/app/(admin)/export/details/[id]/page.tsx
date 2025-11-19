@@ -5,10 +5,7 @@ import TableBox from "@/default_components/TA_common/TableBox";
 import UtilityBar from "@/default_components/TA_common/UtilityBar";
 import Badge from "@/default_components/ui/badge/Badge";
 import { ProductRow } from "@/interfaces/interface.table";
-import {
-  Column,
-  TableProps,
-} from "@/default_components/Ky_components/CustomizableTable";
+import { Column, TableProps } from "@/components/table/CustomizableTable";
 import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
 import StatusBox from "@/default_components/TA_common/StatusBox";
 

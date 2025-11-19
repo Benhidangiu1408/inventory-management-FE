@@ -3,7 +3,9 @@ import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { ExportRow, ImportRow } from "@/interfaces/interface.table";
 import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
-import CustomizableTable, { Column } from "../Ky_components/CustomizableTable";
+import CustomizableTable, {
+  Column,
+} from "../../components/table/CustomizableTable";
 
 interface ListProps {
   type: "import" | "export";

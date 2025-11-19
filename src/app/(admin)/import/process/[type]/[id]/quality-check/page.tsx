@@ -5,7 +5,7 @@ import Button from "@/default_components/ui/button/Button";
 import { QualityCheckRow } from "@/interfaces/interface.table";
 import CustomizableTable, {
   Column,
-} from "@/default_components/Ky_components/CustomizableTable";
+} from "@/components/table/CustomizableTable";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 

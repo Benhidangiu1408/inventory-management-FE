@@ -5,10 +5,7 @@ import InfoBox from "@/default_components/TA_create_page/InfoBox";
 import InfoList from "@/default_components/TA_create_page/InfoList";
 import Button from "@/default_components/ui/button/Button";
 import { ExportConfirmRow } from "@/interfaces/interface.table";
-import {
-  Column,
-  TableProps,
-} from "@/default_components/Ky_components/CustomizableTable";
+import { Column, TableProps } from "@/components/table/CustomizableTable";
 import {
   faArrowRight,
   faCircleInfo,

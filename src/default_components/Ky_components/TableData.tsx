@@ -11,7 +11,7 @@ import {
   FaultBatch,
   ProcessingOrder,
   CategoryRow,
-} from "./TableHeader";
+} from "@/components/table/TableHeader";
 
 export const inventoryCheckOrders: InventoryCheckOrder[] = [
   {

@@ -1,4 +1,4 @@
-import { Column } from "./CustomizableTable";
+import { Column } from "@/components/table/CustomizableTable";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -7,9 +7,9 @@ import {
   faPen,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
-import Select from "../form/Select";
-import Badge from "../ui/badge/Badge";
-import Button from "../ui/button/Button";
+import Select from "../../default_components/form/Select";
+import Badge from "../../default_components/ui/badge/Badge";
+import Button from "../../default_components/ui/button/Button";
 
 export interface WarehouseRow {
   warehouseCode: string;
@@ -313,19 +313,21 @@ export const userColumns: Column<UserRow>[] = [
     label: "Status",
     key: "status",
     render: (value) => (
-      <Badge
-        color={
-          value === "Active"
-            ? "success"
-            : value === "Suspended"
-              ? "warning"
-              : "error"
-        }
-        size="sm"
-        variant="solid"
-      >
-        {value}
-      </Badge>
+      <div className="m-3 flex w-full justify-center">
+        <Badge
+          color={
+            value === "Active"
+              ? "success"
+              : value === "Suspended"
+                ? "warning"
+                : "error"
+          }
+          size="sm"
+          variant="solid"
+        >
+          {value}
+        </Badge>
+      </div>
     ),
   },
   { label: "Last Login", key: "lastLogin" },
@@ -525,69 +527,3 @@ export type CategoryRow = {
   subcategories: SubCategoryRow[];
   actions: string[];
 };
-
-export const categoryColumns: Column<CategoryRow>[] = [
-  { label: "Category ID", key: "id" },
-  { label: "Name", key: "name" },
-  { label: "Description", key: "description" },
-  { label: "Products", key: "productCount" },
-  { label: "Created By", key: "createdBy" },
-  { label: "Last Updated", key: "lastUpdated" },
-  {
-    label: "Actions",
-    key: "actions",
-    render: (data, row) => (
-      <div className="flex gap-3">
-        {Array.isArray(data) && data.includes("r") && (
-          <Link href={`/category/${row.id}`}>
-            <FontAwesomeIcon
-              icon={faEye}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-        {Array.isArray(data) && data.includes("w") && (
-          <Link href={`/category`}>
-            <FontAwesomeIcon
-              icon={faPen}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-      </div>
-    ),
-  },
-];
-
-export const subCategoryColumns: Column<SubCategoryRow>[] = [
-  { label: "Subcategory ID", key: "id" },
-  { label: "Name", key: "name" },
-  { label: "Description", key: "description" },
-  { label: "Products", key: "productCount" },
-  { label: "Created By", key: "createdBy" },
-  { label: "Last Updated", key: "lastUpdated" },
-  {
-    label: "Actions",
-    key: "actions",
-    render: (data, row) => (
-      <div className="flex gap-3">
-        {Array.isArray(data) && data.includes("r") && (
-          <Link href={`/subcategory/${row.id}`}>
-            <FontAwesomeIcon
-              icon={faEye}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-        {Array.isArray(data) && data.includes("w") && (
-          <Link href={`/subcategory`}>
-            <FontAwesomeIcon
-              icon={faPen}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-      </div>
-    ),
-  },
-];

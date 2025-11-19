@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { Column } from "./CustomizableTable";
+import { Column } from "../../components/table/CustomizableTable";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import Button from "../ui/button/Button";

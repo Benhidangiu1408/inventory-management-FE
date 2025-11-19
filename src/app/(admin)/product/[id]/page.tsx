@@ -3,8 +3,8 @@ import ActivityLog from "@/default_components/TA_common/ActivityLog";
 
 import UtilityBar from "@/default_components/TA_common/UtilityBar";
 import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
-import CustomizableTable from "@/default_components/Ky_components/CustomizableTable";
-import { storageBatchColumns } from "@/default_components/Ky_components/TableHeader";
+import CustomizableTable from "@/components/table/CustomizableTable";
+import { storageBatchColumns } from "@/components/table/TableHeader";
 import { storageBatchData } from "@/default_components/Ky_components/TableData";
 
 export default function ProductDetailPage() {
