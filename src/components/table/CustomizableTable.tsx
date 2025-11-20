@@ -67,8 +67,6 @@ export default function CustomizableTable<T extends object>({
           field,
           flex: header.width ? 0 : 1,
           width: header.width,
-          wrapText: true,
-          autoHeight: true,
           sortable: header.sortable ?? true,
           cellClass: header.stopCenterData ? "" : "text-center",
           cellRenderer,
@@ -81,6 +79,8 @@ export default function CustomizableTable<T extends object>({
     () => ({
       filter: true,
       minWidth: 150,
+      wrapText: true,
+      autoHeight: true,
       ...defaultColDef,
     }),
     [defaultColDef],
