@@ -1,7 +1,7 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import UtilityBar from "@/default_components/TA_common/UtilityBar";
 import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
-import ExpandableTable from "@/default_components/Ky_components/ExpandableTable";
+import ExpandableTable from "@/default_components/Ky_components/AccordionTable";
 import {
   Product,
   Batch,

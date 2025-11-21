@@ -2,7 +2,12 @@ import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import Filter from "@/components/Filter";
 import Pagination from "@/default_components/tables/Pagination";
 
-import ExpandableTable from "@/components/table/ExpandableTable";
+import AccordionTable from "@/components/table/AccordionTable";
+import {
+  batchColumns,
+  productColumns,
+} from "@/default_components/Ky_components/ExpandableTableHeaders";
+import { productData } from "@/default_components/Ky_components/TableData";
 
 export default async function CategoryPage() {
   return (
@@ -11,7 +16,14 @@ export default async function CategoryPage() {
       <div>
         <div className="default-card">
           {/*<Filter type="category" />*/}
-          <div className="p-6"></div>
+          <div className="p-6">
+            <AccordionTable
+              headers={productColumns}
+              subTableHeaders={batchColumns}
+              subTableKey={"batches"}
+              data={productData}
+            />
+          </div>
         </div>
       </div>
     </div>

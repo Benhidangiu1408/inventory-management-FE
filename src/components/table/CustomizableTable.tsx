@@ -1,21 +1,45 @@
 "use client";
 
 import { ReactNode, useMemo } from "react";
-import type {
+import {
+  CellStyleModule,
+  ClientSideRowModelModule,
   ColDef,
   ColDefField,
+  CustomFilterModule,
+  DateFilterModule,
   ICellRendererParams,
+  NumberFilterModule,
+  PaginationModule,
+  TextFilterModule,
+  ValidationModule,
 } from "ag-grid-community";
 import { AgGridReact, type AgGridReactProps } from "ag-grid-react";
 import {
   ModuleRegistry,
   themeQuartz,
   colorSchemeDarkBlue,
-  AllCommunityModule,
 } from "ag-grid-community";
 import { useTheme } from "@/context/ThemeContext";
+import {
+  ClipboardModule,
+  ColumnMenuModule,
+  ContextMenuModule,
+} from "ag-grid-enterprise";
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([
+  ClientSideRowModelModule,
+  PaginationModule,
+  CellStyleModule,
+  TextFilterModule,
+  NumberFilterModule,
+  DateFilterModule,
+  CustomFilterModule,
+  ColumnMenuModule,
+  ClipboardModule,
+  ContextMenuModule,
+  ...(process.env.NODE_ENV !== "production" ? [ValidationModule] : []),
+]);
 
 export interface Column<T extends object> {
   label: string; // header displayed text
@@ -31,7 +55,6 @@ export interface TableProps<T extends object>
   headers: Column<T>[];
   data: T[];
   height?: number | string;
-  pagination?: boolean;
 }
 
 export default function CustomizableTable<T extends object>({
@@ -39,10 +62,10 @@ export default function CustomizableTable<T extends object>({
   data,
   className,
   height = "auto",
-  pagination = true,
   defaultColDef,
   ...gridProps
 }: TableProps<T>) {
+  //   Table Theme
   const { theme } = useTheme();
   const agTheme = useMemo(() => {
     return theme === "light"
@@ -50,21 +73,20 @@ export default function CustomizableTable<T extends object>({
       : themeQuartz.withPart(colorSchemeDarkBlue);
   }, [theme]);
 
+  // Column Config
   const columnDefs = useMemo<ColDef<T>[]>(
     () =>
       headers.map((header) => {
         const renderCell = header.render;
-
         // Adapter for Custom Renderers
         const cellRenderer = renderCell
           ? (params: ICellRendererParams<T, T[keyof T]>) =>
               renderCell(params.value as T[keyof T], params.data as T)
           : undefined;
-        const field = header.key as unknown as ColDefField<T>;
 
         return {
           headerName: header.label,
-          field,
+          field: header.key as unknown as ColDefField<T>,
           flex: header.width ? 0 : 1,
           width: header.width,
           sortable: header.sortable ?? true,
@@ -75,21 +97,22 @@ export default function CustomizableTable<T extends object>({
     [headers],
   );
 
+  // Common column config
   const mergedDefaultColDef = useMemo<ColDef>(
     () => ({
       filter: true,
       minWidth: 150,
-      wrapText: true,
-      autoHeight: true,
+      suppressHeaderMenuButton: true,
       ...defaultColDef,
     }),
     [defaultColDef],
   );
 
+  // table style
   const wrapperClassName = useMemo(
     () =>
       [
-        "w-full overflow-auto",
+        "w-full",
         // Centers the flex container (Label + Icon)
         "[&_.ag-header-cell-label]:justify-center",
         // // Centers the text span itself
@@ -105,10 +128,7 @@ export default function CustomizableTable<T extends object>({
   );
 
   return (
-    <div
-      className={wrapperClassName}
-      style={{ height: height === "auto" ? undefined : height }}
-    >
+    <div className={wrapperClassName} style={{ height }}>
       <AgGridReact<T>
         theme={agTheme}
         rowData={data}
@@ -116,7 +136,7 @@ export default function CustomizableTable<T extends object>({
         defaultColDef={mergedDefaultColDef}
         suppressCellFocus={true}
         domLayout={height === "auto" ? "autoHeight" : "normal"}
-        pagination={pagination}
+        pagination={true}
         paginationPageSize={10}
         paginationPageSizeSelector={[10, 20, 50, 100]}
         {...gridProps}
