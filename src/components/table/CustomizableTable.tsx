@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import {
   CellStyleModule,
   ClientSideRowModelModule,
@@ -26,6 +26,7 @@ import {
   ColumnMenuModule,
   ContextMenuModule,
 } from "ag-grid-enterprise";
+import Pagination from "@/components/table/Pagination";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -61,6 +62,7 @@ export default function CustomizableTable<T extends object>({
   headers,
   data,
   className,
+  loading = false,
   height = "auto",
   defaultColDef,
   ...gridProps
@@ -127,9 +129,39 @@ export default function CustomizableTable<T extends object>({
     [className],
   );
 
+  // Pagination
+  const gridRef = useRef<AgGridReact<T>>(null);
+  const onBtnFirst = useCallback(() => {
+    gridRef.current!.api.paginationGoToFirstPage();
+  }, []);
+  const onBtnLast = useCallback(() => {
+    gridRef.current!.api.paginationGoToLastPage();
+  }, []);
+  const onBtnNext = useCallback(() => {
+    gridRef.current!.api.paginationGoToNextPage();
+  }, []);
+  const onBtnPrevious = useCallback(() => {
+    gridRef.current!.api.paginationGoToPreviousPage();
+  }, []);
+  const onBtnPage = useCallback((pageNum: number) => {
+    // we say page 4, as the first page is zero
+    gridRef.current!.api.paginationGoToPage(pageNum);
+  }, []);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const onPaginationChange = useCallback(() => {
+    if (gridRef.current!.api!) {
+      setCurrentPage(gridRef.current!.api.paginationGetCurrentPage());
+      setTotalPage(gridRef.current!.api.paginationGetTotalPages());
+    }
+  }, []);
+
   return (
     <div className={wrapperClassName} style={{ height }}>
       <AgGridReact<T>
+        ref={gridRef}
+        loading={loading}
         theme={agTheme}
         rowData={data}
         columnDefs={columnDefs}
@@ -137,9 +169,21 @@ export default function CustomizableTable<T extends object>({
         suppressCellFocus={true}
         domLayout={height === "auto" ? "autoHeight" : "normal"}
         pagination={true}
-        paginationPageSize={10}
-        paginationPageSizeSelector={[10, 20, 50, 100]}
+        paginationPageSize={pageSize}
+        suppressPaginationPanel={true}
+        suppressScrollOnNewData={true}
+        onPaginationChanged={onPaginationChange}
         {...gridProps}
+      />
+      <Pagination
+        currentPage={currentPage}
+        totalPage={totalPage}
+        onBtnFirst={onBtnFirst}
+        onBtnLast={onBtnLast}
+        onBtnPrevious={onBtnPrevious}
+        onBtnNext={onBtnNext}
+        onBtnPage={onBtnPage}
+        setPageSize={setPageSize}
       />
     </div>
   );

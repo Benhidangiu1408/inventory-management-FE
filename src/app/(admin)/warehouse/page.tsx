@@ -9,7 +9,7 @@ import { warehouseTableData } from "@/default_components/Ky_components/TableData
 import {
   WarehouseRow,
   warehouseTableHeader,
-} from "@/components/table/TableHeader";
+} from "@/components/table/CustomizableTableHeader";
 
 export default function WarehousePage() {
   const [page, setPage] = useState(1);

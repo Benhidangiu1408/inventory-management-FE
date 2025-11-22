@@ -4,7 +4,7 @@ import ActivityLog from "@/default_components/TA_common/ActivityLog";
 import UtilityBar from "@/default_components/TA_common/UtilityBar";
 import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
 import CustomizableTable from "@/components/table/CustomizableTable";
-import { categoryProductColumns } from "@/components/table/TableHeader";
+import { categoryProductColumns } from "@/components/table/CustomizableTableHeader";
 import { categoryProductData } from "@/default_components/Ky_components/TableData";
 
 export default function CategoryDetailPage() {

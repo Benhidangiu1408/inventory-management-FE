@@ -1,10 +1,10 @@
-import { Product } from "./ExpandableTableHeaders";
+import { Product } from "@/components/table/AccordionTableHeader";
 import {
   UserRow,
   OrderRow,
   FaultBatch,
   ProcessingOrder,
-} from "@/components/table/TableHeader";
+} from "@/components/table/CustomizableTableHeader";
 
 export const productData: Product[] = [
   {
@@ -162,6 +162,86 @@ export const orderData: OrderRow[] = [
     date: "04-04-2025",
     warehouse: "Warehouse 3",
     priority: "Medium",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-005",
+    date: "01-01-2025",
+    warehouse: "Warehouse 1",
+    priority: "High",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-006",
+    date: "01-01-2025",
+    warehouse: "Warehouse 1",
+    priority: "High",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-007",
+    date: "01-01-2025",
+    warehouse: "Warehouse 1",
+    priority: "High",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-008",
+    date: "01-01-2025",
+    warehouse: "Warehouse 1",
+    priority: "High",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-009",
+    date: "01-01-2025",
+    warehouse: "Warehouse 1",
+    priority: "High",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-010",
+    date: "01-01-2025",
+    warehouse: "Warehouse 1",
+    priority: "High",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-011",
+    date: "01-01-2025",
+    warehouse: "Warehouse 1",
+    priority: "High",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-012",
+    date: "01-01-2025",
+    warehouse: "Warehouse 1",
+    priority: "High",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-013",
+    date: "01-01-2025",
+    warehouse: "Warehouse 1",
+    priority: "High",
+    handle: "Pending",
+    actions: ["edit", "check"],
+  },
+  {
+    orderId: "ER-2025-014",
+    date: "01-01-2025",
+    warehouse: "Warehouse 1",
+    priority: "High",
     handle: "Pending",
     actions: ["edit", "check"],
   },

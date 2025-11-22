@@ -11,7 +11,7 @@ import Pagination from "@/default_components/tables/Pagination";
 
 import React, { useState } from "react";
 import { inventoryCheckOrders } from "@/default_components/Ky_components/TableData";
-import { inventoryCheckOrderHeaders } from "@/components/table/TableHeader";
+import { inventoryCheckOrderHeaders } from "@/components/table/CustomizableTableHeader";
 // import CustomContentModalBox from "@/components/Ky_components/CustomContentModalBox";
 
 export default function WarehousePage() {

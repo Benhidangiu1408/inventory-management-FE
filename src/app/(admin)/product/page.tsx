@@ -6,7 +6,7 @@ import Pagination from "@/default_components/tables/Pagination";
 
 import React, { useState } from "react";
 import { productMasterData } from "@/default_components/Ky_components/TableData";
-import { productMasterColumns } from "@/components/table/TableHeader";
+import { productMasterColumns } from "@/components/table/CustomizableTableHeader";
 
 export default function ProductPage() {
   const [page, setPage] = useState(1);

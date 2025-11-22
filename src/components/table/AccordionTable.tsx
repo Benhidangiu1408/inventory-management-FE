@@ -26,8 +26,9 @@ import {
 } from "ag-grid-enterprise";
 import { Column, TableProps } from "@/components/table/CustomizableTable";
 import { useTheme } from "@/context/ThemeContext";
-import { useMemo } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
+import Pagination from "@/components/table/Pagination";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -59,6 +60,7 @@ export default function AccordionTable<T extends object, D extends object>({
   subTableHeaders,
   className,
   height = "auto",
+  loading = false,
   defaultColDef,
   ...gridProps
 }: AccordionTableProps<T, D>) {
@@ -117,7 +119,7 @@ export default function AccordionTable<T extends object, D extends object>({
     [defaultColDef],
   );
 
-  // Row Detail Table
+  // Row Detail Table Config
   const detailCellRendererParams = useMemo(() => {
     const detailColumnDefs: ColDef[] = subTableHeaders.map((header) => {
       const renderCell = header.render;
@@ -139,10 +141,12 @@ export default function AccordionTable<T extends object, D extends object>({
     return {
       // Configure the inner grid
       detailGridOptions: {
+        suppressCellFocus: true,
         columnDefs: detailColumnDefs,
         defaultColDef: {
           filter: true,
           minWidth: 150,
+          suppressHeaderMenuButton: true,
         },
         theme:
           theme === "light"
@@ -150,7 +154,6 @@ export default function AccordionTable<T extends object, D extends object>({
             : themeQuartz.withPart(colorSchemeDarkBlue),
         pagination: true,
         paginationPageSize: 10,
-        paginationAutoPageSize: true,
       },
 
       // B. Tell AG Grid how to find the data
@@ -182,9 +185,39 @@ export default function AccordionTable<T extends object, D extends object>({
     [className],
   );
 
+  // Pagination
+  const gridRef = useRef<AgGridReact<T>>(null);
+  const onBtnFirst = useCallback(() => {
+    gridRef.current!.api.paginationGoToFirstPage();
+  }, []);
+  const onBtnLast = useCallback(() => {
+    gridRef.current!.api.paginationGoToLastPage();
+  }, []);
+  const onBtnNext = useCallback(() => {
+    gridRef.current!.api.paginationGoToNextPage();
+  }, []);
+  const onBtnPrevious = useCallback(() => {
+    gridRef.current!.api.paginationGoToPreviousPage();
+  }, []);
+  const onBtnPage = useCallback((pageNum: number) => {
+    // we say page 4, as the first page is zero
+    gridRef.current!.api.paginationGoToPage(pageNum);
+  }, []);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const onPaginationChange = useCallback(() => {
+    if (gridRef.current!.api!) {
+      setCurrentPage(gridRef.current!.api.paginationGetCurrentPage());
+      setTotalPage(gridRef.current!.api.paginationGetTotalPages());
+    }
+  }, []);
+
   return (
     <div className={wrapperClassName} style={{ height }}>
       <AgGridReact<T>
+        ref={gridRef}
+        loading={loading}
         theme={agTheme}
         columnDefs={columnDefs}
         defaultColDef={mergedDefaultColDef}
@@ -194,9 +227,21 @@ export default function AccordionTable<T extends object, D extends object>({
         suppressCellFocus={true}
         masterDetail={true}
         pagination={true}
-        paginationPageSize={10}
-        paginationPageSizeSelector={[10, 20, 50, 100]}
+        paginationPageSize={pageSize}
+        suppressPaginationPanel={true}
+        suppressScrollOnNewData={true}
+        onPaginationChanged={onPaginationChange}
         {...gridProps}
+      />
+      <Pagination
+        currentPage={currentPage}
+        totalPage={totalPage}
+        onBtnFirst={onBtnFirst}
+        onBtnLast={onBtnLast}
+        onBtnPrevious={onBtnPrevious}
+        onBtnNext={onBtnNext}
+        onBtnPage={onBtnPage}
+        setPageSize={setPageSize}
       />
     </div>
   );

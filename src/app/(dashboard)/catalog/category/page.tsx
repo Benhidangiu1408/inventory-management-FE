@@ -1,12 +1,11 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import Filter from "@/components/Filter";
-import Pagination from "@/default_components/tables/Pagination";
 
 import AccordionTable from "@/components/table/AccordionTable";
 import {
   batchColumns,
   productColumns,
-} from "@/default_components/Ky_components/ExpandableTableHeaders";
+} from "@/components/table/AccordionTableHeader";
 import { productData } from "@/default_components/Ky_components/TableData";
 
 export default async function CategoryPage() {
