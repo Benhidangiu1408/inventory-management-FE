@@ -1,61 +1,52 @@
 "use client";
 
 import { Column } from "@/components/table/CustomizableTable";
-import Checkbox from "@/default_components/form/input/Checkbox";
+import { Category, SubCategory } from "@/interfaces/warehouseManagementType";
+import Badge from "@/default_components/ui/badge/Badge";
 
-export type Batch = {
-  code: string;
-  scannedQty: number;
-  systemQty: number;
-  scannedBy: string;
-  isFaulty: boolean;
-  note: string;
-  status: "awaiting" | "scanning" | "confirmed";
-};
-
-export type Product = {
-  id: string;
-  name: string;
-  scannedTotalQty: number;
-  systemTotalQty: number;
-  unit: string;
-  difference: number;
-  batches: Batch[];
-};
-
-export const batchColumns: Column<Batch>[] = [
-  { label: "Batch Code", key: "code" },
-  { label: "Scanned Quantity", key: "scannedQty" },
-  { label: "System Quantity", key: "systemQty" },
+// Category header
+export const categoryHeaders: Column<Category>[] = [
   {
-    label: "Has Fault",
-    key: "isFaulty",
-    render(value) {
-      return (
-        <div className="flex justify-center">
-          <Checkbox onChange={() => {}} checked={Boolean(value)} />
-        </div>
-      );
-    },
+    label: "Code",
+    key: "code",
+    width: 100,
   },
-  { label: "Note", key: "note" },
-  { label: "Status", key: "status" },
-];
-
-export const productColumns: Column<Product>[] = [
-  { label: "Product Name", key: "name" },
-  { label: "Total Scanned Quantity", key: "scannedTotalQty" },
-  { label: "Total System Quantity", key: "systemTotalQty" },
-  { label: "Unit", key: "unit" },
   {
-    label: "Difference",
-    key: "difference",
-    render(value) {
-      return (
-        <div className={value == 0 ? "text-green-500" : "text-red-500"}>
-          {String(value)}
-        </div>
-      );
-    },
+    label: "Category Name",
+    key: "name",
+    width: 250,
+  },
+  {
+    label: "Status",
+    key: "status",
+    width: 120,
+    // Custom Render for Status Badge
+    render: (value) => (
+      <Badge variant={"solid"} color={value === "ACTIVE" ? "success" : "error"}>
+        {value as string}
+      </Badge>
+    ),
+  },
+  {
+    label: "Description",
+    key: "description",
+    render: (val) =>
+      (val as string) || (
+        <span className="text-gray-400 italic">No description</span>
+      ),
+  },
+];
+// --- 2. Child Table Headers (Sub-Category) ---
+export const subCategoryHeaders: Column<SubCategory>[] = [
+  { label: "ID", key: "id", width: 80 },
+  { label: "Sub Code", key: "code", width: 120 },
+  { label: "Subcategory Name", key: "name", width: 200 },
+  {
+    label: "Description",
+    key: "description",
+    render: (val) =>
+      (val as string) || (
+        <span className="text-gray-400 italic">No description</span>
+      ),
   },
 ];

@@ -1,3 +1,22 @@
+// -------------Category-----------------------
+export interface SubCategory {
+  id: number;
+  code: string;
+  name: string;
+  description: string;
+}
+
+export interface Category {
+  id: number;
+  code: string;
+  name: string;
+  description: string | null;
+  status: "ACTIVE" | "INACTIVE";
+  parentCategoryId: number | null;
+  parentCategoryName: string | null;
+  subcategories: SubCategory[];
+}
+
 // -------------- Warehouse ---------------------
 export enum WarehouseStatus {
   ACTIVE = "ACTIVE",

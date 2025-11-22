@@ -62,7 +62,6 @@ export default function CustomizableTable<T extends object>({
   headers,
   data,
   className,
-  loading = false,
   height = "auto",
   defaultColDef,
   ...gridProps
@@ -161,7 +160,6 @@ export default function CustomizableTable<T extends object>({
     <div className={wrapperClassName} style={{ height }}>
       <AgGridReact<T>
         ref={gridRef}
-        loading={loading}
         theme={agTheme}
         rowData={data}
         columnDefs={columnDefs}

@@ -60,7 +60,6 @@ export default function AccordionTable<T extends object, D extends object>({
   subTableHeaders,
   className,
   height = "auto",
-  loading = false,
   defaultColDef,
   ...gridProps
 }: AccordionTableProps<T, D>) {
@@ -217,7 +216,6 @@ export default function AccordionTable<T extends object, D extends object>({
     <div className={wrapperClassName} style={{ height }}>
       <AgGridReact<T>
         ref={gridRef}
-        loading={loading}
         theme={agTheme}
         columnDefs={columnDefs}
         defaultColDef={mergedDefaultColDef}

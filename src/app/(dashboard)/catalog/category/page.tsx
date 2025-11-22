@@ -1,14 +1,15 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import Filter from "@/components/Filter";
 
 import AccordionTable from "@/components/table/AccordionTable";
 import {
-  batchColumns,
-  productColumns,
+  categoryHeaders,
+  subCategoryHeaders,
 } from "@/components/table/AccordionTableHeader";
-import { productData } from "@/default_components/Ky_components/TableData";
+import { getCategories } from "@/services/WarehouseManagementService";
 
 export default async function CategoryPage() {
+  const data = await getCategories();
+  console.log(data);
   return (
     <div>
       <PageBreadcrumb pageTitle="Category" filters={["catalog"]} />
@@ -17,10 +18,10 @@ export default async function CategoryPage() {
           {/*<Filter type="category" />*/}
           <div className="p-6">
             <AccordionTable
-              headers={productColumns}
-              subTableHeaders={batchColumns}
-              subTableKey={"batches"}
-              data={productData}
+              headers={categoryHeaders}
+              subTableHeaders={subCategoryHeaders}
+              subTableKey={"subcategories"}
+              data={data}
             />
           </div>
         </div>
