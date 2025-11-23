@@ -3,7 +3,8 @@ export interface SubCategory {
   id: number;
   code: string;
   name: string;
-  description: string;
+  description: string | null;
+  status: "ACTIVE" | "INACTIVE";
 }
 
 export interface Category {

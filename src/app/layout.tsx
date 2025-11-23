@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/context/ThemeContext";
 
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import { resolveValue, Toaster } from "react-hot-toast";
+import MyToast from "@/components/toast";
 config.autoAddCss = false;
 
 const outfit = Outfit({
@@ -21,7 +23,10 @@ export default function RootLayout({
       </head>
       <body className={`${outfit.className} bg-[#f9fafb] dark:bg-gray-900`}>
         <ThemeProvider>
-          <SidebarProvider>{children}</SidebarProvider>
+          <SidebarProvider>
+            <MyToast />
+            {children}
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>
