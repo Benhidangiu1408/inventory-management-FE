@@ -6,7 +6,11 @@ import Label from "@/default_components/form/Label";
 import Input from "@/default_components/form/input/InputField";
 import NoControlModalBox from "@/components/modal/NoControlModalBox";
 import { useModal } from "@/hooks/useModal";
-import { Category, SubCategory } from "@/interfaces/warehouseManagementType";
+import {
+  Category,
+  CategoryRequest,
+  SubCategory,
+} from "@/interfaces/warehouseManagementType";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api-mask";
@@ -16,9 +20,10 @@ import {
   getCategoryHeaders,
   getSubCategoryHeaders,
 } from "@/components/table/AccordionTableHeader";
+import { categoryService } from "@/services/WarehouseManagementService";
+import Checkbox from "@/default_components/form/input/Checkbox";
 
 interface CategoryFormProps {
-  id: string;
   setLoading: (loading: boolean) => void;
   onSuccess: () => void;
   initialData?: SubCategory;
@@ -26,7 +31,6 @@ interface CategoryFormProps {
 }
 
 function CategoryForm({
-  id,
   setLoading,
   onSuccess,
   initialData,
@@ -39,6 +43,7 @@ function CategoryForm({
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
     description: initialData?.description || "",
+    status: initialData?.status || "ACTIVE",
     parentCategoryId: initialData?.parentCategoryId?.toString() || "",
   });
 
@@ -73,32 +78,42 @@ function CategoryForm({
     setLoading(true);
     setErrors({});
 
-    const payload = {
-      ...formData,
-      parentCategoryId: formData.parentCategoryId
-        ? Number(formData.parentCategoryId)
-        : null,
-    };
-
     try {
       if (isEditMode) {
-        // await apiClient.put(`/categories/${initialData.id}`, formData);
-        console.log(formData);
+        const payload: CategoryRequest = {
+          name: formData.name,
+          description: formData.description,
+          status: formData.status,
+          parentCategoryId:
+            formData.parentCategoryId === ""
+              ? parseInt(formData.parentCategoryId, 10)
+              : null,
+        };
+        console.log(payload);
+        await categoryService.update(initialData.id, payload);
         toast.success("Category updated successfully!");
       } else {
-        // await apiClient.post("/categories/new",formData);
-        console.log(formData);
+        const payload: CategoryRequest = {
+          name: formData.name,
+          description: formData.description,
+          status: formData.status,
+          parentCategoryId:
+            formData.parentCategoryId === ""
+              ? parseInt(formData.parentCategoryId, 10)
+              : null,
+        };
+        console.log(payload);
+        await categoryService.create(payload);
         toast.success("Category created successfully!");
       }
-      // router.refresh();
+      router.refresh();
       onSuccess();
-      if (!isEditMode) {
-        setFormData({
-          name: "",
-          description: "",
-          parentCategoryId: "",
-        });
-      }
+      setFormData({
+        name: "",
+        description: "",
+        status: "ACTIVE",
+        parentCategoryId: "",
+      });
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.validationErrors) {
@@ -124,7 +139,7 @@ function CategoryForm({
   };
 
   return (
-    <form id={id} onSubmit={handleSubmit} className={"mt-4 space-y-6"}>
+    <form id={"tableForm"} onSubmit={handleSubmit} className={"mt-4 space-y-6"}>
       {/* Name Input */}
       <div>
         <Label>Category Name</Label>
@@ -137,6 +152,7 @@ function CategoryForm({
           hint={errors.name}
         />
       </div>
+      {/* Description Input */}
       <div>
         <Label>Category Description</Label>
         <Input
@@ -148,15 +164,30 @@ function CategoryForm({
           hint={errors.description}
         />
       </div>
-      {/* MultiSelect */}
+      {/* Checkbox */}
+      <div className="flex items-center gap-3">
+        <Checkbox
+          checked={formData.status === "ACTIVE"}
+          onChange={(isChecked) =>
+            handleChange("status", isChecked ? "ACTIVE" : "INACTIVE")
+          }
+        />
+        <span className="block text-sm font-medium text-gray-700 dark:text-gray-400">
+          Active
+        </span>
+      </div>
+      {/* Select */}
       <div>
-        <Label>Parent Category</Label>
+        <Label className={`${isRoot ? "opacity-50" : ""}`}>
+          Parent Category
+        </Label>
         <Select
           disabled={isRoot}
           placeholder={"Select parent category"}
-          disablePlaceholderOpt={false}
+          defaultValue={formData.parentCategoryId}
           options={parentOptions}
           onChange={(selected) => handleChange("parentCategoryId", selected)}
+          hint="If you leave this empty, the new category will be a root category"
         />
       </div>
     </form>
@@ -172,18 +203,15 @@ export function ModalCategoryForm({ data }: { data: Category[] }) {
   const handleEdit = (item: Category | SubCategory) => {
     // Cast to Category type so we can add properties safely
     const fullItem = { ...item } as SubCategory;
-
     // If it's a category (missing parentId), set to null
     if (!fullItem.parentCategoryId) {
       fullItem.parentCategoryId = null;
     }
-
     setSelectedCategory(fullItem);
     openModal();
   };
   const headers = useMemo(() => getCategoryHeaders(handleEdit), []);
   const subheaders = useMemo(() => getSubCategoryHeaders(handleEdit), []);
-  const id = "catForm";
 
   return (
     <div>
@@ -191,14 +219,16 @@ export function ModalCategoryForm({ data }: { data: Category[] }) {
         <NoControlModalBox
           startIcon={<Plus size={16} />}
           openBtnTitle={"New Category"}
-          formId={id}
+          formId={"tableForm"}
           isLoading={loading}
           isOpen={isOpen}
-          onOpen={openModal}
+          onOpen={() => {
+            setSelectedCategory(undefined);
+            openModal();
+          }}
           onClose={closeModal}
           modalContent={
             <CategoryForm
-              id={id}
               setLoading={setLoading}
               onSuccess={closeModal}
               existingCategories={data}

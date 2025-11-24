@@ -1,6 +1,6 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 
-import { getCategories } from "@/services/WarehouseManagementService";
+import { categoryService } from "@/services/WarehouseManagementService";
 import { Category } from "@/interfaces/warehouseManagementType";
 import { ModalCategoryForm } from "@/components/form/ModalCategoryForm";
 import { ApiError } from "@/lib/api-mask";
@@ -11,7 +11,7 @@ export default async function CategoryPage() {
   let errorMsg = null;
 
   try {
-    data = await getCategories();
+    data = await categoryService.getAll();
   } catch (error) {
     if (error instanceof ApiError) {
       console.error(`API Error ${error.status}: ${error.message}`);

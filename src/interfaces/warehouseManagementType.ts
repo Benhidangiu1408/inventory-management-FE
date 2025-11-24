@@ -1,4 +1,6 @@
 // -------------Category-----------------------
+export type CategoryStatus = "ACTIVE" | "INACTIVE";
+
 export interface SubCategory {
   id: number;
   code: string;
@@ -6,7 +8,7 @@ export interface SubCategory {
   description: string | null;
   parentCategoryId: number | null;
   parentCategoryName: string | null;
-  status: "ACTIVE" | "INACTIVE";
+  status: CategoryStatus;
 }
 
 export interface Category {
@@ -14,8 +16,15 @@ export interface Category {
   code: string;
   name: string;
   description: string | null;
-  status: "ACTIVE" | "INACTIVE";
+  status: CategoryStatus;
   subcategories: SubCategory[];
+}
+
+export interface CategoryRequest {
+  name: string;
+  description?: string;
+  status: CategoryStatus;
+  parentCategoryId?: number | null; // Optional
 }
 
 // -------------- Warehouse ---------------------

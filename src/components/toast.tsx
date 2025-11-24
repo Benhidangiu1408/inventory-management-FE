@@ -1,6 +1,6 @@
 "use client";
 
-import toast, { resolveValue, Toaster, ToastType } from "react-hot-toast";
+import { resolveValue, Toaster, ToastType } from "react-hot-toast";
 import { CheckCircle, XCircle } from "lucide-react";
 
 export default function MyToast() {
