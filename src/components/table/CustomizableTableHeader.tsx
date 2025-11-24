@@ -1,3 +1,5 @@
+"use client";
+
 import { Column } from "@/components/table/CustomizableTable";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,10 +9,67 @@ import {
   faPen,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
-import Select from "../../default_components/form/Select";
-import Badge from "../../default_components/ui/badge/Badge";
-import Button from "../../default_components/ui/button/Button";
+import Select from "@/default_components/form/Select";
+import Badge from "@/default_components/ui/badge/Badge";
+import Button from "@/default_components/ui/button/Button";
+import { WarehouseGeneral } from "@/interfaces/warehouseManagementType";
+import { Eye } from "lucide-react";
 
+// --- Warehouse General Header ---
+export const warehouseHeaders: Column<WarehouseGeneral>[] = [
+  {
+    label: "Code",
+    key: "code",
+  },
+  {
+    label: "Warehouse Name",
+    key: "name",
+    width: 250,
+  },
+  {
+    label: "Type",
+    key: "type",
+  },
+  {
+    label: "Status",
+    key: "status",
+    render: (value) => (
+      <Badge
+        variant={"solid"}
+        color={
+          value === "ACTIVE"
+            ? "success"
+            : value === "UNDER_MAINTAINANCE"
+              ? "light"
+              : "error"
+        }
+      >
+        {value as string}
+      </Badge>
+    ),
+  },
+  {
+    label: "Description",
+    key: "description",
+    render: (val) =>
+      (val as string) || (
+        <span className="text-gray-400 italic">No description</span>
+      ),
+  },
+  {
+    label: "Actions",
+    key: "id",
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <Link href={`/warehouse-management/${row.id}`}>
+          <Eye size={16} />
+        </Link>
+      </div>
+    ),
+  },
+];
+
+// Nho dem vo interface cua serivce nha!!
 export interface UserRow {
   id: string;
   username: string;

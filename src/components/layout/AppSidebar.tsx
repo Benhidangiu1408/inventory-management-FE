@@ -16,11 +16,12 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
-  faBoxesStacked,
-  faTruckMoving,
+  faDolly,
+  faTruckRampBox,
   faWarehouse,
 } from "@fortawesome/free-solid-svg-icons";
 import {
+  ArchiveX,
   FileBox,
   Globe,
   Package,
@@ -47,7 +48,7 @@ export const navItems: NavItem[] = [
     icon: <Warehouse />,
     name: "Warehouse Management",
     subItems: [
-      { name: "Warehouse", path: "/" },
+      { name: "Warehouse", path: "/warehouse-management/warehouse" },
       { name: "Inventory Check", path: "/" },
     ],
   },
@@ -69,17 +70,17 @@ export const navItems: NavItem[] = [
     ],
   },
   {
-    icon: <FontAwesomeIcon icon={faBoxesStacked} size="lg" />,
+    icon: <FontAwesomeIcon icon={faDolly} size="lg" />,
     name: "Import",
     path: "/import",
   },
   {
-    icon: <FontAwesomeIcon icon={faTruckMoving} size="lg" />,
+    icon: <FontAwesomeIcon icon={faTruckRampBox} size="lg" />,
     name: "Export",
     path: "/export",
   },
   {
-    icon: <Package />,
+    icon: <ArchiveX />,
     name: "Defective",
     subItems: [
       { name: "Root Cause Analysis", path: "/" },

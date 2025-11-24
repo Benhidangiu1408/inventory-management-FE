@@ -1,6 +1,7 @@
 import {
   Category,
   CategoryRequest,
+  WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
 import { apiClient } from "@/lib/api-mask";
 
@@ -28,4 +29,12 @@ export const categoryService = {
   // delete: async (id: number) => {
   //   return apiClient.delete<void>(`${BASE_URL}/${id}`);
   // }
+};
+
+export const warehouseService = {
+  getAll: async () => {
+    return apiClient.get<WarehouseGeneral[]>("/info/v1/warehouses", {
+      cache: "no-store",
+    });
+  },
 };

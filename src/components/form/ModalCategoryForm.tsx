@@ -79,28 +79,19 @@ const CategoryForm = ({
     setErrors({});
 
     try {
+      const payload: CategoryRequest = {
+        name: formData.name,
+        description: formData.description,
+        status: formData.status,
+        parentCategoryId:
+          formData.parentCategoryId !== ""
+            ? Number(formData.parentCategoryId)
+            : null,
+      };
       if (isEditMode) {
-        const payload: CategoryRequest = {
-          name: formData.name,
-          description: formData.description,
-          status: formData.status,
-          parentCategoryId:
-            formData.parentCategoryId !== ""
-              ? Number(formData.parentCategoryId)
-              : null,
-        };
         await categoryService.update(initialData.id, payload);
         toast.success("Category updated successfully!");
       } else {
-        const payload: CategoryRequest = {
-          name: formData.name,
-          description: formData.description,
-          status: formData.status,
-          parentCategoryId:
-            formData.parentCategoryId !== ""
-              ? Number(formData.parentCategoryId)
-              : null,
-        };
         await categoryService.create(payload);
         toast.success("Category created successfully!");
       }

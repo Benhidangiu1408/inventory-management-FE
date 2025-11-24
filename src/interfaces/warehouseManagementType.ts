@@ -39,15 +39,12 @@ export enum WarehouseType {
   DEFECT = "DEFECT",
 }
 
-// The Col Data Type (What your table consumes)
-export interface WarehouseCol {
+export interface WarehouseGeneral {
   id: string;
   code: string;
   name: string;
-  address: string;
+  description: string;
   type: WarehouseType;
   status: WarehouseStatus;
-  managerName: string; // Derived from backend `manager.firstName` + `last`
-  capacity: string; // Optional: if you add this later
-  actions: string[]; // e.g. ["r", "w", "d"]
+  // managerName: string; // Derived from backend `manager.firstName` + `last`
 }
