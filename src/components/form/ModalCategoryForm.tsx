@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FormEvent, useMemo, useState } from "react";
+import React, { FormEvent, useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import Label from "@/default_components/form/Label";
 import Input from "@/default_components/form/input/InputField";
@@ -30,12 +30,12 @@ interface CategoryFormProps {
   existingCategories?: Category[];
 }
 
-function CategoryForm({
+const CategoryForm = ({
   setLoading,
   onSuccess,
   initialData,
   existingCategories = [],
-}: CategoryFormProps) {
+}: CategoryFormProps) => {
   const router = useRouter();
   const isEditMode = !!initialData;
   const isRoot = isEditMode && initialData?.parentCategoryId === null;
@@ -190,7 +190,7 @@ function CategoryForm({
       </div>
     </form>
   );
-}
+};
 
 export function ModalCategoryForm({ data }: { data: Category[] }) {
   const [loading, setLoading] = useState(false);
@@ -198,18 +198,24 @@ export function ModalCategoryForm({ data }: { data: Category[] }) {
   const [selectedCategory, setSelectedCategory] = useState<
     SubCategory | undefined
   >(undefined);
-  const handleEdit = (item: Category | SubCategory) => {
-    // Cast to Category type so we can add properties safely
-    const fullItem = { ...item } as SubCategory;
-    // If it's a category (missing parentId), set to null
-    if (!fullItem.parentCategoryId) {
-      fullItem.parentCategoryId = null;
-    }
-    setSelectedCategory(fullItem);
-    openModal();
-  };
-  const headers = useMemo(() => getCategoryHeaders(handleEdit), []);
-  const subheaders = useMemo(() => getSubCategoryHeaders(handleEdit), []);
+  const handleEdit = useCallback(
+    (item: Category | SubCategory) => {
+      // Cast to Category type so we can add properties safely
+      const fullItem = { ...item } as SubCategory;
+      // If it's a category (missing parentId), set to null
+      if (!fullItem.parentCategoryId) {
+        fullItem.parentCategoryId = null;
+      }
+      setSelectedCategory(fullItem);
+      openModal();
+    },
+    [openModal],
+  );
+  const headers = useMemo(() => getCategoryHeaders(handleEdit), [handleEdit]);
+  const subheaders = useMemo(
+    () => getSubCategoryHeaders(handleEdit),
+    [handleEdit],
+  );
 
   return (
     <div>

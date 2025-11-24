@@ -17,14 +17,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
   faBoxesStacked,
-  faFilePen,
-  faLayerGroup,
-  faTriangleExclamation,
   faTruckMoving,
   faWarehouse,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   FileBox,
+  Globe,
   Package,
   Settings,
   UserRoundCog,
@@ -46,56 +44,29 @@ export const navItems: NavItem[] = [
     path: "/",
   },
   {
+    icon: <Warehouse />,
+    name: "Warehouse Management",
+    subItems: [
+      { name: "Warehouse", path: "/" },
+      { name: "Inventory Check", path: "/" },
+    ],
+  },
+  {
     icon: <FileBox />,
     name: "Catalog",
     subItems: [
       { name: "Category", path: "/catalog/category" },
-      { name: "Product", path: "/s" },
-    ],
-  },
-  {
-    icon: <Warehouse />,
-    name: "Warehouse",
-    path: "/s",
-  },
-  {
-    icon: <Package />,
-    name: "Item",
-    subItems: [
-      { name: "Item List", path: "/s", pro: false },
-      { name: "UOM (Unit of Measurement)", path: "/s" },
+      { name: "Product", path: "/" },
+      { name: "UOM (Unit of Measurement)", path: "/" },
     ],
   },
   {
     icon: <Package />,
-    name: "Defective",
+    name: "Inventory",
     subItems: [
-      { name: "Item List", path: "/s", pro: false },
-      { name: "UOM (Unit of Measurement)", path: "/s" },
+      { name: "Item", path: "/" },
+      { name: "Batch", path: "/" },
     ],
-  },
-  {
-    name: "Users Control",
-    icon: <UserRoundCog />,
-    subItems: [
-      {
-        name: "Profile",
-        path: "/s",
-      },
-      {
-        name: "Users Management",
-        path: "/s",
-      },
-      {
-        name: "Role & Permission",
-        path: "/s",
-      },
-    ],
-  },
-  {
-    icon: <Settings />,
-    name: "Settings",
-    path: "/s",
   },
   {
     icon: <FontAwesomeIcon icon={faBoxesStacked} size="lg" />,
@@ -108,29 +79,40 @@ export const navItems: NavItem[] = [
     path: "/export",
   },
   {
-    icon: <FontAwesomeIcon icon={faFilePen} size="lg" />,
-    name: "Inventory Check",
-    path: "/inventory-check",
+    icon: <Package />,
+    name: "Defective",
+    subItems: [
+      { name: "Root Cause Analysis", path: "/" },
+      { name: "Fault Order", path: "/" },
+    ],
   },
   {
-    icon: <FontAwesomeIcon icon={faTriangleExclamation} size="lg" />,
-    name: "Fault Order",
-    path: "/fault-order",
+    icon: <Globe />,
+    name: "Network",
+    subItems: [
+      { name: "Supplier", path: "/" },
+      { name: "Customer", path: "/" },
+    ],
   },
   {
-    icon: <FontAwesomeIcon icon={faLayerGroup} size="lg" />,
-    name: "Category",
-    path: "/category",
-  },
-  {
-    icon: <FontAwesomeIcon icon={faBoxesStacked} size="lg" />,
-    name: "Product",
-    path: "/product",
+    name: "Users Control",
+    icon: <UserRoundCog />,
+    subItems: [
+      { name: "Profile", path: "/s" },
+      { name: "Users Management", path: "/" },
+      { name: "Role & Permission", path: "/" },
+      { name: "User History", path: "/" },
+    ],
   },
   {
     icon: <FontAwesomeIcon icon={faBell} size="lg" />,
     name: "Notification",
     path: "/notification",
+  },
+  {
+    icon: <Settings />,
+    name: "Settings",
+    path: "/",
   },
 ];
 
@@ -314,8 +296,15 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // const isActive = (path: string) => path === pathname;
-  const isActive = useCallback((path: string) => path === pathname, [pathname]);
+  const isActive = useCallback(
+    (path: string) => {
+      if (path === "/") {
+        return pathname === "/";
+      }
+      return pathname === path || pathname.startsWith(`${path}/`);
+    },
+    [pathname],
+  );
 
   useEffect(() => {
     // Check if the current path matches any submenu item
