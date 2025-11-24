@@ -51,6 +51,7 @@ const Input: FC<InputProps> = ({
   return (
     <div className="relative">
       <input
+        autoComplete={"off"}
         type={type}
         id={id}
         name={name}

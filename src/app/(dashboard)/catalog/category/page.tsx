@@ -1,39 +1,31 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 
-import AccordionTable from "@/components/table/AccordionTable";
-import {
-  categoryHeaders,
-  subCategoryHeaders,
-} from "@/components/table/AccordionTableHeader";
 import { getCategories } from "@/services/WarehouseManagementService";
 import { Category } from "@/interfaces/warehouseManagementType";
 import { ModalCategoryForm } from "@/components/form/ModalCategoryForm";
+import { ApiError } from "@/lib/api-mask";
 
 export default async function CategoryPage() {
+  // Handle initial page data
   let data: Category[] = [];
-  // try {
-  //   data = await getCategories();
-  // } catch (e) {
-  //   console.log(e);
-  // }
-  // console.log(data);
+  let errorMsg = null;
+
+  try {
+    data = await getCategories();
+  } catch (error) {
+    if (error instanceof ApiError) {
+      console.error(`API Error ${error.status}: ${error.message}`);
+      errorMsg = `Could not load categories from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
+    }
+  }
+  if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
 
   return (
     <div>
       <PageBreadcrumb pageTitle="Category" filters={["catalog"]} />
       <div>
         <div className="default-card">
-          <div className={"pt-6 pl-6"}>
-            <ModalCategoryForm />
-          </div>
-          <div className="p-6">
-            <AccordionTable
-              headers={categoryHeaders}
-              subTableHeaders={subCategoryHeaders}
-              subTableKey={"subcategories"}
-              data={data}
-            />
-          </div>
+          <ModalCategoryForm data={data} />
         </div>
       </div>
     </div>

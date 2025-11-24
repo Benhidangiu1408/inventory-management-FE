@@ -53,7 +53,7 @@ export default function ProductListInfoBox() {
         <CustomContentModalBox
           startIcon={<FontAwesomeIcon icon={faPlus} />}
           width={"max-w-[1200px]"}
-          openBtnTitle="Add"
+          btnName="Add"
           onSave={() => {
             console.log("test");
           }}

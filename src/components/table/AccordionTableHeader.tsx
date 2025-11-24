@@ -3,9 +3,12 @@
 import { Column } from "@/components/table/CustomizableTable";
 import { Category, SubCategory } from "@/interfaces/warehouseManagementType";
 import Badge from "@/default_components/ui/badge/Badge";
+import { Pencil } from "lucide-react";
 
 // Category header
-export const categoryHeaders: Column<Category>[] = [
+export const getCategoryHeaders = (
+  onEdit: (category: Category) => void,
+): Column<Category>[] => [
   {
     label: "Code",
     key: "code",
@@ -33,9 +36,23 @@ export const categoryHeaders: Column<Category>[] = [
         <span className="text-gray-400 italic">No description</span>
       ),
   },
+  {
+    label: "Actions",
+    key: "id",
+    width: 80,
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <button onClick={() => onEdit(row)}>
+          <Pencil size={16} />
+        </button>
+      </div>
+    ),
+  },
 ];
 // --- 2. Child Table Headers (Sub-Category) ---
-export const subCategoryHeaders: Column<SubCategory>[] = [
+export const getSubCategoryHeaders = (
+  onEdit: (category: SubCategory) => void,
+): Column<SubCategory>[] => [
   { label: "Code", key: "code" },
   { label: "Subcategory Name", key: "name", width: 250 },
   {
@@ -55,5 +72,17 @@ export const subCategoryHeaders: Column<SubCategory>[] = [
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
       ),
+  },
+  {
+    label: "Actions",
+    key: "id",
+    width: 80,
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <button onClick={() => onEdit(row)}>
+          <Pencil size={16} />
+        </button>
+      </div>
+    ),
   },
 ];

@@ -4,6 +4,8 @@ export interface SubCategory {
   code: string;
   name: string;
   description: string | null;
+  parentCategoryId: number | null;
+  parentCategoryName: string | null;
   status: "ACTIVE" | "INACTIVE";
 }
 
@@ -13,8 +15,6 @@ export interface Category {
   name: string;
   description: string | null;
   status: "ACTIVE" | "INACTIVE";
-  parentCategoryId: number | null;
-  parentCategoryName: string | null;
   subcategories: SubCategory[];
 }
 

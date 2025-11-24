@@ -6,3 +6,9 @@ export async function getCategories() {
     cache: "no-store",
   });
 }
+
+export async function updateCategories() {
+  return apiClient.get<Category[]>("/info/v1/categories/update", {
+    cache: "no-store",
+  });
+}
