@@ -85,11 +85,10 @@ function CategoryForm({
           description: formData.description,
           status: formData.status,
           parentCategoryId:
-            formData.parentCategoryId === ""
-              ? parseInt(formData.parentCategoryId, 10)
+            formData.parentCategoryId !== ""
+              ? Number(formData.parentCategoryId)
               : null,
         };
-        console.log(payload);
         await categoryService.update(initialData.id, payload);
         toast.success("Category updated successfully!");
       } else {
@@ -98,11 +97,10 @@ function CategoryForm({
           description: formData.description,
           status: formData.status,
           parentCategoryId:
-            formData.parentCategoryId === ""
-              ? parseInt(formData.parentCategoryId, 10)
+            formData.parentCategoryId !== ""
+              ? Number(formData.parentCategoryId)
               : null,
         };
-        console.log(payload);
         await categoryService.create(payload);
         toast.success("Category created successfully!");
       }

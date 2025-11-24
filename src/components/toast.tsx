@@ -28,7 +28,7 @@ export default function MyToast() {
     <Toaster
       position={"top-right"}
       toastOptions={{ duration: 3000 }}
-      containerStyle={{ top: 40 }}
+      containerStyle={{ top: 40, zIndex: 999999 }}
     >
       {(t) => {
         const { icon, borderColor } = getToastStyles(t.type);

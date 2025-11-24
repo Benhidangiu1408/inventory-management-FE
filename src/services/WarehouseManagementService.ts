@@ -25,13 +25,6 @@ export const categoryService = {
     return apiClient.put<Category>(`/info/v1/categories/update/${id}`, data);
   },
 
-  // NEW: Update Status Only
-  // updateStatus: async (id: number, status: CategoryStatus) => {
-  //   const payload: CategoryStatusRequest = { status };
-  //   // Calls PATCH /api/v1/categories/{id}/status
-  //   return apiClient.patch<void>(`${BASE_URL}/${id}/status`, payload);
-  // },
-
   // delete: async (id: number) => {
   //   return apiClient.delete<void>(`${BASE_URL}/${id}`);
   // }
