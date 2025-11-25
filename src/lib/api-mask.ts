@@ -8,18 +8,11 @@ type FetchOptions = RequestInit & {
 
 export class ApiError extends Error {
   status: number;
-  // Optional: Holds field-specific errors (e.g. { name: "Required", email: "Invalid" })
-  validationErrors?: Record<string, string>;
 
-  constructor(
-    status: number,
-    message: string,
-    validationErrors?: Record<string, string>,
-  ) {
+  constructor(status: number, message: string) {
     super(message);
     this.name = "ApiError";
     this.status = status;
-    this.validationErrors = validationErrors;
   }
 }
 
@@ -45,20 +38,16 @@ async function fetcher<T>(
     // 2. Handle HTTP Errors (400, 500)
     if (!response.ok) {
       let errorMessage = `API Error: ${response.status}`;
-      let validationErrors = undefined;
 
       try {
         const data = await response.json();
         errorMessage = data.message || data.error || errorMessage;
-
-        // Check for Spring Boot validation errors
-        if (data.errors) validationErrors = data.errors;
       } catch {
         // Fallback to text if JSON parsing fails
         errorMessage = (await response.text()) || response.statusText;
       }
 
-      throw new ApiError(response.status, errorMessage, validationErrors);
+      throw new ApiError(response.status, errorMessage);
     }
 
     if (response.status === 204) return {} as T;

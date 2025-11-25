@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FormEvent, useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import Label from "@/default_components/form/Label";
 import Input from "@/default_components/form/input/InputField";
@@ -21,7 +21,8 @@ import {
   getSubCategoryHeaders,
 } from "@/components/table/AccordionTableHeader";
 import { categoryService } from "@/services/WarehouseManagementService";
-import Checkbox from "@/default_components/form/input/Checkbox";
+import { useForm, SubmitHandler } from "react-hook-form";
+import Radio from "@/default_components/form/input/Radio";
 
 interface CategoryFormProps {
   setLoading: (loading: boolean) => void;
@@ -39,12 +40,18 @@ const CategoryForm = ({
   const router = useRouter();
   const isEditMode = !!initialData;
   const isRoot = isEditMode && initialData?.parentCategoryId === null;
-  // Form State
-  const [formData, setFormData] = useState({
-    name: initialData?.name || "",
-    description: initialData?.description || "",
-    status: initialData?.status || "ACTIVE",
-    parentCategoryId: initialData?.parentCategoryId?.toString() || "",
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CategoryRequest>({
+    defaultValues: {
+      name: initialData?.name || "",
+      description: initialData?.description || "",
+      status: initialData?.status || "ACTIVE",
+      parentCategoryId: initialData?.parentCategoryId || null,
+    },
   });
 
   const parentOptions = useMemo(() => {
@@ -53,40 +60,16 @@ const CategoryForm = ({
       .map((c) => ({ value: c.id.toString(), label: c.name }));
   }, [existingCategories, initialData]);
 
-  //Validation Logic
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const validate = (): boolean => {
-    const errors: Record<string, string> = {};
-    let isValid = true;
-    // Rule: Name Required
-    if (!formData.name.trim()) {
-      errors.name = "Category name is required.";
-      isValid = false;
-    }
-    // Rule: Description Max Length
-    if (formData.description.length > 100) {
-      errors.description = "Description is too long (max 100 chars).";
-      isValid = false;
-    }
-    setErrors(errors);
-    return isValid;
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
+  const onSubmit: SubmitHandler<CategoryRequest> = async (data) => {
     setLoading(true);
-    setErrors({});
-
     try {
       const payload: CategoryRequest = {
-        name: formData.name,
-        description: formData.description,
-        status: formData.status,
-        parentCategoryId:
-          formData.parentCategoryId !== ""
-            ? Number(formData.parentCategoryId)
-            : null,
+        name: data.name,
+        description: data.description,
+        status: data.status,
+        parentCategoryId: data.parentCategoryId
+          ? Number(data.parentCategoryId)
+          : null,
       };
       if (isEditMode) {
         await categoryService.update(initialData.id, payload);
@@ -97,19 +80,9 @@ const CategoryForm = ({
       }
       router.refresh();
       onSuccess();
-      setFormData({
-        name: "",
-        description: "",
-        status: "ACTIVE",
-        parentCategoryId: "",
-      });
     } catch (error) {
       if (error instanceof ApiError) {
-        if (error.validationErrors) {
-          setErrors(error.validationErrors);
-        } else {
-          toast.error(error.message);
-        }
+        toast.error(error.message);
       } else {
         toast.error("An unexpected error occurred");
       }
@@ -118,27 +91,23 @@ const CategoryForm = ({
     }
   };
 
-  // Helper to update state and clear error for that field
-  const handleChange = (field: keyof typeof formData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error immediately when user types
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    }
-  };
-
   return (
-    <form id={"tableForm"} onSubmit={handleSubmit} className={"mt-4 space-y-6"}>
+    <form
+      id={"tableForm"}
+      onSubmit={handleSubmit(onSubmit)}
+      className={"mt-4 space-y-6"}
+    >
       {/* Name Input */}
       <div>
         <Label>Category Name</Label>
         <Input
           type="text"
           placeholder={"e.g. Electronics"}
-          value={formData.name}
-          onChange={(e) => handleChange("name", e.target.value)}
+          {...register("name", {
+            required: "Category name is required",
+          })}
           error={!!errors.name}
-          hint={errors.name}
+          hint={errors.name?.message}
         />
       </div>
       {/* Description Input */}
@@ -147,23 +116,30 @@ const CategoryForm = ({
         <Input
           type="text"
           placeholder={"Describe your category"}
-          value={formData.description}
-          onChange={(e) => handleChange("description", e.target.value)}
+          {...register("description", {
+            maxLength: {
+              value: 100,
+              message: "Description is too long (max 100 chars)",
+            },
+          })}
           error={!!errors.description}
-          hint={errors.description}
+          hint={errors.description?.message}
         />
       </div>
-      {/* Checkbox */}
+      {/* Status Radio */}
       <div className="flex items-center gap-3">
-        <Checkbox
-          checked={formData.status === "ACTIVE"}
-          onChange={(isChecked) =>
-            handleChange("status", isChecked ? "ACTIVE" : "INACTIVE")
-          }
+        <Radio
+          id="status-active"
+          label="Active"
+          value={"ACTIVE"}
+          {...register("status")}
         />
-        <span className="block text-sm font-medium text-gray-700 dark:text-gray-400">
-          Active
-        </span>
+        <Radio
+          id="status-inactive"
+          label="Inactive"
+          value={"INACTIVE"}
+          {...register("status")}
+        />
       </div>
       {/* Select */}
       <div>
@@ -173,9 +149,9 @@ const CategoryForm = ({
         <Select
           disabled={isRoot}
           placeholder={"Select parent category"}
-          defaultValue={formData.parentCategoryId}
+          {...register("parentCategoryId")}
           options={parentOptions}
-          onChange={(selected) => handleChange("parentCategoryId", selected)}
+          error={!!errors.parentCategoryId}
           hint="If you leave this empty, the new category will be a root category"
         />
       </div>

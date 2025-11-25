@@ -4,6 +4,9 @@ import { WarehouseGeneral } from "@/interfaces/warehouseManagementType";
 import { warehouseService } from "@/services/WarehouseManagementService";
 import { ApiError } from "@/lib/api-mask";
 import { warehouseHeaders } from "@/components/table/CustomizableTableHeader";
+import Link from "next/link";
+import Button from "@/default_components/ui/button/Button";
+import { Plus } from "lucide-react";
 
 export default async function WarehousePage() {
   // Handle initial page data
@@ -26,7 +29,19 @@ export default async function WarehousePage() {
         filters={["warehouse-management"]}
       />
       <div>
-        <div className="default-card">
+        <div className="default-card p-6">
+          <div className="mb-4">
+            <Link href={`/warehouse-management/warehouse/new`}>
+              <Button
+                size="sm"
+                variant="primary"
+                startIcon={<Plus size={16} />}
+                className="capitalize"
+              >
+                New Warehouse
+              </Button>
+            </Link>
+          </div>
           <CustomizableTable headers={warehouseHeaders} data={data} />
         </div>
       </div>

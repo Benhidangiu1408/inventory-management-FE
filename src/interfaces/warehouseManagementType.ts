@@ -22,9 +22,9 @@ export interface Category {
 
 export interface CategoryRequest {
   name: string;
-  description?: string;
+  description: string;
   status: CategoryStatus;
-  parentCategoryId?: number | null; // Optional
+  parentCategoryId: number | null; // Optional
 }
 
 // -------------- Warehouse ---------------------
