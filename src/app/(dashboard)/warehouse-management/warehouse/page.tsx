@@ -36,7 +36,6 @@ export default async function WarehousePage() {
                 size="sm"
                 variant="primary"
                 startIcon={<Plus size={16} />}
-                className="capitalize"
               >
                 New Warehouse
               </Button>

@@ -1,29 +1,33 @@
 import {
   Category,
   CategoryRequest,
+  NewWarehouseRequest,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
 import { apiClient } from "@/lib/api-mask";
 
 export const categoryService = {
   getAll: async () => {
-    return apiClient.get<Category[]>("/info/v1/categories", {
+    return apiClient.get<Category[]>("/info/v1/category/all", {
       cache: "no-store",
     });
   },
 
   getById: async (id: number) => {
-    return apiClient.get<Category>(`/info/v1/categories/${id}`, {
+    return apiClient.get<Category>(`/info/v1/category/${id}`, {
       cache: "no-store",
     });
   },
 
   create: async (data: CategoryRequest) => {
-    return apiClient.post<Category>("/info/v1/categories/new", data);
+    return apiClient.post<CategoryRequest>("/info/v1/category/new", data);
   },
 
   update: async (id: number, data: CategoryRequest) => {
-    return apiClient.put<Category>(`/info/v1/categories/update/${id}`, data);
+    return apiClient.put<CategoryRequest>(
+      `/info/v1/category/update/${id}`,
+      data,
+    );
   },
 
   // delete: async (id: number) => {
@@ -33,8 +37,12 @@ export const categoryService = {
 
 export const warehouseService = {
   getAll: async () => {
-    return apiClient.get<WarehouseGeneral[]>("/info/v1/warehouses", {
+    return apiClient.get<WarehouseGeneral[]>("/info/v1/warehouse/all", {
       cache: "no-store",
     });
+  },
+
+  create: async (data: NewWarehouseRequest) => {
+    return apiClient.post<NewWarehouseRequest>("/info/v1/warehouse/new", data);
   },
 };
