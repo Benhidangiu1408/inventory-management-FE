@@ -1,5 +1,5 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
+import GeneralInfoSection from "@/components/GeneralInformation";
 
 export default function WarehouseDetailPage() {
   const generalInfoItems = [

@@ -5,17 +5,17 @@ import {
   faMagnifyingGlass,
   faWarehouse,
 } from "@fortawesome/free-solid-svg-icons";
-import CustomFilter from "../TA_common/CustomFilter";
-import FilterItem from "../TA_common/FilterItem";
+import CustomFilter from "@/components/TA_common/CustomFilter";
+import FilterItem from "@/components/TA_common/FilterItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ImportCreateRow } from "../../interfaces/interface.table";
 import CustomizableTable, {
   Column,
   TableProps,
-} from "../../components/table/CustomizableTable";
+} from "../table/CustomizableTable";
 // import Pagination from "@/default_components/tables/Pagination";
-import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
+import Input from "../../default_components/form/input/InputField";
+import Checkbox from "../../default_components/form/input/Checkbox";
 
 export default function CreateModal() {
   const columns: Column<ImportCreateRow>[] = [

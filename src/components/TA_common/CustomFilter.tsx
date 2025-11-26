@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Button from "../ui/button/Button";
+import Button from "../../default_components/ui/button/Button";
 
 interface ButtonItemProps {
   size: "sm" | "md";

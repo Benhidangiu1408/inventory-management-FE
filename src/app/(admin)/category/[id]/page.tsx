@@ -1,8 +1,8 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import ActivityLog from "@/default_components/TA_common/ActivityLog";
+import ActivityLog from "@/components/TA_common/ActivityLog";
 
-import UtilityBar from "@/default_components/TA_common/UtilityBar";
-import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
+import UtilityBar from "@/components/TA_common/UtilityBar";
+import GeneralInfoSection from "@/components/GeneralInformation";
 // import CustomizableTable from "@/components/table/CustomizableTable";
 // import { categoryProductColumns } from "@/components/table/CustomizableTableHeader";
 // import { categoryProductData } from "@/default_components/Ky_components/TableData";

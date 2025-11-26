@@ -4,9 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { ExportRow, ImportRow } from "@/interfaces/interface.table";
-import CustomizableTable, {
-  Column,
-} from "../../components/table/CustomizableTable";
+import CustomizableTable, { Column } from "../table/CustomizableTable";
 
 interface ListProps {
   type: "import" | "export";

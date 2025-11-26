@@ -1,4 +1,9 @@
-import { Table, TableBody, TableCell, TableRow } from "../ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from "../../default_components/ui/table";
 
 export default function OrderSummary() {
   return (

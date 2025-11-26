@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Button from "../ui/button/Button";
+import Button from "../../default_components/ui/button/Button";
 import {
   faCircleCheck,
   faFileExport,
