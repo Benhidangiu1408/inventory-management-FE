@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { ExportRow, ImportRow } from "@/interfaces/interface.table";
-import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
 import CustomizableTable, {
   Column,
 } from "../../components/table/CustomizableTable";
@@ -218,7 +217,7 @@ export default function List({ type }: ListProps) {
         />
       )}
 
-      <InfoPagination totalPages={10} />
+      {/* <InfoPagination totalPages={10} /> */}
     </div>
   );
 }

@@ -3,9 +3,9 @@ import ActivityLog from "@/default_components/TA_common/ActivityLog";
 
 import UtilityBar from "@/default_components/TA_common/UtilityBar";
 import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
-import CustomizableTable from "@/components/table/CustomizableTable";
-import { categoryProductColumns } from "@/components/table/CustomizableTableHeader";
-import { categoryProductData } from "@/default_components/Ky_components/TableData";
+// import CustomizableTable from "@/components/table/CustomizableTable";
+// import { categoryProductColumns } from "@/components/table/CustomizableTableHeader";
+// import { categoryProductData } from "@/default_components/Ky_components/TableData";
 
 export default function CategoryDetailPage() {
   const generalInfoItems = [
@@ -40,10 +40,10 @@ export default function CategoryDetailPage() {
             />
             <div className="rounded-2xl border border-gray-200 p-6">
               <h2 className="mb-3 font-medium">Products</h2>
-              <CustomizableTable
+              {/* <CustomizableTable
                 headers={categoryProductColumns}
                 data={categoryProductData}
-              />
+              /> */}
             </div>
           </div>
           <div className="flex flex-1 flex-col gap-6">

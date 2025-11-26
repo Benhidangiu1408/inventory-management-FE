@@ -51,7 +51,7 @@ const AppHeader: React.FC = () => {
     });
 
     return list;
-  }, [navItems]);
+  }, []);
 
   const filterBasedOnSearch = useCallback(
     (value: string) => {

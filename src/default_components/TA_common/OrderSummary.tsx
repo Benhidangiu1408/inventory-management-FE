@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 
 export default function OrderSummary() {
   return (
-    <div className="rounded-2xl border border-gray-200 p-6">
+    <div className="rounded-2xl border border-gray-200 bg-white p-6">
       <h2 className="mb-4 text-lg">Order Summary</h2>
       <Table>
         <TableBody className="">

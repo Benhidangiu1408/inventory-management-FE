@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Pagination from "@/default_components/tables/Pagination";
+// import Pagination from "@/default_components/tables/Pagination";
 import ProgressPagination from "../TA_common/ProgressPagination";
 import ProcessPagination from "@/default_components/TA_common/ProcessPagination";
+import { TAPagination } from "@/default_components/TA_common/TAPagination";
 
 interface InfoPaginationProps {
   totalPages?: number;
@@ -23,7 +24,7 @@ export default function InfoPagination({
   return (
     <div>
       {paginationType === "info" ? (
-        <Pagination
+        <TAPagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}

@@ -1,3 +1,5 @@
+"use client";
+
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import ActivityLog from "@/default_components/TA_common/ActivityLog";
 import OrderSummary from "@/default_components/TA_common/OrderSummary";

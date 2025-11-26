@@ -3,12 +3,12 @@ import ActivityLog from "@/default_components/TA_common/ActivityLog";
 
 import UtilityBar from "@/default_components/TA_common/UtilityBar";
 import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
-import ExpandableTable from "@/default_components/Ky_components/AccordionTable";
-import {
-  warehouseBatchColumns,
-  warehouseProductColumns,
-} from "@/default_components/Ky_components/ExpandableTableHeaders";
-import { warehouseProducts } from "@/default_components/Ky_components/TableData";
+// import ExpandableTable from "@/default_components/Ky_components/AccordionTable";
+// import {
+//   warehouseBatchColumns,
+//   warehouseProductColumns,
+// } from "@/default_components/Ky_components/ExpandableTableHeaders";
+// import { warehouseProducts } from "@/default_components/Ky_components/TableData";
 
 export default function WarehouseDetailPage() {
   const generalInfoItems = [
@@ -50,14 +50,14 @@ export default function WarehouseDetailPage() {
               items={generalInfoItems}
             />
             <div className="rounded-2xl border border-gray-200 p-6">
-              <ExpandableTable
+              {/* <ExpandableTable
                 headers={warehouseProductColumns}
                 subTableHeaders={warehouseBatchColumns}
                 data={warehouseProducts}
                 subTableData="batches"
                 needCheckBox={false}
                 title="Warehouse Storage"
-              />
+              /> */}
             </div>
           </div>
           <div className="flex flex-1 flex-col gap-6">

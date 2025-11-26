@@ -66,19 +66,19 @@ export default function NewNotification() {
             <div className="flex gap-4">
               <Checkbox
                 checked={sendViaEmail}
-                onChange={setSendViaEmail}
+                onChange={(e) => setSendViaEmail(e.target.checked)}
                 label="Send via Email"
                 startIcon={<FontAwesomeIcon icon={faEnvelope} />}
               />
               <Checkbox
                 checked={sendViaSMS}
-                onChange={setSendViaSMS}
+                onChange={(e) => setSendViaSMS(e.target.checked)}
                 label="Send via SMS"
                 startIcon={<FontAwesomeIcon icon={faComment} />}
               />
               <Checkbox
                 checked={sendViaPushNotification}
-                onChange={setSendViaPushNotification}
+                onChange={(e) => setSendViaPushNotification(e.target.checked)}
                 label="Send via Push Notification"
               />
             </div>

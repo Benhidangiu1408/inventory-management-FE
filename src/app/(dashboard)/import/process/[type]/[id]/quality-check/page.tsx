@@ -2,7 +2,7 @@
 
 import Input from "@/default_components/form/input/InputField";
 import InfoBox from "@/default_components/TA_create_page/InfoBox";
-import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
+// import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
 import Button from "@/default_components/ui/button/Button";
 import { QualityCheckRow } from "@/interfaces/interface.table";
 import CustomizableTable, {
@@ -25,23 +25,31 @@ export default function QualityCheckPage() {
       key: "qualityStatus",
       label: "Quality Status",
       render: () => (
-        <div className="flex inline-flex gap-2">
-          <Button variant="success_outline">Pass</Button>
-          <Button variant="danger_outline">Fail</Button>
-          <Button variant="warning_outline">Skip</Button>
-          <Button variant="exempt_outline">Exempt</Button>
+        <div className="inline-flex h-full w-full gap-2">
+          <Button size="sm" variant="success_outline">
+            Pass
+          </Button>
+          <Button size="sm" variant="danger_outline">
+            Fail
+          </Button>
+          <Button size="sm" variant="warning_outline">
+            Skip
+          </Button>
+          <Button size="sm" variant="exempt_outline">
+            Exempt
+          </Button>
         </div>
       ),
     },
     {
       key: "reason",
       label: "Reason",
-      render: () => <Input />,
+      render: () => <Input className="h-full" />,
     },
     {
       key: "notes",
       label: "Notes",
-      render: () => <Input />,
+      render: () => <Input className="h-full" />,
     },
   ];
 
@@ -66,7 +74,7 @@ export default function QualityCheckPage() {
             headers={qualityCheckColumn}
             data={qualityCheckData}
           />
-          <InfoPagination totalPages={4} paginationType="progress" />
+          {/* <InfoPagination totalPages={4} paginationType="progress" /> */}
         </div>
       </InfoBox>
     </div>

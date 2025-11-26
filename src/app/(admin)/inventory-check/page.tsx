@@ -1,21 +1,21 @@
 "use client";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import CustomizableTable from "@/components/table/CustomizableTable";
+// import CustomizableTable from "@/components/table/CustomizableTable";
 import Filter from "@/components/Filter";
-import Pagination from "@/default_components/tables/Pagination";
+// import Pagination from "@/default_components/tables/Pagination";
 // import Label from "@/components/form/Label";
 // import Input from "@/components/form/input/InputField";
 // import Select from "@/components/form/Select";
 // import MultiSelect from "@/components/form/MultiSelect";
 // import { ChevronDownIcon } from "@/icons";
 
-import React, { useState } from "react";
-import { inventoryCheckOrders } from "@/default_components/Ky_components/TableData";
-import { inventoryCheckOrderHeaders } from "@/components/table/CustomizableTableHeader";
+// import React, { useState } from "react";
+// import { inventoryCheckOrders } from "@/default_components/Ky_components/TableData";
+// import { inventoryCheckOrderHeaders } from "@/components/table/CustomizableTableHeader";
 // import CustomContentModalBox from "@/components/Ky_components/CustomContentModalBox";
 
 export default function WarehousePage() {
-  const [page, setPage] = useState(1);
+  // const [page, setPage] = useState(1);
   // const [formData, setFormData] = useState({
   //   warehouseName: "",
   //   inspector: "",
@@ -115,17 +115,17 @@ export default function WarehousePage() {
             btnName={"New Audit"}
             modalContent={NewAuditForm}
           /> */}
-          <div className="p-6">
+          {/* <div className="p-6">
             <CustomizableTable
               headers={inventoryCheckOrderHeaders}
               data={inventoryCheckOrders}
             ></CustomizableTable>
-          </div>
-          <Pagination
+          </div> */}
+          {/* <Pagination
             currentPage={page}
             totalPages={6}
             onPageChange={setPage}
-          ></Pagination>
+          ></Pagination> */}
         </div>
       </div>
     </div>

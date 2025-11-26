@@ -46,12 +46,14 @@ export default function StorageLocationPage() {
     {
       key: "storageLocation",
       label: "Storage Location",
-      render: () => <Select options={[]} onChange={() => {}} />,
+      render: () => (
+        <Select className="!h-9" options={[]} onChange={() => {}} />
+      ),
     },
     {
       key: "notes",
       label: "Notes",
-      render: () => <Input />,
+      render: () => <Input className="h-full" />,
     },
   ];
 

@@ -1,6 +1,5 @@
 import {
   faCubes,
-  faDollarSign,
   faFileLines,
   IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
