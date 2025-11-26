@@ -60,7 +60,10 @@ export default function NewInventoryAuditPage() {
                   className="dark:bg-dark-900"
                   options={warehouseOpts}
                   onChange={(val) =>
-                    setFormData({ ...formData, warehouseName: val })
+                    setFormData({
+                      ...formData,
+                      warehouseName: val.target.value,
+                    })
                   }
                 />
                 <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 dark:text-gray-400">
@@ -76,7 +79,7 @@ export default function NewInventoryAuditPage() {
                   className="dark:bg-dark-900"
                   options={userOpts}
                   onChange={(val) =>
-                    setFormData({ ...formData, inspector: val })
+                    setFormData({ ...formData, inspector: val.target.value })
                   }
                 />
                 <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 dark:text-gray-400">
@@ -99,7 +102,9 @@ export default function NewInventoryAuditPage() {
               <div className="flex items-center justify-center pt-5">
                 <Checkbox
                   checked={formData.isCycle}
-                  onChange={(val) => setFormData({ ...formData, isCycle: val })}
+                  onChange={(val) =>
+                    setFormData({ ...formData, isCycle: val.target.checked })
+                  }
                   label="Cycle Check"
                 />
               </div>

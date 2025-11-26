@@ -9,7 +9,7 @@ import CustomizableTable, {
 } from "@/components/table/CustomizableTable";
 import CustomFilter from "@/default_components/TA_common/CustomFilter";
 import FilterItem from "@/default_components/TA_common/FilterItem";
-import Pagination from "@/default_components/tables/Pagination";
+// import Pagination from "@/default_components/tables/Pagination";
 import Button from "@/default_components/ui/button/Button";
 import { ImportCreateRow } from "@/interfaces/interface.table";
 import {
@@ -149,11 +149,11 @@ export default function CreateImportPage() {
               </Link>
             </div>
             <CustomizableTable<ImportCreateRow> {...table} />
-            <Pagination
+            {/* <Pagination
               currentPage={1}
               totalPages={1}
               onPageChange={() => {}}
-            />
+            /> */}
           </div>
         </div>
       </div>

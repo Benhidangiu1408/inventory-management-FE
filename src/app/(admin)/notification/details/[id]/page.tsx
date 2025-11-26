@@ -55,12 +55,14 @@ const MOCK_DATA: NotificationRow[] = [
   },
 ];
 
-export default function NotificationDetailPage({
+export default async function NotificationDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const notification = MOCK_DATA.find((n) => n.id === params.id);
+  const { id } = await params;
+
+  const notification = MOCK_DATA.find((n) => n.id === id);
 
   return (
     <div>
@@ -115,7 +117,7 @@ export default function NotificationDetailPage({
           <div>
             <p className="text-theme-xs text-gray-500">ID</p>
             <p className="text-theme-sm text-gray-800 dark:text-white/90">
-              {notification?.id ?? params.id}
+              {notification?.id ?? id}
             </p>
           </div>
           <div>

@@ -8,7 +8,6 @@ import CustomizableTable, {
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "@/default_components/form/input/InputField";
-import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
 
 export default function ImportProcessPage() {
   const quantityCheckColumn: Column<QuantityCheckRow>[] = [
@@ -24,7 +23,7 @@ export default function ImportProcessPage() {
       key: "actualQuantity",
       label: "Actual Quantity",
       render: () => {
-        return <Input />;
+        return <Input className="h-full" />;
       },
     },
     {
@@ -35,7 +34,7 @@ export default function ImportProcessPage() {
       key: "reason",
       label: "Reason",
       render: () => {
-        return <Input />;
+        return <Input className="h-full" />;
       },
     },
   ];
@@ -60,8 +59,9 @@ export default function ImportProcessPage() {
           <CustomizableTable<QuantityCheckRow>
             headers={quantityCheckColumn}
             data={quantityCheckData}
+            height={"auto"}
           />
-          <InfoPagination totalPages={4} paginationType="progress" />
+          {/* <InfoPagination totalPages={4} paginationType="progress" /> */}
         </div>
       </InfoBox>
     </div>

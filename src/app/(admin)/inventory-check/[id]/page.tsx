@@ -1,19 +1,19 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import UtilityBar from "@/default_components/TA_common/UtilityBar";
 import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
-import ExpandableTable from "@/default_components/Ky_components/AccordionTable";
-import {
-  Product,
-  Batch,
-  productColumns,
-  batchColumns,
-} from "@/default_components/Ky_components/ExpandableTableHeaders";
-import { productData } from "@/default_components/Ky_components/TableData";
+// import ExpandableTable from "@/default_components/Ky_components/AccordionTable";
+// import {
+//   Product,
+//   Batch,
+//   productColumns,
+//   batchColumns,
+// } from "@/default_components/Ky_components/ExpandableTableHeaders";
+// import { productData } from "@/default_components/Ky_components/TableData";
 
 export default async function InventoryCheckDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
   return (
@@ -35,13 +35,13 @@ export default async function InventoryCheckDetailPage({
           </div>
         </div>
         <div className="rounded-2xl border border-gray-200 p-6">
-          <ExpandableTable<Product, Batch>
+          {/* <ExpandableTable<Product, Batch>
             headers={productColumns}
             subTableHeaders={batchColumns}
             data={productData}
             subTableData="batches"
             title="Products & Batches"
-          ></ExpandableTable>
+          ></ExpandableTable> */}
         </div>
       </div>
     </div>

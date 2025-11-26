@@ -13,7 +13,7 @@ import CustomizableTable, {
   Column,
   TableProps,
 } from "../../components/table/CustomizableTable";
-import Pagination from "@/default_components/tables/Pagination";
+// import Pagination from "@/default_components/tables/Pagination";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 
@@ -123,7 +123,7 @@ export default function CreateModal() {
             </div>
           </div>
           <CustomizableTable<ImportCreateRow> {...table} />
-          <Pagination currentPage={1} totalPages={1} onPageChange={() => {}} />
+          {/* <Pagination currentPage={1} totalPages={1} onPageChange={() => {}} /> */}
         </div>
       </div>
     </div>

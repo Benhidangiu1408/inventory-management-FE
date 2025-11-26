@@ -2,7 +2,7 @@
 
 import Input from "@/default_components/form/input/InputField";
 import InfoBox from "@/default_components/TA_create_page/InfoBox";
-import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
+// import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
 import Button from "@/default_components/ui/button/Button";
 import { QualityCheckRow } from "@/interfaces/interface.table";
 import CustomizableTable, {
@@ -66,7 +66,7 @@ export default function QualityCheckPage() {
             headers={qualityCheckColumn}
             data={qualityCheckData}
           />
-          <InfoPagination totalPages={4} paginationType="progress" />
+          {/* <InfoPagination totalPages={4} paginationType="progress" /> */}
         </div>
       </InfoBox>
     </div>

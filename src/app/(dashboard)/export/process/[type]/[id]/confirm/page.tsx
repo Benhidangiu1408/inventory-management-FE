@@ -20,7 +20,7 @@ import InfoBoxStatus from "@/default_components/TA_create_page/InfoBoxStatus";
 export default async function ConfirmPage({
   params,
 }: {
-  params: { type: string; id: string };
+  params: Promise<{ type: string; id: string }>;
 }) {
   const { type, id } = await params;
 

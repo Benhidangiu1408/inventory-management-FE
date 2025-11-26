@@ -3,9 +3,9 @@ import ActivityLog from "@/default_components/TA_common/ActivityLog";
 
 import UtilityBar from "@/default_components/TA_common/UtilityBar";
 import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
-import CustomizableTable from "@/components/table/CustomizableTable";
-import { storageBatchColumns } from "@/components/table/CustomizableTableHeader";
-import { storageBatchData } from "@/default_components/Ky_components/TableData";
+// import CustomizableTable from "@/components/table/CustomizableTable";
+// import { storageBatchColumns } from "@/components/table/CustomizableTableHeader";
+// import { storageBatchData } from "@/default_components/Ky_components/TableData";
 
 export default function ProductDetailPage() {
   const generalInfoItems = [
@@ -44,10 +44,10 @@ export default function ProductDetailPage() {
             />
             <div className="rounded-2xl border border-gray-200 p-6">
               <h2 className="mb-3 font-medium">Product Batches</h2>
-              <CustomizableTable
+              {/* <CustomizableTable
                 headers={storageBatchColumns}
                 data={storageBatchData}
-              />
+              /> */}
             </div>
           </div>
           <div className="flex flex-1 flex-col gap-6">
