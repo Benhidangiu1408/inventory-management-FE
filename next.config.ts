@@ -10,17 +10,13 @@ const nextConfig: NextConfig = {
     return config;
   },
 
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-
   turbopack: {
     rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
+      "*.svg": {
+        loaders: ["@svgr/webpack"],
+        as: "*.js",
       },
-    }
+    },
   },
 };
 

@@ -1,8 +1,6 @@
 "use client";
 
-import CustomizableTable, {
-  TableProps,
-} from "../../components/table/CustomizableTable";
+import CustomizableTable, { TableProps } from "../table/CustomizableTable";
 
 export default function TableBox<T extends object>({
   title,

@@ -1,3 +1,4 @@
+import { CreateWarehouseForm } from "@/components/form/CreateWarehouseForm";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 
 export default function CreateWarehousePage() {
@@ -8,7 +9,9 @@ export default function CreateWarehousePage() {
         filters={["warehouse-management"]}
       />
       <div>
-        <div className="default-card p-6"></div>
+        <div className="default-card p-6">
+          <CreateWarehouseForm />
+        </div>
       </div>
     </div>
   );

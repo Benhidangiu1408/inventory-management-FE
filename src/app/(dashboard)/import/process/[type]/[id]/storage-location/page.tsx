@@ -5,7 +5,7 @@ import Select from "@/default_components/form/Select";
 import CustomizableTable, {
   Column,
 } from "@/components/table/CustomizableTable";
-import InfoBox from "@/default_components/TA_create_page/InfoBox";
+import InfoBox from "@/components/TA_create_page/InfoBox";
 import { StorageLocationCheckRow } from "@/interfaces/interface.table";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import {

@@ -1,6 +1,6 @@
 "use client";
 
-import InfoBox from "@/default_components/TA_create_page/InfoBox";
+import InfoBox from "@/components/TA_create_page/InfoBox";
 import { QuantityCheckRow } from "@/interfaces/interface.table";
 import CustomizableTable, {
   Column,

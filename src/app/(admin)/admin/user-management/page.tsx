@@ -1,7 +1,7 @@
 "use client";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import CustomizableTable from "@/components/table/CustomizableTable";
-import { userData } from "@/default_components/Ky_components/TableData";
+import { userData } from "@/components/table/TableData";
 import { userColumns } from "@/components/table/CustomizableTableHeader";
 import Filter, { DateRange } from "@/components/Filter";
 import { useMemo, useState } from "react";

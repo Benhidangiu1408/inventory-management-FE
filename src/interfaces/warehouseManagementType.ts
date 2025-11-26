@@ -40,11 +40,20 @@ export enum WarehouseType {
 }
 
 export interface WarehouseGeneral {
-  id: string;
+  id: number;
   code: string;
   name: string;
   description: string;
   type: WarehouseType;
   status: WarehouseStatus;
   // managerName: string; // Derived from backend `manager.firstName` + `last`
+}
+
+export interface NewWarehouseRequest {
+  name: string;
+  address: string;
+  description: string;
+  type: WarehouseType;
+  status: WarehouseStatus;
+  // userId: string;
 }

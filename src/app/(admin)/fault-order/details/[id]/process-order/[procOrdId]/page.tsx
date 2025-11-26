@@ -1,15 +1,15 @@
 "use client";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 
-import UtilityBar from "@/default_components/TA_common/UtilityBar";
+import UtilityBar from "@/components/TA_common/UtilityBar";
 import CustomizableTable from "@/components/table/CustomizableTable";
 import {
   faultBatchColumns,
   taskColumns,
 } from "@/components/table/CustomizableTableHeader";
-import { faultBatchData2 } from "@/default_components/Ky_components/TableData";
+import { faultBatchData2 } from "@/components/table/TableData";
 import Button from "@/default_components/ui/button/Button";
-import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
+import GeneralInfoSection from "@/components/GeneralInformation";
 import FileInput from "@/default_components/form/input/FileInput";
 import Label from "@/default_components/form/Label";
 import Input from "@/default_components/form/input/InputField";

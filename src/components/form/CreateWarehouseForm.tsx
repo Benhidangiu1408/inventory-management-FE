@@ -1,138 +1,155 @@
+"use client";
+
+import Input from "@/default_components/form/input/InputField";
+import Label from "@/default_components/form/Label";
+import Select from "@/default_components/form/Select";
+import Button from "@/default_components/ui/button/Button";
+import {
+  NewWarehouseRequest,
+  WarehouseStatus,
+  WarehouseType,
+} from "@/interfaces/warehouseManagementType";
+import { ApiError } from "@/lib/api-mask";
+import { warehouseService } from "@/services/WarehouseManagementService";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+
 export const CreateWarehouseForm = () => {
-  // // Form State
-  // const [formData, setFormData] = useState({
-  //   name: initialData?.name || "",
-  //   description: initialData?.description || "",
-  //   status: initialData?.status || "ACTIVE",
-  //   parentCategoryId: initialData?.parentCategoryId?.toString() || "",
-  // });
-  // const parentOptions = useMemo(() => {
-  //   return existingCategories
-  //     .filter((c) => c.id !== initialData?.id)
-  //     .map((c) => ({ value: c.id.toString(), label: c.name }));
-  // }, [existingCategories, initialData]);
-  // //Validation Logic
-  // const [errors, setErrors] = useState<Record<string, string>>({});
-  // const validate = (): boolean => {
-  //   const errors: Record<string, string> = {};
-  //   let isValid = true;
-  //   // Rule: Name Required
-  //   if (!formData.name.trim()) {
-  //     errors.name = "Category name is required.";
-  //     isValid = false;
-  //   }
-  //   // Rule: Description Max Length
-  //   if (formData.description.length > 100) {
-  //     errors.description = "Description is too long (max 100 chars).";
-  //     isValid = false;
-  //   }
-  //   setErrors(errors);
-  //   return isValid;
-  // };
-  // const handleSubmit = async (e: FormEvent) => {
-  //   e.preventDefault();
-  //   if (!validate()) return;
-  //   setLoading(true);
-  //   setErrors({});
-  //   try {
-  //     const payload: CategoryRequest = {
-  //       name: formData.name,
-  //       description: formData.description,
-  //       status: formData.status,
-  //       parentCategoryId:
-  //         formData.parentCategoryId !== ""
-  //           ? Number(formData.parentCategoryId)
-  //           : null,
-  //     };
-  //     if (isEditMode) {
-  //       await categoryService.update(initialData.id, payload);
-  //       toast.success("Category updated successfully!");
-  //     } else {
-  //       await categoryService.create(payload);
-  //       toast.success("Category created successfully!");
-  //     }
-  //     router.refresh();
-  //     onSuccess();
-  //     setFormData({
-  //       name: "",
-  //       description: "",
-  //       status: "ACTIVE",
-  //       parentCategoryId: "",
-  //     });
-  //   } catch (error) {
-  //     if (error instanceof ApiError) {
-  //       if (error.validationErrors) {
-  //         setErrors(error.validationErrors);
-  //       } else {
-  //         toast.error(error.message);
-  //       }
-  //     } else {
-  //       toast.error("An unexpected error occurred");
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  // // Helper to update state and clear error for that field
-  // const handleChange = (field: keyof typeof formData, value: string) => {
-  //   setFormData((prev) => ({ ...prev, [field]: value }));
-  //   // Clear error immediately when user types
-  //   if (errors[field]) {
-  //     setErrors((prev) => ({ ...prev, [field]: "" }));
-  //   }
-  // };
-  // return (
-  //   <form id={"tableForm"} onSubmit={handleSubmit} className={"mt-4 space-y-6"}>
-  //     {/* Name Input */}
-  //     <div>
-  //       <Label>Category Name</Label>
-  //       <Input
-  //         type="text"
-  //         placeholder={"e.g. Electronics"}
-  //         value={formData.name}
-  //         onChange={(e) => handleChange("name", e.target.value)}
-  //         error={!!errors.name}
-  //         hint={errors.name}
-  //       />
-  //     </div>
-  //     {/* Description Input */}
-  //     <div>
-  //       <Label>Category Description</Label>
-  //       <Input
-  //         type="text"
-  //         placeholder={"Describe your category"}
-  //         value={formData.description}
-  //         onChange={(e) => handleChange("description", e.target.value)}
-  //         error={!!errors.description}
-  //         hint={errors.description}
-  //       />
-  //     </div>
-  //     {/* Checkbox */}
-  //     <div className="flex items-center gap-3">
-  //       <Checkbox
-  //         checked={formData.status === "ACTIVE"}
-  //         onChange={(isChecked) =>
-  //           handleChange("status", isChecked ? "ACTIVE" : "INACTIVE")
-  //         }
-  //       />
-  //       <span className="block text-sm font-medium text-gray-700 dark:text-gray-400">
-  //         Active
-  //       </span>
-  //     </div>
-  //     {/* Select */}
-  //     <div>
-  //       <Label className={`${isRoot ? "opacity-50" : ""}`}>
-  //         Parent Category
-  //       </Label>
-  //       <Select
-  //         disabled={isRoot}
-  //         placeholder={"Select parent category"}
-  //         defaultValue={formData.parentCategoryId}
-  //         options={parentOptions}
-  //         onChange={(selected) => handleChange("parentCategoryId", selected)}
-  //         hint="If you leave this empty, the new category will be a root category"
-  //       />
-  //     </div>
-  //   </form>
-  // );
+  // Initiate form control
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const typeOptions = Object.values(WarehouseType).map((type) => ({
+    value: type,
+    label: type.replace("_", " "), // Makes "COLD_STORAGE" look like "COLD STORAGE"
+  }));
+
+  const statusOptions = Object.values(WarehouseStatus).map((status) => ({
+    value: status,
+    label: status.replace("_", " "),
+  }));
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<NewWarehouseRequest>({
+    defaultValues: {
+      name: "",
+      address: "",
+      description: "",
+      status: WarehouseStatus.ACTIVE,
+      type: WarehouseType.STORAGE,
+    },
+  });
+
+  //Validation Logic
+  const onSubmit: SubmitHandler<NewWarehouseRequest> = async (data) => {
+    setLoading(true);
+    try {
+      const payload: NewWarehouseRequest = {
+        name: data.name,
+        description: data.description,
+        address: data.address,
+        type: data.type,
+        status: data.status,
+      };
+      await warehouseService.create(payload);
+      toast.success("Warehouse created successfully!");
+      reset();
+      router.replace("/warehouse-management/warehouse");
+    } catch (error) {
+      if (error instanceof ApiError) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className={"mt-4 space-y-6"}>
+      {/* Name */}
+      <div>
+        <Label>Warehouse Name</Label>
+        <Input
+          placeholder={"e.g. Export Storage"}
+          {...register("name", {
+            required: "Warehouse name is required",
+          })}
+          error={!!errors.name}
+          hint={errors.name?.message}
+        />
+      </div>
+      {/* Address */}
+      <div>
+        <Label>Address</Label>
+        <Input
+          type="text"
+          placeholder={"Describe your warehouse"}
+          {...register("address", {
+            required: "Please specify warehouse address",
+          })}
+          error={!!errors.address}
+          hint={errors.address?.message}
+        />
+      </div>
+      {/* Description */}
+      <div>
+        <Label>Description</Label>
+        <Input
+          type="text"
+          placeholder={"Describe your warehouse"}
+          {...register("description", {
+            maxLength: {
+              value: 100,
+              message: "Description is too long (max 100 chars)",
+            },
+          })}
+          error={!!errors.description}
+          hint={errors.description?.message}
+        />
+      </div>
+      {/* Select */}
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="w-full">
+          <Label>Warehouse Type</Label>
+          <Select
+            {...register("type", { required: "Please select a type" })}
+            placeholder={"Select type"}
+            options={typeOptions}
+            error={!!errors.type}
+            hint={errors.type?.message}
+          />
+        </div>
+        <div className="w-full">
+          <Label>Status</Label>
+          <Select
+            {...register("status", { required: "Please select a status" })}
+            placeholder={"Select status"}
+            options={statusOptions}
+            error={!!errors.status}
+            hint={errors.status?.message}
+          />
+        </div>
+      </div>
+      {/* Manager? */}
+      <div className="flex gap-3">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => router.replace("/warehouse-management/warehouse")}
+          type="button"
+        >
+          Cancel
+        </Button>
+        <Button size="sm" disabled={loading} type="submit">
+          Save
+        </Button>
+      </div>
+    </form>
+  );
 };

@@ -150,8 +150,8 @@ const Pagination: React.FC<PaginationProps> = ({
               { label: "100", value: "100" },
             ]}
             defaultValue={"10"}
-            onChange={(value) => {
-              setPageSize(parseInt(value.target.value, 10));
+            onChange={(e) => {
+              setPageSize(parseInt(e.target.value, 10));
             }}
             className={"!w-[50px] !pr-0"}
           />

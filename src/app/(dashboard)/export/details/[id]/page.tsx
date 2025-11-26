@@ -1,15 +1,15 @@
 "use client";
 
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import ActivityLog from "@/default_components/TA_common/ActivityLog";
-import OrderSummary from "@/default_components/TA_common/OrderSummary";
-import TableBox from "@/default_components/TA_common/TableBox";
-import UtilityBar from "@/default_components/TA_common/UtilityBar";
+import ActivityLog from "@/components/TA_common/ActivityLog";
+import OrderSummary from "@/components/TA_common/OrderSummary";
+import TableBox from "@/components/TA_common/TableBox";
+import UtilityBar from "@/components/TA_common/UtilityBar";
 import Badge from "@/default_components/ui/badge/Badge";
 import { ProductRow } from "@/interfaces/interface.table";
 import { Column, TableProps } from "@/components/table/CustomizableTable";
-import GeneralInfoSection from "@/default_components/Ky_components/GeneralInformation";
-import StatusBox from "@/default_components/TA_common/StatusBox";
+import GeneralInfoSection from "@/components/GeneralInformation";
+import StatusBox from "@/components/TA_common/StatusBox";
 
 export default function ExportDetailPage() {
   const generalInfoItems = [
