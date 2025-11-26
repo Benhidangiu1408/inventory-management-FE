@@ -61,7 +61,7 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
     key: "id",
     render: (_, row) => (
       <div className="flex h-full items-center justify-center gap-2">
-        <Link href={`/warehouse-management/${row.id}`}>
+        <Link href={`/warehouse-management/warehouse/detail/${row.id}`}>
           <Eye size={16} />
         </Link>
       </div>
