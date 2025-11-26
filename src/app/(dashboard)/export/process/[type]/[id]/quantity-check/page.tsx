@@ -1,11 +1,13 @@
+import CustomizableTable, {
+  Column,
+} from "@/components/table/CustomizableTable";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import InfoBox from "@/default_components/TA_create_page/InfoBox";
 import InfoBoxStatus from "@/default_components/TA_create_page/InfoBoxStatus";
 import InfoList from "@/default_components/TA_create_page/InfoList";
-import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
 import ProductListInfoBox from "@/default_components/TA_create_page/ProductListInfoBox";
-// import ProgressBar from "@/default_components/TA_create_page/ProgressBar";
 import SmallInfoBox from "@/default_components/TA_create_page/SmallInfoBox";
+import { ExportQuantityCheckRow } from "@/interfaces/interface.table";
 import {
   faCircleCheck,
   faCircleInfo,
@@ -21,6 +23,32 @@ export default async function ExportQuantityCheckPage({
   params: { type: string; id: string };
 }) {
   const { type, id } = await params;
+
+  const exportQuantityCheckColumn: Column<ExportQuantityCheckRow>[] = [
+    {
+      key: "quantity",
+      label: "Quantity",
+    },
+    {
+      key: "location",
+      label: "Location",
+    },
+  ];
+
+  const exportQuantityCheckData: ExportQuantityCheckRow[] = [
+    {
+      quantity: 10,
+      location: "Warehouse B/ Shelf A",
+    },
+    {
+      quantity: 10,
+      location: "Warehouse C/ Shelf D",
+    },
+    {
+      quantity: 30,
+      location: "Warehouse F/ Shelf H",
+    },
+  ];
 
   const sampleData = {
     name: "ABCXYZ",
@@ -107,7 +135,18 @@ export default async function ExportQuantityCheckPage({
           icon={<FontAwesomeIcon icon={faCircleCheck} />}
           title="Quantity Check"
         >
-          Hello
+          <div className="flex flex-col gap-4 p-6">
+            <div className="flex flex-col gap-1">
+              <h2>Office Chair Black</h2>
+              <div>SKU: SPYBX-DRINK-500ML-LEM-01</div>
+              <div>Expected Quantity: 50</div>
+              <div className="text-brand-500 font-bold">Total Quantity: 50</div>
+            </div>
+            <CustomizableTable<ExportQuantityCheckRow>
+              headers={exportQuantityCheckColumn}
+              data={exportQuantityCheckData}
+            />
+          </div>
         </InfoBox>
       </div>
     </div>
