@@ -49,6 +49,17 @@ export interface WarehouseGeneral {
   // managerName: string; // Derived from backend `manager.firstName` + `last`
 }
 
+export interface WarehouseDetail {
+  id: number;
+  code: string;
+  name: string;
+  address: string;
+  description: string;
+  type: WarehouseType;
+  status: WarehouseStatus;
+  // managerName: string; // Derived from backend `manager.firstName` + `last`
+}
+
 export interface NewWarehouseRequest {
   name: string;
   address: string;

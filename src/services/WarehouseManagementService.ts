@@ -2,6 +2,7 @@ import {
   Category,
   CategoryRequest,
   NewWarehouseRequest,
+  WarehouseDetail,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
 import { apiClient } from "@/lib/api-mask";
@@ -39,6 +40,11 @@ export const warehouseService = {
   getAll: async () => {
     return apiClient.get<WarehouseGeneral[]>("/info/v1/warehouse/all", {
       cache: "no-store",
+    });
+  },
+  getDetail: async (id: number) => {
+    return apiClient.get<WarehouseDetail>(`/info/v1/warehouse/${id}`, {
+      cache: "no-cache",
     });
   },
 

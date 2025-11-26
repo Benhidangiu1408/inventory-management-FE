@@ -13,12 +13,14 @@ export default function GeneralInfoSection({
   items,
 }: GeneralInfoSectionProps) {
   return (
-    <div className="w-full rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
-      {title && <div className="mb-3">{title}</div>}
+    <div className="default-card w-full p-6">
+      {title && <div className="mb-3 font-medium">{title}</div>}
       <div className="grid grid-cols-2 gap-5">
         {items.map((item) => (
-          <div key={item.label} className="text-sm">
-            <div className="font-medium text-gray-600">{item.label}</div>
+          <div key={item.label}>
+            <div className="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400">
+              {item.label}
+            </div>
             <p>{item.value}</p>
           </div>
         ))}
