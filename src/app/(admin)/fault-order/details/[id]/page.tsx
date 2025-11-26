@@ -7,7 +7,7 @@ import CustomizableTable from "@/components/table/CustomizableTable";
 import {
   faultBatchColumns,
   processingOrderColumns,
-} from "@/components/table/TableHeader";
+} from "@/components/table/CustomizableTableHeader";
 import {
   faultBatchData,
   processingOrderData,

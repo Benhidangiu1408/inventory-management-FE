@@ -3,7 +3,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import InfoBox from "./InfoBox";
 import { faCube, faPlus } from "@fortawesome/free-solid-svg-icons";
-import CustomContentModalBox from "../Ky_components/CustomContentModalBox";
+import CustomContentModalBox from "../../components/modal/CustomContentModalBox";
 import CreateModal from "./CreateModal";
 import { ProductTempRow } from "../../interfaces/interface.table";
 import CustomizableTable, {

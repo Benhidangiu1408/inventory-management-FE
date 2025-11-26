@@ -2,14 +2,12 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import CustomizableTable from "@/components/table/CustomizableTable";
 import { userData } from "@/default_components/Ky_components/TableData";
-import { userColumns } from "@/components/table/TableHeader";
+import { userColumns } from "@/components/table/CustomizableTableHeader";
 import Filter, { DateRange } from "@/components/Filter";
-import Pagination from "@/default_components/tables/Pagination";
 import { useMemo, useState } from "react";
 import { isDateWithinRange, parseFlexibleDate } from "@/lib/utils";
 
 export default function UserManagementPage() {
-  const [page, setPage] = useState(1);
   const [dateRange, setDateRange] = useState<DateRange>({});
 
   const filteredUsers = useMemo(() => {
@@ -30,7 +28,7 @@ export default function UserManagementPage() {
           type="user"
           onDateRangeChange={(range) => {
             setDateRange(range);
-            setPage(1);
+            // setPage(1);
           }}
           dateRangePlaceholder={{
             from: "Last login (from)",
@@ -43,11 +41,6 @@ export default function UserManagementPage() {
             data={filteredUsers}
           ></CustomizableTable>
         </div>
-        <Pagination
-          currentPage={page}
-          totalPages={6}
-          onPageChange={setPage}
-        ></Pagination>
       </div>
     </div>
   );

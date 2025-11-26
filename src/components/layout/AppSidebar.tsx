@@ -16,14 +16,19 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
-  faBoxesStacked,
-  faFilePen,
-  faLayerGroup,
-  faTriangleExclamation,
-  faTruckMoving,
+  faDolly,
+  faTruckRampBox,
   faWarehouse,
 } from "@fortawesome/free-solid-svg-icons";
-import { Package, Settings, UserRoundCog, Warehouse } from "lucide-react";
+import {
+  ArchiveX,
+  FileBox,
+  Globe,
+  Package,
+  Settings,
+  UserRoundCog,
+  Warehouse,
+} from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -41,82 +46,74 @@ export const navItems: NavItem[] = [
   },
   {
     icon: <Warehouse />,
-    name: "Warehouse",
-    path: "/s",
+    name: "Warehouse Management",
+    subItems: [
+      { name: "Warehouse", path: "/warehouse-management/warehouse" },
+      { name: "Inventory Check", path: "/" },
+    ],
   },
   {
-    icon: <Package />,
-    name: "Item",
+    icon: <FileBox />,
+    name: "Catalog",
     subItems: [
-      { name: "Item List", path: "/s", pro: false },
-      { name: "UOM (Unit of Measurement)", path: "/s" },
+      { name: "Category", path: "/catalog/category" },
+      { name: "Product", path: "/" },
+      { name: "UOM (Unit of Measurement)", path: "/" },
     ],
   },
   {
     icon: <Package />,
+    name: "Inventory",
+    subItems: [
+      { name: "Item", path: "/" },
+      { name: "Batch", path: "/" },
+    ],
+  },
+  {
+    icon: <FontAwesomeIcon icon={faDolly} size="lg" />,
+    name: "Import",
+    path: "/import",
+  },
+  {
+    icon: <FontAwesomeIcon icon={faTruckRampBox} size="lg" />,
+    name: "Export",
+    path: "/export",
+  },
+  {
+    icon: <ArchiveX />,
     name: "Defective",
     subItems: [
-      { name: "Item List", path: "/s", pro: false },
-      { name: "UOM (Unit of Measurement)", path: "/s" },
+      { name: "Root Cause Analysis", path: "/" },
+      { name: "Fault Order", path: "/" },
+    ],
+  },
+  {
+    icon: <Globe />,
+    name: "Network",
+    subItems: [
+      { name: "Supplier", path: "/" },
+      { name: "Customer", path: "/" },
     ],
   },
   {
     name: "Users Control",
     icon: <UserRoundCog />,
     subItems: [
-      {
-        name: "Profile",
-        path: "/s",
-      },
-      {
-        name: "Users Management",
-        path: "/s",
-      },
-      {
-        name: "Role & Permission",
-        path: "/s",
-      },
+      { name: "Profile", path: "/s" },
+      { name: "Users Management", path: "/" },
+      { name: "Role & Permission", path: "/" },
+      { name: "User History", path: "/" },
     ],
-  },
-  {
-    icon: <Settings />,
-    name: "Settings",
-    path: "/s",
-  },
-  {
-    icon: <FontAwesomeIcon icon={faBoxesStacked} size="lg" />,
-    name: "Import",
-    path: "/import",
-  },
-  {
-    icon: <FontAwesomeIcon icon={faTruckMoving} size="lg" />,
-    name: "Export",
-    path: "/export",
-  },
-  {
-    icon: <FontAwesomeIcon icon={faFilePen} size="lg" />,
-    name: "Inventory Check",
-    path: "/inventory-check",
-  },
-  {
-    icon: <FontAwesomeIcon icon={faTriangleExclamation} size="lg" />,
-    name: "Fault Order",
-    path: "/fault-order",
-  },
-  {
-    icon: <FontAwesomeIcon icon={faLayerGroup} size="lg" />,
-    name: "Category",
-    path: "/category",
-  },
-  {
-    icon: <FontAwesomeIcon icon={faBoxesStacked} size="lg" />,
-    name: "Product",
-    path: "/product",
   },
   {
     icon: <FontAwesomeIcon icon={faBell} size="lg" />,
     name: "Notification",
     path: "/notification",
+  },
+  {
+    icon: <Settings />,
+    name: "Settings",
+    path: "/",
   },
 ];
 
@@ -300,8 +297,15 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // const isActive = (path: string) => path === pathname;
-  const isActive = useCallback((path: string) => path === pathname, [pathname]);
+  const isActive = useCallback(
+    (path: string) => {
+      if (path === "/") {
+        return pathname === "/";
+      }
+      return pathname === path || pathname.startsWith(`${path}/`);
+    },
+    [pathname],
+  );
 
   useEffect(() => {
     // Check if the current path matches any submenu item

@@ -1,31 +1,33 @@
 "use client";
 
-import { ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import {
   CellStyleModule,
   ClientSideRowModelModule,
   ColDef,
   ColDefField,
+  colorSchemeDarkBlue,
   CustomFilterModule,
   DateFilterModule,
+  GetDetailRowDataParams,
   ICellRendererParams,
+  IDetailCellRendererParams,
+  ModuleRegistry,
   NumberFilterModule,
   PaginationModule,
   TextFilterModule,
+  themeQuartz,
   ValidationModule,
 } from "ag-grid-community";
-import { AgGridReact, type AgGridReactProps } from "ag-grid-react";
-import {
-  ModuleRegistry,
-  themeQuartz,
-  colorSchemeDarkBlue,
-} from "ag-grid-community";
-import { useTheme } from "@/context/ThemeContext";
 import {
   ClipboardModule,
   ColumnMenuModule,
   ContextMenuModule,
+  MasterDetailModule,
 } from "ag-grid-enterprise";
+import { Column, TableProps } from "@/components/table/CustomizableTable";
+import { useTheme } from "@/context/ThemeContext";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { AgGridReact } from "ag-grid-react";
 import Pagination from "@/components/table/Pagination";
 
 ModuleRegistry.registerModules([
@@ -36,37 +38,32 @@ ModuleRegistry.registerModules([
   NumberFilterModule,
   DateFilterModule,
   CustomFilterModule,
+  MasterDetailModule,
   ColumnMenuModule,
-  ClipboardModule,
   ContextMenuModule,
+  ClipboardModule,
   ...(process.env.NODE_ENV !== "production" ? [ValidationModule] : []),
 ]);
 
-export interface Column<T extends object> {
-  label: string; // header displayed text
-  key: keyof T & string; // header/attribute key
-  render?: (value: T[keyof T], row: T) => ReactNode; // optional custom cell renderer
-  width?: number;
-  sortable?: boolean;
-  stopCenterData?: boolean;
+interface AccordionTableProps<T extends object, D extends object>
+  extends TableProps<T> {
+  // The key where the child array lives (e.g., "orders")
+  subTableKey: keyof T;
+  // Headers for the sub-table
+  subTableHeaders: Column<D>[];
 }
 
-export interface TableProps<T extends object>
-  extends Omit<AgGridReactProps<T>, "rowData" | "columnDefs"> {
-  headers: Column<T>[];
-  data: T[];
-  height?: number | string;
-}
-
-export default function CustomizableTable<T extends object>({
+export default function AccordionTable<T extends object, D extends object>({
   headers,
   data,
+  subTableKey,
+  subTableHeaders,
   className,
   height = "auto",
   defaultColDef,
   ...gridProps
-}: TableProps<T>) {
-  //   Table Theme
+}: AccordionTableProps<T, D>) {
+  // Table Theme
   const { theme } = useTheme();
   const agTheme = useMemo(() => {
     return theme === "light"
@@ -74,12 +71,23 @@ export default function CustomizableTable<T extends object>({
       : themeQuartz.withPart(colorSchemeDarkBlue);
   }, [theme]);
 
-  // Column Config
+  // Main Column Config
   const columnDefs = useMemo<ColDef<T>[]>(
-    () =>
-      headers.map((header) => {
+    () => [
+      // The "Expander" Column
+      {
+        headerName: "",
+        width: 50,
+        minWidth: 50,
+        cellRenderer: "agGroupCellRenderer", // Built-in expander arrow
+        resizable: false,
+        suppressSizeToFit: true,
+        filter: false,
+        sortable: false,
+        suppressHeaderContextMenu: true,
+      },
+      ...headers.map((header) => {
         const renderCell = header.render;
-        // Adapter for Custom Renderers
         const cellRenderer = renderCell
           ? (params: ICellRendererParams<T, T[keyof T]>) =>
               renderCell(params.value as T[keyof T], params.data as T)
@@ -95,6 +103,7 @@ export default function CustomizableTable<T extends object>({
           cellRenderer,
         } satisfies ColDef<T>;
       }),
+    ],
     [headers],
   );
 
@@ -109,6 +118,52 @@ export default function CustomizableTable<T extends object>({
     [defaultColDef],
   );
 
+  // Row Detail Table Config
+  const detailCellRendererParams = useMemo(() => {
+    const detailColumnDefs: ColDef[] = subTableHeaders.map((header) => {
+      const renderCell = header.render;
+      const cellRenderer = renderCell
+        ? (params: ICellRendererParams) => renderCell(params.value, params.data)
+        : undefined;
+
+      return {
+        headerName: header.label,
+        field: header.key as unknown as ColDefField<D>,
+        flex: header.width ? 0 : 1,
+        width: header.width,
+        sortable: header.sortable ?? true,
+        cellClass: header.stopCenterData ? "" : "text-center",
+        cellRenderer,
+      } satisfies ColDef<D>;
+    });
+
+    return {
+      // Configure the inner grid
+      detailGridOptions: {
+        suppressCellFocus: true,
+        columnDefs: detailColumnDefs,
+        defaultColDef: {
+          filter: true,
+          minWidth: 150,
+          suppressHeaderMenuButton: true,
+        },
+        theme:
+          theme === "light"
+            ? themeQuartz
+            : themeQuartz.withPart(colorSchemeDarkBlue),
+        pagination: true,
+        paginationPageSize: 10,
+      },
+
+      // B. Tell AG Grid how to find the data
+      getDetailRowData: (params: GetDetailRowDataParams) => {
+        // Pull the array from the row data using your key (e.g., row.orders)
+        const subData = params.data[subTableKey];
+        params.successCallback(subData);
+      },
+    } as IDetailCellRendererParams<T, D>;
+  }, [subTableHeaders, subTableKey, theme]);
+
   // table style
   const wrapperClassName = useMemo(
     () =>
@@ -121,6 +176,7 @@ export default function CustomizableTable<T extends object>({
         // // Forces the text span to take full width (so it can center)
         "[&_.ag-header-cell-text]:w-full",
         "[&_.ag-header-cell-text]:font-semibold",
+        "[&_.ag-details-row]:!p-2",
         className,
       ]
         .filter((value): value is string => Boolean(value && value.trim()))
@@ -161,11 +217,13 @@ export default function CustomizableTable<T extends object>({
       <AgGridReact<T>
         ref={gridRef}
         theme={agTheme}
-        rowData={data}
         columnDefs={columnDefs}
         defaultColDef={mergedDefaultColDef}
-        suppressCellFocus={true}
+        rowData={data}
+        detailCellRendererParams={detailCellRendererParams}
         domLayout={height === "auto" ? "autoHeight" : "normal"}
+        suppressCellFocus={true}
+        masterDetail={true}
         pagination={true}
         paginationPageSize={pageSize}
         suppressPaginationPanel={true}
