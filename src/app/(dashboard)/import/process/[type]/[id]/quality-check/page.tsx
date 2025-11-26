@@ -25,23 +25,31 @@ export default function QualityCheckPage() {
       key: "qualityStatus",
       label: "Quality Status",
       render: () => (
-        <div className="flex inline-flex gap-2">
-          <Button variant="success_outline">Pass</Button>
-          <Button variant="danger_outline">Fail</Button>
-          <Button variant="warning_outline">Skip</Button>
-          <Button variant="exempt_outline">Exempt</Button>
+        <div className="inline-flex h-full w-full gap-2">
+          <Button size="sm" variant="success_outline">
+            Pass
+          </Button>
+          <Button size="sm" variant="danger_outline">
+            Fail
+          </Button>
+          <Button size="sm" variant="warning_outline">
+            Skip
+          </Button>
+          <Button size="sm" variant="exempt_outline">
+            Exempt
+          </Button>
         </div>
       ),
     },
     {
       key: "reason",
       label: "Reason",
-      render: () => <Input />,
+      render: () => <Input className="h-full" />,
     },
     {
       key: "notes",
       label: "Notes",
-      render: () => <Input />,
+      render: () => <Input className="h-full" />,
     },
   ];
 

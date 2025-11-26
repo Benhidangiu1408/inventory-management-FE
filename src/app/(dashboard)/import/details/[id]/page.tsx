@@ -1,3 +1,5 @@
+"use client";
+
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import TableBox from "@/default_components/TA_common/TableBox";
 import UtilityBar from "@/default_components/TA_common/UtilityBar";

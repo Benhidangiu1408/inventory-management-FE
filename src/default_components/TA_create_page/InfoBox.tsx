@@ -18,7 +18,7 @@ export default function InfoBox({
   modal,
 }: InfoBoxProps) {
   return (
-    <div className="rounded-2xl border border-gray-200">
+    <div className="rounded-2xl border border-gray-200 bg-white">
       <div className="border-b border-gray-200 px-6 py-3">
         <div className="flex items-center justify-between gap-3 text-lg font-bold">
           <div className="flex items-center gap-3">

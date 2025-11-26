@@ -159,7 +159,7 @@ export default async function ConfirmPage({
           </div>
           <div className="flex flex-1 flex-col gap-6">
             <OrderSummary />
-            <div className="rounded-2xl border border-gray-200 p-6">
+            <div className="rounded-2xl border border-gray-200 bg-white p-6">
               <h2 className="mb-4 text-lg">Confirmation</h2>
               <Button className="w-full" size="md">
                 <FontAwesomeIcon icon={faArrowRight} /> Confirm
