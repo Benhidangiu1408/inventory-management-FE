@@ -1,11 +1,11 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import InfoBox from "@/default_components/TA_create_page/InfoBox";
-import InfoBoxStatus from "@/default_components/TA_create_page/InfoBoxStatus";
-import InfoList from "@/default_components/TA_create_page/InfoList";
-import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
-import ProductListInfoBox from "@/default_components/TA_create_page/ProductListInfoBox";
+import InfoBox from "@/components/TA_create_page/InfoBox";
+import InfoBoxStatus from "@/components/TA_create_page/InfoBoxStatus";
+import InfoList from "@/components/TA_create_page/InfoList";
+import InfoPagination from "@/components/TA_create_page/InfoPagination";
+import ProductListInfoBox from "@/components/TA_create_page/ProductListInfoBox";
 // import ProgressBar from "@/default_components/TA_create_page/ProgressBar";
-import SmallInfoBox from "@/default_components/TA_create_page/SmallInfoBox";
+import SmallInfoBox from "@/components/TA_create_page/SmallInfoBox";
 import {
   faCircleCheck,
   faCircleInfo,

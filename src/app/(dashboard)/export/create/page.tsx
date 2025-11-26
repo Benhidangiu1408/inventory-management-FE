@@ -7,8 +7,8 @@ import CustomizableTable, {
   Column,
   TableProps,
 } from "@/components/table/CustomizableTable";
-import CustomFilter from "@/default_components/TA_common/CustomFilter";
-import FilterItem from "@/default_components/TA_common/FilterItem";
+import CustomFilter from "@/components/TA_common/CustomFilter";
+import FilterItem from "@/components/TA_common/FilterItem";
 // import Pagination from "@/default_components/tables/Pagination";
 import Button from "@/default_components/ui/button/Button";
 import { ImportCreateRow } from "@/interfaces/interface.table";

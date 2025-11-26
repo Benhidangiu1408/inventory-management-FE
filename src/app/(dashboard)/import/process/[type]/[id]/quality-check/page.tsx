@@ -1,7 +1,7 @@
 "use client";
 
 import Input from "@/default_components/form/input/InputField";
-import InfoBox from "@/default_components/TA_create_page/InfoBox";
+import InfoBox from "@/components/TA_create_page/InfoBox";
 // import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
 import Button from "@/default_components/ui/button/Button";
 import { QualityCheckRow } from "@/interfaces/interface.table";

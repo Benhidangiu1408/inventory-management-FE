@@ -2,7 +2,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 
-import UtilityBar from "@/default_components/TA_common/UtilityBar";
+import UtilityBar from "@/components/TA_common/UtilityBar";
 import CustomizableTable from "@/components/table/CustomizableTable";
 import {
   faultBatchColumns,
@@ -11,8 +11,8 @@ import {
 import {
   faultBatchData,
   processingOrderData,
-} from "@/default_components/Ky_components/TableData";
-import StatusBox from "@/default_components/TA_common/StatusBox";
+} from "@/components/table/TableData";
+import StatusBox from "@/components/TA_common/StatusBox";
 import Button from "@/default_components/ui/button/Button";
 
 export default function FaultOrderDetailPage() {

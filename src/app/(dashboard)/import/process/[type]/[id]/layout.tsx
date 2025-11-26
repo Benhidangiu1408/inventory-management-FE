@@ -1,8 +1,8 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import InfoBox from "@/default_components/TA_create_page/InfoBox";
-import InfoList from "@/default_components/TA_create_page/InfoList";
-import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
-import SmallInfoBox from "@/default_components/TA_create_page/SmallInfoBox";
+import InfoBox from "@/components/TA_create_page/InfoBox";
+import InfoList from "@/components/TA_create_page/InfoList";
+import InfoPagination from "@/components/TA_create_page/InfoPagination";
+import SmallInfoBox from "@/components/TA_create_page/SmallInfoBox";
 import { ProcessProvider } from "@/context/ProcessContext";
 import {
   faCircleInfo,
@@ -11,9 +11,9 @@ import {
   faIndustry,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ProgressBar from "@/default_components/TA_create_page/ProgressBar";
-import InfoBoxStatus from "@/default_components/TA_create_page/InfoBoxStatus";
-import ProductListInfoBox from "@/default_components/TA_create_page/ProductListInfoBox";
+import ProgressBar from "@/components/TA_create_page/ProgressBar";
+import InfoBoxStatus from "@/components/TA_create_page/InfoBoxStatus";
+import ProductListInfoBox from "@/components/TA_create_page/ProductListInfoBox";
 
 export default async function ImportProcessLayout({
   params,

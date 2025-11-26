@@ -4,7 +4,7 @@ import CustomizableTable from "@/components/table/CustomizableTable";
 import Filter, { DateRange } from "@/components/Filter";
 
 import React, { useMemo, useState } from "react";
-import { orderData } from "@/default_components/Ky_components/TableData";
+import { orderData } from "@/components/table/TableData";
 import { orderColumns } from "@/components/table/CustomizableTableHeader";
 import { isDateWithinRange, parseFlexibleDate } from "@/lib/utils";
 
