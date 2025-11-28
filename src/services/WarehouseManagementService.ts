@@ -51,4 +51,10 @@ export const warehouseService = {
   create: async (data: NewWarehouseRequest) => {
     return apiClient.post<NewWarehouseRequest>("/info/v1/warehouse/new", data);
   },
+  update: async (id: number, data: NewWarehouseRequest) => {
+    return apiClient.put<NewWarehouseRequest>(
+      `/info/v1/warehouse/update/${id}`,
+      data,
+    );
+  },
 };

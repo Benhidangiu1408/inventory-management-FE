@@ -3,6 +3,7 @@ import GeneralInfoSection from "@/components/GeneralInformation";
 import { warehouseService } from "@/services/WarehouseManagementService";
 import { ApiError } from "@/lib/api-mask";
 import { WarehouseDetail } from "@/interfaces/warehouseManagementType";
+import { ModalUpdateWarehouseForm } from "@/components/form/ModalUpdateWarehouseForm";
 
 export default async function WarehouseDetailPage({
   params,
@@ -38,15 +39,28 @@ export default async function WarehouseDetailPage({
         filters={["warehouse-management", "detail"]}
       />
       <div className="flex flex-col gap-6">
-        <div className="flex justify-between gap-6">
-          <div className="flex flex-3 flex-col gap-6">
-            <GeneralInfoSection
-              title="General Information"
-              items={generalInfoItems}
-            />
-            <div className="default-card p-6"></div>
-          </div>
-        </div>
+        <GeneralInfoSection
+          title="General Information"
+          items={generalInfoItems}
+          editBtn={
+            <ModalUpdateWarehouseForm initialData={data as WarehouseDetail} />
+          }
+        />
+        <GeneralInfoSection
+          title="Description"
+          items={[
+            {
+              label: "",
+              value:
+                data?.description !== "" ? (
+                  data?.description
+                ) : (
+                  <div className="italic opacity-50">No description</div>
+                ),
+            },
+          ]}
+        />
+        <div className="default-card p-6"></div>
       </div>
     </div>
   );
