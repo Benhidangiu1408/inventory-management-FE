@@ -48,7 +48,7 @@ const CategoryForm = ({
   } = useForm<CategoryRequest>({
     defaultValues: {
       name: initialData?.name || "",
-      description: initialData?.description || "",
+      description: initialData?.description || null,
       status: initialData?.status || "ACTIVE",
       parentCategoryId: initialData?.parentCategoryId || null,
     },
@@ -65,7 +65,7 @@ const CategoryForm = ({
     try {
       const payload: CategoryRequest = {
         name: data.name,
-        description: data.description,
+        description: data.description !== "" ? data.description : null,
         status: data.status,
         parentCategoryId: data.parentCategoryId
           ? Number(data.parentCategoryId)

@@ -38,7 +38,7 @@ export const CreateWarehouseForm = () => {
     defaultValues: {
       name: "",
       address: "",
-      description: "",
+      description: null,
       status: WarehouseStatus.ACTIVE,
       type: WarehouseType.STORAGE,
     },
@@ -50,7 +50,7 @@ export const CreateWarehouseForm = () => {
     try {
       const payload: NewWarehouseRequest = {
         name: data.name,
-        description: data.description,
+        description: data.description !== "" ? data.description : null,
         address: data.address,
         type: data.type,
         status: data.status,

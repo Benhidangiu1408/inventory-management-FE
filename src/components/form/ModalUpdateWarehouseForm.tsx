@@ -61,7 +61,7 @@ const UpdateWarehouseForm = ({
     try {
       const payload: NewWarehouseRequest = {
         name: data.name,
-        description: data.description,
+        description: data.description !== "" ? data.description : null,
         address: data.address,
         type: data.type,
         status: data.status,

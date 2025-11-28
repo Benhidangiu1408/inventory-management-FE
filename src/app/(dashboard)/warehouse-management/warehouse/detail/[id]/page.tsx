@@ -51,12 +51,9 @@ export default async function WarehouseDetailPage({
           items={[
             {
               label: "",
-              value:
-                data?.description !== "" ? (
-                  data?.description
-                ) : (
-                  <div className="italic opacity-50">No description</div>
-                ),
+              value: (data?.description as string) || (
+                <div className="text-gray-400 italic">No description</div>
+              ),
             },
           ]}
         />
