@@ -10,6 +10,8 @@ type ModalProps = {
   title?: string;
   startIcon?: ReactNode;
   openBtnTitle: string;
+  btnClassName?: string;
+  disableSaveBtn?: boolean;
   // Logic
   formId?: string;
   isLoading?: boolean;
@@ -26,6 +28,8 @@ export default function NoControlModalBox({
   title,
   startIcon,
   isLoading = false,
+  btnClassName = "",
+  disableSaveBtn = false,
   openBtnTitle,
   formId,
   modalContent,
@@ -41,7 +45,12 @@ export default function NoControlModalBox({
   return (
     <div>
       {/* 1. The Trigger Button (Opens the Modal) */}
-      <Button size="sm" onClick={onOpen} startIcon={startIcon}>
+      <Button
+        size="sm"
+        onClick={onOpen}
+        startIcon={startIcon}
+        className={btnClassName}
+      >
         {openBtnTitle}
       </Button>
       {/* Modal */}
@@ -72,7 +81,7 @@ export default function NoControlModalBox({
             form={formId}
             size="sm"
             onClick={formId ? undefined : handleSave}
-            disabled={isLoading}
+            disabled={isLoading || disableSaveBtn}
           >
             {isLoading ? "Saving..." : "Save"}
           </Button>

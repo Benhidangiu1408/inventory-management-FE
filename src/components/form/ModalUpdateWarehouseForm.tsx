@@ -3,23 +3,37 @@
 import Input from "@/default_components/form/input/InputField";
 import Label from "@/default_components/form/Label";
 import Select from "@/default_components/form/Select";
-import Button from "@/default_components/ui/button/Button";
 import {
   NewWarehouseRequest,
+  WarehouseDetail,
   WarehouseStatus,
   WarehouseType,
 } from "@/interfaces/warehouseManagementType";
 import { ApiError } from "@/lib/api-mask";
 import { warehouseService } from "@/services/WarehouseManagementService";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import NoControlModalBox from "../modal/NoControlModalBox";
+import { useModal } from "@/hooks/useModal";
+import { Pencil } from "lucide-react";
 
-export const CreateWarehouseForm = () => {
+interface WarehouseFormProps {
+  setLoading: (loading: boolean) => void;
+  setDisable: (loading: boolean) => void;
+  onSuccess: () => void;
+  initialData?: WarehouseDetail;
+}
+
+const UpdateWarehouseForm = ({
+  setLoading,
+  setDisable,
+  onSuccess,
+  initialData,
+}: WarehouseFormProps) => {
   // Initiate form control
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const typeOptions = Object.values(WarehouseType).map((type) => ({
     value: type,
     label: type.replace("_", " "), // Makes "COLD_STORAGE" look like "COLD STORAGE"
@@ -32,17 +46,14 @@ export const CreateWarehouseForm = () => {
   const {
     register,
     handleSubmit,
-    reset,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<NewWarehouseRequest>({
-    defaultValues: {
-      name: "",
-      address: "",
-      description: null,
-      status: WarehouseStatus.ACTIVE,
-      type: WarehouseType.STORAGE,
-    },
+    defaultValues: initialData,
   });
+
+  useEffect(() => {
+    setDisable(!isDirty);
+  }, [isDirty, setDisable]);
 
   //Validation Logic
   const onSubmit: SubmitHandler<NewWarehouseRequest> = async (data) => {
@@ -55,10 +66,10 @@ export const CreateWarehouseForm = () => {
         type: data.type,
         status: data.status,
       };
-      await warehouseService.create(payload);
-      reset();
+      await warehouseService.update(Number(initialData?.id), payload);
       toast.success("Warehouse created successfully!");
-      router.replace("/warehouse-management/warehouse");
+      router.refresh();
+      onSuccess();
     } catch (error) {
       if (error instanceof ApiError) {
         toast.error(error.message);
@@ -71,7 +82,11 @@ export const CreateWarehouseForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={"mt-4 space-y-6"}>
+    <form
+      id="updateWarehouseForm"
+      onSubmit={handleSubmit(onSubmit)}
+      className={"mt-4 space-y-6"}
+    >
       {/* Name */}
       <div>
         <Label>Warehouse Name</Label>
@@ -137,19 +152,38 @@ export const CreateWarehouseForm = () => {
         </div>
       </div>
       {/* Manager? */}
-      <div className="flex gap-3">
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => router.replace("/warehouse-management/warehouse")}
-          type="button"
-        >
-          Cancel
-        </Button>
-        <Button size="sm" disabled={loading} type="submit">
-          Save
-        </Button>
-      </div>
     </form>
   );
 };
+
+export function ModalUpdateWarehouseForm({
+  initialData,
+}: {
+  initialData: WarehouseDetail;
+}) {
+  const [loading, setLoading] = useState(false);
+  const { isOpen, openModal, closeModal } = useModal();
+  const [disable, setDisable] = useState(false);
+
+  return (
+    <NoControlModalBox
+      btnClassName="h-8 w-8"
+      startIcon={<Pencil size={16} />}
+      openBtnTitle={""}
+      formId={"updateWarehouseForm"}
+      isLoading={loading}
+      isOpen={isOpen}
+      onOpen={openModal}
+      onClose={closeModal}
+      disableSaveBtn={disable}
+      modalContent={
+        <UpdateWarehouseForm
+          setLoading={setLoading}
+          setDisable={setDisable}
+          onSuccess={closeModal}
+          initialData={initialData}
+        />
+      }
+    />
+  );
+}

@@ -30,7 +30,7 @@ export default function SearchResultItem({
             {capitalizeWords(parentName)}
           </div>
         )}
-        <div className="">{capitalizeWords(name)}</div>
+        <div>{capitalizeWords(name)}</div>
       </div>
     </Link>
   );
