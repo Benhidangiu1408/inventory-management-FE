@@ -22,15 +22,18 @@ export default function AuthLayout({
               <GridShape />
               <div className="flex max-w-xs flex-col items-center">
                 <Link href="/" className="mb-4 block">
-                  <Image
-                    width={231}
-                    height={48}
-                    src="./images/logo/auth-logo.svg"
-                    alt="Logo"
-                  />
+                  <div className="flex flex-col items-center justify-center gap-4">
+                    <Image
+                      width={150}
+                      height={150}
+                      src="./images/logo/logo-icon.svg"
+                      alt="Logo"
+                    />
+                    <h3 className="text-white text-3xl">Stockify</h3>
+                  </div>
                 </Link>
-                <p className="text-center text-gray-400 dark:text-white/60">
-                  Free and Open-Source Tailwind CSS Admin Dashboard Template
+                <p className="text-center text-3xl text-gray-400 dark:text-white/60">
+                  Efficiency at Every Aisle
                 </p>
               </div>
             </div>
