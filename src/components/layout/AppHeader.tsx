@@ -186,20 +186,23 @@ const AppHeader: React.FC = () => {
           </button>
 
           <Link href="/" className="lg:hidden">
-            <Image
-              width={154}
-              height={32}
-              className="dark:hidden"
-              src="/images/logo/logo.svg"
-              alt="Logo"
-            />
-            <Image
+            <div className="flex items-center gap-2">
+              <Image
+                width={35}
+                height={35}
+                className=""
+                src="/images/logo/logo-icon.svg"
+                alt="Logo"
+              />
+              <div className="text-xl dark:text-white">Stockify</div>
+            </div>
+            {/* <Image
               width={154}
               height={32}
               className="hidden dark:block"
               src="/images/logo/logo-dark.svg"
               alt="Logo"
-            />
+            /> */}
           </Link>
 
           <button
