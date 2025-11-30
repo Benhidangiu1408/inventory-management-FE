@@ -1,6 +1,9 @@
 import {
   Category,
   CategoryRequest,
+  LocationBulkCreate,
+  LocationResponse,
+  LocationType,
   NewWarehouseRequest,
   WarehouseDetail,
   WarehouseGeneral,
@@ -55,6 +58,44 @@ export const warehouseService = {
     return apiClient.put<NewWarehouseRequest>(
       `/info/v1/warehouse/update/${id}`,
       data,
+    );
+  },
+};
+
+export const locationService = {
+  create: async (data: LocationBulkCreate) => {
+    return apiClient.post<LocationBulkCreate>("/info/v1/location/new", data);
+  },
+  getAll: async (warehouseId: number) => {
+    return apiClient.get<LocationResponse[]>(
+      `/info/v1/warehouse/${warehouseId}/location/all`,
+      {
+        cache: "no-cache",
+      },
+    );
+  },
+  getRoot: async (warehouseId: number) => {
+    return apiClient.get<LocationResponse[]>(
+      `/info/v1/warehouse/${warehouseId}/location/roots`,
+      {
+        cache: "no-cache",
+      },
+    );
+  },
+  getChildren: async (warehouseId: number, parentId: number) => {
+    return apiClient.get<LocationResponse[]>(
+      `/info/v1/warehouse/${warehouseId}/location/children?parentId=${parentId}`,
+      {
+        cache: "no-cache",
+      },
+    );
+  },
+  getByType: async (warehouseId: number, type: LocationType) => {
+    return apiClient.get<LocationResponse[]>(
+      `/info/v1/warehouse/${warehouseId}/location/type?type=${type}`,
+      {
+        cache: "no-cache",
+      },
     );
   },
 };

@@ -71,21 +71,21 @@ export interface NewWarehouseRequest {
 
 // ----------------- Location --------------------
 export enum LocationType {
-  ROOM,
-  ZONE,
-  AISLE,
-  SHELF,
-  RACK,
-  BIN,
+  ROOM = "ROOM",
+  ZONE = "ZONE",
+  AISLE = "AISLE",
+  SHELF = "SHELF",
+  RACK = "RACK",
+  BIN = "BIN",
 }
 
 export enum LocationStatus {
-  INACTIVE,
-  OCCUPIED,
-  EMPTY,
-  RESERVED,
-  BLOCKED,
-  UNDER_MAINTENANCE,
+  INACTIVE = "INACTIVE",
+  OCCUPIED = "OCCUPIED",
+  EMPTY = "EMPTY",
+  RESERVED = "RESERVE",
+  BLOCKED = "BLOCKED",
+  UNDER_MAINTENANCE = "UNDER_MAINTENANCE",
 }
 
 export interface LocationResponse {
@@ -103,12 +103,12 @@ export interface LocationUpdate {
 
 export interface LocationBulkCreate {
   warehouseId: number;
-  parentId: number;
+  parentId: number | null;
   levels: LevelConfig[];
 }
 
 interface LevelConfig {
   type: LocationType;
   quantity: number;
-  namePrefix: string;
+  namePrefix: string | null;
 }

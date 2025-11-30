@@ -4,6 +4,7 @@ import { warehouseService } from "@/services/WarehouseManagementService";
 import { ApiError } from "@/lib/api-mask";
 import { WarehouseDetail } from "@/interfaces/warehouseManagementType";
 import { ModalUpdateWarehouseForm } from "@/components/form/ModalUpdateWarehouseForm";
+import { ModalCreateLocationForm } from "@/components/form/ModalCreateLocationForm";
 
 export default async function WarehouseDetailPage({
   params,
@@ -57,7 +58,9 @@ export default async function WarehouseDetailPage({
             },
           ]}
         />
-        <div className="default-card p-6"></div>
+        <div className="default-card p-6">
+          <ModalCreateLocationForm />
+        </div>
       </div>
     </div>
   );

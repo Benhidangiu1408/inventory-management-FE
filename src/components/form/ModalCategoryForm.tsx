@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import Label from "@/default_components/form/Label";
 import Input from "@/default_components/form/input/InputField";
@@ -26,6 +26,7 @@ import Radio from "@/default_components/form/input/Radio";
 
 interface CategoryFormProps {
   setLoading: (loading: boolean) => void;
+  setDisable: (loading: boolean) => void;
   onSuccess: () => void;
   initialData?: SubCategory;
   existingCategories?: Category[];
@@ -33,6 +34,7 @@ interface CategoryFormProps {
 
 const CategoryForm = ({
   setLoading,
+  setDisable,
   onSuccess,
   initialData,
   existingCategories = [],
@@ -44,7 +46,7 @@ const CategoryForm = ({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<CategoryRequest>({
     defaultValues: {
       name: initialData?.name || "",
@@ -53,6 +55,10 @@ const CategoryForm = ({
       parentCategoryId: initialData?.parentCategoryId || null,
     },
   });
+
+  useEffect(() => {
+    setDisable(!isDirty);
+  }, [isDirty, setDisable]);
 
   const parentOptions = useMemo(() => {
     return existingCategories
@@ -161,6 +167,7 @@ const CategoryForm = ({
 
 export function ModalCategoryForm({ data }: { data: Category[] }) {
   const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
   const [selectedCategory, setSelectedCategory] = useState<
     SubCategory | undefined
@@ -193,6 +200,7 @@ export function ModalCategoryForm({ data }: { data: Category[] }) {
           formId={"tableForm"}
           isLoading={loading}
           isOpen={isOpen}
+          disableSaveBtn={disable}
           onOpen={() => {
             setSelectedCategory(undefined);
             openModal();
@@ -200,6 +208,7 @@ export function ModalCategoryForm({ data }: { data: Category[] }) {
           onClose={closeModal}
           modalContent={
             <CategoryForm
+              setDisable={setDisable}
               setLoading={setLoading}
               onSuccess={closeModal}
               existingCategories={data}
