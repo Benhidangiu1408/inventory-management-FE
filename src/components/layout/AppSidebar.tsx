@@ -380,20 +380,23 @@ const AppSidebar: React.FC = () => {
         <Link href="/">
           {isExpanded || isHovered || isMobileOpen ? (
             <div className={"h-[40px] w-[150px]"}>
-              <Image
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-              <Image
+              <div className="flex items-center gap-3">
+                <Image
+                  src="/images/logo/logo-icon.svg"
+                  alt="Logo"
+                  width={45}
+                  height={45}
+                />
+                <div className="dark:text-white text-xl">Stockify</div>
+              </div>
+              
+              {/* <Image
                 className="hidden dark:block"
                 src="/images/logo/logo-dark.svg"
                 alt="Logo"
                 width={150}
                 height={40}
-              />
+              /> */}
             </div>
           ) : (
             <div className={"flex h-[40px] justify-center"}>
