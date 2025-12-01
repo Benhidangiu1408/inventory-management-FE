@@ -57,7 +57,7 @@ export const navItems: NavItem[] = [
     name: "Catalog",
     subItems: [
       { name: "Category", path: "/catalog/category" },
-      { name: "Product", path: "/" },
+      { name: "Product", path: "/catalog/product" },
       { name: "UOM (Unit of Measurement)", path: "/" },
     ],
   },
@@ -387,9 +387,9 @@ const AppSidebar: React.FC = () => {
                   width={45}
                   height={45}
                 />
-                <div className="dark:text-white text-xl">Stockify</div>
+                <div className="text-xl dark:text-white">Stockify</div>
               </div>
-              
+
               {/* <Image
                 className="hidden dark:block"
                 src="/images/logo/logo-dark.svg"

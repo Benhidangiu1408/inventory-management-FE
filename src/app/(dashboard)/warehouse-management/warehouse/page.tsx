@@ -25,7 +25,7 @@ export default async function WarehousePage() {
   return (
     <div>
       <PageBreadcrumb
-        pageTitle="Warehouse List"
+        pageTitle="Warehouse"
         filters={["warehouse-management"]}
       />
       <div>

@@ -23,10 +23,8 @@ export default async function CategoryPage() {
   return (
     <div>
       <PageBreadcrumb pageTitle="Category" filters={["catalog"]} />
-      <div>
-        <div className="default-card">
-          <ModalCategoryForm data={data} />
-        </div>
+      <div className="default-card">
+        <ModalCategoryForm data={data} />
       </div>
     </div>
   );

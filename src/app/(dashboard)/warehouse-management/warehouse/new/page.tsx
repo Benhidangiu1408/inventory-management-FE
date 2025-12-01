@@ -8,10 +8,8 @@ export default function CreateWarehousePage() {
         pageTitle="Create Warehouse"
         filters={["warehouse-management"]}
       />
-      <div>
-        <div className="default-card p-6">
-          <CreateWarehouseForm />
-        </div>
+      <div className="default-card p-6">
+        <CreateWarehouseForm />
       </div>
     </div>
   );
