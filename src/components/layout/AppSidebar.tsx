@@ -58,7 +58,8 @@ export const navItems: NavItem[] = [
     subItems: [
       { name: "Category", path: "/catalog/category" },
       { name: "Product", path: "/catalog/product" },
-      { name: "UOM (Unit of Measurement)", path: "/" },
+      { name: "Product Attributes", path: "/catalog/variant-attributes" },
+      { name: "UOM (Unit of Measurement)", path: "/catalog/unit" },
     ],
   },
   {
@@ -326,11 +327,13 @@ const AppSidebar: React.FC = () => {
         }
       });
     });
-
+    const checkActive = () => {
+      if (!submenuMatched) {
+        setOpenSubmenu(null);
+      }
+    };
     // If no submenu item matches, close the open submenu
-    if (!submenuMatched) {
-      setOpenSubmenu(null);
-    }
+    checkActive();
   }, [pathname, isActive]);
 
   useEffect(() => {

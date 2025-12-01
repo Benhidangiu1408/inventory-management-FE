@@ -39,7 +39,6 @@ export const getCategoryHeaders = (
   {
     label: "Actions",
     key: "id",
-    width: 80,
     render: (_, row) => (
       <div className="flex h-full items-center justify-center gap-2">
         <button onClick={() => onEdit(row)}>

@@ -13,10 +13,12 @@ import Select from "@/default_components/form/Select";
 import Badge from "@/default_components/ui/badge/Badge";
 import Button from "@/default_components/ui/button/Button";
 import {
+  AttributeResponse,
   LocationResponse,
+  UnitResponse,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
-import { Eye } from "lucide-react";
+import { Eye, Pencil } from "lucide-react";
 
 // --- Warehouse General Header ---
 export const warehouseHeaders: Column<WarehouseGeneral>[] = [
@@ -117,6 +119,66 @@ export const LocationHeaders: Column<LocationResponse>[] = [
   //     </div>
   //   ),
   // },
+];
+
+export const getUnitHeaders = (
+  onEdit: (unit: UnitResponse) => void,
+): Column<UnitResponse>[] => [
+  {
+    label: "Unit Name",
+    key: "name",
+  },
+  {
+    label: "Unit Abbreviation",
+    key: "abb",
+  },
+  {
+    label: "Description",
+    key: "description",
+    render: (val) =>
+      (val as string) || (
+        <span className="text-gray-400 italic">No description</span>
+      ),
+  },
+  {
+    label: "Actions",
+    key: "id",
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <button onClick={() => onEdit(row)}>
+          <Pencil size={16} />
+        </button>
+      </div>
+    ),
+  },
+];
+
+export const getAttributeHeaders = (
+  onEdit: (unit: AttributeResponse) => void,
+): Column<AttributeResponse>[] => [
+  {
+    label: "Attributes Name",
+    key: "name",
+  },
+  {
+    label: "Description",
+    key: "description",
+    render: (val) =>
+      (val as string) || (
+        <span className="text-gray-400 italic">No description</span>
+      ),
+  },
+  {
+    label: "Actions",
+    key: "id",
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <button onClick={() => onEdit(row)}>
+          <Pencil size={16} />
+        </button>
+      </div>
+    ),
+  },
 ];
 
 // Nho dem vo interface cua serivce nha!!

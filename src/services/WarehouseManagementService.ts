@@ -1,10 +1,14 @@
 import {
+  AttributeRequest,
+  AttributeResponse,
   Category,
   CategoryRequest,
   LocationBulkCreate,
   LocationResponse,
   LocationType,
   NewWarehouseRequest,
+  UnitRequest,
+  UnitResponse,
   WarehouseDetail,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
@@ -96,6 +100,41 @@ export const locationService = {
       {
         cache: "no-cache",
       },
+    );
+  },
+};
+
+export const unitService = {
+  getAll: async () => {
+    return apiClient.get<UnitResponse[]>("/info/v1/unit/all", {
+      cache: "no-store",
+    });
+  },
+
+  create: async (data: UnitRequest) => {
+    return apiClient.post<UnitRequest>("/info/v1/unit/new", data);
+  },
+
+  update: async (id: number, data: UnitRequest) => {
+    return apiClient.put<UnitRequest>(`/info/v1/unit/update/${id}`, data);
+  },
+};
+
+export const attributesService = {
+  getAll: async () => {
+    return apiClient.get<AttributeResponse[]>("/info/v1/attributes/all", {
+      cache: "no-store",
+    });
+  },
+
+  create: async (data: AttributeRequest) => {
+    return apiClient.post<AttributeRequest>("/info/v1/attributes/new", data);
+  },
+
+  update: async (id: number, data: AttributeRequest) => {
+    return apiClient.put<AttributeRequest>(
+      `/info/v1/attributes/update/${id}`,
+      data,
     );
   },
 };

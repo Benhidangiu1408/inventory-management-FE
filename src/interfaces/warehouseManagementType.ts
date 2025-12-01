@@ -112,3 +112,29 @@ interface LevelConfig {
   quantity: number;
   namePrefix: string | null;
 }
+
+// Unit
+export interface UnitResponse {
+  id: number;
+  name: string;
+  abb: string;
+  description: string | null;
+}
+
+export interface UnitRequest {
+  name: string;
+  abb: string;
+  description: string | null;
+}
+
+// VARIANT ATTRIBUTES
+export interface AttributeResponse {
+  id: number;
+  name: string;
+  description: string | null;
+}
+
+export interface AttributeRequest {
+  name: string;
+  description: string | null;
+}
