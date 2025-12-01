@@ -132,10 +132,7 @@ const CreateForm = ({
         parentId: anchorParentId,
         levels: levelsConfig,
       };
-
-      await new Promise((resolve) => setTimeout(() => resolve(1), 2000));
       await locationService.create(payload);
-      console.log(payload);
       toast.success("Location created successfully!");
       router.refresh();
       onSuccess();
