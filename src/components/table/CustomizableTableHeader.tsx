@@ -12,7 +12,10 @@ import {
 import Select from "@/default_components/form/Select";
 import Badge from "@/default_components/ui/badge/Badge";
 import Button from "@/default_components/ui/button/Button";
-import { WarehouseGeneral } from "@/interfaces/warehouseManagementType";
+import {
+  LocationResponse,
+  WarehouseGeneral,
+} from "@/interfaces/warehouseManagementType";
 import { Eye } from "lucide-react";
 
 // --- Warehouse General Header ---
@@ -67,6 +70,57 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
       </div>
     ),
   },
+];
+
+// --- Location View Header ---
+export const LocationHeaders: Column<LocationResponse>[] = [
+  {
+    label: "Code",
+    key: "code",
+  },
+  {
+    label: "Location Name",
+    key: "name",
+  },
+  {
+    label: "Type",
+    key: "type",
+  },
+  {
+    label: "Status",
+    key: "status",
+    render: (value) => {
+      const statusColors: Record<
+        string,
+        "success" | "info" | "warning" | "error" | "light"
+      > = {
+        EMPTY: "success", // Green
+        OCCUPIED: "info", // Blue
+        RESERVED: "warning", // Orange
+        UNDER_MAINTENANCE: "warning", // Orange
+        BLOCKED: "error", // Red
+        INACTIVE: "light", // Gray
+      };
+      const color = statusColors[value as string] || "light";
+      const label = (value as string).replace(/_/g, " ");
+      return (
+        <Badge variant="solid" color={color}>
+          {label}
+        </Badge>
+      );
+    },
+  },
+  // {
+  //   label: "Actions",
+  //   key: "id",
+  //   render: (_, row) => (
+  //     <div className="flex h-full items-center justify-center gap-2">
+  //       <Link href={`/warehouse-management/warehouse/detail/${row.id}`}>
+  //         <Pencil size={16} />
+  //       </Link>
+  //     </div>
+  //   ),
+  // },
 ];
 
 // Nho dem vo interface cua serivce nha!!
