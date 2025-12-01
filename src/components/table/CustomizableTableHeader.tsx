@@ -83,10 +83,6 @@ export const LocationHeaders: Column<LocationResponse>[] = [
     key: "name",
   },
   {
-    label: "Type",
-    key: "type",
-  },
-  {
     label: "Status",
     key: "status",
     render: (value) => {
