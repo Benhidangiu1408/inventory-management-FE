@@ -87,7 +87,7 @@ const AttributeForm = ({
         <Label>Attribute Name</Label>
         <Input
           type="text"
-          placeholder={"e.g. Electronics"}
+          placeholder={"e.g. Color"}
           {...register("name", {
             required: "Attribute name is required",
           })}

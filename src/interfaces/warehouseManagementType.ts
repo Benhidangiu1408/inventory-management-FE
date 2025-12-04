@@ -138,3 +138,93 @@ export interface AttributeRequest {
   name: string;
   description: string | null;
 }
+
+// Product
+export enum ProductStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+}
+
+export interface ProductCreateRequest {
+  name: string;
+  description: string | null;
+  categoryId: number | null;
+  // Base Unit Config
+  baseUnitId: number | null;
+  // Batch Unit Config
+  batchUnitId: number | null;
+  batchConversionRate?: number; // Required if batchUnitId != baseUnitId
+  // Item Unit Config
+  itemUnitId: number | null;
+  itemConversionRate?: number; // Required if itemUnitId != baseUnitId
+}
+
+export interface UnitSummary {
+  id: number;
+  name: string;
+  abb: string;
+}
+
+export interface VariantAttributeResponse {
+  attributeId: number;
+  attributeName: string;
+  value: string;
+}
+
+export interface VariantResponse {
+  id: number;
+  code: string;
+  description: string | null;
+  image: string | null;
+  minimumQuantity: number;
+  status: ProductStatus;
+  attributes: VariantAttributeResponse[];
+}
+
+export interface ProductResponse {
+  id: number;
+  code: string;
+  name: string;
+  description: string | null;
+  status: ProductStatus;
+  categoryName: string;
+  // Unit Config
+  baseUnit: UnitSummary;
+  batchUnit: UnitSummary | null;
+  itemUnit: UnitSummary | null;
+  // Variants list
+  variants: VariantResponse[];
+}
+// Uncheck
+
+export interface AttributeValue {
+  attributeId: number;
+  value: string;
+}
+
+export interface VariantCreateRequest {
+  productId: number;
+  minimumStockRequire?: number;
+  description: string | null;
+  image: string | null;
+  attributes: AttributeValue[];
+}
+
+export interface VariantUpdateRequest {
+  description?: string;
+  image?: string;
+  minimumStockRequire?: number;
+  status?: ProductStatus;
+}
+
+export interface ProductUpdateRequest {
+  name?: string;
+  description?: string;
+  status?: ProductStatus;
+}
+
+export interface ProductAddConversionRequest {
+  fromUnitId: number;
+  toUnitId: number;
+  conversionRate: number;
+}

@@ -7,8 +7,11 @@ import {
   LocationResponse,
   LocationType,
   NewWarehouseRequest,
+  ProductCreateRequest,
+  ProductResponse,
   UnitRequest,
   UnitResponse,
+  VariantCreateRequest,
   WarehouseDetail,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
@@ -137,4 +140,30 @@ export const attributesService = {
       data,
     );
   },
+};
+
+export const productService = {
+  getAll: async () => {
+    return apiClient.get<ProductResponse[]>("/info/v1/product/all", {
+      cache: "no-store",
+    });
+  },
+
+  create: async (data: ProductCreateRequest) => {
+    return apiClient.post<ProductCreateRequest>("/info/v1/product/new", data);
+  },
+
+  createVariant: async (data: VariantCreateRequest) => {
+    return apiClient.post<VariantCreateRequest>(
+      "/info/v1/product/variant/new",
+      data,
+    );
+  },
+
+  // update: async (id: number, data: AttributeRequest) => {
+  //   return apiClient.put<AttributeRequest>(
+  //     `/info/v1/attributes/update/${id}`,
+  //     data,
+  //   );
+  // },
 };
