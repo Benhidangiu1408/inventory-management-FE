@@ -15,7 +15,7 @@ export default async function CategoryPage() {
   } catch (error) {
     if (error instanceof ApiError) {
       console.error(`API Error ${error.status}: ${error.message}`);
-      errorMsg = `Could not load categories from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
+      errorMsg = `Could not load data from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
     }
   }
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;

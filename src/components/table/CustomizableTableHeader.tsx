@@ -3,6 +3,7 @@
 import { Column } from "@/components/table/CustomizableTable";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { format, parseISO } from "date-fns";
 import {
   faCheck,
   faEye,
@@ -19,6 +20,7 @@ import {
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
 import { Eye, Pencil } from "lucide-react";
+import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
 
 // --- Warehouse General Header ---
 export const warehouseHeaders: Column<WarehouseGeneral>[] = [
@@ -176,6 +178,74 @@ export const getAttributeHeaders = (
         <button onClick={() => onEdit(row)}>
           <Pencil size={16} />
         </button>
+      </div>
+    ),
+  },
+];
+
+export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
+  {
+    label: "Code",
+    key: "code",
+  },
+  {
+    label: "Warehouse",
+    key: "warehouseName",
+  },
+  // {
+  //   label: "Assignee",
+  //   key: "assigneeName",
+  // },
+  {
+    label: "Planned Date",
+    key: "plannedDate",
+    render: (value) => {
+      if (!value) return <span className="text-gray-400">-</span>;
+      const safeDateString = (value as string).endsWith("Z")
+        ? value
+        : `${value}Z`;
+      return (
+        <span>
+          {format(parseISO(safeDateString as string), "MMM d, yyyy h:mm a")}
+        </span>
+      );
+    },
+  },
+  {
+    label: "Status",
+    key: "status",
+    render: (value) => {
+      const statusColors: Record<
+        string,
+        "success" | "info" | "warning" | "error" | "light"
+      > = {
+        COMPLETED: "info", // Green
+        IN_PROGRESS: "warning",
+        CREATED: "light", // Gray/White
+        REJECTED: "error", // Red
+        APPROVED: "success", // Green
+      };
+      const color = statusColors[value as string] || "light";
+      const label = (value as string).replace(/_/g, " ");
+      return (
+        <Badge variant="solid" color={color}>
+          {label}
+        </Badge>
+      );
+    },
+  },
+  {
+    label: "Actions",
+    key: "id",
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <Link
+          href={`/warehouse-management/inventory-check/detail/${row.id}`}
+          className="hover:text-brand-600 rounded-md p-1 text-gray-500 transition-colors hover:bg-gray-100"
+          title="View Worksheet"
+        >
+          <Eye size={18} />
+        </Link>
       </div>
     ),
   },

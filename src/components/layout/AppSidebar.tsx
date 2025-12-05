@@ -49,7 +49,10 @@ export const navItems: NavItem[] = [
     name: "Warehouse Management",
     subItems: [
       { name: "Warehouse", path: "/warehouse-management/warehouse" },
-      { name: "Inventory Check", path: "/" },
+      {
+        name: "Inventory Check",
+        path: "/warehouse-management/inventory-check",
+      },
     ],
   },
   {

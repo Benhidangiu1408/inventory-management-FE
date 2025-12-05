@@ -82,7 +82,6 @@ export const CreateProductForm = ({
         itemConversionRate: Number(data.itemConversionRate),
       };
       await productService.create(payload);
-      console.log(payload);
       reset();
       toast.success("Product created successfully!");
       router.replace("/catalog/product");

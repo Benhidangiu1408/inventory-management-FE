@@ -17,11 +17,11 @@ export default async function WarehouseDetailPage({
   let errorMsg = null;
 
   try {
-    data = await warehouseService.getDetail(id);
+    data = await warehouseService.getDetail(Number(id));
   } catch (error) {
     if (error instanceof ApiError) {
       console.error(`API Error ${error.status}: ${error.message}`);
-      errorMsg = `Could not load categories from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
+      errorMsg = `Could not load data from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
     }
   }
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;

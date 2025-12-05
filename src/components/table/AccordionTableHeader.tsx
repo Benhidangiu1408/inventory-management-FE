@@ -9,8 +9,18 @@ import {
   VariantResponse,
 } from "@/interfaces/warehouseManagementType";
 import Badge from "@/default_components/ui/badge/Badge";
-import { Pencil, Plus } from "lucide-react";
+import { AlertCircle, CheckCircle, Pencil, Plus, Save } from "lucide-react";
 import Link from "next/link";
+import {
+  InventoryCheckBatchRow,
+  InventoryCheckProductGroup,
+} from "@/interfaces/inventoryManagementType";
+import { useEffect, useEffectEvent, useState } from "react";
+import Input from "@/default_components/form/input/InputField";
+import Checkbox from "@/default_components/form/input/Checkbox";
+import { inventoryCheckService } from "@/services/InventoryManagementService";
+import { ApiError } from "@/lib/api-mask";
+import toast from "react-hot-toast";
 
 // Category header
 export const getCategoryHeaders = (
@@ -212,3 +222,292 @@ export const variantHeaders: Column<VariantResponse>[] = [
   // ),
   // },
 ];
+
+// Inventory Check Detail
+const BatchInputCell = ({ row }: { row: InventoryCheckBatchRow }) => {
+  const [val, setVal] = useState(row.scannedQuantity?.toString() ?? "");
+  const set = useEffectEvent(() =>
+    setVal((prev) => {
+      const next = row.scannedQuantity?.toString() ?? "";
+      return prev !== next ? next : prev;
+    }),
+  );
+  useEffect(() => {
+    set();
+  }, [row.scannedQuantity]);
+  const isDirty = val !== (row.scannedQuantity?.toString() ?? "");
+
+  return (
+    <div className="flex h-full items-center">
+      <Input
+        type="number"
+        value={val}
+        onChange={(e) => setVal(e.target.value)}
+        placeholder="0"
+        className="!h-8 text-right font-mono text-sm"
+        // Show visual feedback based on state
+        success={!isDirty && row.scannedQuantity !== null}
+        error={isDirty ? true : false}
+        data-detail-id={row.detailId}
+        data-new-value={val}
+      />
+    </div>
+  );
+};
+
+const BatchFaultCell = ({ row }: { row: InventoryCheckBatchRow }) => {
+  const [checked, setChecked] = useState(row.hasFaults);
+  const set = useEffectEvent(() =>
+    setChecked((prev) => {
+      return prev !== row.hasFaults ? row.hasFaults : prev;
+    }),
+  );
+  useEffect(() => {
+    set();
+  }, [row.hasFaults]);
+  return (
+    <div className="flex h-full items-center justify-center">
+      <Checkbox
+        checked={checked}
+        onChange={(e) => setChecked(e.target.checked)}
+        data-detail-id={row.detailId}
+        data-fault-status={checked}
+        className="flex items-center justify-center"
+      />
+    </div>
+  );
+};
+
+const BatchActionCell = ({
+  row,
+  onSave,
+}: {
+  row: InventoryCheckBatchRow;
+  onSave: (detailId: number, qty: number, hasFaults: boolean) => void;
+}) => {
+  const [loading, setLoading] = useState(false);
+  const handleSave = async () => {
+    const input = document.querySelector(
+      `input[data-detail-id="${row.detailId}"]`,
+    ) as HTMLInputElement;
+    const checkbox = document.querySelector(
+      `input[data-detail-id="${row.detailId}"][type="checkbox"]`,
+    ) as HTMLInputElement;
+
+    try {
+      setLoading(true);
+      await inventoryCheckService.submit({
+        detailId: Number(row.detailId),
+        scannedQuantity: Number(input.value),
+        hasFaults: checkbox.checked,
+      });
+      onSave(Number(row.detailId), Number(input.value), checkbox.checked);
+      toast.success("Inventory Check Detail Submitted");
+    } catch (error) {
+      if (error instanceof ApiError) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <div className="flex h-full items-center justify-center">
+      <button
+        onClick={handleSave}
+        disabled={loading}
+        className="hover:bg-brand-50 hover:text-brand-600 inline-flex items-center justify-center rounded-lg p-1.5 text-gray-500 disabled:opacity-50 dark:hover:bg-gray-800"
+        title="Save Result"
+      >
+        {loading ? (
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        ) : (
+          <Save size={18} />
+        )}
+      </button>
+    </div>
+  );
+};
+const BatchVarianceCell = ({ row }: { row: InventoryCheckBatchRow }) => {
+  // If not scanned yet, show placeholder
+  if (row.scannedQuantity === null) {
+    return <span>-</span>;
+  }
+  const diff = row.scannedQuantity - row.storedQuantity;
+  const isMatch = diff === 0;
+  return (
+    <div
+      className={`flex h-full items-center justify-center ${
+        isMatch
+          ? "text-success-700 dark:text-success-400"
+          : "text-error-700 dark:text-error-400"
+      }`}
+    >
+      {diff > 0 ? `+${diff}` : diff}
+    </div>
+  );
+};
+
+export const icSheetProductHeaders: Column<InventoryCheckProductGroup>[] = [
+  {
+    label: "Product Info",
+    key: "productName",
+    render: (_, row) => (
+      <div className="flex flex-col justify-center py-1">
+        <span className="font-semibold text-gray-900 dark:text-white">
+          {row.productName}
+        </span>
+        <span className="text-xs text-gray-500">{` (${row.productSku})`}</span>
+      </div>
+    ),
+  },
+  {
+    label: "Unit",
+    key: "unitName",
+    render: (val) => (
+      <span className="text-sm text-gray-600">{val as string}</span>
+    ),
+  },
+  {
+    label: "Progress",
+    key: "batches",
+    render: (batches) => {
+      const list = batches as InventoryCheckBatchRow[];
+      const total = list.length;
+      const counted = list.filter((b) => b.scannedQuantity !== null).length;
+      const isComplete = total > 0 && total === counted;
+
+      return (
+        <div className="flex h-full items-center justify-center gap-2">
+          <span
+            className={`text-sm font-medium ${
+              isComplete ? "text-success-600" : "text-gray-500"
+            }`}
+          >
+            {counted} / {total} Batches
+          </span>
+          {isComplete && <CheckCircle size={16} className="text-success-500" />}
+        </div>
+      );
+    },
+  },
+];
+
+// --- CHILD HEADERS (Batches) ---
+export const getIcSheetBatchSubheaders = (
+  onSave: (detailId: number, qty: number, hasFaults: boolean) => void,
+): Column<InventoryCheckBatchRow>[] => [
+  {
+    label: "Location",
+    key: "locationCode",
+    width: 250,
+    render: (val) => (
+      <span className="font-mono text-sm font-medium text-gray-700 dark:text-gray-300">
+        {val as string}
+      </span>
+    ),
+  },
+  {
+    label: "Batch Code",
+    key: "batchCode",
+    render: (val) => (
+      <span className="font-mono text-sm text-gray-600 dark:text-gray-400">
+        {val as string}
+      </span>
+    ),
+  },
+  {
+    label: "System Qty",
+    key: "storedQuantity",
+    render: (val) => (
+      <span className="font-mono font-medium text-gray-900 dark:text-white">
+        {val as number}
+      </span>
+    ),
+  },
+  {
+    label: "Scanned Qty",
+    key: "scannedQuantity",
+    sortable: false,
+    render: (_, row) => <BatchInputCell row={row} />,
+  },
+  {
+    label: "Variance",
+    key: "scannedQuantity",
+    sortable: false,
+    render: (_, row) => <BatchVarianceCell row={row} />,
+  },
+  {
+    label: "Faulty",
+    key: "hasFaults",
+    sortable: false,
+    render: (_, row) => <BatchFaultCell row={row} />,
+  },
+  {
+    label: "Action",
+    key: "detailId",
+    sortable: false,
+    render: (_, row) => <BatchActionCell row={row} onSave={onSave} />,
+  },
+];
+// Read only
+export const icSheetBatchSubheadersReadOnly: Column<InventoryCheckBatchRow>[] =
+  [
+    {
+      label: "Location",
+      key: "locationCode",
+      width: 250,
+      render: (val) => (
+        <span className="font-mono text-sm font-medium text-gray-700 dark:text-gray-300">
+          {val as string}
+        </span>
+      ),
+    },
+    {
+      label: "Batch Code",
+      key: "batchCode",
+      render: (val) => (
+        <span className="font-mono text-sm text-gray-600 dark:text-gray-400">
+          {val as string}
+        </span>
+      ),
+    },
+    {
+      label: "System Qty",
+      key: "storedQuantity",
+      render: (val) => (
+        <span className="font-mono font-medium text-gray-900 dark:text-white">
+          {val as number}
+        </span>
+      ),
+    },
+    {
+      label: "Scanned Qty",
+      key: "scannedQuantity",
+      render: (val) => (
+        <span className="font-mono font-bold text-gray-900 dark:text-white">
+          {val !== null ? (val as number) : "-"}
+        </span>
+      ),
+    },
+    {
+      label: "Variance",
+      key: "scannedQuantity",
+      render: (_, row) => <BatchVarianceCell row={row} />,
+    },
+    {
+      label: "Faulty",
+      key: "hasFaults",
+      render: (val) => (
+        <div className="flex h-full items-center justify-center">
+          {val ? (
+            <AlertCircle size={18} className="text-error-500" />
+          ) : (
+            <span className="text-gray-300">-</span>
+          )}
+        </div>
+      ),
+    },
+  ];
