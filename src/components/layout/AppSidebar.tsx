@@ -387,9 +387,9 @@ const AppSidebar: React.FC = () => {
                   width={45}
                   height={45}
                 />
-                <div className="dark:text-white text-xl">Stockify</div>
+                <div className="text-xl dark:text-white">Stockify</div>
               </div>
-              
+
               {/* <Image
                 className="hidden dark:block"
                 src="/images/logo/logo-dark.svg"
