@@ -4,36 +4,56 @@ import {
   FaultBatch,
   ProcessingOrder,
 } from "@/components/table/CustomizableTableHeader";
+import { userManagementService } from "@/services/UserManagementService";
 
-export const userData: UserRow[] = [
-  {
-    id: "U001",
-    username: "alice",
-    email: "alice@example.com",
-    role: "Admin",
-    status: "Active",
-    lastLogin: "2025-09-10 14:32",
+// export const userData2: UserRow[] = [
+//   {
+//     id: "U001",
+//     username: "alice",
+//     email: "alice@example.com",
+//     role: "Admin",
+//     status: "Active",
+//     createdDate: "2025-09-10 14:32",
+//     actions: ["d", "r"],
+//   },
+//   {
+//     id: "U002",
+//     username: "bob",
+//     email: "bob@example.com",
+//     role: "Manager",
+//     status: "Inactive",
+//     createdDate: "2025-09-05 09:12",
+//     actions: ["d"],
+//   },
+//   {
+//     id: "U003",
+//     username: "carol",
+//     email: "carol@example.com",
+//     role: "Staff",
+//     status: "Suspended",
+//     createdDate: "2025-08-30 18:47",
+//     actions: ["d", "r"],
+//   },
+// ];
+
+export const userData = async (): Promise<UserRow[]> => {
+  const users = await userManagementService.getAll();
+
+  const roles = await Promise.all(
+    users.map((u) => userManagementService.getRoleByUsername(u.username))
+  );
+
+  return users.map((u, index) => ({
+    id: u.id?.toString() ?? "",
+    username: u.username,
+    email: u.email,
+    role: roles[index] ?? "Unknown",
+    status: u.status ?? "Inactive",
+    createdDate: u.createdDate ?? "",
     actions: ["d", "r"],
-  },
-  {
-    id: "U002",
-    username: "bob",
-    email: "bob@example.com",
-    role: "Manager",
-    status: "Inactive",
-    lastLogin: "2025-09-05 09:12",
-    actions: ["d"],
-  },
-  {
-    id: "U003",
-    username: "carol",
-    email: "carol@example.com",
-    role: "Staff",
-    status: "Suspended",
-    lastLogin: "2025-08-30 18:47",
-    actions: ["d", "r"],
-  },
-];
+  }));
+};
+
 
 export const orderData: OrderRow[] = [
   {

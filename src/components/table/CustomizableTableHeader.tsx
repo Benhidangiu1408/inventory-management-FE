@@ -19,8 +19,12 @@ import {
   UnitResponse,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
+
 import { Eye, Pencil } from "lucide-react";
 import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
+import { UserStatus } from "@/interfaces/userManagementType";
+import { userManagementService } from "@/services/UserManagementService";
+
 
 // --- Warehouse General Header ---
 export const warehouseHeaders: Column<WarehouseGeneral>[] = [
@@ -256,11 +260,50 @@ export interface UserRow {
   id: string;
   username: string;
   email: string;
-  role: "Admin" | "Manager" | "Staff";
-  status: "Active" | "Inactive" | "Suspended";
-  lastLogin: string; // formatted date/time
+  role: string;
+  status: UserStatus;
+  createdDate: string; // formatted date/time
   actions: string[]; // e.g. ["r","w"] for read/edit
 }
+
+function UserActionsCell({ row }: { row: UserRow }) {
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent row click event
+
+    if (!confirm("Delete this user?")) return;
+
+    try {
+      await userManagementService.deleteAccount(row.username);
+      alert("Deleted!");
+
+      // Optional: refresh page
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      alert("Delete failed");
+    }
+  };
+
+  return (
+    <div className="flex justify-end gap-3">
+      <Link href={`/admin/user-management/${row.id}`}>
+        <FontAwesomeIcon
+          icon={faEye}
+          className="cursor-pointer hover:text-blue-500"
+        />
+      </Link>
+
+      <button onClick={handleDelete}>
+        <FontAwesomeIcon
+          icon={faTrashCan}
+          className="cursor-pointer hover:text-red-500"
+        />
+      </button>
+    </div>
+  );
+}
+
+export default UserActionsCell;
 
 export const userColumns: Column<UserRow>[] = [
   { label: "User ID", key: "id" },
@@ -304,30 +347,31 @@ export const userColumns: Column<UserRow>[] = [
       </div>
     ),
   },
-  { label: "Last Login", key: "lastLogin" },
+  { label: "Created Date", key: "createdDate" },
   {
     label: "Actions",
     key: "actions",
-    render: (value) => (
-      <div className="flex justify-end gap-3">
-        {value.includes("r") && (
-          <Link href={`/admin/user-management`}>
-            <FontAwesomeIcon
-              icon={faEye}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-        {value.includes("d") && (
-          <Link href={`/admin/user-management`}>
-            <FontAwesomeIcon
-              icon={faTrashCan}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-      </div>
-    ),
+    // render: (value) => (
+    //   <div className="flex justify-end gap-3">
+    //     {value.includes("r") && (
+    //       <Link href={`/admin/user-management`}>
+    //         <FontAwesomeIcon
+    //           icon={faEye}
+    //           className="cursor-pointer hover:text-blue-500"
+    //         />
+    //       </Link>
+    //     )}
+    //     {value.includes("d") && (
+    //       <Link href={`/admin/user-management`}>
+    //         <FontAwesomeIcon
+    //           icon={faTrashCan}
+    //           className="cursor-pointer hover:text-blue-500"
+    //         />
+    //       </Link>
+    //     )}
+    //   </div>
+    // ),
+    render: (_, row) => <UserActionsCell row={row} />,
   },
 ];
 

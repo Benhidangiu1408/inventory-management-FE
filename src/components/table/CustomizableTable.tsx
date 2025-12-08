@@ -171,6 +171,13 @@ export default function CustomizableTable<T extends object>({
         suppressPaginationPanel={true}
         suppressScrollOnNewData={true}
         onPaginationChanged={onPaginationChange}
+        onRowClicked={(event) => {
+          const row = event.data as T & { id?: string | number };
+          if (row?.id == null) {
+            return;
+          }
+          window.location.href = `/profile/${row.id}`; // or any route
+        }}
         {...gridProps}
       />
       <Pagination
