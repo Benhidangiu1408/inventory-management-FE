@@ -153,6 +153,7 @@ export default function AccordionTable<T extends object, D extends object>({
             : themeQuartz.withPart(colorSchemeDarkBlue),
         pagination: true,
         paginationPageSize: 10,
+        paginationPageSizeSelector: [10, 20, 50, 100],
       },
 
       // B. Tell AG Grid how to find the data

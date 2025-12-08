@@ -1,20 +1,22 @@
+import AccordionTable from "@/components/table/AccordionTable";
+import {
+  productHeaders,
+  variantHeaders,
+} from "@/components/table/AccordionTableHeader";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import CustomizableTable from "@/components/table/CustomizableTable";
-import { WarehouseGeneral } from "@/interfaces/warehouseManagementType";
-import { warehouseService } from "@/services/WarehouseManagementService";
-import { ApiError } from "@/lib/api-mask";
-import { warehouseHeaders } from "@/components/table/CustomizableTableHeader";
-import Link from "next/link";
 import Button from "@/default_components/ui/button/Button";
+import { ProductResponse } from "@/interfaces/warehouseManagementType";
+import { ApiError } from "@/lib/api-mask";
+import { productService } from "@/services/WarehouseManagementService";
 import { Plus } from "lucide-react";
+import Link from "next/link";
 
-export default async function WarehousePage() {
-  // Handle initial page data
-  let data: WarehouseGeneral[] = [];
+export default async function ProductPage() {
+  let data: ProductResponse[] = [];
   let errorMsg = null;
 
   try {
-    data = await warehouseService.getAll();
+    data = await productService.getAll();
   } catch (error) {
     if (error instanceof ApiError) {
       console.error(`API Error ${error.status}: ${error.message}`);
@@ -24,24 +26,26 @@ export default async function WarehousePage() {
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
   return (
     <div>
-      <PageBreadcrumb
-        pageTitle="Warehouse"
-        filters={["warehouse-management"]}
-      />
+      <PageBreadcrumb pageTitle="Product" filters={["catalog"]} />
       <div>
         <div className="default-card p-6">
           <div className="mb-4">
-            <Link href={`/warehouse-management/warehouse/new`}>
+            <Link href={`/catalog/product/new`}>
               <Button
                 size="sm"
                 variant="primary"
                 startIcon={<Plus size={16} />}
               >
-                New Warehouse
+                New Product
               </Button>
             </Link>
           </div>
-          <CustomizableTable headers={warehouseHeaders} data={data} />
+          <AccordionTable
+            headers={productHeaders}
+            subTableKey={"variants"}
+            subTableHeaders={variantHeaders}
+            data={data}
+          />
         </div>
       </div>
     </div>

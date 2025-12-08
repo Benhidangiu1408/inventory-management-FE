@@ -1,7 +1,17 @@
 import {
+  AttributeRequest,
+  AttributeResponse,
   Category,
   CategoryRequest,
+  LocationBulkCreate,
+  LocationResponse,
+  LocationType,
   NewWarehouseRequest,
+  ProductCreateRequest,
+  ProductResponse,
+  UnitRequest,
+  UnitResponse,
+  VariantCreateRequest,
   WarehouseDetail,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
@@ -57,4 +67,103 @@ export const warehouseService = {
       data,
     );
   },
+};
+
+export const locationService = {
+  create: async (data: LocationBulkCreate) => {
+    return apiClient.post<LocationBulkCreate>("/info/v1/location/new", data);
+  },
+  getAll: async (warehouseId: number) => {
+    return apiClient.get<LocationResponse[]>(
+      `/info/v1/warehouse/${warehouseId}/location/all`,
+      {
+        cache: "no-cache",
+      },
+    );
+  },
+  getRoot: async (warehouseId: number) => {
+    return apiClient.get<LocationResponse[]>(
+      `/info/v1/warehouse/${warehouseId}/location/roots`,
+      {
+        cache: "no-cache",
+      },
+    );
+  },
+  getChildren: async (warehouseId: number, parentId: number) => {
+    return apiClient.get<LocationResponse[]>(
+      `/info/v1/warehouse/${warehouseId}/location/children?parentId=${parentId}`,
+      {
+        cache: "no-cache",
+      },
+    );
+  },
+  getByType: async (warehouseId: number, type: LocationType) => {
+    return apiClient.get<LocationResponse[]>(
+      `/info/v1/warehouse/${warehouseId}/location/type?type=${type}`,
+      {
+        cache: "no-cache",
+      },
+    );
+  },
+};
+
+export const unitService = {
+  getAll: async () => {
+    return apiClient.get<UnitResponse[]>("/info/v1/unit/all", {
+      cache: "no-store",
+    });
+  },
+
+  create: async (data: UnitRequest) => {
+    return apiClient.post<UnitRequest>("/info/v1/unit/new", data);
+  },
+
+  update: async (id: number, data: UnitRequest) => {
+    return apiClient.put<UnitRequest>(`/info/v1/unit/update/${id}`, data);
+  },
+};
+
+export const attributesService = {
+  getAll: async () => {
+    return apiClient.get<AttributeResponse[]>("/info/v1/attributes/all", {
+      cache: "no-store",
+    });
+  },
+
+  create: async (data: AttributeRequest) => {
+    return apiClient.post<AttributeRequest>("/info/v1/attributes/new", data);
+  },
+
+  update: async (id: number, data: AttributeRequest) => {
+    return apiClient.put<AttributeRequest>(
+      `/info/v1/attributes/update/${id}`,
+      data,
+    );
+  },
+};
+
+export const productService = {
+  getAll: async () => {
+    return apiClient.get<ProductResponse[]>("/info/v1/product/all", {
+      cache: "no-store",
+    });
+  },
+
+  create: async (data: ProductCreateRequest) => {
+    return apiClient.post<ProductCreateRequest>("/info/v1/product/new", data);
+  },
+
+  createVariant: async (data: VariantCreateRequest) => {
+    return apiClient.post<VariantCreateRequest>(
+      "/info/v1/product/variant/new",
+      data,
+    );
+  },
+
+  // update: async (id: number, data: AttributeRequest) => {
+  //   return apiClient.put<AttributeRequest>(
+  //     `/info/v1/attributes/update/${id}`,
+  //     data,
+  //   );
+  // },
 };

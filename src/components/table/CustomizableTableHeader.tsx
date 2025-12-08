@@ -3,6 +3,7 @@
 import { Column } from "@/components/table/CustomizableTable";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { format, parseISO } from "date-fns";
 import {
   faCheck,
   faEye,
@@ -12,8 +13,14 @@ import {
 import Select from "@/default_components/form/Select";
 import Badge from "@/default_components/ui/badge/Badge";
 import Button from "@/default_components/ui/button/Button";
-import { WarehouseGeneral } from "@/interfaces/warehouseManagementType";
-import { Eye } from "lucide-react";
+import {
+  AttributeResponse,
+  LocationResponse,
+  UnitResponse,
+  WarehouseGeneral,
+} from "@/interfaces/warehouseManagementType";
+import { Eye, Pencil } from "lucide-react";
+import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
 
 // --- Warehouse General Header ---
 export const warehouseHeaders: Column<WarehouseGeneral>[] = [
@@ -63,6 +70,181 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
       <div className="flex h-full items-center justify-center gap-2">
         <Link href={`/warehouse-management/warehouse/detail/${row.id}`}>
           <Eye size={16} />
+        </Link>
+      </div>
+    ),
+  },
+];
+
+// --- Location View Header ---
+export const LocationHeaders: Column<LocationResponse>[] = [
+  {
+    label: "Code",
+    key: "code",
+  },
+  {
+    label: "Location Name",
+    key: "name",
+  },
+  {
+    label: "Status",
+    key: "status",
+    render: (value) => {
+      const statusColors: Record<
+        string,
+        "success" | "info" | "warning" | "error" | "light"
+      > = {
+        EMPTY: "success", // Green
+        OCCUPIED: "info", // Blue
+        RESERVED: "warning", // Orange
+        UNDER_MAINTENANCE: "warning", // Orange
+        BLOCKED: "error", // Red
+        INACTIVE: "light", // Gray
+      };
+      const color = statusColors[value as string] || "light";
+      const label = (value as string).replace(/_/g, " ");
+      return (
+        <Badge variant="solid" color={color}>
+          {label}
+        </Badge>
+      );
+    },
+  },
+  // {
+  //   label: "Actions",
+  //   key: "id",
+  //   render: (_, row) => (
+  //     <div className="flex h-full items-center justify-center gap-2">
+  //       <Link href={`/warehouse-management/warehouse/detail/${row.id}`}>
+  //         <Pencil size={16} />
+  //       </Link>
+  //     </div>
+  //   ),
+  // },
+];
+
+export const getUnitHeaders = (
+  onEdit: (unit: UnitResponse) => void,
+): Column<UnitResponse>[] => [
+  {
+    label: "Unit Name",
+    key: "name",
+  },
+  {
+    label: "Unit Abbreviation",
+    key: "abb",
+  },
+  {
+    label: "Description",
+    key: "description",
+    render: (val) =>
+      (val as string) || (
+        <span className="text-gray-400 italic">No description</span>
+      ),
+  },
+  {
+    label: "Actions",
+    key: "id",
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <button onClick={() => onEdit(row)}>
+          <Pencil size={16} />
+        </button>
+      </div>
+    ),
+  },
+];
+
+export const getAttributeHeaders = (
+  onEdit: (unit: AttributeResponse) => void,
+): Column<AttributeResponse>[] => [
+  {
+    label: "Attributes Name",
+    key: "name",
+  },
+  {
+    label: "Description",
+    key: "description",
+    render: (val) =>
+      (val as string) || (
+        <span className="text-gray-400 italic">No description</span>
+      ),
+  },
+  {
+    label: "Actions",
+    key: "id",
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <button onClick={() => onEdit(row)}>
+          <Pencil size={16} />
+        </button>
+      </div>
+    ),
+  },
+];
+
+export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
+  {
+    label: "Code",
+    key: "code",
+  },
+  {
+    label: "Warehouse",
+    key: "warehouseName",
+  },
+  // {
+  //   label: "Assignee",
+  //   key: "assigneeName",
+  // },
+  {
+    label: "Planned Date",
+    key: "plannedDate",
+    render: (value) => {
+      if (!value) return <span className="text-gray-400">-</span>;
+      const safeDateString = (value as string).endsWith("Z")
+        ? value
+        : `${value}Z`;
+      return (
+        <span>
+          {format(parseISO(safeDateString as string), "MMM d, yyyy h:mm a")}
+        </span>
+      );
+    },
+  },
+  {
+    label: "Status",
+    key: "status",
+    render: (value) => {
+      const statusColors: Record<
+        string,
+        "success" | "info" | "warning" | "error" | "light"
+      > = {
+        COMPLETED: "info", // Green
+        IN_PROGRESS: "warning",
+        CREATED: "light", // Gray/White
+        REJECTED: "error", // Red
+        APPROVED: "success", // Green
+      };
+      const color = statusColors[value as string] || "light";
+      const label = (value as string).replace(/_/g, " ");
+      return (
+        <Badge variant="solid" color={color}>
+          {label}
+        </Badge>
+      );
+    },
+  },
+  {
+    label: "Actions",
+    key: "id",
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <Link
+          href={`/warehouse-management/inventory-check/detail/${row.id}`}
+          className="hover:text-brand-600 rounded-md p-1 text-gray-500 transition-colors hover:bg-gray-100"
+          title="View Worksheet"
+        >
+          <Eye size={18} />
         </Link>
       </div>
     ),

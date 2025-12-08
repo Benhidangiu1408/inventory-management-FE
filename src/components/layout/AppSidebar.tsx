@@ -49,7 +49,10 @@ export const navItems: NavItem[] = [
     name: "Warehouse Management",
     subItems: [
       { name: "Warehouse", path: "/warehouse-management/warehouse" },
-      { name: "Inventory Check", path: "/" },
+      {
+        name: "Inventory Check",
+        path: "/warehouse-management/inventory-check",
+      },
     ],
   },
   {
@@ -57,8 +60,9 @@ export const navItems: NavItem[] = [
     name: "Catalog",
     subItems: [
       { name: "Category", path: "/catalog/category" },
-      { name: "Product", path: "/" },
-      { name: "UOM (Unit of Measurement)", path: "/" },
+      { name: "Product", path: "/catalog/product" },
+      { name: "Product Attributes", path: "/catalog/variant-attributes" },
+      { name: "UOM (Unit of Measurement)", path: "/catalog/unit" },
     ],
   },
   {
@@ -326,11 +330,13 @@ const AppSidebar: React.FC = () => {
         }
       });
     });
-
+    const checkActive = () => {
+      if (!submenuMatched) {
+        setOpenSubmenu(null);
+      }
+    };
     // If no submenu item matches, close the open submenu
-    if (!submenuMatched) {
-      setOpenSubmenu(null);
-    }
+    checkActive();
   }, [pathname, isActive]);
 
   useEffect(() => {
