@@ -6,24 +6,58 @@ import { userColumns } from "@/components/table/CustomizableTableHeader";
 import Filter, { DateRange } from "@/components/Filter";
 import { useEffect, useMemo, useState } from "react";
 import { isDateWithinRange, parseFlexibleDate } from "@/lib/utils";
+import { Role } from "@/interfaces/userManagementType";
+import { roleAssignment, userManagementService } from "@/services/UserManagementService";
+import { useSearchParams } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function UserManagementPage() {
   const [dateRange, setDateRange] = useState<DateRange>({});
   const [users, setUsers] = useState<Awaited<ReturnType<typeof userData>>>([]);
-
-  const memoColumns = useMemo(() => userColumns, []);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const memoColumns = useMemo(() => userColumns(roles), [roles]);
 
   useEffect(() => {
     let isMounted = true;
 
     const loadUsers = async () => {
       const rows = await userData();
+      const formatted = rows.map((u) => ({
+        ...u,
+        createdDate: u.createdDate
+          ? new Date(u.createdDate).toLocaleDateString("vi-VN") // => 20/11/2025
+          : "",
+      }));
+      const sorted = formatted.sort(
+        (a, b) => Number(a.id ?? 0) - Number(b.id ?? 0),
+      );
       if (isMounted) {
-        setUsers(rows);
+        setUsers(sorted);
       }
     };
 
     loadUsers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRoles = async () => {
+      try {
+        const res = await roleAssignment.getAllRole();
+        if (isMounted) {
+          setRoles(res);
+        }
+      } catch (e) {
+        console.error("Failed to fetch roles:", e);
+      }
+    };
+
+    loadRoles();
 
     return () => {
       isMounted = false;
@@ -39,6 +73,13 @@ export default function UserManagementPage() {
       isDateWithinRange(parseFlexibleDate(row.createdDate), dateRange),
     );
   }, [dateRange, users]);
+
+  const searchParams = useSearchParams();
+    useEffect(() => {
+      if (searchParams.get("created") === "1") {
+        toast.success("User created successfully!");
+      }
+    }, []);
 
   return (
     <div>

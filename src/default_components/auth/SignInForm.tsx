@@ -7,6 +7,8 @@ import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Link from "next/link";
 import React, { useState } from "react";
 import { userManagementService } from "@/services/UserManagementService";
+import { ApiError } from "@/lib/api-mask";
+import toast from "react-hot-toast";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,13 +35,15 @@ export default function SignInForm() {
       // Lưu token vào sessionStorage
       sessionStorage.setItem("token", token);
 
-      // nếu muốn save userId thì parse token hoặc trả từ backend
-      // sessionStorage.setItem("userId", ...)
-
-      // redirect
+      const userId = JSON.parse(atob(token.split(".")[1])).userId;
+      sessionStorage.setItem("userId", userId);
       window.location.href = "/";
-    } catch (err) {
-      setError("Invalid username or password");
+    } catch (error) {
+      if (error instanceof ApiError) {
+        toast.error(error.message);
+      } else {
+        toast.error("Username or password is incorrect");
+      }
     } finally {
       setLoading(false);
     }
@@ -101,7 +105,7 @@ export default function SignInForm() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Checkbox
                       checked={isChecked}
@@ -111,7 +115,7 @@ export default function SignInForm() {
                       Keep me logged in
                     </span>
                   </div>
-                </div>
+                </div> */}
                 <div>
                   <Button
                     className="w-full"

@@ -22,7 +22,7 @@ import {
 
 import { Eye, Pencil } from "lucide-react";
 import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
-import { UserStatus } from "@/interfaces/userManagementType";
+import { Role, UserStatus } from "@/interfaces/userManagementType";
 import { userManagementService } from "@/services/UserManagementService";
 
 
@@ -305,73 +305,117 @@ function UserActionsCell({ row }: { row: UserRow }) {
 
 export default UserActionsCell;
 
-export const userColumns: Column<UserRow>[] = [
+// export const userColumns: Column<UserRow>[] = [
+//   { label: "User ID", key: "id" },
+//   { label: "Username", key: "username" },
+//   { label: "Email", key: "email" },
+//   {
+//     label: "Role",
+//     key: "role",
+//     render(value) {
+//       return (
+//         <Select
+//           defaultValue={String(value)}
+//           onChange={() => {
+//             // userManagementService.assignRole(
+//             //   Number(value),
+//             //   Number(sessionStorage.getItem("userId")),
+//             //   Number(id)
+//             // );
+//           }}
+//           options={[
+//             { value: "Admin", label: "Admin" },
+//             { value: "Manager", label: "Manager" },
+//             { value: "Staff", label: "Staff" },
+//           ]}
+//         />
+//       );
+//     },
+//   },
+//   {
+//     label: "Status",
+//     key: "status",
+//     render: (value) => (
+//       <div className="m-3 flex w-full justify-center">
+//         <Badge
+//           color={
+//             value === "Active"
+//               ? "success"
+//               : value === "Suspended"
+//                 ? "warning"
+//                 : "error"
+//           }
+//           size="sm"
+//           variant="solid"
+//         >
+//           {value}
+//         </Badge>
+//       </div>
+//     ),
+//   },
+//   { label: "Created Date", key: "createdDate" },
+//   // {
+//   //   label: "Actions",
+//   //   key: "actions",
+//   //   // render: (value) => (
+//   //   //   <div className="flex justify-end gap-3">
+//   //   //     {value.includes("r") && (
+//   //   //       <Link href={`/admin/user-management`}>
+//   //   //         <FontAwesomeIcon
+//   //   //           icon={faEye}
+//   //   //           className="cursor-pointer hover:text-blue-500"
+//   //   //         />
+//   //   //       </Link>
+//   //   //     )}
+//   //   //     {value.includes("d") && (
+//   //   //       <Link href={`/admin/user-management`}>
+//   //   //         <FontAwesomeIcon
+//   //   //           icon={faTrashCan}
+//   //   //           className="cursor-pointer hover:text-blue-500"
+//   //   //         />
+//   //   //       </Link>
+//   //   //     )}
+//   //   //   </div>
+//   //   // ),
+//   //   render: (_, row) => <UserActionsCell row={row} />,
+//   // },
+// ];
+export const userColumns = (roles: Role[]): Column<UserRow>[] => [
   { label: "User ID", key: "id" },
   { label: "Username", key: "username" },
   { label: "Email", key: "email" },
+
   {
     label: "Role",
     key: "role",
-    render(value) {
+    render(value, row) {
       return (
         <Select
-          defaultValue={String(value)}
-          onChange={() => {}}
-          options={[
-            { value: "Admin", label: "Admin" },
-            { value: "Manager", label: "Manager" },
-            { value: "Staff", label: "Staff" },
-          ]}
+          defaultValue={String(roles.find((r) => r.name === value)?.id ?? "")}
+          onChange={(e) => {
+            userManagementService.assignRole(
+              Number(e.target.value),                     // roleId mới
+              Number(sessionStorage.getItem("userId")),   // assigningUser
+              Number(row.id)                              // assignedUser
+            );
+          }}
+          onClick={(e) => e.stopPropagation()}
+          options={roles.map((r) => ({
+            value: String(r.id),
+            label: r.name,
+          }))}
         />
       );
     },
   },
+
   {
     label: "Status",
     key: "status",
-    render: (value) => (
-      <div className="m-3 flex w-full justify-center">
-        <Badge
-          color={
-            value === "Active"
-              ? "success"
-              : value === "Suspended"
-                ? "warning"
-                : "error"
-          }
-          size="sm"
-          variant="solid"
-        >
-          {value}
-        </Badge>
-      </div>
-    ),
   },
-  { label: "Created Date", key: "createdDate" },
   {
-    label: "Actions",
-    key: "actions",
-    // render: (value) => (
-    //   <div className="flex justify-end gap-3">
-    //     {value.includes("r") && (
-    //       <Link href={`/admin/user-management`}>
-    //         <FontAwesomeIcon
-    //           icon={faEye}
-    //           className="cursor-pointer hover:text-blue-500"
-    //         />
-    //       </Link>
-    //     )}
-    //     {value.includes("d") && (
-    //       <Link href={`/admin/user-management`}>
-    //         <FontAwesomeIcon
-    //           icon={faTrashCan}
-    //           className="cursor-pointer hover:text-blue-500"
-    //         />
-    //       </Link>
-    //     )}
-    //   </div>
-    // ),
-    render: (_, row) => <UserActionsCell row={row} />,
+    label: "Created Date",
+    key: "createdDate",
   },
 ];
 

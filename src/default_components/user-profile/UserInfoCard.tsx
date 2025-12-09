@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
@@ -7,7 +7,6 @@ import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { useUserProfile, useUserRole } from "@/hooks/useUserProfile";
 import { userManagementService } from "@/services/UserManagementService";
-import { User } from "@/interfaces/userManagementType";
 
 export interface Props {
   id:string
@@ -21,11 +20,6 @@ export default function UserInfoCard({ id }: Props) {
     error: roleError,
   } = useUserRole(user?.username);
   const [phone, setPhone] = useState(user?.phoneNumber || "");
-  // if (isLoading) return <p>Loading...</p>;
-  // if (error) return <p>Failed to load user</p>;
-  // if (!user) return <p>No user data available</p>;
-  // if (isRoleLoading && user.username) return <p>Loading role...</p>;
-  // if (roleError && user.username) return <p>Failed to load role</p>;
   const displayRole =
     typeof role === "string"
       ? role
@@ -33,8 +27,6 @@ export default function UserInfoCard({ id }: Props) {
         ? (role as { role?: string }).role
         : undefined;
   const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
     userManagementService.updateProfile(user?.username!, phone);
     closeModal();
   };

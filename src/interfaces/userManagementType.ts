@@ -61,3 +61,24 @@ export interface RoleRequest {
   description: string;
   status: RoleStatus; // or "ACTIVE" | "INACTIVE"
 }
+
+export interface RoleAssignmentKey {
+  roleId: number;
+  assignedUserId: number;
+}
+
+export interface RoleRef {
+  id: number;
+}
+
+export interface UserRef {
+  id: number;
+}
+
+export interface RoleAssignmentRequest {
+  roleAssignmentKey: RoleAssignmentKey;
+  assignedDate: string;        // ISO datetime string
+  role: RoleRef;
+  assignedUser: UserRef;
+  assigningUser: UserRef;
+}

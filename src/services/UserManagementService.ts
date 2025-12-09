@@ -1,7 +1,15 @@
-import { User, UserRequest,UserLogin, Role, Permission, RoleRequest, PermissionRequest } from "@/interfaces/userManagementType";
+import { User, UserRequest,UserLogin, Role, Permission, RoleRequest, PermissionRequest, RoleAssignmentRequest } from "@/interfaces/userManagementType";
 import { apiClient } from "@/lib/api-mask";
 
-const authToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYW0zLm5ndXllbiIsInVzZXJJZCI6NSwiaWF0IjoxNzY1MDAzNzQwLCJleHAiOjE3NjUwMDczNDB9.blOiOyLjPp4FjUVLvFVT2Kzxatun3HLxOHQCSXmi5XA";
+// const authToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYW0zLm5ndXllbiIsInVzZXJJZCI6NSwiaWF0IjoxNzY1MjA3ODU2LCJleHAiOjE3NjUyMTE0NTZ9.57oM7prjNFJZP9Xp6o6aBXno4ShsVQFFgwZwY53F8Ds";
+const token = sessionStorage.getItem("token");
+
+if (!token) {
+  console.error("Token not found in sessionStorage");
+}
+
+const authToken = `Bearer ${token ?? ""}`;
+
 
 export const userManagementService = {
   register: async (data: UserRequest) => {
@@ -17,7 +25,6 @@ export const userManagementService = {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: authToken,
         },
         body: JSON.stringify(data),
         cache: "no-store",
@@ -96,7 +103,29 @@ export const userManagementService = {
       headers: { Authorization: authToken },
       cache: "no-store",
     });
-  }
+  },
+
+  assignRole: async (roleId: number, assigningId: number, assignedId: number) => {
+    const payload: RoleAssignmentRequest = {
+      roleAssignmentKey: {
+        roleId: roleId,
+        assignedUserId: assignedId,
+      },
+      assignedDate: new Date().toISOString().slice(0, 19),
+      role: {
+        id: roleId,
+      },
+      assignedUser: {
+        id: assignedId,
+      },
+      assigningUser: {
+        id: assigningId,
+      },
+    };
+    return apiClient.post<RoleAssignmentRequest>(`/users/role-assignments`, payload, {
+      headers: { Authorization: authToken },
+    });
+  },
 
 
 

@@ -5,15 +5,16 @@ import Button from "@/default_components/ui/button/Button";
 import React, { useState } from "react";
 import { roleAssignment } from "@/services/UserManagementService";
 import { RoleStatus } from "@/interfaces/userManagementType";
+import toast from "react-hot-toast";
+import { ApiError } from "@/lib/api-mask";
 
-export default function NewRoleForm() {
+export default function NewRoleForm({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [roleStatus, setRoleStatus] = useState<RoleStatus>("ACTIVE");
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
 
+  const handleLogin = async () => {
     try {
       await roleAssignment.createRole({
         name,
@@ -22,9 +23,21 @@ export default function NewRoleForm() {
       });
 
       // redirect
-      window.location.href = "/admin/role-management";
-    } catch (err) {
-      console.error(err);
+      onClose();
+
+      // setTimeout(() => {
+      //   toast.success("Role created successfully!");
+      // }, 15000);
+      window.location.href = "/admin/role-management?created=1";
+    } catch (error) {
+      onClose();
+      setTimeout(() => {
+        if (error instanceof ApiError) {
+          toast.error(error.message);
+        } else {
+          toast.error("An unexpected error occurred");
+        }
+      }, 150);
     }
   };
 
@@ -41,7 +54,7 @@ export default function NewRoleForm() {
             </p>
           </div>
           <div>
-            <form onSubmit={handleLogin}>
+            <form>
               <div className="space-y-6">
                 <div>
                   <Label>
@@ -71,7 +84,9 @@ export default function NewRoleForm() {
                   <select
                     className="w-full rounded-lg border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                     value={roleStatus}
-                    onChange={(e) => setRoleStatus(e.target.value as RoleStatus)}
+                    onChange={(e) =>
+                      setRoleStatus(e.target.value as RoleStatus)
+                    }
                   >
                     <option value="">Select status</option>
                     <option value="ACTIVE">Active</option>
@@ -80,9 +95,10 @@ export default function NewRoleForm() {
                 </div>
                 <div>
                   <Button
+                    type="button"
                     className="w-full"
                     size="sm"
-                    type="submit"
+                    onClick={handleLogin}
                   >
                     Create
                   </Button>
@@ -95,5 +111,3 @@ export default function NewRoleForm() {
     </div>
   );
 }
-
-   

@@ -50,7 +50,7 @@ export const userData = async (): Promise<UserRow[]> => {
     role: roles[index] ?? "Unknown",
     status: u.status ?? "Inactive",
     createdDate: u.createdDate ?? "",
-    actions: ["d", "r"],
+    actions: ["d"],
   }));
 };
 

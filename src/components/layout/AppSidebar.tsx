@@ -131,7 +131,7 @@ export const othersItems: NavItem[] = [
   {
     icon: <UserCircleIcon />,
     name: "User Profile",
-    path: "/profile/5",
+    path: `/profile/${sessionStorage.getItem("userId") ?? ""}`,
   },
 
   {

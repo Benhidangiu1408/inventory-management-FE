@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useMemo, useState } from "react";
 import { roleAssignment } from "@/services/UserManagementService";
 import { Role } from "@/interfaces/userManagementType";
+import { useSearchParams } from "next/navigation";
+import toast from "react-hot-toast";
 
 export type roleStructure = {
   id: number;
@@ -50,7 +52,6 @@ export default function RoleManagementPage() {
         if (!roles || roles.length === 0) return;
         setRoles(roles);
 
-        // nếu bạn có full permission list
         const fullPermissionList = await roleAssignment
           .getAllPermission()
           .then((res) => res.map((perm) => ({ id: perm.id, name: perm.name }))); // Permission[]
@@ -131,6 +132,17 @@ export default function RoleManagementPage() {
     setSelectedGranted([]);
   };
 
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (searchParams.get("created") === "1") {
+      toast.success("Role created successfully!");
+    }
+  }, []);
+  useEffect(() => {
+    if (searchParams.get("created2") === "1") {
+      toast.success("Permission created successfully!");
+    }
+  }, []);
   return (
     <div>
       <PageBreadcrumb pageTitle="Role Management" />

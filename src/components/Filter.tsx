@@ -79,9 +79,9 @@ export default function Filter({
       // case "fault order":
       //   return <FaultOrderForm />;
       case "user":
-        return <NewUserForm />;
+        return <NewUserForm onClose={() => setIsOpen(false)}/>;
       case "role":
-        return <NewRoleForm />;
+        return <NewRoleForm onClose={() => setIsOpen(false)}/>;
       // case "permission":
       //   return <PermissionForm />;
       default:
@@ -229,7 +229,7 @@ export default function Filter({
           className="m-4 max-w-[700px]"
           overlayClassName="bg-gray-900/10 backdrop-blur-[2px]"
         >
-          <NewPermissionForm />
+          <NewPermissionForm onClose={() => setIsPermissionOpen(false)} />
         </Modal>
       )}
     </div>

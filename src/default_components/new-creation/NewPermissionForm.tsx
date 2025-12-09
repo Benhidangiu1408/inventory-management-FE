@@ -4,9 +4,10 @@ import Label from "@/default_components/form/Label";
 import Button from "@/default_components/ui/button/Button";
 import React, { useState } from "react";
 import { roleAssignment } from "@/services/UserManagementService";
+import { ApiError } from "@/lib/api-mask";
+import toast from "react-hot-toast";
 
-export default function NewPermissionForm() {
-
+export default function NewPermissionForm({ onClose }: { onClose: () => void }) {
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -15,8 +16,7 @@ export default function NewPermissionForm() {
   const [, setLoading] = useState(false);
   const [, setError] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = async () => {
     setLoading(true);
     setError("");
 
@@ -28,19 +28,33 @@ export default function NewPermissionForm() {
       });
 
       // redirect
-      window.location.href = "/admin/role-management";
-    } catch (err) {
-      setError("Invalid username or password");
+      // window.location.href = "/admin/role-management";
+      onClose();
+
+      // setTimeout(() => {
+      //   toast.success("Permission created successfully!");
+      // }, 150);
+      window.location.href = "/admin/role-management?created2=1";
+    } catch (error) {
+      // window.location.href = "/admin/role-management";
+      onClose();
+      setTimeout(() => {
+        if (error instanceof ApiError) {
+          toast.error(error.message);
+        } else {
+          toast.error("An unexpected error occurred");
+        }
+      }, 150);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex w-full flex-1 mb-5 mt-5">
+    <div className="mt-5 mb-5 flex w-full flex-1">
       <div className="mx-auto mb-5 flex w-full justify-center">
         <div className="w-full max-w-md">
-          <div className="mb-5 sm:mb-8 flex items-center flex-col">
+          <div className="mb-5 flex flex-col items-center sm:mb-8">
             <h1 className="text-title-sm sm:text-title-md mb-2 font-semibold text-gray-800 dark:text-white/90">
               Create Permission
             </h1>
@@ -49,11 +63,12 @@ export default function NewPermissionForm() {
             </p>
           </div>
           <div>
-            <form onSubmit={handleLogin}>
+            <form >
               <div className="space-y-6">
                 <div>
                   <Label>
-                    Permission Code <span className="text-error-500">*</span>{" "}
+                    Permission Code{" "}
+                    <span className="text-error-500">*</span>{" "}
                   </Label>
                   <Input
                     placeholder="Enter permission code"
@@ -63,7 +78,8 @@ export default function NewPermissionForm() {
                 </div>
                 <div>
                   <Label>
-                    Permission Name <span className="text-error-500">*</span>{" "}
+                    Permission Name{" "}
+                    <span className="text-error-500">*</span>{" "}
                   </Label>
                   <Input
                     placeholder="Enter permission name"
@@ -73,7 +89,8 @@ export default function NewPermissionForm() {
                 </div>
                 <div>
                   <Label>
-                    Permission Description <span className="text-error-500">*</span>{" "}
+                    Permission Description{" "}
+                    <span className="text-error-500">*</span>{" "}
                   </Label>
                   <Input
                     placeholder="Enter permission description"
@@ -82,11 +99,7 @@ export default function NewPermissionForm() {
                   />
                 </div>
                 <div>
-                  <Button
-                    className="w-full"
-                    size="sm"
-                    type="submit"
-                  >
+                  <Button type="button" className="w-full" size="sm" onClick={handleLogin}>
                     Create
                   </Button>
                 </div>

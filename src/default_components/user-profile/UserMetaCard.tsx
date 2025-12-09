@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
@@ -9,6 +9,8 @@ import Image from "next/image";
 import { useUserProfile, useUserRole } from "@/hooks/useUserProfile";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import { userManagementService } from "@/services/UserManagementService";
+import { ApiError } from "@/lib/api-mask";
+import toast from "react-hot-toast";
 
 type UserMetaCardProps = {
   id: string;
@@ -33,6 +35,13 @@ export default function UserMetaCard({ id }: UserMetaCardProps) {
 
   const [currentStatus, setCurrentStatus] = useState(user?.status || "");
 
+  console.log("Current Status:", currentStatus);
+  console.log("User Status:", user?.status);
+  useEffect(() => {
+    if (user?.status) {
+      setCurrentStatus(user.status);
+    }
+  }, [user]);
   const displayRole =
     typeof role === "string"
       ? role
@@ -41,7 +50,7 @@ export default function UserMetaCard({ id }: UserMetaCardProps) {
         : undefined;
   const handleSave = async () => {
     if (!currentPassword || !newPassword) {
-      alert("Please fill in both passwords.");
+      toast.error("Please fill in both passwords.", { duration: 5000 });
       return;
     }
 
@@ -53,14 +62,28 @@ export default function UserMetaCard({ id }: UserMetaCardProps) {
         newPassword,
       );
 
-      alert("Password changed successfully!");
       closeModal();
+
+      setTimeout(() => {
+        toast.success("Password changed successfully!", {
+          duration: 3000, // 5 giây, muốn lâu hơn thì tăng lên
+        });
+      }, 150);
 
       setCurrentPassword("");
       setNewPassword("");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to change password. Please try again.");
+    } catch (error) {
+      closeModal();
+
+      setTimeout(() => {
+        if (error instanceof ApiError) {
+          toast.error(error.message, {
+            duration: 3000, // 3 giây, muốn lâu hơn thì tăng lên
+          });
+        } else {
+          toast.error("An unexpected error occurred", { duration: 5000 });
+        }
+      }, 150);
     } finally {
       setLoading(false);
     }
@@ -68,21 +91,32 @@ export default function UserMetaCard({ id }: UserMetaCardProps) {
 
   const handleConfirm = async () => {
     setLoading(true);
+    console.log("Current Status:", currentStatus);
+    console.log("User Status:", user?.status);
     try {
       // Call appropriate service method to activate/deactivate user
       // For example:
-      await user?.status === "ACTIVE"
-        ? userManagementService.deactivateAccount(user?.username!)
-        : userManagementService.activateAccount(user?.username!);
-      alert("Operation successful!");
-      setCurrentStatus(user?.status === "ACTIVE" ? "INACTIVE" : "ACTIVE");
+      (await currentStatus) === "ACTIVE"
+        ? userManagementService.deactivateAccount(user?.username)
+        : userManagementService.activateAccount(user?.username);
+      setCurrentStatus(currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE");
       closeModal();
-    } catch (err) {
-      console.error(err);
-      alert("Operation failed. Please try again.");
+      setTimeout(() => {
+        toast.success("User status changed successfully!");
+      }, 150);
+    } catch (error) {
+      closeModal();
+
+      setTimeout(() => {
+        if (error instanceof ApiError) {
+          toast.error(error.message);
+        } else {
+          toast.error("An unexpected error occurred");
+        }
+      }, 150);
     } finally {
       setLoading(false);
-    } 
+    }
   };
 
   return (
@@ -110,7 +144,7 @@ export default function UserMetaCard({ id }: UserMetaCardProps) {
                 </p>
                 <div className="hidden h-3.5 w-px bg-gray-300 xl:block dark:bg-gray-700"></div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {currentStatus===""? user?.status: currentStatus}
+                  {currentStatus === "" ? user?.status : currentStatus}
                 </p>
               </div>
             </div>
@@ -134,112 +168,123 @@ export default function UserMetaCard({ id }: UserMetaCardProps) {
                 fill=""
               />
             </svg>
-            Change Password
+            {id === sessionStorage.getItem("userId")
+              ? "Change Password"
+              : "Change Status"}
           </button>
         </div>
       </div>
-      <Modal
-        isOpen={isOpen}
-        onClose={closeModal}
-        className="m-4 max-w-[700px]"
-        overlayClassName="bg-gray-900/10 backdrop-blur-sm"
-      >
-        <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 lg:p-11 dark:bg-gray-900">
-          <div className="px-2 pr-14">
-            <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Change Your Password
-            </h4>
-          </div>
-          <form className="flex flex-col">
-            <div className="custom-scrollbar h-[200px] overflow-y-auto px-2 pb-3">
-              <div className="mt-4">
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div className="col-span-2">
-                    <Label>Current Password</Label>
-                    <div className="relative">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Enter your current password"
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                      />
-                      <span
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute top-1/2 right-4 z-30 -translate-y-1/2 cursor-pointer"
-                      >
-                        {showPassword ? (
-                          <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
-                        ) : (
-                          <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
-                        )}
-                      </span>
+      {id === sessionStorage.getItem("userId") && (
+        <Modal
+          isOpen={isOpen}
+          onClose={closeModal}
+          className="m-4 max-w-[700px]"
+          overlayClassName="bg-gray-900/10 backdrop-blur-sm"
+        >
+          <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 lg:p-11 dark:bg-gray-900">
+            <div className="px-2 pr-14">
+              <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+                Change Your Password
+              </h4>
+            </div>
+            <form className="flex flex-col">
+              <div className="custom-scrollbar h-[200px] overflow-y-auto px-2 pb-3">
+                <div className="mt-4">
+                  <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                    <div className="col-span-2">
+                      <Label>Current Password</Label>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your current password"
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                        />
+                        <span
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute top-1/2 right-4 z-30 -translate-y-1/2 cursor-pointer"
+                        >
+                          {showPassword ? (
+                            <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
+                          ) : (
+                            <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
+                          )}
+                        </span>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-span-2">
-                    <Label>New Password</Label>
-                    <div className="relative">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Enter your new password"
-                        onChange={(e) => setNewPassword(e.target.value)}
-                      />
-                      <span
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute top-1/2 right-4 z-30 -translate-y-1/2 cursor-pointer"
-                      >
-                        {showPassword ? (
-                          <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
-                        ) : (
-                          <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
-                        )}
-                      </span>
+                    <div className="col-span-2">
+                      <Label>New Password</Label>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your new password"
+                          onChange={(e) => setNewPassword(e.target.value)}
+                        />
+                        <span
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute top-1/2 right-4 z-30 -translate-y-1/2 cursor-pointer"
+                        >
+                          {showPassword ? (
+                            <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
+                          ) : (
+                            <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
+                          )}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="mt-1 flex items-center gap-3 px-2 lg:justify-end">
-              <Button size="sm" variant="outline" onClick={closeModal}>
-                Close
-              </Button>
-              <Button size="sm" onClick={handleSave} disabled={loading}>
-                {loading ? "Saving..." : "Save Changes"}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      {/* <Modal
-        isOpen={isOpen}
-        onClose={closeModal}
-        className="m-4 max-w-[700px]"
-        overlayClassName="bg-gray-900/10 backdrop-blur-sm"
-      >
-        <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 lg:p-11 dark:bg-gray-900">
-          <div className="px-2 pr-14">
-            <h4 className="mb-4 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              {user?.status === "ACTIVE"
-                ? "Deactivate Account"
-                 : "Activate Account"}
-            </h4>
-            <p className="mb-6 text-sm text-gray-500 lg:mb-7 dark:text-gray-400">
-              {user?.status === "ACTIVE"
-                ? "Are you sure you want to deactivate this account? The user will be unable to access the system until reactivated."
-                : "Are you sure you want to activate this account? The user will be able to access the system upon activation."}
-            </p>
+              <div className="mt-1 flex items-center gap-3 px-2 lg:justify-end">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={closeModal}
+                >
+                  Close
+                </Button>
+                <Button type="button" size="sm" onClick={handleSave}>
+                  Save Changes
+                </Button>
+              </div>
+            </form>
           </div>
-          <form className="flex flex-col">
-            <div className="mt-1 flex items-center gap-3 px-2 lg:justify-end">
-              <Button size="sm" variant="outline" onClick={closeModal}>
-                Close
-              </Button>
-              <Button size="sm" onClick={handleConfirm} disabled={loading}>
-                Confirm
-              </Button>
+        </Modal>
+      )}
+      {id !== sessionStorage.getItem("userId") && (
+        <Modal
+          isOpen={isOpen}
+          onClose={closeModal}
+          className="m-4 max-w-[700px]"
+          overlayClassName="bg-gray-900/10 backdrop-blur-sm"
+        >
+          <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 lg:p-11 dark:bg-gray-900">
+            <div className="px-2 pr-14">
+              <h4 className="mb-4 text-2xl font-semibold text-gray-800 dark:text-white/90">
+                {currentStatus === "ACTIVE"
+                  ? "Deactivate Account"
+                  : "Activate Account"}
+              </h4>
+              <p className="mb-6 text-sm text-gray-500 lg:mb-7 dark:text-gray-400">
+                {currentStatus === "ACTIVE"
+                  ? "Are you sure you want to deactivate this account? The user will be unable to access the system until reactivated."
+                  : "Are you sure you want to activate this account? The user will be able to access the system upon activation."}
+              </p>
             </div>
-          </form>
-        </div>
-      </Modal> */}
+            <form className="flex flex-col">
+              <div className="mt-1 flex items-center gap-3 px-2 lg:justify-end">
+                <Button size="sm" variant="outline" onClick={closeModal}>
+                  Close
+                </Button>
+                <Button size="sm" onClick={handleConfirm}>
+                  Confirm
+                </Button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+      )}
     </>
   );
 }
