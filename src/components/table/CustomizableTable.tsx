@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  SyntheticEvent,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import {
   CellStyleModule,
   ClientSideRowModelModule,
@@ -87,29 +78,11 @@ export default function CustomizableTable<T extends object>({
   const columnDefs = useMemo<ColDef<T>[]>(
     () =>
       headers.map((header) => {
-        const stopGridEvent = (event: SyntheticEvent) => {
-          event.stopPropagation();
-        };
         const renderCell = header.render;
         // Adapter for Custom Renderers
-        // const cellRenderer = renderCell
-        //   ? (params: ICellRendererParams<T, T[keyof T]>) =>
-        //       renderCell(params.value as T[keyof T], params.data as T)
-        //   : undefined;
         const cellRenderer = renderCell
-          ? (params: ICellRendererParams<T, T[keyof T]>) => (
-              <div
-                data-grid-interactive="true"
-                onClick={stopGridEvent}
-                onMouseDown={stopGridEvent}
-                onMouseUp={stopGridEvent}
-                onDoubleClick={stopGridEvent}
-                onTouchStart={stopGridEvent}
-                onContextMenu={stopGridEvent}
-              >
-                {renderCell(params.value as T[keyof T], params.data as T)}
-              </div>
-            )
+          ? (params: ICellRendererParams<T, T[keyof T]>) =>
+              renderCell(params.value as T[keyof T], params.data as T)
           : undefined;
 
         return {
@@ -120,7 +93,6 @@ export default function CustomizableTable<T extends object>({
           sortable: header.sortable ?? true,
           cellClass: header.stopCenterData ? "" : "text-center",
           cellRenderer,
-          suppressKeyboardEvent: () => true,
         } satisfies ColDef<T>;
       }),
     [headers],
@@ -184,25 +156,6 @@ export default function CustomizableTable<T extends object>({
     }
   }, []);
 
-  const handlePageSizeChange = useCallback<Dispatch<SetStateAction<number>>>(
-    (value) => {
-      setPageSize((prev) => {
-        const next =
-          typeof value === "function" ? value(prev) : (value as number);
-        gridRef.current?.api.paginationSetPageSize(next);
-        return next;
-      });
-    },
-    [],
-  );
-
-  const isInteractiveEvent = useCallback((domEvent?: Event | null) => {
-    if (!domEvent) return false;
-    if (domEvent.defaultPrevented) return true;
-    const target = domEvent.target as HTMLElement | null;
-    return Boolean(target?.closest('[data-grid-interactive="true"]'));
-  }, []);
-
   return (
     <div className={wrapperClassName} style={{ height }}>
       <AgGridReact<T>
@@ -212,23 +165,12 @@ export default function CustomizableTable<T extends object>({
         columnDefs={columnDefs}
         defaultColDef={mergedDefaultColDef}
         suppressCellFocus={true}
-        suppressRowClickSelection={true}
         domLayout={height === "auto" ? "autoHeight" : "normal"}
         pagination={true}
         paginationPageSize={pageSize}
         suppressPaginationPanel={true}
         suppressScrollOnNewData={true}
         onPaginationChanged={onPaginationChange}
-        onRowClicked={(event) => {
-          if (isInteractiveEvent(event.event)) {
-            return;
-          }
-          const row = event.data as T & { id?: string | number };
-          if (row?.id == null) {
-            return;
-          }
-          window.location.href = `/profile/${row.id}`; // or any route
-        }}
         {...gridProps}
       />
       <Pagination
@@ -239,7 +181,7 @@ export default function CustomizableTable<T extends object>({
         onBtnPrevious={onBtnPrevious}
         onBtnNext={onBtnNext}
         onBtnPage={onBtnPage}
-        setPageSize={handlePageSizeChange}
+        setPageSize={setPageSize}
       />
     </div>
   );

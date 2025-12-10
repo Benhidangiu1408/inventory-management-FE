@@ -25,7 +25,6 @@ import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
 import { Role, UserStatus } from "@/interfaces/userManagementType";
 import { userManagementService } from "@/services/UserManagementService";
 
-
 // --- Warehouse General Header ---
 export const warehouseHeaders: Column<WarehouseGeneral>[] = [
   {
@@ -267,9 +266,7 @@ export interface UserRow {
 }
 
 function UserActionsCell({ row }: { row: UserRow }) {
-  const handleDelete = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent row click event
-
+  const handleDelete = async () => {
     if (!confirm("Delete this user?")) return;
 
     try {
@@ -286,7 +283,7 @@ function UserActionsCell({ row }: { row: UserRow }) {
 
   return (
     <div className="flex justify-end gap-3">
-      <Link href={`/admin/user-management/${row.id}`}>
+      <Link href={`/src/app/admin/user-management/${row.id}`}>
         <FontAwesomeIcon
           icon={faEye}
           className="cursor-pointer hover:text-blue-500"
@@ -382,7 +379,13 @@ export default UserActionsCell;
 // ];
 export const userColumns = (roles: Role[]): Column<UserRow>[] => [
   { label: "User ID", key: "id" },
-  { label: "Username", key: "username" },
+  {
+    label: "Username",
+    key: "username",
+    render(_, row) {
+      return <Link href={`/profile/${row.id}`}>{row.username}</Link>;
+    },
+  },
   { label: "Email", key: "email" },
 
   {
@@ -394,12 +397,11 @@ export const userColumns = (roles: Role[]): Column<UserRow>[] => [
           defaultValue={String(roles.find((r) => r.name === value)?.id ?? "")}
           onChange={(e) => {
             userManagementService.assignRole(
-              Number(e.target.value),                     // roleId mới
-              Number(sessionStorage.getItem("userId")),   // assigningUser
-              Number(row.id)                              // assignedUser
+              Number(e.target.value), // roleId mới
+              Number(sessionStorage.getItem("userId")), // assigningUser
+              Number(row.id), // assignedUser
             );
           }}
-          onClick={(e) => e.stopPropagation()}
           options={roles.map((r) => ({
             value: String(r.id),
             label: r.name,

@@ -69,8 +69,8 @@ export const navItems: NavItem[] = [
     icon: <Package />,
     name: "Inventory",
     subItems: [
-      { name: "Item", path: "/" },
-      { name: "Batch", path: "/" },
+      { name: "Item", path: "/s" },
+      { name: "Batch", path: "/s" },
     ],
   },
   {
@@ -87,26 +87,29 @@ export const navItems: NavItem[] = [
     icon: <ArchiveX />,
     name: "Defective",
     subItems: [
-      { name: "Root Cause Analysis", path: "/" },
-      { name: "Fault Order", path: "/" },
+      { name: "Root Cause Analysis", path: "/s" },
+      { name: "Fault Order", path: "/s" },
     ],
   },
   {
     icon: <Globe />,
     name: "Network",
     subItems: [
-      { name: "Supplier", path: "/" },
-      { name: "Customer", path: "/" },
+      { name: "Supplier", path: "/s" },
+      { name: "Customer", path: "/s" },
     ],
   },
   {
     name: "Users Control",
     icon: <UserRoundCog />,
     subItems: [
-      { name: "Profile", path: "/s" },
-      { name: "Users Management", path: "/" },
-      { name: "Role & Permission", path: "/" },
-      { name: "User History", path: "/" },
+      {
+        name: "Profile",
+        path: `/profile/${sessionStorage.getItem("userId") ?? ""}`,
+      },
+      { name: "Users Management", path: "/admin/user-management" },
+      { name: "Role & Permission", path: "/admin/role-management" },
+      { name: "User History", path: "/s" },
     ],
   },
   {
@@ -117,7 +120,7 @@ export const navItems: NavItem[] = [
   {
     icon: <Settings />,
     name: "Settings",
-    path: "/",
+    path: "/s",
   },
 ];
 
@@ -128,12 +131,6 @@ export const othersItems: NavItem[] = [
     name: "Calendar",
     path: "/calendar",
   },
-  {
-    icon: <UserCircleIcon />,
-    name: "User Profile",
-    path: `/profile/${sessionStorage.getItem("userId") ?? ""}`,
-  },
-
   {
     name: "Forms",
     icon: <FontAwesomeIcon icon={faWarehouse} />,
