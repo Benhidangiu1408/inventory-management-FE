@@ -157,6 +157,10 @@ export interface ProductCreateRequest {
   // Item Unit Config
   itemUnitId: number | null;
   itemConversionRate?: number; // Required if itemUnitId != baseUnitId
+  additionalConversions?: {
+    fromUnitId: number | null;
+    conversionRate: number | null;
+  }[];
 }
 
 export interface UnitSummary {
