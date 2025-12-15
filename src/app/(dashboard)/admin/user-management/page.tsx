@@ -7,7 +7,10 @@ import Filter, { DateRange } from "@/components/Filter";
 import { useEffect, useMemo, useState } from "react";
 import { isDateWithinRange, parseFlexibleDate } from "@/lib/utils";
 import { Role } from "@/interfaces/userManagementType";
-import { roleAssignment, userManagementService } from "@/services/UserManagementService";
+import {
+  roleAssignment,
+  userManagementService,
+} from "@/services/UserManagementService";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -24,9 +27,7 @@ export default function UserManagementPage() {
       const rows = await userData();
       const formatted = rows.map((u) => ({
         ...u,
-        createdDate: u.createdDate
-          ? new Date(u.createdDate).toLocaleDateString("vi-VN") // => 20/11/2025
-          : "",
+        createdDate: u.createdDate ? new Date(u.createdDate) : null,
       }));
       const sorted = formatted.sort(
         (a, b) => Number(a.id ?? 0) - Number(b.id ?? 0),
@@ -69,17 +70,15 @@ export default function UserManagementPage() {
       return users;
     }
 
-    return users.filter((row) =>
-      isDateWithinRange(parseFlexibleDate(row.createdDate), dateRange),
-    );
+    return users.filter((row) => isDateWithinRange(row.createdDate, dateRange));
   }, [dateRange, users]);
 
   const searchParams = useSearchParams();
-    useEffect(() => {
-      if (searchParams.get("created") === "1") {
-        toast.success("User created successfully!");
-      }
-    }, []);
+  useEffect(() => {
+    if (searchParams.get("created") === "1") {
+      toast.success("User created successfully!");
+    }
+  }, []);
 
   return (
     <div>
@@ -92,8 +91,8 @@ export default function UserManagementPage() {
             // setPage(1);
           }}
           dateRangePlaceholder={{
-            from: "Last login (from)",
-            to: "Last login (to)",
+            from: "Created Date (from)",
+            to: "Created Date (to)",
           }}
         />
         <div className="p-6">

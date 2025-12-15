@@ -29,7 +29,7 @@ export default async function ProductPage() {
       <PageBreadcrumb pageTitle="Product" filters={["catalog"]} />
       <div>
         <div className="default-card p-6">
-          <div className="mb-4">
+          <div className="mb-6 pt-2 px-1 flex justify-end">
             <Link href={`/catalog/product/new`}>
               <Button
                 size="sm"

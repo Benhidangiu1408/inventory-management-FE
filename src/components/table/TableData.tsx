@@ -49,7 +49,7 @@ export const userData = async (): Promise<UserRow[]> => {
     email: u.email,
     role: roles[index] ?? "Unknown",
     status: u.status ?? "Inactive",
-    createdDate: u.createdDate ?? "",
+    createdDate: u.createdDate ? new Date(u.createdDate) : null,
     actions: ["d"],
   }));
 };

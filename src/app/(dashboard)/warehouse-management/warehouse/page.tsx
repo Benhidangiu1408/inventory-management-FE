@@ -30,7 +30,7 @@ export default async function WarehousePage() {
       />
       <div>
         <div className="default-card p-6">
-          <div className="mb-4">
+          <div className="mb-6 pt-2 px-1 flex justify-end">
             <Link href={`/warehouse-management/warehouse/new`}>
               <Button
                 size="sm"

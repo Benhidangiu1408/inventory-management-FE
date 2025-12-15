@@ -261,7 +261,7 @@ export interface UserRow {
   email: string;
   role: string;
   status: UserStatus;
-  createdDate: string; // formatted date/time
+  createdDate: Date | null; // formatted date/time
   actions: string[]; // e.g. ["r","w"] for read/edit
 }
 
@@ -378,12 +378,22 @@ export default UserActionsCell;
 //   // },
 // ];
 export const userColumns = (roles: Role[]): Column<UserRow>[] => [
-  { label: "User ID", key: "id" },
+  {
+    label: "User ID",
+    key: "id",
+  },
   {
     label: "Username",
     key: "username",
     render(_, row) {
-      return <Link href={`/profile/${row.id}`}>{row.username}</Link>;
+      return (
+        <Link
+          href={`/profile/${row.id}`}
+          className="text-blue-600 hover:underline"
+        >
+          {row.username}
+        </Link>
+      );
     },
   },
   { label: "Email", key: "email" },
@@ -418,6 +428,10 @@ export const userColumns = (roles: Role[]): Column<UserRow>[] => [
   {
     label: "Created Date",
     key: "createdDate",
+    render(value) {
+      if (!value) return "";
+      return (value as Date).toLocaleDateString("vi-VN");
+    },
   },
 ];
 

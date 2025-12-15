@@ -28,6 +28,9 @@ import {
   Settings,
   UserRoundCog,
   Warehouse,
+  UsersRound,
+  UserCircle,
+  ClipboardCheck,
 } from "lucide-react";
 
 type NavItem = {
@@ -46,33 +49,18 @@ export const navItems: NavItem[] = [
   },
   {
     icon: <Warehouse />,
-    name: "Warehouse Management",
-    subItems: [
-      { name: "Warehouse", path: "/warehouse-management/warehouse" },
-      {
-        name: "Inventory Check",
-        path: "/warehouse-management/inventory-check",
-      },
-    ],
+    name: "Inventory On Hand",
+    path: "/import",
   },
-  {
-    icon: <FileBox />,
-    name: "Catalog",
-    subItems: [
-      { name: "Category", path: "/catalog/category" },
-      { name: "Product", path: "/catalog/product" },
-      { name: "Product Attributes", path: "/catalog/variant-attributes" },
-      { name: "UOM (Unit of Measurement)", path: "/catalog/unit" },
-    ],
-  },
-  {
-    icon: <Package />,
-    name: "Inventory",
-    subItems: [
-      { name: "Item", path: "/s" },
-      { name: "Batch", path: "/s" },
-    ],
-  },
+
+  // {
+  //   icon: <Package />,
+  //   name: "Inventory",
+  //   subItems: [
+  //     { name: "Item", path: "/s" },
+  //     { name: "Batch", path: "/s" },
+  //   ],
+  // },
   {
     icon: <FontAwesomeIcon icon={faDolly} size="lg" />,
     name: "Import",
@@ -84,6 +72,11 @@ export const navItems: NavItem[] = [
     path: "/export",
   },
   {
+    icon: <ClipboardCheck />,
+    name: "Stocktaking",
+    path: "/warehouse-management/inventory-check",
+  },
+  {
     icon: <ArchiveX />,
     name: "Defective",
     subItems: [
@@ -92,35 +85,47 @@ export const navItems: NavItem[] = [
     ],
   },
   {
-    icon: <Globe />,
-    name: "Network",
+    icon: <FileBox />,
+    name: "Master Data",
+    subItems: [
+      { name: "Warehouse", path: "/warehouse-management/warehouse" },
+      { name: "Category", path: "/catalog/category" },
+      { name: "Product", path: "/catalog/product" },
+      { name: "Product Attributes", path: "/catalog/variant-attributes" },
+      { name: "UOM (Unit of Measurement)", path: "/catalog/unit" },
+    ],
+  },
+  {
+    icon: <UsersRound />,
+    name: "Business Partners",
     subItems: [
       { name: "Supplier", path: "/s" },
       { name: "Customer", path: "/s" },
     ],
   },
+  
   {
     name: "Users Control",
     icon: <UserRoundCog />,
     subItems: [
-      {
-        name: "Profile",
-        path: `/profile/${sessionStorage.getItem("userId") ?? ""}`,
-      },
+      // {
+      //   name: "Profile",
+      //   path: `/profile/${sessionStorage.getItem("userId") ?? ""}`,
+      // },
       { name: "Users Management", path: "/admin/user-management" },
       { name: "Role & Permission", path: "/admin/role-management" },
       { name: "User History", path: "/s" },
     ],
   },
+  // {
+  //   icon: <FontAwesomeIcon icon={faBell} size="lg" />,
+  //   name: "Notification",
+  //   path: "/notification",
+  // },
   {
-    icon: <FontAwesomeIcon icon={faBell} size="lg" />,
-    name: "Notification",
-    path: "/notification",
-  },
-  {
-    icon: <Settings />,
-    name: "Settings",
-    path: "/s",
+    icon: <UserCircle />,
+    name: "Profile",
+    path: `/profile/${sessionStorage.getItem("userId") ?? ""}`,
   },
 ];
 
@@ -433,7 +438,7 @@ const AppSidebar: React.FC = () => {
               {renderMenuItems(navItems, "main")}
             </div>
 
-            <div className="">
+            {/* <div className="">
               <h2
                 className={`mb-4 flex h-[20px] text-xs leading-[20px] text-gray-400 uppercase ${
                   !isExpanded && !isHovered
@@ -448,7 +453,7 @@ const AppSidebar: React.FC = () => {
                 )}
               </h2>
               {renderMenuItems(othersItems, "others")}
-            </div>
+            </div> */}
           </div>
         </nav>
         {/* widget upgrade to pro */}
