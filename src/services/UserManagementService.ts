@@ -36,12 +36,23 @@ export const userManagementService = {
     return token;
   },
 
-  getAll: async () => {
-    return apiClient.get<User[]>("users", {
+  // getAll: async () => {
+  //   return apiClient.get<User[]>("users", {
+  //     headers: { Authorization: authToken },
+  //     cache: "no-store",
+  //   });
+  // },
+
+  getAll: async (roleId?: number) => {
+    const query = roleId ? `?roleId=${roleId}` : "";
+
+    return apiClient.get<User[]>(`users${query}`, {
       headers: { Authorization: authToken },
       cache: "no-store",
     });
   },
+
+
 
   getById: async (id: string) => {
     return apiClient.get<User>(`/users/${id}`, {
