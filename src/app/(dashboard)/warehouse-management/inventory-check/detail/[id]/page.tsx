@@ -30,6 +30,12 @@ export default async function InventoryCheckDetailPage({
     { label: "Assignee", value: "John Doe" },
     { label: "Status", value: data?.header.status },
     {
+      label: "Cycle Check",
+      value: data?.header.isCycleCheck
+        ? `Every ${data.header.cycleIntervalDays} day(s)`
+        : "None",
+    },
+    {
       label: "Note",
       value: (data?.header.note as string) || (
         <div className="text-gray-400 italic">No Note</div>

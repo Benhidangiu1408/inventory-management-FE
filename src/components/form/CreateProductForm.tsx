@@ -37,7 +37,7 @@ export const CreateProductForm = ({
     .map((cat) =>
       cat.subcategories.map((subCat) => ({
         value: subCat.id.toString(),
-        label: `${subCat.name} (${subCat.code})`,
+        label: `${cat.name} - ${subCat.name} (${subCat.code})`,
       })),
     )
     .flat();

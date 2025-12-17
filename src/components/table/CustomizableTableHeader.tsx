@@ -190,6 +190,8 @@ export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
   {
     label: "Code",
     key: "code",
+    filter: false,
+    minWidth: 120,
   },
   {
     label: "Warehouse",
@@ -202,6 +204,7 @@ export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
   {
     label: "Planned Date",
     key: "plannedDate",
+    filter: "agDateColumnFilter",
     render: (value) => {
       if (!value) return <span className="text-gray-400">-</span>;
       const safeDateString = (value as string).endsWith("Z")
@@ -240,6 +243,7 @@ export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
   {
     label: "Actions",
     key: "id",
+    filter: false,
     render: (_, row) => (
       <div className="flex h-full items-center justify-center gap-2">
         <Link

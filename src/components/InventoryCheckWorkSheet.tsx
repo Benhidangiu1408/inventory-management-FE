@@ -17,6 +17,7 @@ import {
   icSheetBatchSubheadersReadOnly,
   icSheetProductHeaders,
 } from "./table/AccordionTableHeader";
+import { useConfirmModal } from "@/hooks/useConfirmModal";
 
 export function InventoryCheckWorkSheet({
   initialData,
@@ -28,6 +29,7 @@ export function InventoryCheckWorkSheet({
   const [data, setData] = useState<InventoryCheckSheetData | null>(initialData);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { confirm, ConfirmationModal } = useConfirmModal();
 
   useEffect(() => {
     setData(initialData);
@@ -80,9 +82,15 @@ export function InventoryCheckWorkSheet({
     } finally {
       setLoading(false);
     }
-  }, [router, sheetId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetId]);
   const handleComplete = useCallback(async () => {
-    if (!confirm("Are you sure you want to finish counting?")) return;
+    const ok = await confirm({
+      title: "Confirm Stocktaking Completion",
+      message:
+        "Are you sure you want to finalize this stock check?\nOnce finalized, the stock results will be locked and cannot be modified.",
+    });
+    if (!ok) return;
     try {
       setLoading(true);
       await inventoryCheckService.complete(sheetId);
@@ -97,9 +105,15 @@ export function InventoryCheckWorkSheet({
     } finally {
       setLoading(false);
     }
-  }, [router, sheetId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetId]);
   const handleApprove = useCallback(async () => {
-    if (!confirm("Confirm approval of this inventory check?")) return;
+    const ok = await confirm({
+      title: "Approve Inventory Check Result",
+      message:
+        "Once approved, the stock results will be stored and use for future report.",
+    });
+    if (!ok) return;
     try {
       setLoading(true);
       await inventoryCheckService.approve(sheetId);
@@ -111,9 +125,15 @@ export function InventoryCheckWorkSheet({
     } finally {
       setLoading(false);
     }
-  }, [router, sheetId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetId]);
   const handleReject = useCallback(async () => {
-    if (!confirm("Are you sure you want to reject this sheet?")) return;
+    const ok = await confirm({
+      title: "Reject Inventory Check Result",
+      message:
+        "Once rejected, the stock results will be put away and the employee will need to recheck.",
+    });
+    if (!ok) return;
     try {
       setLoading(true);
       await inventoryCheckService.reject(sheetId);
@@ -125,7 +145,8 @@ export function InventoryCheckWorkSheet({
     } finally {
       setLoading(false);
     }
-  }, [router, sheetId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetId]);
 
   // --- STATE: NOT STARTED ---
   if (header.status === SheetStatus.CREATED) {
@@ -156,6 +177,7 @@ export function InventoryCheckWorkSheet({
   if (header.status === SheetStatus.COMPLETED) {
     return (
       <div className="space-y-6">
+        {ConfirmationModal}
         <div className="flex items-center justify-between rounded-lg border border-blue-100 bg-blue-50 p-4">
           <div>
             <h2 className="text-lg font-bold text-blue-900">Review Required</h2>
@@ -238,12 +260,10 @@ export function InventoryCheckWorkSheet({
   // --- STATE: IN PROGRESS (The Worksheet) ---
   return (
     <div className="space-y-6">
+      {ConfirmationModal}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">{header.code}</h1>
-          <span className="text-sm text-gray-500">
-            Assigned to: {header.assigneeName}
-          </span>
         </div>
         <div className="flex items-center gap-3">
           <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">

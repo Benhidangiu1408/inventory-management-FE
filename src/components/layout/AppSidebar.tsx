@@ -11,11 +11,9 @@ import {
   GridIcon,
   HorizontaLDots,
   PieChartIcon,
-  UserCircleIcon,
 } from "../../icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faBell,
   faDolly,
   faTruckRampBox,
   faWarehouse,
@@ -23,11 +21,7 @@ import {
 import {
   ArchiveX,
   FileBox,
-  Globe,
-  Package,
-  Settings,
   UserRoundCog,
-  Warehouse,
   UsersRound,
   UserCircle,
   ClipboardCheck,
@@ -47,11 +41,11 @@ export const navItems: NavItem[] = [
     name: "Dashboard",
     path: "/",
   },
-  {
-    icon: <Warehouse />,
-    name: "Inventory On Hand",
-    path: "/import",
-  },
+  // {
+  //   icon: <Warehouse />,
+  //   name: "Inventory On Hand",
+  //   path: "/import",
+  // },
 
   // {
   //   icon: <Package />,
@@ -76,14 +70,14 @@ export const navItems: NavItem[] = [
     name: "Stocktaking",
     path: "/warehouse-management/inventory-check",
   },
-  {
-    icon: <ArchiveX />,
-    name: "Defective",
-    subItems: [
-      { name: "Root Cause Analysis", path: "/s" },
-      { name: "Fault Order", path: "/s" },
-    ],
-  },
+  // {
+  //   icon: <ArchiveX />,
+  //   name: "Defective",
+  //   subItems: [
+  //     { name: "Root Cause Analysis", path: "/s" },
+  //     { name: "Fault Order", path: "/s" },
+  //   ],
+  // },
   {
     icon: <FileBox />,
     name: "Master Data",
@@ -103,7 +97,7 @@ export const navItems: NavItem[] = [
       { name: "Customer", path: "/s" },
     ],
   },
-  
+
   {
     name: "Users Control",
     icon: <UserRoundCog />,

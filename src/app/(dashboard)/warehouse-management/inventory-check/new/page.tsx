@@ -1,6 +1,6 @@
 import { CreateICSheetForm } from "@/components/form/CreateICSheetForm";
-import Calendar from "@/default_components/calendar/Calendar";
-import ComponentCard from "@/default_components/common/ComponentCard";
+// import Calendar from "@/default_components/calendar/Calendar";
+// import ComponentCard from "@/default_components/common/ComponentCard";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import {
   ProductResponse,
@@ -35,9 +35,9 @@ export default async function CreateICPage() {
       />
       <div className="flex flex-col gap-6">
         <CreateICSheetForm warehouse={warehouseData} product={productData} />
-        <ComponentCard title="Assigned Inspector Schedule">
+        {/* <ComponentCard title="Assigned Inspector Schedule">
           <Calendar />
-        </ComponentCard>
+        </ComponentCard> */}
       </div>
     </div>
   );

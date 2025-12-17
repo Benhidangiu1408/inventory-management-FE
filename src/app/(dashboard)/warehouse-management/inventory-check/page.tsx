@@ -29,7 +29,7 @@ export default async function InventoryCheckPage() {
       />
       <div>
         <div className="default-card p-6">
-          <div className="mb-4">
+          <div className="mb-6 flex justify-end px-1 pt-2">
             <Link href={`/warehouse-management/inventory-check/new`}>
               <Button
                 size="sm"

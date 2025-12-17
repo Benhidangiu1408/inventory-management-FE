@@ -44,22 +44,49 @@ export const CreateICSheetForm = ({
     reset,
     control,
     formState: { errors },
-  } = useForm<CreateInventoryCheckRequest>({
+  } = useForm<
+    CreateInventoryCheckRequest & {
+      cycleValue: number;
+      cycleUnit: "DAYS" | "WEEKS" | "MONTHS";
+    }
+  >({
     defaultValues: {
       warehouseId: null,
       targetProductIds: [],
       plannedDate: "",
       note: "",
       isCycleCheck: false,
-      cycleIntervalDays: 7,
+      cycleValue: 1, // Default 1
+      cycleUnit: "WEEKS", // Default Weeks
     },
   });
   const isCycleCheck = useWatch({ control, name: "isCycleCheck" });
+  const cycleValue = useWatch({ control, name: "cycleValue" });
+  const cycleUnit = useWatch({ control, name: "cycleUnit" });
 
   //Validation Logic
-  const onSubmit: SubmitHandler<CreateInventoryCheckRequest> = async (data) => {
+  const onSubmit: SubmitHandler<
+    CreateInventoryCheckRequest & {
+      cycleValue: number;
+      cycleUnit: "DAYS" | "WEEKS" | "MONTHS";
+    }
+  > = async (data) => {
     setLoading(true);
     try {
+      let calculatedDays = undefined;
+      if (data.isCycleCheck) {
+        const val = Number(data.cycleValue);
+        switch (data.cycleUnit) {
+          case "WEEKS":
+            calculatedDays = val * 7;
+            break;
+          case "MONTHS":
+            calculatedDays = val * 30;
+            break;
+          default:
+            calculatedDays = val;
+        }
+      }
       const payload: CreateInventoryCheckRequest = {
         note: data.note,
         warehouseId: Number(data.warehouseId),
@@ -71,13 +98,11 @@ export const CreateICSheetForm = ({
           : [],
         plannedDate: new Date(data.plannedDate).toISOString(),
         isCycleCheck: Boolean(data.isCycleCheck),
-        cycleIntervalDays: data.isCycleCheck
-          ? Number(data.cycleIntervalDays)
-          : undefined,
+        cycleIntervalDays: calculatedDays,
       };
       await inventoryCheckService.create(payload);
       reset();
-      toast.success("Product created successfully!");
+      toast.success("Inventory Check Scheduled!");
       router.replace("/warehouse-management/inventory-check");
     } catch (error) {
       if (error instanceof ApiError) {
@@ -179,19 +204,43 @@ export const CreateICSheetForm = ({
 
           {/* Conditional Input for Days */}
           {isCycleCheck && (
-            <div className="animate-in fade-in slide-in-from-top-2 ml-8 w-full max-w-xs duration-200">
-              <Label>Repeat Interval (Days)</Label>
-              <Input
-                type="number"
-                placeholder="e.g. 7"
-                {...register("cycleIntervalDays", {
-                  valueAsNumber: true,
-                  min: { value: 1, message: "Interval must be at least 1 day" },
-                  required: isCycleCheck ? "Interval is required" : false,
-                })}
-                error={!!errors.cycleIntervalDays}
-                hint={errors.cycleIntervalDays?.message}
-              />
+            <div className="animate-in fade-in slide-in-from-top-2 ml-8 w-full duration-200">
+              <Label>Repeat Every</Label>
+              <div className="flex items-start">
+                {/* Number Input */}
+                <div className="w-24">
+                  <Input
+                    type="number"
+                    className="rounded-r-none border-r-0 text-center"
+                    placeholder="e.g. 1"
+                    {...register("cycleValue", {
+                      required: isCycleCheck,
+                      min: { value: 1, message: "Must be at least 1" },
+                    })}
+                    error={!!errors.cycleValue}
+                    hint={errors.cycleValue?.message}
+                  />
+                </div>
+
+                {/* Unit Selector */}
+                <div className="w-40">
+                  <Select
+                    className="rounded-l-none"
+                    options={[
+                      { value: "DAYS", label: "Days" },
+                      { value: "WEEKS", label: "Weeks" },
+                      { value: "MONTHS", label: "Months" },
+                    ]}
+                    {...register("cycleUnit")}
+                  />
+                </div>
+              </div>
+
+              {/* Helper text showing calculation */}
+              <p className="mt-2 text-xs text-gray-500">
+                Next check created automatically {cycleValue || 1}{" "}
+                {cycleUnit?.toLowerCase()} after completion.
+              </p>
             </div>
           )}
         </div>
