@@ -4,11 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { inventoryCheckService } from "@/services/InventoryManagementService";
 import {
+  InventoryCheckBatchRow,
+  InventoryCheckProductGroup,
   InventoryCheckSheetData,
   SheetStatus,
 } from "@/interfaces/inventoryManagementType";
 import Button from "@/default_components/ui/button/Button";
-import { CheckCircle, Play, Save, XCircle } from "lucide-react";
+import { CheckCircle, Play, Save, Scan, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { ApiError } from "@/lib/api-mask";
 import AccordionTable from "./table/AccordionTable";
@@ -59,6 +61,45 @@ export function InventoryCheckWorkSheet({
     },
     [],
   );
+  const handleSimulateScan = useCallback(() => {
+    toast("Scannings...");
+    setTimeout(() => {
+      if (!data || data.products.length === 0) return;
+
+      // 1. Flatten all batches into a single list
+      // and Filter only for UN-SCANNED items (null or 0)
+      const pendingBatches: {
+        batch: InventoryCheckBatchRow;
+        product: InventoryCheckProductGroup;
+      }[] = [];
+      data.products.forEach((product) => {
+        product.batches.forEach((batch) => {
+          if (batch.scannedQuantity === null) {
+            pendingBatches.push({ batch, product });
+          }
+        });
+      });
+      // 2. Check if anything is left to scan
+      if (pendingBatches.length === 0) {
+        toast.success("All items have been scanned!");
+        return;
+      }
+      // 3. Pick a random batch from the PENDING list
+      const target =
+        pendingBatches[Math.floor(Math.random() * pendingBatches.length)];
+      // 4. Simulate a perfect match
+      const simulatedQty = target.batch.storedQuantity;
+      // 5. Update State
+      handleBatchSave(
+        target.batch.detailId,
+        simulatedQty,
+        target.batch.hasFaults,
+      );
+      toast.success(
+        `Scanned: ${target.product.productName} (${target.batch.batchCode})`,
+      );
+    }, 1500);
+  }, [data, handleBatchSave]);
 
   // Generate Headers with the callback closure
   const editableHeaders = useMemo(
@@ -286,6 +327,14 @@ export function InventoryCheckWorkSheet({
           <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
             In Progress
           </span>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleSimulateScan}
+            startIcon={<Scan size={18} />}
+          >
+            Simulate RFID
+          </Button>
           <Button
             size="sm"
             onClick={handleComplete}
