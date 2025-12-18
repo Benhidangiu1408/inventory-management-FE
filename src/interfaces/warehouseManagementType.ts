@@ -57,7 +57,8 @@ export interface WarehouseDetail {
   description: string | null;
   type: WarehouseType;
   status: WarehouseStatus;
-  // managerName: string; // Derived from backend `manager.firstName` + `last`
+  managerId: number;
+  managerName: string;
 }
 
 export interface NewWarehouseRequest {
@@ -66,7 +67,7 @@ export interface NewWarehouseRequest {
   description: string | null;
   type: WarehouseType;
   status: WarehouseStatus;
-  // userId: string;
+  managerId: number | null;
 }
 
 // ----------------- Location --------------------

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link";
 import React, { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
@@ -19,8 +19,6 @@ export default function UserDropdown() {
     setIsOpen(false);
   }
 
-  const id = 5;
-
   return (
     <div className="relative">
       <button
@@ -36,7 +34,9 @@ export default function UserDropdown() {
           />
         </span>
 
-        <span className="text-theme-sm mr-1 block font-medium">{user?.firstName ?? ""}</span>
+        <span className="text-theme-sm mr-1 block font-medium">
+          {user?.firstName ?? ""}
+        </span>
 
         <svg
           className={`stroke-gray-500 transition-transform duration-200 dark:stroke-gray-400 ${
@@ -149,8 +149,11 @@ export default function UserDropdown() {
             </DropdownItem>
           </li>
         </ul>
-        <Link
-          href="/login"
+        <DropdownItem
+          onClick={() => {
+            sessionStorage.clear();
+            window.location.replace("/login");
+          }}
           className="group text-theme-sm mt-3 flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
         >
           <svg
@@ -169,7 +172,7 @@ export default function UserDropdown() {
             />
           </svg>
           Sign out
-        </Link>
+        </DropdownItem>
       </Dropdown>
     </div>
   );

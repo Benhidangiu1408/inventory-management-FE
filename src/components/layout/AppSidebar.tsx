@@ -19,7 +19,6 @@ import {
   faWarehouse,
 } from "@fortawesome/free-solid-svg-icons";
 import {
-  ArchiveX,
   FileBox,
   UserRoundCog,
   UsersRound,
