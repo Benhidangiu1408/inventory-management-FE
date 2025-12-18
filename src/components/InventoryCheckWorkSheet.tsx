@@ -30,6 +30,7 @@ export function InventoryCheckWorkSheet({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { confirm, ConfirmationModal } = useConfirmModal();
+  const currentUser = sessionStorage.getItem("userId");
 
   useEffect(() => {
     setData(initialData);
@@ -61,13 +62,21 @@ export function InventoryCheckWorkSheet({
 
   // Generate Headers with the callback closure
   const editableHeaders = useMemo(
-    () => getIcSheetBatchSubheaders(handleBatchSave),
-    [handleBatchSave],
+    () =>
+      getIcSheetBatchSubheaders(
+        handleBatchSave,
+        Number(initialData?.header.assigneeId),
+      ),
+    [handleBatchSave, initialData?.header.assigneeId],
   );
   const { header, products } = data as InventoryCheckSheetData;
 
   // Action
   const handleStart = useCallback(async () => {
+    if (Number(currentUser) !== initialData?.header.assigneeId) {
+      toast.error("You're not the assigned employee!");
+      return;
+    }
     try {
       setLoading(true);
       await inventoryCheckService.start(sheetId);
@@ -108,6 +117,10 @@ export function InventoryCheckWorkSheet({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sheetId]);
   const handleApprove = useCallback(async () => {
+    if (Number(currentUser) !== initialData?.header.creatorId) {
+      toast.error("Only the manager can approve!");
+      return;
+    }
     const ok = await confirm({
       title: "Approve Inventory Check Result",
       message:
@@ -116,7 +129,7 @@ export function InventoryCheckWorkSheet({
     if (!ok) return;
     try {
       setLoading(true);
-      await inventoryCheckService.approve(sheetId);
+      await inventoryCheckService.approve(sheetId, Number(currentUser));
       toast.success("Sheet Approved");
       router.replace("/warehouse-management/inventory-check");
     } catch (error) {
@@ -128,6 +141,10 @@ export function InventoryCheckWorkSheet({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sheetId]);
   const handleReject = useCallback(async () => {
+    if (Number(currentUser) !== initialData?.header.creatorId) {
+      toast.error("Only the manager can reject!");
+      return;
+    }
     const ok = await confirm({
       title: "Reject Inventory Check Result",
       message:
@@ -136,7 +153,7 @@ export function InventoryCheckWorkSheet({
     if (!ok) return;
     try {
       setLoading(true);
-      await inventoryCheckService.reject(sheetId);
+      await inventoryCheckService.reject(sheetId, Number(currentUser));
       toast.success("Sheet Rejected");
       router.replace("/warehouse-management/inventory-check");
     } catch (error) {

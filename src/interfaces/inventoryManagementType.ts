@@ -11,9 +11,10 @@ export interface CreateInventoryCheckRequest {
   warehouseId: number | null;
   // If empty array or null, it implies checking the entire warehouse
   targetProductIds: number[];
-  assigneeId: number | null;
+  creatorId: number | null;
+  assignedUserId: number | null;
   plannedDate: string;
-  note?: string;
+  note: string | null;
   // Cycle Counting
   isCycleCheck: boolean;
   cycleIntervalDays?: number;
@@ -32,6 +33,9 @@ export interface InventoryCheckResponse {
   // Assignee Info
   assigneeId: number;
   assigneeName: string;
+  creatorId: number;
+  creatorName: string;
+  approvalName: string;
   // Config
   isCycleCheck: boolean;
   cycleIntervalDays?: number;

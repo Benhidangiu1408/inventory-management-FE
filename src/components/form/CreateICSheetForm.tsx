@@ -14,8 +14,9 @@ import {
 } from "@/interfaces/warehouseManagementType";
 import { ApiError } from "@/lib/api-mask";
 import { inventoryCheckService } from "@/services/InventoryManagementService";
+import { userManagementService } from "@/services/UserManagementService";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -58,11 +59,36 @@ export const CreateICSheetForm = ({
       isCycleCheck: false,
       cycleValue: 1, // Default 1
       cycleUnit: "WEEKS", // Default Weeks
+      assignedUserId: null,
     },
   });
   const isCycleCheck = useWatch({ control, name: "isCycleCheck" });
   const cycleValue = useWatch({ control, name: "cycleValue" });
   const cycleUnit = useWatch({ control, name: "cycleUnit" });
+  const creator = sessionStorage.getItem("userId");
+
+  const [users, setUsers] = useState<{ value: string; label: string }[]>([]);
+  useEffect(() => {
+    const fetchManagers = async () => {
+      try {
+        const users = await userManagementService.getAll(1);
+        if (users) {
+          const options = users
+            .filter((val) => String(val.id) !== creator)
+            .map((u) => ({
+              value: u.id.toString(),
+              label: `${u.username}`,
+            }));
+          setUsers(options);
+        }
+      } catch (error) {
+        console.error("Failed to load user:", error);
+        toast.error("Could not load user list");
+      }
+    };
+    fetchManagers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   //Validation Logic
   const onSubmit: SubmitHandler<
@@ -88,9 +114,10 @@ export const CreateICSheetForm = ({
         }
       }
       const payload: CreateInventoryCheckRequest = {
-        note: data.note,
+        note: data.note !== "" ? data.note : null,
         warehouseId: Number(data.warehouseId),
-        assigneeId: null,
+        assignedUserId: Number(data.assignedUserId),
+        creatorId: Number(creator),
         targetProductIds: data.targetProductIds
           ? (data.targetProductIds as unknown as string[]).map((id: string) =>
               Number(id),
@@ -136,12 +163,13 @@ export const CreateICSheetForm = ({
           <div className="col-span-1">
             <Label>Assignee</Label>
             <Select
-              // {...register("assigneeId", { required: "Please assign a checker" })}
-              options={[]}
-              placeholder="Select Person"
-              error={!!errors.assigneeId}
-              hint={errors.assigneeId?.message}
-              disabled
+              {...register("assignedUserId", {
+                required: "Please assign an employee",
+              })}
+              options={users}
+              placeholder="Select Employee"
+              error={!!errors.assignedUserId}
+              hint={errors.assignedUserId?.message}
             />
           </div>
           {/* Planned Date */}
