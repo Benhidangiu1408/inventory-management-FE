@@ -24,7 +24,7 @@ export default function ImportPage() {
               size: "sm",
               type: "link",
               title: "New Import",
-              href: "/import/create",
+              href: "/import/new",
               startIcon: <FontAwesomeIcon icon={faPlus} />,
             },
           ]}
