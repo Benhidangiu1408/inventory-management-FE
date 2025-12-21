@@ -3,24 +3,26 @@ import { ReactNode } from "react";
 export interface ImportRow {
   batchId: string;
   date: string;
-  type: string;
+  type: string; // Loại phiếu nhập: manufacturer, purchase-order, transfer
+  requestStatus?: string; // Trạng thái yêu cầu: REQUEST, PROCESSING
   createdBy: string;
   totalQuantity: number;
   totalValue: number;
-  status: string;
+  status: string; // Trạng thái active/inactive
   actions?: ReactNode;
 }
 
 export interface ExportRow {
   batchId: string;
   date: string;
-  type: string;
+  type: string; // Loại phiếu xuất: manufacturer, purchase-order, transfer
+  requestStatus?: string; // Trạng thái yêu cầu: REQUEST, PROCESSING
   warehouse: string;
   receiver: string;
   createdBy: string;
   totalQuantity: number;
   totalValue: number;
-  status: string;
+  status: string; // Trạng thái active/inactive
   actions?: ReactNode;
 }
 
@@ -93,4 +95,19 @@ export interface ImportCreateRow {
 export interface ExportQuantityCheckRow {
   quantity: number;
   location: string;
+}
+
+export interface ThirdPartyRequestProduct {
+  productId: string;
+  productName: string;
+  quantity: number;
+  unit: string;
+}
+
+export interface ThirdPartyRequest {
+  requestId: string;
+  thirdPartyName: string;
+  thirdPartyContact: string;
+  date: string;
+  products: ThirdPartyRequestProduct[];
 }

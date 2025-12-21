@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useCallback, useMemo } from "react";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import Checkbox from "@/default_components/form/input/Checkbox";
 import Input from "@/default_components/form/input/InputField";
@@ -24,44 +25,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 
 export default function CreateImportPage() {
-  const columns: Column<ImportCreateRow>[] = [
-    {
-      label: "Check Box",
-      key: "checkBox",
-      render: () => (
-        <div className="flex justify-center">
-          <Checkbox checked={false} onChange={() => {}} />
-        </div>
-      ),
-    },
-    {
-      label: "Product ID",
-      key: "productId",
-    },
-    {
-      label: "Name",
-      key: "name",
-    },
-    {
-      label: "Stock",
-      key: "stock",
-    },
-    {
-      label: "Unit",
-      key: "unit",
-    },
-    {
-      label: "Quantity",
-      key: "quantity",
-    },
-    {
-      label: "Pick Quantity",
-      key: "pickQuantity",
-      render: () => <Input type="number" className="" onChange={() => {}} />,
-    },
-  ];
-
-  const data: ImportCreateRow[] = [
+  const [data, setData] = useState<ImportCreateRow[]>([
     {
       checkBox: false,
       productId: "1",
@@ -80,12 +44,94 @@ export default function CreateImportPage() {
       quantity: "200",
       pickQuantity: "",
     },
-  ];
+  ]);
 
-  const table: TableProps<ImportCreateRow> = {
-    headers: columns,
-    data,
-  };
+  const handleCheckboxChange = useCallback(
+    (productId: string, checked: boolean) => {
+      setData((prev) =>
+        prev.map((item) =>
+          item.productId === productId ? { ...item, checkBox: checked } : item,
+        ),
+      );
+    },
+    [],
+  );
+
+  const handlePickQuantityChange = useCallback(
+    (productId: string, value: string) => {
+      setData((prev) =>
+        prev.map((item) =>
+          item.productId === productId
+            ? { ...item, pickQuantity: value }
+            : item,
+        ),
+      );
+    },
+    [],
+  );
+
+  const columns: Column<ImportCreateRow>[] = useMemo(
+    () => [
+      {
+        label: "Check Box",
+        key: "checkBox",
+        render: (_, row) => (
+          <div className="flex h-full items-center justify-center">
+            <Checkbox
+              checked={row.checkBox}
+              onChange={(e) =>
+                handleCheckboxChange(row.productId, e.target.checked)
+              }
+            />
+          </div>
+        ),
+      },
+      {
+        label: "Product ID",
+        key: "productId",
+      },
+      {
+        label: "Name",
+        key: "name",
+      },
+      {
+        label: "Stock",
+        key: "stock",
+      },
+      {
+        label: "Unit",
+        key: "unit",
+      },
+      {
+        label: "Quantity",
+        key: "quantity",
+      },
+      {
+        label: "Pick Quantity",
+        key: "pickQuantity",
+        render: (_, row) => (
+          <Input
+            type="number"
+            className="h-full"
+            value={String(row.pickQuantity || "")}
+            onChange={(e) =>
+              handlePickQuantityChange(row.productId, e.target.value)
+            }
+          />
+        ),
+      },
+    ],
+    [handleCheckboxChange, handlePickQuantityChange],
+  );
+
+  const table: TableProps<ImportCreateRow> = useMemo(
+    () => ({
+      headers: columns,
+      data,
+      getRowId: (params) => params.data.productId,
+    }),
+    [columns, data],
+  );
 
   return (
     <>
