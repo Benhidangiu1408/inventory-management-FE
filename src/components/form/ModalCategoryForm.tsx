@@ -193,7 +193,7 @@ export function ModalCategoryForm({ data }: { data: Category[] }) {
 
   return (
     <div>
-      <div className={"pt-6 pl-6"}>
+      <div className={"pt-6 px-6 flex justify-end"}>
         <NoControlModalBox
           startIcon={<Plus size={16} />}
           openBtnTitle={"New Category"}

@@ -25,6 +25,7 @@ import {
   ClipboardModule,
   ColumnMenuModule,
   ContextMenuModule,
+  SetFilterModule,
 } from "ag-grid-enterprise";
 import Pagination from "@/components/table/Pagination";
 
@@ -39,6 +40,7 @@ ModuleRegistry.registerModules([
   ColumnMenuModule,
   ClipboardModule,
   ContextMenuModule,
+  SetFilterModule,
   ...(process.env.NODE_ENV !== "production" ? [ValidationModule] : []),
 ]);
 
@@ -47,8 +49,12 @@ export interface Column<T extends object> {
   key: keyof T & string; // header/attribute key
   render?: (value: T[keyof T], row: T) => ReactNode; // optional custom cell renderer
   width?: number;
+  minWidth?: number;
   sortable?: boolean;
   stopCenterData?: boolean;
+  filter?: boolean | string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  filterParams?: any;
 }
 
 export interface TableProps<T extends object>
@@ -90,9 +96,12 @@ export default function CustomizableTable<T extends object>({
           field: header.key as unknown as ColDefField<T>,
           flex: header.width ? 0 : 1,
           width: header.width,
+          minWidth: header.minWidth,
           sortable: header.sortable ?? true,
           cellClass: header.stopCenterData ? "" : "text-center",
           cellRenderer,
+          filter: header.filter,
+          filterParams: header.filterParams,
         } satisfies ColDef<T>;
       }),
     [headers],

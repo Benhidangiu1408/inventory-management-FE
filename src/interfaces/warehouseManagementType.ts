@@ -57,7 +57,8 @@ export interface WarehouseDetail {
   description: string | null;
   type: WarehouseType;
   status: WarehouseStatus;
-  // managerName: string; // Derived from backend `manager.firstName` + `last`
+  managerId: number;
+  managerName: string;
 }
 
 export interface NewWarehouseRequest {
@@ -66,7 +67,7 @@ export interface NewWarehouseRequest {
   description: string | null;
   type: WarehouseType;
   status: WarehouseStatus;
-  // userId: string;
+  managerId: number | null;
 }
 
 // ----------------- Location --------------------
@@ -157,6 +158,10 @@ export interface ProductCreateRequest {
   // Item Unit Config
   itemUnitId: number | null;
   itemConversionRate?: number; // Required if itemUnitId != baseUnitId
+  additionalConversions?: {
+    fromUnitId: number | null;
+    conversionRate: number | null;
+  }[];
 }
 
 export interface UnitSummary {

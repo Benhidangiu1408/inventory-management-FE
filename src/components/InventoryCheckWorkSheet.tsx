@@ -4,11 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { inventoryCheckService } from "@/services/InventoryManagementService";
 import {
+  InventoryCheckBatchRow,
+  InventoryCheckProductGroup,
   InventoryCheckSheetData,
   SheetStatus,
 } from "@/interfaces/inventoryManagementType";
 import Button from "@/default_components/ui/button/Button";
-import { CheckCircle, Play, Save, XCircle } from "lucide-react";
+import { CheckCircle, Play, Save, Scan, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { ApiError } from "@/lib/api-mask";
 import AccordionTable from "./table/AccordionTable";
@@ -17,6 +19,7 @@ import {
   icSheetBatchSubheadersReadOnly,
   icSheetProductHeaders,
 } from "./table/AccordionTableHeader";
+import { useConfirmModal } from "@/hooks/useConfirmModal";
 
 export function InventoryCheckWorkSheet({
   initialData,
@@ -28,6 +31,8 @@ export function InventoryCheckWorkSheet({
   const [data, setData] = useState<InventoryCheckSheetData | null>(initialData);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { confirm, ConfirmationModal } = useConfirmModal();
+  const currentUser = sessionStorage.getItem("userId");
 
   useEffect(() => {
     setData(initialData);
@@ -56,16 +61,63 @@ export function InventoryCheckWorkSheet({
     },
     [],
   );
+  const handleSimulateScan = useCallback(() => {
+    toast("Scannings...");
+    setTimeout(() => {
+      if (!data || data.products.length === 0) return;
+
+      // 1. Flatten all batches into a single list
+      // and Filter only for UN-SCANNED items (null or 0)
+      const pendingBatches: {
+        batch: InventoryCheckBatchRow;
+        product: InventoryCheckProductGroup;
+      }[] = [];
+      data.products.forEach((product) => {
+        product.batches.forEach((batch) => {
+          if (batch.scannedQuantity === null) {
+            pendingBatches.push({ batch, product });
+          }
+        });
+      });
+      // 2. Check if anything is left to scan
+      if (pendingBatches.length === 0) {
+        toast.success("All items have been scanned!");
+        return;
+      }
+      // 3. Pick a random batch from the PENDING list
+      const target =
+        pendingBatches[Math.floor(Math.random() * pendingBatches.length)];
+      // 4. Simulate a perfect match
+      const simulatedQty = target.batch.storedQuantity;
+      // 5. Update State
+      handleBatchSave(
+        target.batch.detailId,
+        simulatedQty,
+        target.batch.hasFaults,
+      );
+      toast.success(
+        `Scanned: ${target.product.productName} (${target.batch.batchCode})`,
+      );
+    }, 1500);
+  }, [data, handleBatchSave]);
 
   // Generate Headers with the callback closure
   const editableHeaders = useMemo(
-    () => getIcSheetBatchSubheaders(handleBatchSave),
-    [handleBatchSave],
+    () =>
+      getIcSheetBatchSubheaders(
+        handleBatchSave,
+        Number(initialData?.header.assigneeId),
+      ),
+    [handleBatchSave, initialData?.header.assigneeId],
   );
   const { header, products } = data as InventoryCheckSheetData;
 
   // Action
   const handleStart = useCallback(async () => {
+    if (Number(currentUser) !== initialData?.header.assigneeId) {
+      toast.error("You're not the assigned employee!");
+      return;
+    }
     try {
       setLoading(true);
       await inventoryCheckService.start(sheetId);
@@ -80,9 +132,15 @@ export function InventoryCheckWorkSheet({
     } finally {
       setLoading(false);
     }
-  }, [router, sheetId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetId]);
   const handleComplete = useCallback(async () => {
-    if (!confirm("Are you sure you want to finish counting?")) return;
+    const ok = await confirm({
+      title: "Confirm Stocktaking Completion",
+      message:
+        "Are you sure you want to finalize this stock check?\nOnce finalized, the stock results will be locked and cannot be modified.",
+    });
+    if (!ok) return;
     try {
       setLoading(true);
       await inventoryCheckService.complete(sheetId);
@@ -97,12 +155,22 @@ export function InventoryCheckWorkSheet({
     } finally {
       setLoading(false);
     }
-  }, [router, sheetId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetId]);
   const handleApprove = useCallback(async () => {
-    if (!confirm("Confirm approval of this inventory check?")) return;
+    if (Number(currentUser) !== initialData?.header.creatorId) {
+      toast.error("Only the manager can approve!");
+      return;
+    }
+    const ok = await confirm({
+      title: "Approve Inventory Check Result",
+      message:
+        "Once approved, the stock results will be stored and use for future report.",
+    });
+    if (!ok) return;
     try {
       setLoading(true);
-      await inventoryCheckService.approve(sheetId);
+      await inventoryCheckService.approve(sheetId, Number(currentUser));
       toast.success("Sheet Approved");
       router.replace("/warehouse-management/inventory-check");
     } catch (error) {
@@ -111,12 +179,22 @@ export function InventoryCheckWorkSheet({
     } finally {
       setLoading(false);
     }
-  }, [router, sheetId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetId]);
   const handleReject = useCallback(async () => {
-    if (!confirm("Are you sure you want to reject this sheet?")) return;
+    if (Number(currentUser) !== initialData?.header.creatorId) {
+      toast.error("Only the manager can reject!");
+      return;
+    }
+    const ok = await confirm({
+      title: "Reject Inventory Check Result",
+      message:
+        "Once rejected, the stock results will be put away and the employee will need to recheck.",
+    });
+    if (!ok) return;
     try {
       setLoading(true);
-      await inventoryCheckService.reject(sheetId);
+      await inventoryCheckService.reject(sheetId, Number(currentUser));
       toast.success("Sheet Rejected");
       router.replace("/warehouse-management/inventory-check");
     } catch (error) {
@@ -125,7 +203,8 @@ export function InventoryCheckWorkSheet({
     } finally {
       setLoading(false);
     }
-  }, [router, sheetId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetId]);
 
   // --- STATE: NOT STARTED ---
   if (header.status === SheetStatus.CREATED) {
@@ -156,6 +235,7 @@ export function InventoryCheckWorkSheet({
   if (header.status === SheetStatus.COMPLETED) {
     return (
       <div className="space-y-6">
+        {ConfirmationModal}
         <div className="flex items-center justify-between rounded-lg border border-blue-100 bg-blue-50 p-4">
           <div>
             <h2 className="text-lg font-bold text-blue-900">Review Required</h2>
@@ -238,17 +318,23 @@ export function InventoryCheckWorkSheet({
   // --- STATE: IN PROGRESS (The Worksheet) ---
   return (
     <div className="space-y-6">
+      {ConfirmationModal}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">{header.code}</h1>
-          <span className="text-sm text-gray-500">
-            Assigned to: {header.assigneeName}
-          </span>
         </div>
         <div className="flex items-center gap-3">
           <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
             In Progress
           </span>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleSimulateScan}
+            startIcon={<Scan size={18} />}
+          >
+            Simulate RFID
+          </Button>
           <Button
             size="sm"
             onClick={handleComplete}

@@ -281,12 +281,19 @@ const BatchFaultCell = ({ row }: { row: InventoryCheckBatchRow }) => {
 const BatchActionCell = ({
   row,
   onSave,
+  employeeId,
 }: {
   row: InventoryCheckBatchRow;
   onSave: (detailId: number, qty: number, hasFaults: boolean) => void;
+  employeeId: number;
 }) => {
   const [loading, setLoading] = useState(false);
   const handleSave = async () => {
+    const currentUser = sessionStorage.getItem("userId");
+    if (Number(currentUser) !== employeeId) {
+      toast.error("You're not the assigned employee!");
+      return;
+    }
     const input = document.querySelector(
       `input[data-detail-id="${row.detailId}"]`,
     ) as HTMLInputElement;
@@ -398,6 +405,7 @@ export const icSheetProductHeaders: Column<InventoryCheckProductGroup>[] = [
 // --- CHILD HEADERS (Batches) ---
 export const getIcSheetBatchSubheaders = (
   onSave: (detailId: number, qty: number, hasFaults: boolean) => void,
+  employeeId: number,
 ): Column<InventoryCheckBatchRow>[] => [
   {
     label: "Location",
@@ -449,7 +457,9 @@ export const getIcSheetBatchSubheaders = (
     label: "Action",
     key: "detailId",
     sortable: false,
-    render: (_, row) => <BatchActionCell row={row} onSave={onSave} />,
+    render: (_, row) => (
+      <BatchActionCell row={row} onSave={onSave} employeeId={employeeId} />
+    ),
   },
 ];
 // Read only

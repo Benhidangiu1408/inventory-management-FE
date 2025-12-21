@@ -47,15 +47,15 @@ export const inventoryCheckService = {
       null,
     );
   },
-  approve: async (id: number) => {
+  approve: async (id: number, userId: number) => {
     return apiClient.post<void>(
-      `/inventory/v1/inventory-check/${id}/approve`,
+      `/inventory/v1/inventory-check/${id}/approve?userId=${userId}`,
       null,
     );
   },
-  reject: async (id: number) => {
+  reject: async (id: number, userId: number) => {
     return apiClient.post<void>(
-      `/inventory/v1/inventory-check/${id}/reject`,
+      `/inventory/v1/inventory-check/${id}/reject?userId=${userId}`,
       null,
     );
   },

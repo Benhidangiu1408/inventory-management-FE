@@ -27,8 +27,26 @@ export default async function InventoryCheckDetailPage({
   const generalInfoItems = [
     { label: "Code", value: data?.header.code },
     { label: "Warehouse Name", value: data?.header.warehouseName },
-    { label: "Assignee", value: "John Doe" },
+    { label: "Assigner", value: data?.header.creatorName },
+    { label: "Assignee", value: data?.header.assigneeName },
     { label: "Status", value: data?.header.status },
+    ...(data?.header.status === "APPROVED" || data?.header.status === "REJECTED"
+      ? [
+          {
+            label:
+              data.header.status === "APPROVED" ? "Approved By" : "Rejected By",
+            value: data.header.approvalName || "-",
+          },
+        ]
+      : [
+          {
+            label: "Cycle Check",
+            value: data?.header.isCycleCheck
+              ? `Every ${data.header.cycleIntervalDays} day(s)`
+              : "None",
+          },
+        ]),
+
     {
       label: "Note",
       value: (data?.header.note as string) || (

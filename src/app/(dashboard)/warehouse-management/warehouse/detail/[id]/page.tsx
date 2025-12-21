@@ -30,7 +30,7 @@ export default async function WarehouseDetailPage({
     { label: "Code", value: data?.code },
     { label: "Warehouse Name", value: data?.name },
     { label: "Address", value: data?.address },
-    { label: "Manager", value: "John Doe" },
+    { label: "Manager", value: data?.managerName },
     { label: "Status", value: data?.status },
     { label: "Type", value: data?.type },
   ];

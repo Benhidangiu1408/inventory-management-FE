@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import MyToast from "@/components/toast";
+import { ReactQueryProvider } from "./providers";
+import AuthGuard from "@/components/layout/AuthGuard";
 config.autoAddCss = false;
 
 const outfit = Outfit({
@@ -21,12 +23,14 @@ export default function RootLayout({
         <title>WMS - Warehouse Management System</title>
       </head>
       <body className={`${outfit.className} bg-[#f9fafb] dark:bg-gray-900`}>
-        <ThemeProvider>
-          <SidebarProvider>
-            <MyToast />
-            {children}
-          </SidebarProvider>
-        </ThemeProvider>
+        <ReactQueryProvider>
+          <ThemeProvider>
+            <SidebarProvider>
+              <MyToast />
+              <AuthGuard>{children}</AuthGuard>
+            </SidebarProvider>
+          </ThemeProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

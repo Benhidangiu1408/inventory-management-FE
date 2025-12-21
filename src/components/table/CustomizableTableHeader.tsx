@@ -19,8 +19,11 @@ import {
   UnitResponse,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
+
 import { Eye, Pencil } from "lucide-react";
 import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
+import { Role, UserStatus } from "@/interfaces/userManagementType";
+import { userManagementService } from "@/services/UserManagementService";
 
 // --- Warehouse General Header ---
 export const warehouseHeaders: Column<WarehouseGeneral>[] = [
@@ -187,6 +190,8 @@ export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
   {
     label: "Code",
     key: "code",
+    filter: false,
+    minWidth: 120,
   },
   {
     label: "Warehouse",
@@ -199,6 +204,7 @@ export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
   {
     label: "Planned Date",
     key: "plannedDate",
+    filter: "agDateColumnFilter",
     render: (value) => {
       if (!value) return <span className="text-gray-400">-</span>;
       const safeDateString = (value as string).endsWith("Z")
@@ -237,6 +243,7 @@ export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
   {
     label: "Actions",
     key: "id",
+    filter: false,
     render: (_, row) => (
       <div className="flex h-full items-center justify-center gap-2">
         <Link
@@ -256,78 +263,179 @@ export interface UserRow {
   id: string;
   username: string;
   email: string;
-  role: "Admin" | "Manager" | "Staff";
-  status: "Active" | "Inactive" | "Suspended";
-  lastLogin: string; // formatted date/time
+  role: string;
+  status: UserStatus;
+  createdDate: Date | null; // formatted date/time
   actions: string[]; // e.g. ["r","w"] for read/edit
 }
 
-export const userColumns: Column<UserRow>[] = [
-  { label: "User ID", key: "id" },
-  { label: "Username", key: "username" },
+function UserActionsCell({ row }: { row: UserRow }) {
+  const handleDelete = async () => {
+    if (!confirm("Delete this user?")) return;
+
+    try {
+      await userManagementService.deleteAccount(row.username);
+      alert("Deleted!");
+
+      // Optional: refresh page
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      alert("Delete failed");
+    }
+  };
+
+  return (
+    <div className="flex justify-end gap-3">
+      <Link href={`/src/app/admin/user-management/${row.id}`}>
+        <FontAwesomeIcon
+          icon={faEye}
+          className="cursor-pointer hover:text-blue-500"
+        />
+      </Link>
+
+      <button onClick={handleDelete}>
+        <FontAwesomeIcon
+          icon={faTrashCan}
+          className="cursor-pointer hover:text-red-500"
+        />
+      </button>
+    </div>
+  );
+}
+
+export default UserActionsCell;
+
+// export const userColumns: Column<UserRow>[] = [
+//   { label: "User ID", key: "id" },
+//   { label: "Username", key: "username" },
+//   { label: "Email", key: "email" },
+//   {
+//     label: "Role",
+//     key: "role",
+//     render(value) {
+//       return (
+//         <Select
+//           defaultValue={String(value)}
+//           onChange={() => {
+//             // userManagementService.assignRole(
+//             //   Number(value),
+//             //   Number(sessionStorage.getItem("userId")),
+//             //   Number(id)
+//             // );
+//           }}
+//           options={[
+//             { value: "Admin", label: "Admin" },
+//             { value: "Manager", label: "Manager" },
+//             { value: "Staff", label: "Staff" },
+//           ]}
+//         />
+//       );
+//     },
+//   },
+//   {
+//     label: "Status",
+//     key: "status",
+//     render: (value) => (
+//       <div className="m-3 flex w-full justify-center">
+//         <Badge
+//           color={
+//             value === "Active"
+//               ? "success"
+//               : value === "Suspended"
+//                 ? "warning"
+//                 : "error"
+//           }
+//           size="sm"
+//           variant="solid"
+//         >
+//           {value}
+//         </Badge>
+//       </div>
+//     ),
+//   },
+//   { label: "Created Date", key: "createdDate" },
+//   // {
+//   //   label: "Actions",
+//   //   key: "actions",
+//   //   // render: (value) => (
+//   //   //   <div className="flex justify-end gap-3">
+//   //   //     {value.includes("r") && (
+//   //   //       <Link href={`/admin/user-management`}>
+//   //   //         <FontAwesomeIcon
+//   //   //           icon={faEye}
+//   //   //           className="cursor-pointer hover:text-blue-500"
+//   //   //         />
+//   //   //       </Link>
+//   //   //     )}
+//   //   //     {value.includes("d") && (
+//   //   //       <Link href={`/admin/user-management`}>
+//   //   //         <FontAwesomeIcon
+//   //   //           icon={faTrashCan}
+//   //   //           className="cursor-pointer hover:text-blue-500"
+//   //   //         />
+//   //   //       </Link>
+//   //   //     )}
+//   //   //   </div>
+//   //   // ),
+//   //   render: (_, row) => <UserActionsCell row={row} />,
+//   // },
+// ];
+export const userColumns = (roles: Role[]): Column<UserRow>[] => [
+  {
+    label: "User ID",
+    key: "id",
+  },
+  {
+    label: "Username",
+    key: "username",
+    render(_, row) {
+      return (
+        <Link
+          href={`/profile/${row.id}`}
+          className="text-blue-600 hover:underline"
+        >
+          {row.username}
+        </Link>
+      );
+    },
+  },
   { label: "Email", key: "email" },
+
   {
     label: "Role",
     key: "role",
-    render(value) {
+    render(value, row) {
       return (
         <Select
-          defaultValue={String(value)}
-          onChange={() => {}}
-          options={[
-            { value: "Admin", label: "Admin" },
-            { value: "Manager", label: "Manager" },
-            { value: "Staff", label: "Staff" },
-          ]}
+          defaultValue={String(roles.find((r) => r.name === value)?.id ?? "")}
+          onChange={(e) => {
+            userManagementService.assignRole(
+              Number(e.target.value), // roleId mới
+              Number(sessionStorage.getItem("userId")), // assigningUser
+              Number(row.id), // assignedUser
+            );
+          }}
+          options={roles.map((r) => ({
+            value: String(r.id),
+            label: r.name,
+          }))}
         />
       );
     },
   },
+
   {
     label: "Status",
     key: "status",
-    render: (value) => (
-      <div className="m-3 flex w-full justify-center">
-        <Badge
-          color={
-            value === "Active"
-              ? "success"
-              : value === "Suspended"
-                ? "warning"
-                : "error"
-          }
-          size="sm"
-          variant="solid"
-        >
-          {value}
-        </Badge>
-      </div>
-    ),
   },
-  { label: "Last Login", key: "lastLogin" },
   {
-    label: "Actions",
-    key: "actions",
-    render: (value) => (
-      <div className="flex justify-end gap-3">
-        {value.includes("r") && (
-          <Link href={`/admin/user-management`}>
-            <FontAwesomeIcon
-              icon={faEye}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-        {value.includes("d") && (
-          <Link href={`/admin/user-management`}>
-            <FontAwesomeIcon
-              icon={faTrashCan}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-      </div>
-    ),
+    label: "Created Date",
+    key: "createdDate",
+    render(value) {
+      if (!value) return "";
+      return (value as Date).toLocaleDateString("vi-VN");
+    },
   },
 ];
 
