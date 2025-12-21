@@ -4,6 +4,8 @@ import { warehouseService } from "@/services/WarehouseManagementService";
 import { ApiError } from "@/lib/api-mask";
 import { WarehouseDetail } from "@/interfaces/warehouseManagementType";
 import { ModalUpdateWarehouseForm } from "@/components/form/ModalUpdateWarehouseForm";
+import { ModalCreateLocationForm } from "@/components/form/ModalCreateLocationForm";
+import { ViewLocation } from "@/components/ViewLocation";
 
 export default async function WarehouseDetailPage({
   params,
@@ -15,11 +17,11 @@ export default async function WarehouseDetailPage({
   let errorMsg = null;
 
   try {
-    data = await warehouseService.getDetail(id);
+    data = await warehouseService.getDetail(Number(id));
   } catch (error) {
     if (error instanceof ApiError) {
       console.error(`API Error ${error.status}: ${error.message}`);
-      errorMsg = `Could not load categories from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
+      errorMsg = `Could not load data from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
     }
   }
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
@@ -28,7 +30,7 @@ export default async function WarehouseDetailPage({
     { label: "Code", value: data?.code },
     { label: "Warehouse Name", value: data?.name },
     { label: "Address", value: data?.address },
-    { label: "Manager", value: "John Doe" },
+    { label: "Manager", value: data?.managerName },
     { label: "Status", value: data?.status },
     { label: "Type", value: data?.type },
   ];
@@ -57,7 +59,10 @@ export default async function WarehouseDetailPage({
             },
           ]}
         />
-        <div className="default-card p-6"></div>
+        <div className="default-card flex flex-col gap-6 p-6">
+          <ModalCreateLocationForm />
+          <ViewLocation />
+        </div>
       </div>
     </div>
   );

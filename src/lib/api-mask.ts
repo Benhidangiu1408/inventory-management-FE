@@ -51,7 +51,11 @@ async function fetcher<T>(
     }
 
     if (response.status === 204) return {} as T;
-    return response.json();
+    const text = await response.text();
+    // If text is empty, return an empty object (or null) instead of crashing
+    if (!text) return {} as T;
+    // Otherwise, parse the JSON
+    return JSON.parse(text);
     /* eslint-disable  @typescript-eslint/no-explicit-any */
   } catch (error: any) {
     // 🚨 3. Handle Network Errors (ECONNREFUSED, Network Down)
@@ -86,6 +90,6 @@ export const apiClient = {
   put: <T>(url: string, body: unknown, options?: FetchOptions) =>
     fetcher<T>(url, { method: "PUT", body: JSON.stringify(body), ...options }),
 
-  delete: <T>(url: string, options?: FetchOptions) =>
-    fetcher<T>(url, { method: "DELETE", ...options }),
+  delete: <T>(url: string, permissionIds: number[], p0: { headers: { Authorization: string; }; cache: string; }, options?: FetchOptions) =>
+    fetcher<T>(url, { method: "DELETE", body: JSON.stringify(permissionIds), ...options }),
 };

@@ -10,9 +10,10 @@ import {
   WarehouseType,
 } from "@/interfaces/warehouseManagementType";
 import { ApiError } from "@/lib/api-mask";
+import { userManagementService } from "@/services/UserManagementService";
 import { warehouseService } from "@/services/WarehouseManagementService";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -41,8 +42,31 @@ export const CreateWarehouseForm = () => {
       description: null,
       status: WarehouseStatus.ACTIVE,
       type: WarehouseType.STORAGE,
+      managerId: null,
     },
   });
+
+  const [managerOptions, setManagerOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
+  useEffect(() => {
+    const fetchManagers = async () => {
+      try {
+        const users = await userManagementService.getAll(1);
+        if (users) {
+          const options = users.map((u) => ({
+            value: u.id.toString(),
+            label: `${u.username}`,
+          }));
+          setManagerOptions(options);
+        }
+      } catch (error) {
+        console.error("Failed to load managers:", error);
+        toast.error("Could not load user list");
+      }
+    };
+    fetchManagers();
+  }, []);
 
   //Validation Logic
   const onSubmit: SubmitHandler<NewWarehouseRequest> = async (data) => {
@@ -54,7 +78,9 @@ export const CreateWarehouseForm = () => {
         address: data.address,
         type: data.type,
         status: data.status,
+        managerId: Number(data.managerId),
       };
+      console.log(payload);
       await warehouseService.create(payload);
       reset();
       toast.success("Warehouse created successfully!");
@@ -89,12 +115,24 @@ export const CreateWarehouseForm = () => {
         <Label>Address</Label>
         <Input
           type="text"
-          placeholder={"Describe your warehouse"}
+          placeholder={"Where is your warehouse?"}
           {...register("address", {
             required: "Please specify warehouse address",
           })}
           error={!!errors.address}
           hint={errors.address?.message}
+        />
+      </div>
+      {/* Manager Select (New Field) */}
+      <div>
+        <Label>Warehouse Manager</Label>
+        <Select
+          {...register("managerId", { required: "Please select a manager" })}
+          placeholder={"Select manager"}
+          options={managerOptions}
+          disabled={managerOptions.length === 0}
+          error={!!errors.managerId}
+          hint={errors.managerId?.message}
         />
       </div>
       {/* Description */}
@@ -136,7 +174,6 @@ export const CreateWarehouseForm = () => {
           />
         </div>
       </div>
-      {/* Manager? */}
       <div className="flex gap-3">
         <Button
           size="sm"

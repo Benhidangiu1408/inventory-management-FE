@@ -4,40 +4,78 @@ import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import Filter from "@/components/Filter";
 import { faRightLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { roleAssignment } from "@/services/UserManagementService";
+import { Role } from "@/interfaces/userManagementType";
+import { useSearchParams } from "next/navigation";
+import toast from "react-hot-toast";
 
-const coreAdminPermissions = [
-  "Create user",
-  "Edit user",
-  "Deactivate user",
-  "Assign role",
-  "Manage roles & permissions",
-  "Configure system settings",
-  "View audit logs",
-  "Export activity report",
-];
-
-const warehouseAdminPermissions = [
-  "Create warehouse",
-  "Edit warehouse details",
-  "Delete warehouse",
-  "Add product",
-  "Update product information",
-  "Adjust stock quantity",
-  "Perform inventory check",
-  "Approve stock adjustments",
-  "Create export order",
-  "Approve shipment",
-];
-
+export type roleStructure = {
+  id: number;
+  name: string;
+};
 export default function RoleManagementPage() {
-  const [ungrantedPermissions, setUngrantedPermissions] =
-    useState(coreAdminPermissions);
-  const [grantedPermissions, setGrantedPermissions] = useState(
-    warehouseAdminPermissions,
+  const [ungrantedPermissions, setUngrantedPermissions] = useState<string[]>(
+    [],
   );
+  const [grantedPermissions, setGrantedPermissions] = useState<string[]>([]);
   const [selectedUngranted, setSelectedUngranted] = useState<string[]>([]);
   const [selectedGranted, setSelectedGranted] = useState<string[]>([]);
+
+  const [selectedRole, setSelectedRole] = useState<number>(0);
+  const [role, setRole] = useState<roleStructure[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [fullPermission, setFullPermission] = useState<roleStructure[]>([]);
+
+  const loadRolePermissions = async (roleId: number) => {
+    const role = roles.find((r) => r.id === roleId);
+
+    if (!role) {
+      console.error("Role not found:", roleId);
+      return;
+    }
+    const granted = role.permissions.map((p) => p.name);
+    const ungranted = fullPermission
+      .filter((perm) => !granted.includes(perm.name))
+      .map((p) => p.name);
+
+    setGrantedPermissions(granted);
+    setUngrantedPermissions(ungranted);
+  };
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const res = await roleAssignment.getAllRole();
+        const roles = res; // Role[]
+
+        if (!roles || roles.length === 0) return;
+        setRoles(roles);
+
+        const fullPermissionList = await roleAssignment
+          .getAllPermission()
+          .then((res) => res.map((perm) => ({ id: perm.id, name: perm.name }))); // Permission[]
+
+        setFullPermission(fullPermissionList);
+
+        setRole(roles.map((r) => ({ id: r.id, name: r.name })));
+
+        setSelectedRole(roles[0].id);
+      } catch (err) {
+        console.error("Failed to load roles", err);
+      }
+    };
+
+    fetchRoles();
+  }, []);
+
+  useEffect(() => {
+    if (roles.length > 0 && fullPermission.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      loadRolePermissions(roles[0].id); // role index 0
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roles, fullPermission]);
 
   const hasSelection = useMemo(
     () => selectedUngranted.length > 0 || selectedGranted.length > 0,
@@ -65,40 +103,62 @@ export default function RoleManagementPage() {
       const remainingGranted = prev.filter(
         (permission) => !selectedGranted.includes(permission),
       );
-      return [...remainingGranted, ...selectedUngranted];
+      return [...selectedUngranted, ...remainingGranted];
     });
 
     setUngrantedPermissions((prev) => {
       const remainingUngranted = prev.filter(
         (permission) => !selectedUngranted.includes(permission),
       );
-      return [...remainingUngranted, ...selectedGranted];
+      return [...selectedGranted, ...remainingUngranted];
     });
+
+    if (selectedGranted.length > 0) {
+      const grantedIds = selectedGranted
+        .map((name) => fullPermission.find((p) => p.name === name)?.id)
+        .filter((id): id is number => id !== undefined);
+      console.log(grantedIds);
+      roleAssignment.removeRolePermissions(selectedRole, grantedIds);
+    }
+
+    if (selectedUngranted.length > 0) {
+      const ungrantedIds = selectedUngranted
+        .map((name) => fullPermission.find((p) => p.name === name)?.id)
+        .filter((id): id is number => id !== undefined);
+      roleAssignment.updateRolePermissions(selectedRole, ungrantedIds);
+    }
 
     setSelectedUngranted([]);
     setSelectedGranted([]);
   };
 
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (searchParams.get("created") === "1") {
+      toast.success("Role created successfully!");
+    }
+  }, []);
+  useEffect(() => {
+    if (searchParams.get("created2") === "1") {
+      toast.success("Permission created successfully!");
+    }
+  }, []);
   return (
     <div>
       <PageBreadcrumb pageTitle="Role Management" />
       <div className="rounded-2xl border border-[#E4E7EC] bg-white">
-        <Filter type="role" />
+        <Filter
+          type="role"
+          roles={role}
+          onRoleChange={(id: number) => {
+            setSelectedRole(id);
+            loadRolePermissions(id);
+          }}
+        />
         {/* Role Assignment */}
         <div className="flex p-6">
           <div className="flex w-full flex-col">
             <ComponentCard title="Ungranted" className="h-full">
-              {/* <div className="relative">
-                <FontAwesomeIcon
-                  icon={faMagnifyingGlass}
-                  className="absolute top-1/2 left-4 -translate-y-1/2"
-                />
-                <Input
-                  type="text"
-                  placeholder="Search or type command..."
-                  className="pl-12"
-                />
-              </div> */}
               <div className="relative m-5 max-h-96 overflow-y-auto pr-2">
                 <div className="grid grid-cols-2 gap-2">
                   {ungrantedPermissions.map((val) => (

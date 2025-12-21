@@ -3,6 +3,7 @@
 import { Column } from "@/components/table/CustomizableTable";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { format, parseISO } from "date-fns";
 import {
   faCheck,
   faEye,
@@ -12,8 +13,17 @@ import {
 import Select from "@/default_components/form/Select";
 import Badge from "@/default_components/ui/badge/Badge";
 import Button from "@/default_components/ui/button/Button";
-import { WarehouseGeneral } from "@/interfaces/warehouseManagementType";
-import { Eye } from "lucide-react";
+import {
+  AttributeResponse,
+  LocationResponse,
+  UnitResponse,
+  WarehouseGeneral,
+} from "@/interfaces/warehouseManagementType";
+
+import { Eye, Pencil } from "lucide-react";
+import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
+import { Role, UserStatus } from "@/interfaces/userManagementType";
+import { userManagementService } from "@/services/UserManagementService";
 
 // --- Warehouse General Header ---
 export const warehouseHeaders: Column<WarehouseGeneral>[] = [
@@ -69,83 +79,363 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
   },
 ];
 
-// Nho dem vo interface cua serivce nha!!
-export interface UserRow {
-  id: string;
-  username: string;
-  email: string;
-  role: "Admin" | "Manager" | "Staff";
-  status: "Active" | "Inactive" | "Suspended";
-  lastLogin: string; // formatted date/time
-  actions: string[]; // e.g. ["r","w"] for read/edit
-}
-
-export const userColumns: Column<UserRow>[] = [
-  { label: "User ID", key: "id" },
-  { label: "Username", key: "username" },
-  { label: "Email", key: "email" },
+// --- Location View Header ---
+export const LocationHeaders: Column<LocationResponse>[] = [
   {
-    label: "Role",
-    key: "role",
-    render(value) {
+    label: "Code",
+    key: "code",
+  },
+  {
+    label: "Location Name",
+    key: "name",
+  },
+  {
+    label: "Status",
+    key: "status",
+    render: (value) => {
+      const statusColors: Record<
+        string,
+        "success" | "info" | "warning" | "error" | "light"
+      > = {
+        EMPTY: "success", // Green
+        OCCUPIED: "info", // Blue
+        RESERVED: "warning", // Orange
+        UNDER_MAINTENANCE: "warning", // Orange
+        BLOCKED: "error", // Red
+        INACTIVE: "light", // Gray
+      };
+      const color = statusColors[value as string] || "light";
+      const label = (value as string).replace(/_/g, " ");
       return (
-        <Select
-          defaultValue={String(value)}
-          onChange={() => {}}
-          options={[
-            { value: "Admin", label: "Admin" },
-            { value: "Manager", label: "Manager" },
-            { value: "Staff", label: "Staff" },
-          ]}
-        />
+        <Badge variant="solid" color={color}>
+          {label}
+        </Badge>
+      );
+    },
+  },
+  // {
+  //   label: "Actions",
+  //   key: "id",
+  //   render: (_, row) => (
+  //     <div className="flex h-full items-center justify-center gap-2">
+  //       <Link href={`/warehouse-management/warehouse/detail/${row.id}`}>
+  //         <Pencil size={16} />
+  //       </Link>
+  //     </div>
+  //   ),
+  // },
+];
+
+export const getUnitHeaders = (
+  onEdit: (unit: UnitResponse) => void,
+): Column<UnitResponse>[] => [
+  {
+    label: "Unit Name",
+    key: "name",
+  },
+  {
+    label: "Unit Abbreviation",
+    key: "abb",
+  },
+  {
+    label: "Description",
+    key: "description",
+    render: (val) =>
+      (val as string) || (
+        <span className="text-gray-400 italic">No description</span>
+      ),
+  },
+  {
+    label: "Actions",
+    key: "id",
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <button onClick={() => onEdit(row)}>
+          <Pencil size={16} />
+        </button>
+      </div>
+    ),
+  },
+];
+
+export const getAttributeHeaders = (
+  onEdit: (unit: AttributeResponse) => void,
+): Column<AttributeResponse>[] => [
+  {
+    label: "Attributes Name",
+    key: "name",
+  },
+  {
+    label: "Description",
+    key: "description",
+    render: (val) =>
+      (val as string) || (
+        <span className="text-gray-400 italic">No description</span>
+      ),
+  },
+  {
+    label: "Actions",
+    key: "id",
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <button onClick={() => onEdit(row)}>
+          <Pencil size={16} />
+        </button>
+      </div>
+    ),
+  },
+];
+
+export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
+  {
+    label: "Code",
+    key: "code",
+    filter: false,
+    minWidth: 120,
+  },
+  {
+    label: "Warehouse",
+    key: "warehouseName",
+  },
+  // {
+  //   label: "Assignee",
+  //   key: "assigneeName",
+  // },
+  {
+    label: "Planned Date",
+    key: "plannedDate",
+    filter: "agDateColumnFilter",
+    render: (value) => {
+      if (!value) return <span className="text-gray-400">-</span>;
+      const safeDateString = (value as string).endsWith("Z")
+        ? value
+        : `${value}Z`;
+      return (
+        <span>
+          {format(parseISO(safeDateString as string), "MMM d, yyyy h:mm a")}
+        </span>
       );
     },
   },
   {
     label: "Status",
     key: "status",
-    render: (value) => (
-      <div className="m-3 flex w-full justify-center">
-        <Badge
-          color={
-            value === "Active"
-              ? "success"
-              : value === "Suspended"
-                ? "warning"
-                : "error"
-          }
-          size="sm"
-          variant="solid"
-        >
-          {value}
+    render: (value) => {
+      const statusColors: Record<
+        string,
+        "success" | "info" | "warning" | "error" | "light"
+      > = {
+        COMPLETED: "info", // Green
+        IN_PROGRESS: "warning",
+        CREATED: "light", // Gray/White
+        REJECTED: "error", // Red
+        APPROVED: "success", // Green
+      };
+      const color = statusColors[value as string] || "light";
+      const label = (value as string).replace(/_/g, " ");
+      return (
+        <Badge variant="solid" color={color}>
+          {label}
         </Badge>
+      );
+    },
+  },
+  {
+    label: "Actions",
+    key: "id",
+    filter: false,
+    render: (_, row) => (
+      <div className="flex h-full items-center justify-center gap-2">
+        <Link
+          href={`/warehouse-management/inventory-check/detail/${row.id}`}
+          className="hover:text-brand-600 rounded-md p-1 text-gray-500 transition-colors hover:bg-gray-100"
+          title="View Worksheet"
+        >
+          <Eye size={18} />
+        </Link>
       </div>
     ),
   },
-  { label: "Last Login", key: "lastLogin" },
+];
+
+// Nho dem vo interface cua serivce nha!!
+export interface UserRow {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  status: UserStatus;
+  createdDate: Date | null; // formatted date/time
+  actions: string[]; // e.g. ["r","w"] for read/edit
+}
+
+function UserActionsCell({ row }: { row: UserRow }) {
+  const handleDelete = async () => {
+    if (!confirm("Delete this user?")) return;
+
+    try {
+      await userManagementService.deleteAccount(row.username);
+      alert("Deleted!");
+
+      // Optional: refresh page
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      alert("Delete failed");
+    }
+  };
+
+  return (
+    <div className="flex justify-end gap-3">
+      <Link href={`/src/app/admin/user-management/${row.id}`}>
+        <FontAwesomeIcon
+          icon={faEye}
+          className="cursor-pointer hover:text-blue-500"
+        />
+      </Link>
+
+      <button onClick={handleDelete}>
+        <FontAwesomeIcon
+          icon={faTrashCan}
+          className="cursor-pointer hover:text-red-500"
+        />
+      </button>
+    </div>
+  );
+}
+
+export default UserActionsCell;
+
+// export const userColumns: Column<UserRow>[] = [
+//   { label: "User ID", key: "id" },
+//   { label: "Username", key: "username" },
+//   { label: "Email", key: "email" },
+//   {
+//     label: "Role",
+//     key: "role",
+//     render(value) {
+//       return (
+//         <Select
+//           defaultValue={String(value)}
+//           onChange={() => {
+//             // userManagementService.assignRole(
+//             //   Number(value),
+//             //   Number(sessionStorage.getItem("userId")),
+//             //   Number(id)
+//             // );
+//           }}
+//           options={[
+//             { value: "Admin", label: "Admin" },
+//             { value: "Manager", label: "Manager" },
+//             { value: "Staff", label: "Staff" },
+//           ]}
+//         />
+//       );
+//     },
+//   },
+//   {
+//     label: "Status",
+//     key: "status",
+//     render: (value) => (
+//       <div className="m-3 flex w-full justify-center">
+//         <Badge
+//           color={
+//             value === "Active"
+//               ? "success"
+//               : value === "Suspended"
+//                 ? "warning"
+//                 : "error"
+//           }
+//           size="sm"
+//           variant="solid"
+//         >
+//           {value}
+//         </Badge>
+//       </div>
+//     ),
+//   },
+//   { label: "Created Date", key: "createdDate" },
+//   // {
+//   //   label: "Actions",
+//   //   key: "actions",
+//   //   // render: (value) => (
+//   //   //   <div className="flex justify-end gap-3">
+//   //   //     {value.includes("r") && (
+//   //   //       <Link href={`/admin/user-management`}>
+//   //   //         <FontAwesomeIcon
+//   //   //           icon={faEye}
+//   //   //           className="cursor-pointer hover:text-blue-500"
+//   //   //         />
+//   //   //       </Link>
+//   //   //     )}
+//   //   //     {value.includes("d") && (
+//   //   //       <Link href={`/admin/user-management`}>
+//   //   //         <FontAwesomeIcon
+//   //   //           icon={faTrashCan}
+//   //   //           className="cursor-pointer hover:text-blue-500"
+//   //   //         />
+//   //   //       </Link>
+//   //   //     )}
+//   //   //   </div>
+//   //   // ),
+//   //   render: (_, row) => <UserActionsCell row={row} />,
+//   // },
+// ];
+export const userColumns = (roles: Role[]): Column<UserRow>[] => [
   {
-    label: "Actions",
-    key: "actions",
-    render: (value) => (
-      <div className="flex justify-end gap-3">
-        {value.includes("r") && (
-          <Link href={`/admin/user-management`}>
-            <FontAwesomeIcon
-              icon={faEye}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-        {value.includes("d") && (
-          <Link href={`/admin/user-management`}>
-            <FontAwesomeIcon
-              icon={faTrashCan}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-      </div>
-    ),
+    label: "User ID",
+    key: "id",
+  },
+  {
+    label: "Username",
+    key: "username",
+    render(_, row) {
+      return (
+        <Link
+          href={`/profile/${row.id}`}
+          className="text-blue-600 hover:underline"
+        >
+          {row.username}
+        </Link>
+      );
+    },
+  },
+  { label: "Email", key: "email" },
+
+  {
+    label: "Role",
+    key: "role",
+    render(value, row) {
+      return (
+        <Select
+          defaultValue={String(roles.find((r) => r.name === value)?.id ?? "")}
+          onChange={(e) => {
+            userManagementService.assignRole(
+              Number(e.target.value), // roleId mới
+              Number(sessionStorage.getItem("userId")), // assigningUser
+              Number(row.id), // assignedUser
+            );
+          }}
+          options={roles.map((r) => ({
+            value: String(r.id),
+            label: r.name,
+          }))}
+        />
+      );
+    },
+  },
+
+  {
+    label: "Status",
+    key: "status",
+  },
+  {
+    label: "Created Date",
+    key: "createdDate",
+    render(value) {
+      if (!value) return "";
+      return (value as Date).toLocaleDateString("vi-VN");
+    },
   },
 ];
 

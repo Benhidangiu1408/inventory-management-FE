@@ -18,19 +18,19 @@ export default async function WarehousePage() {
   } catch (error) {
     if (error instanceof ApiError) {
       console.error(`API Error ${error.status}: ${error.message}`);
-      errorMsg = `Could not load categories from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
+      errorMsg = `Could not load data from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
     }
   }
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
   return (
     <div>
       <PageBreadcrumb
-        pageTitle="Warehouse List"
+        pageTitle="Warehouse"
         filters={["warehouse-management"]}
       />
       <div>
         <div className="default-card p-6">
-          <div className="mb-4">
+          <div className="mb-6 pt-2 px-1 flex justify-end">
             <Link href={`/warehouse-management/warehouse/new`}>
               <Button
                 size="sm"
