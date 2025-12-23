@@ -88,14 +88,14 @@ export const navItems: NavItem[] = [
       { name: "UOM (Unit of Measurement)", path: "/catalog/unit" },
     ],
   },
-  {
-    icon: <UsersRound />,
-    name: "Business Partners",
-    subItems: [
-      { name: "Supplier", path: "/s" },
-      { name: "Customer", path: "/s" },
-    ],
-  },
+  // {
+  //   icon: <UsersRound />,
+  //   name: "Business Partners",
+  //   subItems: [
+  //     { name: "Supplier", path: "/s" },
+  //     { name: "Customer", path: "/s" },
+  //   ],
+  // },
 
   {
     name: "Users Control",
@@ -107,7 +107,7 @@ export const navItems: NavItem[] = [
       // },
       { name: "Users Management", path: "/admin/user-management" },
       { name: "Role & Permission", path: "/admin/role-management" },
-      { name: "User History", path: "/s" },
+      // { name: "User History", path: "/s" },
     ],
   },
   // {
