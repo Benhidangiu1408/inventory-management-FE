@@ -21,20 +21,26 @@ export default function NewExportPage() {
         <div className="flex flex-col items-center gap-3 p-6">
           <Link
             className="w-[50%]"
-            href="/export/process/manufacturer/1/confirm"
+            href="/export/process/manufacturer/1/quantity-check"
           >
             <Button className="w-full gap-3 p-6">
               <FontAwesomeIcon icon={faIndustry} />
               <h3>Manufacturer</h3>
             </Button>
           </Link>
-          <Link className="w-[50%]" href="/export/process/transfer/1/confirm">
+          <Link
+            className="w-[50%]"
+            href="/export/process/transfer/1/quantity-check"
+          >
             <Button className="w-full gap-3 p-6">
               <FontAwesomeIcon icon={faArrowRightArrowLeft} />
               <h3>Transfer</h3>
             </Button>
           </Link>
-          <Link className="w-[50%]" href="/export/process/customer/1/confirm">
+          <Link
+            className="w-[50%]"
+            href="/export/process/customer/1/quantity-check"
+          >
             <Button className="w-full gap-3 p-6">
               <FontAwesomeIcon icon={faUser} />
               <h3>Customer</h3>

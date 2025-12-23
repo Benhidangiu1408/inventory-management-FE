@@ -5,11 +5,12 @@ import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import InfoBox from "@/components/TA_create_page/InfoBox";
 import InfoBoxStatus from "@/components/TA_create_page/InfoBoxStatus";
 import InfoList from "@/components/TA_create_page/InfoList";
-import InfoPagination from "@/components/TA_create_page/InfoPagination";
 import ProductListInfoBox from "@/components/TA_create_page/ProductListInfoBox";
 // import ProgressBar from "@/default_components/TA_create_page/ProgressBar";
 import SmallInfoBox from "@/components/TA_create_page/SmallInfoBox";
 import { ExportQuantityCheckRow } from "@/interfaces/interface.table";
+import Button from "@/default_components/ui/button/Button";
+import Link from "next/link";
 
 import {
   faCircleCheck,
@@ -17,6 +18,7 @@ import {
   faCube,
   faDollarSign,
   faIndustry,
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -151,6 +153,14 @@ export default async function ExportQuantityCheckPage({
             />
           </div>
         </InfoBox>
+
+        <div className="flex justify-end">
+          <Link href={`/export/process/${type}/${id}/confirm`}>
+            <Button size="md" endIcon={<FontAwesomeIcon icon={faArrowRight} />}>
+              Continue
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
