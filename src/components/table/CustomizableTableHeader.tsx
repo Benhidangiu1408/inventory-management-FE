@@ -493,21 +493,36 @@ export const orderColumns: Column<OrderRow>[] = [
     key: "actions",
     render: (value, row) => (
       <div className="flex justify-center gap-3">
-        {value.includes("edit") && (
-          <Link href={`/fault-order/details/${row.orderId}`}>
-            <FontAwesomeIcon
-              icon={faPen}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-        {value.includes("check") && (
+        <Link href={`/`}>
           <FontAwesomeIcon
-            icon={faCheck}
+            icon={faEye}
             className="cursor-pointer hover:text-blue-500"
           />
-        )}
+        </Link>
+
+        <button onClick={() => {}}>
+          <FontAwesomeIcon
+            icon={faCheck}
+            className="cursor-pointer hover:text-red-500"
+          />
+        </button>
       </div>
+      // <div className="flex justify-center gap-3">
+      //   {value.includes("edit") && (
+      //     <Link href={`/fault-order/details/${row.orderId}`}>
+      //       <FontAwesomeIcon
+      //         icon={faPen}
+      //         className="cursor-pointer hover:text-blue-500"
+      //       />
+      //     </Link>
+      //   )}
+      //   {value.includes("check") && (
+      //     <FontAwesomeIcon
+      //       icon={faCheck}
+      //       className="cursor-pointer hover:text-blue-500"
+      //     />
+      //   )}
+      // </div>
     ),
   },
 ];
