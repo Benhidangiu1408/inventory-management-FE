@@ -1,8 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-nextjs-portal {
-  display: none;
-}
 
 @custom-variant dark (&:is(.dark *));
 
