@@ -11,6 +11,7 @@ type ModalProps = {
   btnName: string;
   modalContent: ReactNode;
   onSave: () => void;
+  step?: string;
 };
 
 export default function CustomContentModalBox({
@@ -19,6 +20,7 @@ export default function CustomContentModalBox({
   btnName,
   modalContent,
   onSave,
+  step = "quantity-check",
 }: ModalProps) {
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
@@ -28,9 +30,11 @@ export default function CustomContentModalBox({
 
   return (
     <div>
-      <Button size="sm" onClick={openModal} startIcon={startIcon}>
-        {btnName}
-      </Button>
+      {step === "quantity-check" && (
+        <Button size="sm" onClick={openModal} startIcon={startIcon}>
+          {btnName}
+        </Button>
+      )}
       <Modal
         isOpen={isOpen}
         onClose={closeModal}

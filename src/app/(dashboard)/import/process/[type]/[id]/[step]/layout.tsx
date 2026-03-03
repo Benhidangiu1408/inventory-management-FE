@@ -14,15 +14,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ProgressBar from "@/components/TA_create_page/ProgressBar";
 import InfoBoxStatus from "@/components/TA_create_page/InfoBoxStatus";
 import ProductListInfoBox from "@/components/TA_create_page/ProductListInfoBox";
+import { ProductVariantResponse } from "@/interfaces/inboundOutboundType";
+import { inboundOutboundService } from "@/services/InboundOutboundService";
 
 export default async function ImportProcessLayout({
   params,
   children,
 }: Readonly<{
   children: React.ReactNode;
-  params: { type: string; id: string };
+  params: { type: string; id: string; step: string };
 }>) {
-  const { type, id } = await params;
+  const { type, id, step } = await params;
+
+  const productVariants: ProductVariantResponse[] =
+    await inboundOutboundService.getProductVariants();
+
+  console.log(productVariants);
 
   const sampleData = {
     name: "ABCXYZ",
@@ -104,9 +111,13 @@ export default async function ImportProcessLayout({
             )}
           </InfoBox>
 
-          <ProductListInfoBox />
+          <ProductListInfoBox step={step} />
 
-          <ProgressBar />
+          <ProgressBar
+            step={
+              step as "quantity-check" | "quality-check" | "storage-location"
+            }
+          />
 
           {children}
 

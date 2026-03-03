@@ -1,14 +1,10 @@
 import { ReactNode } from "react";
 
 export interface ImportRow {
-  batchId: string;
-  date: string;
-  type: string; // Loại phiếu nhập: manufacturer, purchase-order, transfer
-  requestStatus?: string; // Trạng thái yêu cầu: REQUEST, PROCESSING
-  createdBy: string;
-  totalQuantity: number;
-  totalValue: number;
-  status: string; // Trạng thái active/inactive
+  id: number;
+  status: string;
+  type: string;
+  createdAt: string;
   actions?: ReactNode;
 }
 

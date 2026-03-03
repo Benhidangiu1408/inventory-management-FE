@@ -1,15 +1,15 @@
 "use client";
 
 import InfoBox from "@/components/TA_create_page/InfoBox";
-import { QuantityCheckRow } from "@/interfaces/interface.table";
 import CustomizableTable, {
   Column,
 } from "@/components/table/CustomizableTable";
+import Input from "@/default_components/form/input/InputField";
+import { QuantityCheckRow } from "@/interfaces/interface.table";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Input from "@/default_components/form/input/InputField";
 
-export default function ImportProcessPage() {
+export const ImportProcessClient = () => {
   const quantityCheckColumn: Column<QuantityCheckRow>[] = [
     {
       key: "name",
@@ -66,4 +66,4 @@ export default function ImportProcessPage() {
       </InfoBox>
     </div>
   );
-}
+};

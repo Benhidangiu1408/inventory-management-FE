@@ -9,7 +9,7 @@ import CreateModal from "./CreateModal";
 import { ProductTempRow } from "../../interfaces/interface.table";
 import CustomizableTable, { Column } from "../table/CustomizableTable";
 
-export default function ProductListInfoBox() {
+export default function ProductListInfoBox({ step = "" }: { step?: string }) {
   const [productTempData, setProductTempData] = useState<ProductTempRow[]>([
     {
       name: "Product 1",
@@ -90,6 +90,7 @@ export default function ProductListInfoBox() {
       title="Product List"
       modal={
         <CustomContentModalBox
+          step={step}
           startIcon={<FontAwesomeIcon icon={faPlus} />}
           width={"max-w-[1200px]"}
           btnName="Add"

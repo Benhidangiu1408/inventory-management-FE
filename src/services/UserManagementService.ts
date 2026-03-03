@@ -1,19 +1,28 @@
-import { User, UserRequest,UserLogin, Role, Permission, RoleRequest, PermissionRequest, RoleAssignmentRequest } from "@/interfaces/userManagementType";
+import {
+  User,
+  UserRequest,
+  UserLogin,
+  Role,
+  Permission,
+  RoleRequest,
+  PermissionRequest,
+  RoleAssignmentRequest,
+} from "@/interfaces/userManagementType";
 import { apiClient } from "@/lib/api-mask";
 
-// const authToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYW0zLm5ndXllbiIsInVzZXJJZCI6NSwiaWF0IjoxNzY1MjA3ODU2LCJleHAiOjE3NjUyMTE0NTZ9.57oM7prjNFJZP9Xp6o6aBXno4ShsVQFFgwZwY53F8Ds";
-const token = sessionStorage.getItem("token");
+const authToken =
+  "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYW0zLm5ndXllbiIsInVzZXJJZCI6NSwiaWF0IjoxNzY1MjA3ODU2LCJleHAiOjE3NjUyMTE0NTZ9.57oM7prjNFJZP9Xp6o6aBXno4ShsVQFFgwZwY53F8Ds";
+// const token = sessionStorage.getItem("token");
 
-if (!token) {
-  console.error("Token not found in sessionStorage");
-}
+// if (!token) {
+//   console.error("Token not found in sessionStorage");
+// }
 
-const authToken = `Bearer ${token ?? ""}`;
-
+// const authToken = `Bearer ${token ?? ""}`;
 
 export const userManagementService = {
   register: async (data: UserRequest) => {
-    console.log(data)
+    console.log(data);
     return apiClient.post<UserRequest>("users/register", data, {
       headers: { Authorization: authToken },
     });
@@ -22,15 +31,15 @@ export const userManagementService = {
   login: async (data: UserLogin) => {
     // return apiClient.post<{ token: string }>("users/login", data);
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-        cache: "no-store",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+      cache: "no-store",
     });
     if (!res.ok) {
-        throw new Error("Login failed");
+      throw new Error("Login failed");
     }
     const token = await res.text(); // nhận string
     return token;
@@ -52,8 +61,6 @@ export const userManagementService = {
     });
   },
 
-
-
   getById: async (id: string) => {
     return apiClient.get<User>(`/users/${id}`, {
       headers: { Authorization: authToken },
@@ -68,32 +75,43 @@ export const userManagementService = {
   },
 
   getRoleByUsername: async (username: string) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}/role`, {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/role`,
+      {
         headers: { Authorization: authToken },
         cache: "no-store",
-    });
+      },
+    );
     const text = await res.text(); // nhận string
     return text; // "WAREHOUSE_STAFF"
   },
 
   updateProfile: async (username: string, phoneNumber: string) => {
-    return apiClient.put<User>(`users/${username}/profile`, {phoneNumber}, {
-      headers: { Authorization: authToken },
-    });
+    return apiClient.put<User>(
+      `users/${username}/profile`,
+      { phoneNumber },
+      {
+        headers: { Authorization: authToken },
+      },
+    );
   },
 
-//   changePassword: async (username: string, currentPassword: string, newPassword: string) => {
-//     const query = new URLSearchParams({ currentPassword, newPassword }).toString();
-//     return apiClient.put<User>(`users/${username}/password?${query}`, null, {
-//       headers: { Authorization: authToken },
-//     });
-//   }
+  //   changePassword: async (username: string, currentPassword: string, newPassword: string) => {
+  //     const query = new URLSearchParams({ currentPassword, newPassword }).toString();
+  //     return apiClient.put<User>(`users/${username}/password?${query}`, null, {
+  //       headers: { Authorization: authToken },
+  //     });
+  //   }
 
-  changePassword: async (username: string, currentPassword: string, newPassword: string) => {
+  changePassword: async (
+    username: string,
+    currentPassword: string,
+    newPassword: string,
+  ) => {
     return apiClient.put(
-        `users/${username}/password`,
-        { oldPassword: currentPassword, newPassword },
-        { headers: { Authorization: authToken } }
+      `users/${username}/password`,
+      { oldPassword: currentPassword, newPassword },
+      { headers: { Authorization: authToken } },
     );
   },
 
@@ -116,7 +134,11 @@ export const userManagementService = {
     });
   },
 
-  assignRole: async (roleId: number, assigningId: number, assignedId: number) => {
+  assignRole: async (
+    roleId: number,
+    assigningId: number,
+    assignedId: number,
+  ) => {
     const payload: RoleAssignmentRequest = {
       roleAssignmentKey: {
         roleId: roleId,
@@ -133,15 +155,14 @@ export const userManagementService = {
         id: assigningId,
       },
     };
-    return apiClient.post<RoleAssignmentRequest>(`/users/role-assignments`, payload, {
-      headers: { Authorization: authToken },
-    });
+    return apiClient.post<RoleAssignmentRequest>(
+      `/users/role-assignments`,
+      payload,
+      {
+        headers: { Authorization: authToken },
+      },
+    );
   },
-
-
-
-
-
 
   // delete: async (id: number) => {
   //   return apiClient.delete<void>(`/api/users/${id}`, {
@@ -161,32 +182,39 @@ export const roleAssignment = {
       headers: { Authorization: authToken },
     });
   },
-    getAllRole: async () => {
-        return apiClient.get<Role[]>("/users/roles", {
-        headers: { Authorization: authToken },
-        cache: "no-store",
-       });
-    },
-
-    getAllPermission: async () => {
-        return apiClient.get<Permission[]>("/users/permissions", {
-        headers: { Authorization: authToken },
-        cache: "no-store",
-       });
-    },
-
-    updateRolePermissions: async (roleId: number, permissionIds: number[]) => {
-        return apiClient.put<Role>(`/users/roles/${roleId}/permissions`, permissionIds, {
-            headers: { Authorization: authToken },
-            cache: "no-store",
-        });
-    },
-
-  removeRolePermissions: async (roleId: number, permissionIds: number[]) => {
-    return apiClient.delete<Role>(`/users/roles/${roleId}/permissions`, permissionIds, {
+  getAllRole: async () => {
+    return apiClient.get<Role[]>("/users/roles", {
       headers: { Authorization: authToken },
       cache: "no-store",
     });
   },
-  
+
+  getAllPermission: async () => {
+    return apiClient.get<Permission[]>("/users/permissions", {
+      headers: { Authorization: authToken },
+      cache: "no-store",
+    });
+  },
+
+  updateRolePermissions: async (roleId: number, permissionIds: number[]) => {
+    return apiClient.put<Role>(
+      `/users/roles/${roleId}/permissions`,
+      permissionIds,
+      {
+        headers: { Authorization: authToken },
+        cache: "no-store",
+      },
+    );
+  },
+
+  removeRolePermissions: async (roleId: number, permissionIds: number[]) => {
+    return apiClient.delete<Role>(
+      `/users/roles/${roleId}/permissions`,
+      permissionIds,
+      {
+        headers: { Authorization: authToken },
+        cache: "no-store",
+      },
+    );
+  },
 };
