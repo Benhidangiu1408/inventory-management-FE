@@ -90,6 +90,22 @@ export const apiClient = {
   put: <T>(url: string, body: unknown, options?: FetchOptions) =>
     fetcher<T>(url, { method: "PUT", body: JSON.stringify(body), ...options }),
 
-  delete: <T>(url: string, permissionIds: number[], p0: { headers: { Authorization: string; }; cache: string; }, options?: FetchOptions) =>
-    fetcher<T>(url, { method: "DELETE", body: JSON.stringify(permissionIds), ...options }),
+  patch: <T>(url: string, body: unknown, options?: FetchOptions) =>
+    fetcher<T>(url, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      ...options,
+    }),
+
+  delete: <T>(
+    url: string,
+    permissionIds: number[],
+    p0: { headers: { Authorization: string }; cache: string },
+    options?: FetchOptions,
+  ) =>
+    fetcher<T>(url, {
+      method: "DELETE",
+      body: JSON.stringify(permissionIds),
+      ...options,
+    }),
 };

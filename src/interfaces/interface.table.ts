@@ -41,7 +41,9 @@ export interface StorageLocationRow {
 }
 
 export interface ProductTempRow {
+  id: number;
   name: string;
+  description: string;
   expectedQuantity: number;
 }
 
@@ -82,9 +84,8 @@ export interface ImportCreateRow {
   checkBox: boolean;
   productId: string;
   name: string;
-  stock: number;
+  description: string;
   unit: string;
-  quantity: number | string; // can be number or string for easy input in
   pickQuantity: number | string; // can be number or string for easy input in
 }
 

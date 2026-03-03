@@ -3,7 +3,6 @@ import InfoBox from "@/components/TA_create_page/InfoBox";
 import InfoList from "@/components/TA_create_page/InfoList";
 import InfoPagination from "@/components/TA_create_page/InfoPagination";
 import SmallInfoBox from "@/components/TA_create_page/SmallInfoBox";
-import { ProcessProvider } from "@/context/ProcessContext";
 import {
   faCircleInfo,
   faCube,
@@ -16,6 +15,7 @@ import InfoBoxStatus from "@/components/TA_create_page/InfoBoxStatus";
 import ProductListInfoBox from "@/components/TA_create_page/ProductListInfoBox";
 import { ProductVariantResponse } from "@/interfaces/inboundOutboundType";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
+import { ProcessProvider } from "@/context/ProcessContext";
 
 export default async function ImportProcessLayout({
   params,
@@ -26,10 +26,11 @@ export default async function ImportProcessLayout({
 }>) {
   const { type, id, step } = await params;
 
+  const importSheetDetail =
+    await inboundOutboundService.getImportSheetDetail(id);
+
   const productVariants: ProductVariantResponse[] =
     await inboundOutboundService.getProductVariants();
-
-  console.log(productVariants);
 
   const sampleData = {
     name: "ABCXYZ",
@@ -111,7 +112,11 @@ export default async function ImportProcessLayout({
             )}
           </InfoBox>
 
-          <ProductListInfoBox step={step} />
+          <ProductListInfoBox
+            step={step}
+            details={importSheetDetail.details}
+            productVariants={productVariants}
+          />
 
           <ProgressBar
             step={

@@ -79,6 +79,13 @@ export interface ImportSheetDetailCreateReq {
   expectedQuantity: number;
 }
 
+export interface ImportSheetDetailUpdateReq {
+  productVariantId?: number;
+  expectedQuantity?: number;
+  actualQuantity?: number;
+  reason?: number;
+}
+
 export interface ImportSheetResponse {
   id: number;
   status: SheetStatus;
