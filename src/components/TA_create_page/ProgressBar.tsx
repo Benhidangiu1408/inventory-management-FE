@@ -51,7 +51,7 @@ export default function ProgressBar({
   // ];
 
   return (
-    <div className="flex gap-6 rounded-2xl border border-gray-200 px-6 py-5">
+    <div className="flex gap-6 rounded-2xl border border-gray-200 bg-white px-6 py-5">
       {Object.entries(PROCESS_MAP).map(([key, value], index) => (
         <ProgressBarItem
           key={index}

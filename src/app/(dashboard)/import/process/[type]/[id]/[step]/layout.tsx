@@ -16,6 +16,7 @@ import ProductListInfoBox from "@/components/TA_create_page/ProductListInfoBox";
 import { ProductVariantResponse } from "@/interfaces/inboundOutboundType";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { ProcessProvider } from "@/context/ProcessContext";
+import { ImportProvider } from "@/context/ImportContext";
 
 export default async function ImportProcessLayout({
   params,
@@ -70,64 +71,63 @@ export default async function ImportProcessLayout({
           status={<InfoBoxStatus icon={icon} type={type} />}
         />
 
-        <div className="flex flex-col gap-6">
-          <InfoBox
-            icon={<FontAwesomeIcon icon={faCircleInfo} />}
-            title={title}
-            description={description}
-          >
-            {type === "purchase-order" ? (
-              <InfoList>
-                {Object.entries(sampleData).map(([key, value]) => (
-                  <div key={key}>
-                    <span className="font-bold capitalize">{key}</span>: {value}
-                  </div>
-                ))}
-              </InfoList>
-            ) : (
-              <>
-                <InfoList className="grid grid-cols-2 gap-6 p-6">
-                  <SmallInfoBox
-                    title="FROM"
-                    data={{
-                      warehouse: "Warehouse 1",
-                      name: "Name 1",
-                      address: "Address 1",
-                      location: "Location 1",
-                      status: "Status 1",
-                    }}
-                  />
-                  <SmallInfoBox
-                    title="TO"
-                    data={{
-                      warehouse: "Warehouse 2",
-                      name: "Name 2",
-                      address: "Address 2",
-                      location: "Location 2",
-                      status: "Status 2",
-                    }}
-                  />
+        <ImportProvider initialData={importSheetDetail}>
+          <div className="flex flex-col gap-6">
+            <InfoBox
+              icon={<FontAwesomeIcon icon={faCircleInfo} />}
+              title={title}
+              description={description}
+            >
+              {type === "purchase-order" ? (
+                <InfoList>
+                  {Object.entries(sampleData).map(([key, value]) => (
+                    <div key={key}>
+                      <span className="font-bold capitalize">{key}</span>:{" "}
+                      {value}
+                    </div>
+                  ))}
                 </InfoList>
-              </>
-            )}
-          </InfoBox>
+              ) : (
+                <>
+                  <InfoList className="grid grid-cols-2 gap-6 p-6">
+                    <SmallInfoBox
+                      title="FROM"
+                      data={{
+                        warehouse: "Warehouse 1",
+                        name: "Name 1",
+                        address: "Address 1",
+                        location: "Location 1",
+                        status: "Status 1",
+                      }}
+                    />
+                    <SmallInfoBox
+                      title="TO"
+                      data={{
+                        warehouse: "Warehouse 2",
+                        name: "Name 2",
+                        address: "Address 2",
+                        location: "Location 2",
+                        status: "Status 2",
+                      }}
+                    />
+                  </InfoList>
+                </>
+              )}
+            </InfoBox>
 
-          <ProductListInfoBox
-            step={step}
-            details={importSheetDetail.details}
-            productVariants={productVariants}
-          />
+            <ProductListInfoBox step={step} productVariants={productVariants} />
 
-          <ProgressBar
-            step={
-              step as "quantity-check" | "quality-check" | "storage-location"
-            }
-          />
+            <ProgressBar
+              step={
+                step as "quantity-check" | "quality-check" | "storage-location"
+              }
+            />
 
-          {children}
+            {children}
 
-          <InfoPagination paginationType="process" />
-        </div>
+            <InfoPagination paginationType="process" />
+          </div>
+        </ImportProvider>
       </div>
     </ProcessProvider>
   );

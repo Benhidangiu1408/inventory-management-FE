@@ -4,6 +4,7 @@ import {
   ImportSheetDetailResponse,
   ImportSheetDetailUpdateReq,
   ImportSheetResponse,
+  ImportSheetUpdateReq,
   PageResponse,
   ProductVariantResponse,
   WarehoseResponse,
@@ -71,6 +72,16 @@ export const inboundOutboundService = {
   ) => {
     return await apiClient.patch<ImportSheetDetailResponse>(
       `/inbound-outbound/v1/import-sheet/${importSheetId}/detail/${importSheetDetailId}`,
+      data,
+    );
+  },
+
+  updateImportSheet: async (
+    importSheetId: number,
+    data: ImportSheetUpdateReq,
+  ) => {
+    return await apiClient.patch<ImportSheetResponse>(
+      `/inbound-outbound/v1/import-sheet/${importSheetId}`,
       data,
     );
   },

@@ -10,12 +10,12 @@ import { ProductTempRow } from "../../interfaces/interface.table";
 import CustomizableTable, { Column } from "../table/CustomizableTable";
 import {
   ImportSheetDetailCreateReq,
-  ImportSheetDetailResponse,
   ImportSheetDetailUpdateReq,
   ProductVariantResponse,
 } from "@/interfaces/inboundOutboundType";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { useParams } from "next/navigation";
+import { useImport } from "@/context/ImportContext";
 
 const data: ProductTempRow[] = [
   {
@@ -52,29 +52,37 @@ const data: ProductTempRow[] = [
 
 export default function ProductListInfoBox({
   step = "",
-  details,
   productVariants,
 }: {
   step?: string;
-  details: ImportSheetDetailResponse[];
   productVariants: ProductVariantResponse[];
 }) {
   const params = useParams();
 
   const { id } = params;
 
-  const productTempRow = details.map((detail) => {
-    return {
+  const { importData, setImportData } = useImport();
+
+  const details = importData.details;
+
+  // const productTempRow = details.map((detail) => {
+  //   return {
+  //     id: detail.productVariant.id,
+  //     name: detail.productVariant.product.name,
+  //     description: detail.productVariant.description,
+  //     expectedQuantity: detail.expectedQuantity ?? 0,
+  //   };
+  // });
+
+  const productTempData: ProductTempRow[] = importData.details.map(
+    (detail) => ({
       id: detail.productVariant.id,
       name: detail.productVariant.product.name,
       description: detail.productVariant.description,
       expectedQuantity: detail.expectedQuantity ?? 0,
-    };
-  });
-
-  const [productTempData, setProductTempData] = useState<ProductTempRow[]>(
-    productTempRow ?? data,
+    }),
   );
+
   const [selectedProduct, setSelectedProduct] = useState<ProductTempRow | null>(
     null,
   );
@@ -112,18 +120,23 @@ export default function ProductListInfoBox({
           data,
         );
 
-        const newProduct: ProductTempRow = {
-          id: res.productVariant.id,
-          name: res.productVariant.product.name,
-          description: res.productVariant.description,
-          expectedQuantity: res.expectedQuantity ?? 0,
-        };
+        // const newProduct: ProductTempRow = {
+        //   id: res.productVariant.id,
+        //   name: res.productVariant.product.name,
+        //   description: res.productVariant.description,
+        //   expectedQuantity: res.expectedQuantity ?? 0,
+        // };
 
-        setProductTempData((prev) => {
-          const updated = [...prev];
-          updated.push(newProduct);
-          return updated;
-        });
+        // setProductTempData((prev) => {
+        //   const updated = [...prev];
+        //   updated.push(newProduct);
+        //   return updated;
+        // });
+
+        setImportData((prev) => ({
+          ...prev,
+          details: [...prev.details, res],
+        }));
       } else {
         const updatedQuantity =
           item.expectedQuantity + selectedProduct.expectedQuantity;
@@ -150,26 +163,19 @@ export default function ProductListInfoBox({
           data,
         );
 
-        const updatedProduct: ProductTempRow = {
-          id: res.productVariant.id,
-          name: res.productVariant.product.name,
-          description: res.productVariant.description,
-          expectedQuantity: res.expectedQuantity ?? 0,
-        };
+        // const updatedProduct: ProductTempRow = {
+        //   id: res.productVariant.id,
+        //   name: res.productVariant.product.name,
+        //   description: res.productVariant.description,
+        //   expectedQuantity: res.expectedQuantity ?? 0,
+        // };
 
-        setProductTempData((prev) => {
-          const updated = [...prev];
-
-          const foundedProductIndex = updated.findIndex(
-            (item) => item.id === updatedProduct.id,
-          );
-
-          updated[foundedProductIndex] = {
-            ...updatedProduct,
-          };
-
-          return updated;
-        });
+        setImportData((prev) => ({
+          ...prev,
+          details: prev.details.map((detail) =>
+            detail.id === res.id ? res : detail,
+          ),
+        }));
       }
     } else {
       console.warn(

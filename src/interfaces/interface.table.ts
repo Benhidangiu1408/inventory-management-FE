@@ -48,7 +48,10 @@ export interface ProductTempRow {
 }
 
 export interface QuantityCheckRow {
+  detailId: number;
+  productVariantId: number;
   name: string;
+  description: string;
   expectedQuantity: number;
   actualQuantity: number;
   variance: number;
