@@ -16,6 +16,7 @@ import {
 import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { useParams } from "next/navigation";
 import { useImport } from "@/context/ImportContext";
+import toast from "react-hot-toast";
 
 const data: ProductTempRow[] = [
   {
@@ -65,15 +66,6 @@ export default function ProductListInfoBox({
 
   const details = importData.details;
 
-  // const productTempRow = details.map((detail) => {
-  //   return {
-  //     id: detail.productVariant.id,
-  //     name: detail.productVariant.product.name,
-  //     description: detail.productVariant.description,
-  //     expectedQuantity: detail.expectedQuantity ?? 0,
-  //   };
-  // });
-
   const productTempData: ProductTempRow[] = importData.details.map(
     (detail) => ({
       id: detail.productVariant.id,
@@ -120,19 +112,6 @@ export default function ProductListInfoBox({
           data,
         );
 
-        // const newProduct: ProductTempRow = {
-        //   id: res.productVariant.id,
-        //   name: res.productVariant.product.name,
-        //   description: res.productVariant.description,
-        //   expectedQuantity: res.expectedQuantity ?? 0,
-        // };
-
-        // setProductTempData((prev) => {
-        //   const updated = [...prev];
-        //   updated.push(newProduct);
-        //   return updated;
-        // });
-
         setImportData((prev) => ({
           ...prev,
           details: [...prev.details, res],
@@ -163,13 +142,6 @@ export default function ProductListInfoBox({
           data,
         );
 
-        // const updatedProduct: ProductTempRow = {
-        //   id: res.productVariant.id,
-        //   name: res.productVariant.product.name,
-        //   description: res.productVariant.description,
-        //   expectedQuantity: res.expectedQuantity ?? 0,
-        // };
-
         setImportData((prev) => ({
           ...prev,
           details: prev.details.map((detail) =>
@@ -178,6 +150,7 @@ export default function ProductListInfoBox({
         }));
       }
     } else {
+      toast.error("You have to checkbox and input the pick quantity");
       console.warn(
         "No product selected or selected product has invalid pickQuantity",
       );

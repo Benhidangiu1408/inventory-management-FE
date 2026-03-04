@@ -156,7 +156,7 @@ export default function CreateModal({
           id: Number(selectedItem.productId),
           name: selectedItem.name,
           expectedQuantity: Number(selectedItem.pickQuantity),
-          description: "", // nếu chưa có mô tả thì để rỗng
+          description: selectedItem.description ?? "",
         }
       : null;
 

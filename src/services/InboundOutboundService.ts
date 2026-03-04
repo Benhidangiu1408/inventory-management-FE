@@ -85,4 +85,14 @@ export const inboundOutboundService = {
       data,
     );
   },
+
+  confirmImportSheet: async (
+    importSheetId: number,
+    data: ImportSheetUpdateReq,
+  ) => {
+    return await apiClient.post<ImportSheetResponse>(
+      `/inbound-outbound/v1/import-sheet/${importSheetId}/confirm`,
+      data,
+    );
+  },
 };

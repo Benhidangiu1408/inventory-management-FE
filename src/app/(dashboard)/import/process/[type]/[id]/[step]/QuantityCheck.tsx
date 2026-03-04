@@ -24,79 +24,46 @@ export default function ImportProcessPage() {
 
   const [loading, setLoading] = useState(false);
 
-  // console.log(importData);
-
-  const quantityCheckData: QuantityCheckRow[] = importData.details.map(
-    (detail) => ({
-      detailId: detail.id,
-      productVariantId: detail.productVariant.id,
-      name: detail.productVariant.product.name,
-      description: detail.productVariant.description,
-      expectedQuantity: detail.expectedQuantity ?? 0,
-      actualQuantity: detail.actualQuantity ?? 0,
-      variance: (detail.actualQuantity ?? 0) - (detail.expectedQuantity ?? 0),
-      reason: detail.reason ?? "",
-    }),
-  );
-
-  const [rows, setRows] = useState<QuantityCheckRow[]>(quantityCheckData);
-  // const [dirtyRows, setDirtyRows] = useState<QuantityCheckRow[]>([]);
+  const rows: QuantityCheckRow[] = importData.details.map((detail) => ({
+    detailId: detail.id,
+    productVariantId: detail.productVariant.id,
+    name: detail.productVariant.product.name,
+    description: detail.productVariant.description,
+    expectedQuantity: detail.expectedQuantity ?? 0,
+    actualQuantity: detail.actualQuantity ?? 0,
+    variance: (detail.actualQuantity ?? 0) - (detail.expectedQuantity ?? 0),
+    reason: detail.reason ?? "",
+  }));
 
   const updateRow = (detailId: number, changes: Partial<QuantityCheckRow>) => {
-    setRows((prev) =>
-      prev.map((row) => {
-        if (row.detailId !== detailId) return row;
-
-        const updated = { ...row, ...changes };
-
-        // setDirtyRows((dirty) => {
-        //   const exists = dirty.find((d) => d.detailId === detailId);
-        //   if (exists) {
-        //     return dirty.map((d) => (d.detailId === detailId ? updated : d));
-        //   }
-        //   return [...dirty, updated];
-        // });
+    setImportData((prev) => ({
+      ...prev,
+      details: prev.details.map((detail) => {
+        if (detail.id !== detailId) return detail;
 
         return {
-          ...updated,
-          variance:
-            (updated.actualQuantity ?? 0) - (updated.expectedQuantity ?? 0),
+          ...detail,
+          actualQuantity: changes.actualQuantity ?? detail.actualQuantity ?? 0,
+          reason: changes.reason ?? detail.reason ?? "",
         };
       }),
-    );
+    }));
   };
 
   const handleConfirm = async () => {
-    const originalMap = new Map(importData.details.map((d) => [d.id, d]));
+    const details: ImportSheetDetailUpdateReq[] = importData.details.map(
+      (detail) => ({
+        id: detail.id,
+        actualQuantity: detail.actualQuantity,
+        reason: detail.reason,
+      }),
+    );
 
-    const changedDetails = rows.map((row) => {
-      const original = originalMap.get(row.detailId);
-      if (!original) return null;
-
-      const hasActualChanged =
-        row.actualQuantity !== (original.actualQuantity ?? 0);
-
-      const hasReasonChanged = (row.reason ?? "") !== (original.reason ?? "");
-
-      if (!hasActualChanged && !hasReasonChanged) return null;
-
-      return {
-        id: row.detailId,
-        actualQuantity: row.actualQuantity,
-        reason: row.reason,
-      };
-    });
-
-    const changeDetailsWithoutNull: ImportSheetDetailUpdateReq[] =
-      changedDetails.filter((item) => item !== null);
-
-    const data: ImportSheetUpdateReq = {
-      details: changeDetailsWithoutNull,
-    };
+    const data: ImportSheetUpdateReq = { details };
 
     setLoading(true);
 
-    const res = await inboundOutboundService.updateImportSheet(
+    const res = await inboundOutboundService.confirmImportSheet(
       importData.id,
       data,
     );
@@ -165,16 +132,6 @@ export default function ImportProcessPage() {
       },
     },
   ];
-
-  // const quantityCheckData: QuantityCheckRow[] = [
-  //   {
-  //     name: "Product 1",
-  //     expectedQuantity: 10,
-  //     actualQuantity: 10,
-  //     variance: 0,
-  //     reason: "Reason 1",
-  //   },
-  // ];
 
   return (
     <div>
