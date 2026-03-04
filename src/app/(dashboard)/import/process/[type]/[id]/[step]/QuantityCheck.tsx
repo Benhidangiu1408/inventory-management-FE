@@ -16,13 +16,19 @@ import { QuantityCheckRow } from "@/interfaces/interface.table";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function ImportProcessPage() {
+  const router = useRouter();
+
+  const { type, id } = useParams();
+
   const { importData, setImportData } = useImport();
 
   const [loading, setLoading] = useState(false);
+  const isInProgress = importData.status === "IN_PROGRESS";
 
   const rows: QuantityCheckRow[] = importData.details.map((detail) => ({
     detailId: detail.id,
@@ -73,6 +79,8 @@ export default function ImportProcessPage() {
     setLoading(false);
 
     toast.success("Updated Quantity Check Successfully");
+
+    router.push(`/import/process/${type}/${id}/quality-check`);
   };
 
   const quantityCheckColumn: Column<QuantityCheckRow>[] = [
@@ -101,6 +109,7 @@ export default function ImportProcessPage() {
             className="h-[35px]"
             defaultValue={value}
             type="number"
+            disabled={isInProgress}
             onBlur={(e) =>
               updateRow(row.detailId, {
                 actualQuantity: Number(e.target.value),
@@ -122,6 +131,7 @@ export default function ImportProcessPage() {
           <Input
             defaultValue={value}
             className="h-[35px]"
+            disabled={isInProgress}
             onBlur={(e) =>
               updateRow(row.detailId, {
                 reason: e.target.value,
@@ -147,7 +157,9 @@ export default function ImportProcessPage() {
           />
 
           <div className="flex justify-end">
-            <Button onClick={handleConfirm}>Confirm Check Quantity</Button>
+            <Button onClick={handleConfirm} disabled={isInProgress}>
+              Confirm Check Quantity
+            </Button>
           </div>
         </div>
       </InfoBox>

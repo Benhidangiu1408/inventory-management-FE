@@ -1,5 +1,14 @@
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 
+export enum QCSheetDetailStatus {
+  PENDING = "PENDING",
+  IN_PROGRESS = "IN_PROGRESS",
+  PASSED = "PASSED",
+  FAILED = "FAILED",
+  RECHECK_REQUIRED = "RECHECK_REQUIRED",
+  REJECTED = "REJECTED",
+}
+
 export enum ImportSheetType {
   INTERNAL = "INTERNAL",
   FACTORY = "FACTORY",
@@ -62,6 +71,7 @@ export interface BatchResponse {
   code: string;
   initialQuantity: number;
   location: LocationResponse;
+  productVariant: ProductVariantResponse;
 }
 
 export interface ImportSheetDetailResponse {
@@ -114,4 +124,16 @@ export interface ImportSheetUpdateReq {
   sourceWarehouseId?: number;
   supplierId?: number;
   details?: ImportSheetDetailUpdateReq[];
+}
+
+export interface QCSheetDetailResponse {
+  id: number;
+  status: QCSheetDetailStatus;
+  description: string;
+  batch: BatchResponse;
+}
+
+export interface QCSheetResponse {
+  id: number;
+  details: QCSheetDetailResponse[];
 }

@@ -15,8 +15,9 @@ import InfoBoxStatus from "@/components/TA_create_page/InfoBoxStatus";
 import ProductListInfoBox from "@/components/TA_create_page/ProductListInfoBox";
 import { ProductVariantResponse } from "@/interfaces/inboundOutboundType";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
-import { ProcessProvider } from "@/context/ProcessContext";
 import { ImportProvider } from "@/context/ImportContext";
+import Badge from "@/default_components/ui/badge/Badge";
+import { QualityCheckProvider } from "@/context/QualityCheckContext";
 
 export default async function ImportProcessLayout({
   params,
@@ -30,62 +31,73 @@ export default async function ImportProcessLayout({
   const importSheetDetail =
     await inboundOutboundService.getImportSheetDetail(id);
 
+  let qcSheetDetail = null;
+
+  if (step === "quality-check") {
+    qcSheetDetail = await inboundOutboundService.getQCSheetByImportSheetId(id);
+  }
+
+  console.log(qcSheetDetail);
+
   const productVariants: ProductVariantResponse[] =
     await inboundOutboundService.getProductVariants();
 
-  const sampleData = {
-    name: "ABCXYZ",
-    email: "abcxyz@gmail.com",
-    address: "1234567890",
-    phone: "0909090909",
-    status: "Active",
-  };
+  // const sampleData = {
+  //   name: "ABCXYZ",
+  //   email: "abcxyz@gmail.com",
+  //   address: "1234567890",
+  //   phone: "0909090909",
+  //   status: "Active",
+  // };
 
   const title =
-    type === "purchase-order"
+    type === "SUPPLIER".toLowerCase()
       ? "Purchase Order"
-      : type === "transfer"
+      : type === "INTERNAL".toLowerCase()
         ? "Transfer Information"
         : "Manufacturer Information";
 
   const description =
-    type === "purchase-order"
+    type === "SUPPLIER".toLowerCase()
       ? "Purchase Order Description"
-      : type === "transfer"
+      : type === "INTERNAL".toLowerCase()
         ? "Transfer Information Description"
         : "Manufacturer Information Description";
 
   const icon =
-    type === "purchase-order"
+    type === "SUPPLIER".toLowerCase()
       ? faDollarSign
-      : type === "transfer"
+      : type === "INTERNAL".toLowerCase()
         ? faCube
         : faIndustry;
 
   return (
-    <ProcessProvider>
-      <div>
-        <PageBreadcrumb
-          pageTitle="Import Process"
-          filters={["process", type, id]}
-          status={<InfoBoxStatus icon={icon} type={type} />}
-        />
+    <div>
+      <PageBreadcrumb
+        pageTitle="Import Process"
+        filters={["process", type, id]}
+        status={<InfoBoxStatus icon={icon} type={type} />}
+      />
 
-        <ImportProvider initialData={importSheetDetail}>
+      <ImportProvider initialData={importSheetDetail}>
+        <QualityCheckProvider initialData={qcSheetDetail}>
           <div className="flex flex-col gap-6">
             <InfoBox
               icon={<FontAwesomeIcon icon={faCircleInfo} />}
               title={title}
               description={description}
             >
-              {type === "purchase-order" ? (
+              {type === "SUPPLIER" ? (
                 <InfoList>
-                  {Object.entries(sampleData).map(([key, value]) => (
+                  {/* {Object.entries(sampleData).map(([key, value]) => (
                     <div key={key}>
                       <span className="font-bold capitalize">{key}</span>:{" "}
                       {value}
                     </div>
-                  ))}
+                  ))} */}
+                  <div>
+                    Status: <Badge>{importSheetDetail.status}</Badge>
+                  </div>
                 </InfoList>
               ) : (
                 <>
@@ -127,8 +139,8 @@ export default async function ImportProcessLayout({
 
             <InfoPagination paginationType="process" />
           </div>
-        </ImportProvider>
-      </div>
-    </ProcessProvider>
+        </QualityCheckProvider>
+      </ImportProvider>
+    </div>
   );
 }

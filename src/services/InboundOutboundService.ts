@@ -7,6 +7,7 @@ import {
   ImportSheetUpdateReq,
   PageResponse,
   ProductVariantResponse,
+  QCSheetResponse,
   WarehoseResponse,
 } from "@/interfaces/inboundOutboundType";
 import { apiClient } from "@/lib/api-mask";
@@ -93,6 +94,12 @@ export const inboundOutboundService = {
     return await apiClient.post<ImportSheetResponse>(
       `/inbound-outbound/v1/import-sheet/${importSheetId}/confirm`,
       data,
+    );
+  },
+
+  getQCSheetByImportSheetId: async (importSheetId: string) => {
+    return await apiClient.get<QCSheetResponse>(
+      `/inbound-outbound/v1/qc-sheet/import-sheet/${importSheetId}`,
     );
   },
 };

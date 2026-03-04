@@ -230,7 +230,7 @@ export default function CreateModal({
         render: (_, row) => (
           <Input
             type="number"
-            className="h-full"
+            className="h-[35px]"
             value={String(row.pickQuantity || "")}
             onChange={(e) =>
               handlePickQuantityChange(row.productId, e.target.value)

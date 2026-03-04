@@ -10,12 +10,23 @@ import CustomizableTable, {
 } from "@/components/table/CustomizableTable";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useQualityCheck } from "@/context/QualityCheckContext";
 
 export default function QualityCheckPage() {
+  const { qcData } = useQualityCheck();
+
   const qualityCheckColumn: Column<QualityCheckRow>[] = [
+    {
+      key: "batchCode",
+      label: "Batch Code",
+    },
     {
       key: "name",
       label: "Product Name",
+    },
+    {
+      key: "description",
+      label: "Description",
     },
     {
       key: "quantity",
@@ -26,16 +37,16 @@ export default function QualityCheckPage() {
       label: "Quality Status",
       render: () => (
         <div className="inline-flex h-full w-full gap-2">
-          <Button size="sm" variant="success_outline">
+          <Button size="sm" className="h-[35px]" variant="success_outline">
             Pass
           </Button>
-          <Button size="sm" variant="danger_outline">
+          <Button size="sm" className="h-[35px]" variant="danger_outline">
             Fail
           </Button>
-          <Button size="sm" variant="warning_outline">
+          <Button size="sm" className="h-[35px]" variant="warning_outline">
             Skip
           </Button>
-          <Button size="sm" variant="exempt_outline">
+          <Button size="sm" className="h-[35px]" variant="exempt_outline">
             Exempt
           </Button>
         </div>
@@ -44,24 +55,26 @@ export default function QualityCheckPage() {
     {
       key: "reason",
       label: "Reason",
-      render: () => <Input className="h-full" />,
+      render: () => <Input className="h-[35px]" />,
     },
     {
       key: "notes",
       label: "Notes",
-      render: () => <Input className="h-full" />,
+      render: () => <Input className="h-[35px]" />,
     },
   ];
 
-  const qualityCheckData: QualityCheckRow[] = [
-    {
-      name: "Product 1",
-      quantity: 10,
+  const rows: QualityCheckRow[] =
+    qcData?.details.map((detail) => ({
+      detailId: detail.id,
+      batchCode: detail.batch.code,
+      name: detail.batch.productVariant.product.name,
+      description: detail.batch.productVariant.description,
+      quantity: detail.batch.initialQuantity,
       qualityStatus: "Pass",
-      reason: "Reason 1",
-      notes: "Notes 1",
-    },
-  ];
+      reason: "",
+      notes: "",
+    })) ?? [];
 
   return (
     <div>
@@ -72,9 +85,8 @@ export default function QualityCheckPage() {
         <div className="p-6">
           <CustomizableTable<QualityCheckRow>
             headers={qualityCheckColumn}
-            data={qualityCheckData}
+            data={rows}
           />
-          {/* <InfoPagination totalPages={4} paginationType="progress" /> */}
         </div>
       </InfoBox>
     </div>

@@ -59,7 +59,10 @@ export interface QuantityCheckRow {
 }
 
 export interface QualityCheckRow {
+  detailId: number;
+  batchCode: string;
   name: string;
+  description: string;
   quantity: number;
   qualityStatus: "Pass" | "Fail" | "Skip" | "Exempt";
   reason: string;

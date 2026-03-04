@@ -47,7 +47,7 @@ const ActionsButton = ({
       // }
     }
     // Default behavior
-    return `/${type}/process/${processType}/${identifier}/${type === "import" ? "quantity-check" : "confirm"}`;
+    return `/${type}/process/${processType.toLowerCase()}/${identifier}/${type === "import" ? "quantity-check" : "confirm"}`;
   };
 
   return (
@@ -90,10 +90,12 @@ const RequestStatusCell = ({
     } else if (requestStatus === "PROCESSING") {
       if (listType === "import") {
         router.push(
-          `/${listType}/process/${importType}/${batchId}/quantity-check`,
+          `/${listType}/process/${importType.toLowerCase()}/${batchId}/quantity-check`,
         );
       } else {
-        router.push(`/${listType}/process/${importType}/${batchId}/confirm`);
+        router.push(
+          `/${listType}/process/${importType.toLowerCase()}/${batchId}/confirm`,
+        );
       }
     }
   };

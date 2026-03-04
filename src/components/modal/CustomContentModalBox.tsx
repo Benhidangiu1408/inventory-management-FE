@@ -4,6 +4,8 @@ import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/default_components/ui/modal";
 import Button from "@/default_components/ui/button/Button";
 import { ReactNode } from "react";
+import { useImport } from "@/context/ImportContext";
+import { SheetStatus } from "@/interfaces/inventoryManagementType";
 
 type ModalProps = {
   width?: string;
@@ -28,13 +30,16 @@ export default function CustomContentModalBox({
     closeModal();
   };
 
+  const { importData } = useImport();
+
   return (
     <div>
-      {step === "quantity-check" && (
-        <Button size="sm" onClick={openModal} startIcon={startIcon}>
-          {btnName}
-        </Button>
-      )}
+      {step === "quantity-check" &&
+        importData.status === SheetStatus.CREATED && (
+          <Button size="sm" onClick={openModal} startIcon={startIcon}>
+            {btnName}
+          </Button>
+        )}
       <Modal
         isOpen={isOpen}
         onClose={closeModal}
