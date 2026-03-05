@@ -1,7 +1,13 @@
 "use client";
 
 import { ImportSheetResponse } from "@/interfaces/inboundOutboundType";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface ImportContextType {
   importData: ImportSheetResponse;
@@ -18,6 +24,10 @@ export function ImportProvider({
   initialData: ImportSheetResponse;
 }) {
   const [importData, setImportData] = useState(initialData);
+
+  useEffect(() => {
+    setImportData(initialData);
+  }, [initialData]);
 
   return (
     <ImportContext.Provider value={{ importData, setImportData }}>

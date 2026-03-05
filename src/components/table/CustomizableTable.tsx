@@ -8,6 +8,7 @@ import {
   ColDefField,
   CustomFilterModule,
   DateFilterModule,
+  GetRowIdParams,
   ICellRendererParams,
   NumberFilterModule,
   PaginationModule,
@@ -62,6 +63,7 @@ export interface TableProps<T extends object>
   headers: Column<T>[];
   data: T[];
   height?: number | string;
+  getRowId?: (params: GetRowIdParams<T>) => string;
 }
 
 export default function CustomizableTable<T extends object>({
@@ -70,6 +72,7 @@ export default function CustomizableTable<T extends object>({
   className,
   height = "auto",
   defaultColDef,
+  getRowId,
   ...gridProps
 }: TableProps<T>) {
   //   Table Theme
@@ -180,6 +183,7 @@ export default function CustomizableTable<T extends object>({
         suppressPaginationPanel={true}
         suppressScrollOnNewData={true}
         onPaginationChanged={onPaginationChange}
+        getRowId={getRowId}
         {...gridProps}
       />
       <Pagination

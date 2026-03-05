@@ -181,6 +181,7 @@ export default function ProductListInfoBox({
         <CustomizableTable<ProductTempRow>
           headers={productTempColumn}
           data={productTempData}
+          getRowId={(params) => String(params.data.id)}
         />
       </div>
     </InfoBox>

@@ -1,7 +1,6 @@
 "use client";
 
-import Input from "@/default_components/form/input/InputField";
-import Select from "@/default_components/form/Select";
+import Select, { Option } from "@/default_components/form/Select";
 import CustomizableTable, {
   Column,
 } from "@/components/table/CustomizableTable";
@@ -14,6 +13,22 @@ import {
   faCircleXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  LocationResponse,
+  QCSheetDetailStatus,
+  SetBatchLocationReq,
+} from "@/interfaces/inboundOutboundType";
+import { useCallback, useEffect, useState } from "react";
+import { inboundOutboundService } from "@/services/InboundOutboundService";
+import { useImport } from "@/context/ImportContext";
+import { LocationType } from "@/interfaces/warehouseManagementType";
+import Button from "@/default_components/ui/button/Button";
+import { useQualityCheck } from "@/context/QualityCheckContext";
+import { useParams, useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { Loading } from "@/components/TA_common/Loading";
+import { useConfirmModal } from "@/hooks/useConfirmModal";
+import { SheetStatus } from "@/interfaces/inventoryManagementType";
 
 const Title = ({
   icon,
@@ -34,10 +49,62 @@ const Title = ({
 };
 
 export default function StorageLocationPage() {
+  const { id } = useParams();
+  const router = useRouter();
+
+  const { importData, setImportData } = useImport();
+  const { qcData } = useQualityCheck();
+
+  const [locations, setLocations] = useState<LocationResponse[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { confirm, ConfirmationModal } = useConfirmModal();
+
+  const isCompleted = importData.status === SheetStatus.COMPLETED;
+
+  const options: Option[] = locations.map((location) => ({
+    value: String(location.id),
+    label: `${location.code} - ${location.name}`,
+  }));
+
+  const firstLocationValue = locations[0]?.id ?? 0;
+
+  const buildStorageData = (
+    statuses: QCSheetDetailStatus[],
+  ): StorageLocationCheckRow[] => {
+    return importData.details
+      .filter((detail) => {
+        const foundedQcDetail = qcData?.details.find(
+          (qcDetail) => qcDetail.batch.id === detail.batch?.id,
+        );
+
+        return statuses.includes(
+          foundedQcDetail?.status as QCSheetDetailStatus,
+        );
+      })
+      .map((detail) => ({
+        detailId: detail.id,
+        batchCode: detail.batch?.code ?? "",
+        name: detail.batch?.productVariant.product.name ?? "",
+        description: detail.batch?.productVariant.description ?? "",
+        quantity: detail.batch?.initialQuantity ?? 0,
+        storageLocation:
+          detail.batch?.location?.id?.toString() ?? String(firstLocationValue),
+        notes: "",
+      }));
+  };
+
   const storageLocationColumn: Column<StorageLocationCheckRow>[] = [
+    {
+      key: "batchCode",
+      label: "Batch Code",
+    },
     {
       key: "name",
       label: "Name",
+    },
+    {
+      key: "description",
+      label: "Description",
     },
     {
       key: "quantity",
@@ -46,76 +113,173 @@ export default function StorageLocationPage() {
     {
       key: "storageLocation",
       label: "Storage Location",
-      render: () => (
-        <Select className="!h-9" options={[]} onChange={() => {}} />
+      render: (value, row) => (
+        <Select
+          className="h-[38px]"
+          disabled={isCompleted}
+          value={value}
+          options={options}
+          onChange={(e) =>
+            updateRows(row.detailId, {
+              storageLocation: e.target.value,
+            })
+          }
+        />
       ),
-    },
-    {
-      key: "notes",
-      label: "Notes",
-      render: () => <Input className="h-full" />,
+      width: 375,
     },
   ];
 
-  const storageLocationData: StorageLocationCheckRow[] = [
-    {
-      name: "Product 1",
-      quantity: 10,
-      storageLocation: "Storage Location 1",
-      notes: "Notes 1",
-    },
-    {
-      name: "Product 2",
-      quantity: 20,
-      storageLocation: "Storage Location 2",
-      notes: "Notes 2",
-    },
-  ];
+  const storagePassData: StorageLocationCheckRow[] = buildStorageData([
+    QCSheetDetailStatus.PASSED,
+    QCSheetDetailStatus.SKIPPED,
+  ]);
 
-  const storageDefectiveLocationData: StorageLocationCheckRow[] = [
-    {
-      name: "Product 1",
-      quantity: 10,
-      storageLocation: "Storage Location 1",
-      notes: "Notes 1",
-    },
-    {
-      name: "Product 2",
-      quantity: 20,
-      storageLocation: "Storage Location 2",
-      notes: "Notes 2",
-    },
-  ];
+  const storageFailData: StorageLocationCheckRow[] = buildStorageData([
+    QCSheetDetailStatus.FAILED,
+  ]);
+
+  const handleConfirm = async () => {
+    const data: SetBatchLocationReq[] = importData.details.map((detail) => ({
+      importSheetDetailId: detail.id,
+      locationId: detail.batch!.location!.id,
+    }));
+
+    setLoading(true);
+    await inboundOutboundService.setBatchLocations(id as string, data);
+
+    setLoading(false);
+    toast.success("Storage Location Successfully");
+    router.refresh();
+
+    // console.log(res);
+    // console.log(importData);
+  };
+
+  const handleOpenConfirmModal = async () => {
+    const isConfirmed = await confirm({
+      title: "Confirm Storage Location",
+      message:
+        "Are you sure you want to confirm the storage location for all these batches?",
+    });
+
+    if (!isConfirmed) return;
+
+    await handleConfirm();
+  };
+
+  const updateRows = (
+    detailId: number,
+    changes: Partial<StorageLocationCheckRow>,
+  ) => {
+    setImportData((prev) => ({
+      ...prev,
+      details: prev.details.map((detail) => {
+        if (detail.id !== detailId) return detail;
+
+        if (!detail.batch) return detail;
+
+        let currentBatchLocation = detail.batch.location;
+
+        if (
+          String(currentBatchLocation?.id ?? firstLocationValue) !==
+          changes.storageLocation
+        ) {
+          const newLocation = locations.find(
+            (location) => String(location.id) === changes.storageLocation,
+          );
+
+          if (newLocation) {
+            currentBatchLocation = newLocation;
+          }
+        }
+
+        return {
+          ...detail,
+          batch: {
+            ...detail.batch,
+            location: currentBatchLocation,
+          },
+        };
+      }),
+    }));
+  };
+
+  const fetchLocations = useCallback(async () => {
+    const res = await inboundOutboundService.getLocationByType(
+      importData.warehouse.id,
+      LocationType.BIN,
+    );
+
+    setLocations(res);
+  }, [importData.warehouse.id]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchLocations().catch(console.error);
+  }, [fetchLocations]);
+
+  useEffect(() => {
+    if (!locations.length) return;
+
+    setImportData((prev) => ({
+      ...prev,
+      details: prev.details.map((detail) => {
+        if (!detail.batch) return detail;
+
+        if (detail.batch.location) return detail;
+
+        return {
+          ...detail,
+          batch: {
+            ...detail.batch,
+            location: locations[0],
+          },
+        };
+      }),
+    }));
+  }, [locations, setImportData]);
 
   return (
-    <InfoBox
-      icon={<FontAwesomeIcon icon={faBoxOpen} />}
-      title="Storage Location"
-    >
-      <div className="flex flex-col gap-6 p-6">
-        <div>
-          <Title
-            icon={faCircleCheck}
-            title="Passed Products"
-            quantity={storageLocationData.length}
-          />
-          <CustomizableTable<StorageLocationCheckRow>
-            headers={storageLocationColumn}
-            data={storageLocationData}
-          />
+    <div>
+      {loading && <Loading />}
+      {ConfirmationModal}
+      <InfoBox
+        icon={<FontAwesomeIcon icon={faBoxOpen} />}
+        title="Storage Location"
+      >
+        <div className="flex flex-col gap-6 p-6">
+          <div>
+            <Title
+              icon={faCircleCheck}
+              title="Passed Products"
+              quantity={storagePassData.length}
+            />
+            <CustomizableTable<StorageLocationCheckRow>
+              headers={storageLocationColumn}
+              data={storagePassData}
+              getRowId={(params) => String(params.data.detailId)}
+            />
+          </div>
+          <div>
+            <Title
+              icon={faCircleXmark}
+              title="Failed Products"
+              quantity={storageFailData.length}
+            />
+            <CustomizableTable<StorageLocationCheckRow>
+              headers={storageLocationColumn}
+              data={storageFailData}
+              getRowId={(params) => String(params.data.detailId)}
+            />
+          </div>
+          <div className="flex justify-end">
+            <Button onClick={handleOpenConfirmModal} disabled={isCompleted}>
+              Confirm Storage Location
+            </Button>
+          </div>
         </div>
-        <div>
-          <Title
-            icon={faCircleXmark}
-            title="Failed Products"
-            quantity={storageLocationData.length}
-          />
-          <CustomizableTable<StorageLocationCheckRow>
-            headers={storageLocationColumn}
-            data={storageDefectiveLocationData}
-          />
-        </div>
-      </div>
-    </InfoBox>
+      </InfoBox>
+    </div>
   );
 }

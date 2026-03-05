@@ -11,6 +11,8 @@ import {
   PageResponse,
 } from "@/interfaces/inboundOutboundType";
 import { format } from "date-fns";
+import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import Badge from "@/default_components/ui/badge/Badge";
 
 interface ListProps {
   type: "import" | "export";
@@ -199,12 +201,26 @@ export default function List({ type, data }: ListProps) {
 
   const tableHeaderForImport: Column<ImportRow>[] = [
     {
-      label: "ID",
+      label: "Import Sheet ID",
       key: "id",
     },
     {
       label: "Status",
       key: "status",
+      render: (value) => {
+        switch (value) {
+          case SheetStatus.CREATED:
+            return <Badge color="light">{value}</Badge>;
+          case SheetStatus.IN_PROGRESS:
+            return <Badge color="warning">{value}</Badge>;
+          case SheetStatus.APPROVED:
+            return <Badge color="info">{value}</Badge>;
+          case SheetStatus.COMPLETED:
+            return <Badge color="success">{value}</Badge>;
+          default:
+            return value;
+        }
+      },
     },
     {
       label: "Type",

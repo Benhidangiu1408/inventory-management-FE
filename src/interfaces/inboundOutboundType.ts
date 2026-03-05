@@ -1,4 +1,5 @@
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import { LocationStatus, LocationType } from "./warehouseManagementType";
 
 export enum QCSheetDetailStatus {
   PENDING = "PENDING",
@@ -7,6 +8,7 @@ export enum QCSheetDetailStatus {
   FAILED = "FAILED",
   RECHECK_REQUIRED = "RECHECK_REQUIRED",
   REJECTED = "REJECTED",
+  SKIPPED = "SKIPPED",
 }
 
 export enum ImportSheetType {
@@ -64,6 +66,8 @@ export interface LocationResponse {
   id: number;
   code: string;
   name: string;
+  locationType: LocationType;
+  locationStatus: LocationStatus;
 }
 
 export interface BatchResponse {
@@ -102,6 +106,7 @@ export interface ImportSheetResponse {
   type: ImportSheetType;
   details: ImportSheetDetailResponse[];
   createdAt: string;
+  warehouse: WarehoseResponse;
 }
 
 export interface WarehoseResponse {
@@ -131,9 +136,30 @@ export interface QCSheetDetailResponse {
   status: QCSheetDetailStatus;
   description: string;
   batch: BatchResponse;
+  reason: string;
+  notes: string;
+}
+
+export interface QCSheetDetailUpdateReq {
+  id: number;
+  status?: QCSheetDetailStatus;
+  description?: string;
+  reason?: string;
+  notes?: string;
 }
 
 export interface QCSheetResponse {
   id: number;
+  status: SheetStatus;
   details: QCSheetDetailResponse[];
+}
+
+export interface QCSheetUpdateReq {
+  status?: SheetStatus;
+  details?: QCSheetDetailUpdateReq[];
+}
+
+export interface SetBatchLocationReq {
+  importSheetDetailId: number;
+  locationId: number;
 }

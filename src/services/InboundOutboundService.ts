@@ -1,15 +1,20 @@
 import {
+  BatchResponse,
   ImportSheetCreateReq,
   ImportSheetDetailCreateReq,
   ImportSheetDetailResponse,
   ImportSheetDetailUpdateReq,
   ImportSheetResponse,
   ImportSheetUpdateReq,
+  LocationResponse,
   PageResponse,
   ProductVariantResponse,
   QCSheetResponse,
+  QCSheetUpdateReq,
+  SetBatchLocationReq,
   WarehoseResponse,
 } from "@/interfaces/inboundOutboundType";
+import { LocationType } from "@/interfaces/warehouseManagementType";
 import { apiClient } from "@/lib/api-mask";
 
 export const inboundOutboundService = {
@@ -100,6 +105,32 @@ export const inboundOutboundService = {
   getQCSheetByImportSheetId: async (importSheetId: string) => {
     return await apiClient.get<QCSheetResponse>(
       `/inbound-outbound/v1/qc-sheet/import-sheet/${importSheetId}`,
+    );
+  },
+
+  updateQCSheet: async (qcSheetId: string | number, data: QCSheetUpdateReq) => {
+    return await apiClient.patch<QCSheetResponse>(
+      `/inbound-outbound/v1/qc-sheet/${qcSheetId}`,
+      data,
+    );
+  },
+
+  getLocationByType: async (
+    warehouseId: string | number,
+    locationType: LocationType,
+  ) => {
+    return await apiClient.get<LocationResponse[]>(
+      `/inbound-outbound/v1/locations/${warehouseId}/${locationType}`,
+    );
+  },
+
+  setBatchLocations: async (
+    importSheetId: number | string,
+    data: SetBatchLocationReq[],
+  ) => {
+    return await apiClient.post<ImportSheetResponse>(
+      `/inbound-outbound/v1/import-sheet/${importSheetId}/batch-location`,
+      data,
     );
   },
 };

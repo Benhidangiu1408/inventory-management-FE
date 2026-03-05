@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { QCSheetDetailStatus } from "./inboundOutboundType";
 
 export interface ImportRow {
   id: number;
@@ -64,13 +65,16 @@ export interface QualityCheckRow {
   name: string;
   description: string;
   quantity: number;
-  qualityStatus: "Pass" | "Fail" | "Skip" | "Exempt";
+  qualityStatus: QCSheetDetailStatus;
   reason: string;
   notes: string;
 }
 
 export interface StorageLocationCheckRow {
+  detailId: number;
+  batchCode: string;
   name: string;
+  description: string;
   quantity: number;
   storageLocation: string;
   notes: string;

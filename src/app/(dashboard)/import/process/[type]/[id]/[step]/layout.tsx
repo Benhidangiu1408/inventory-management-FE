@@ -33,11 +33,9 @@ export default async function ImportProcessLayout({
 
   let qcSheetDetail = null;
 
-  if (step === "quality-check") {
+  if (step !== "quantity-check") {
     qcSheetDetail = await inboundOutboundService.getQCSheetByImportSheetId(id);
   }
-
-  console.log(qcSheetDetail);
 
   const productVariants: ProductVariantResponse[] =
     await inboundOutboundService.getProductVariants();
@@ -87,7 +85,7 @@ export default async function ImportProcessLayout({
               title={title}
               description={description}
             >
-              {type === "SUPPLIER" ? (
+              {type === "SUPPLIER".toLowerCase() ? (
                 <InfoList>
                   {/* {Object.entries(sampleData).map(([key, value]) => (
                     <div key={key}>

@@ -8,11 +8,13 @@ import CustomizableTable, {
 import { useImport } from "@/context/ImportContext";
 import Input from "@/default_components/form/input/InputField";
 import Button from "@/default_components/ui/button/Button";
+import { useConfirmModal } from "@/hooks/useConfirmModal";
 import {
   ImportSheetDetailUpdateReq,
   ImportSheetUpdateReq,
 } from "@/interfaces/inboundOutboundType";
 import { QuantityCheckRow } from "@/interfaces/interface.table";
+import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -27,8 +29,10 @@ export default function ImportProcessPage() {
 
   const { importData, setImportData } = useImport();
 
+  const { confirm, ConfirmationModal } = useConfirmModal();
+
   const [loading, setLoading] = useState(false);
-  const isInProgress = importData.status === "IN_PROGRESS";
+  const isCreated = importData.status === SheetStatus.CREATED;
 
   const rows: QuantityCheckRow[] = importData.details.map((detail) => ({
     detailId: detail.id,
@@ -83,6 +87,18 @@ export default function ImportProcessPage() {
     router.push(`/import/process/${type}/${id}/quality-check`);
   };
 
+  const handleOpenConfirmModal = async () => {
+    const isConfirmed = await confirm({
+      title: "Confirm Quantity Check",
+      message:
+        "Are you sure you want to confirm the quantity check for all these batches?",
+    });
+
+    if (!isConfirmed) return;
+
+    await handleConfirm();
+  };
+
   const quantityCheckColumn: Column<QuantityCheckRow>[] = [
     {
       key: "productVariantId",
@@ -109,7 +125,7 @@ export default function ImportProcessPage() {
             className="h-[35px]"
             defaultValue={value}
             type="number"
-            disabled={isInProgress}
+            disabled={!isCreated}
             onBlur={(e) =>
               updateRow(row.detailId, {
                 actualQuantity: Number(e.target.value),
@@ -122,6 +138,15 @@ export default function ImportProcessPage() {
     {
       key: "variance",
       label: "Variance",
+      render: (value, row) => {
+        return (
+          <div
+            className={`${Number(value) === 0 ? "text-success-500" : Number(value) > 0 ? "text-warning-500" : "text-error-500"} font-bold`}
+          >
+            {Number(value) > 0 && "+"} {value}
+          </div>
+        );
+      },
     },
     {
       key: "reason",
@@ -131,7 +156,7 @@ export default function ImportProcessPage() {
           <Input
             defaultValue={value}
             className="h-[35px]"
-            disabled={isInProgress}
+            disabled={!isCreated}
             onBlur={(e) =>
               updateRow(row.detailId, {
                 reason: e.target.value,
@@ -146,6 +171,7 @@ export default function ImportProcessPage() {
   return (
     <div>
       {loading && <Loading />}
+      {ConfirmationModal}
       <InfoBox
         icon={<FontAwesomeIcon icon={faCircleCheck} />}
         title="Quantity Check"
@@ -154,10 +180,11 @@ export default function ImportProcessPage() {
           <CustomizableTable<QuantityCheckRow>
             headers={quantityCheckColumn}
             data={rows}
+            getRowId={(params) => String(params.data.detailId)}
           />
 
           <div className="flex justify-end">
-            <Button onClick={handleConfirm} disabled={isInProgress}>
+            <Button onClick={handleOpenConfirmModal} disabled={!isCreated}>
               Confirm Check Quantity
             </Button>
           </div>

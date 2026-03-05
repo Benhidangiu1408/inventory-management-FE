@@ -1,7 +1,13 @@
 "use client";
 
 import { QCSheetResponse } from "@/interfaces/inboundOutboundType";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface QualityCheckContextType {
   qcData: QCSheetResponse | null;
@@ -20,6 +26,10 @@ export function QualityCheckProvider({
   initialData: QCSheetResponse | null;
 }) {
   const [qcData, setQCData] = useState(initialData);
+
+  useEffect(() => {
+    setQCData(initialData);
+  }, [initialData]);
 
   return (
     <QualityCheckContext.Provider value={{ qcData, setQCData }}>
