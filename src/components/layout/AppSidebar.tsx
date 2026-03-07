@@ -112,7 +112,7 @@ export const navItems: NavItem[] = [
   {
     icon: <UserCircle />,
     name: "Profile",
-    path: `/profile/""}`,
+    path: `/profile`,
   },
 ];
 

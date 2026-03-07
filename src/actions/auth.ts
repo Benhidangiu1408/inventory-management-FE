@@ -12,6 +12,7 @@ export async function loginAction(data: UserLogin) {
     const payloadBase64 = accessToken.split(".")[1];
     const payloadJson = Buffer.from(payloadBase64, "base64").toString("utf-8");
     const userId = JSON.parse(payloadJson).userId;
+    const permissions = JSON.parse(payloadJson).permissions;
 
     // Set the HTTP-only cookie
     const cookieStore = await cookies();
@@ -24,15 +25,11 @@ export async function loginAction(data: UserLogin) {
     };
     cookieStore.set("jwt", accessToken, cookieOptions);
     cookieStore.set("userId", userId, cookieOptions);
+    cookieStore.set("permissions", permissions, cookieOptions);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return { error: error.message || "An unexpected error happened!" };
   }
-}
-
-export async function getUserIdAction() {
-  const cookieStore = await cookies();
-  return cookieStore.get("userId")?.value || null;
 }
 
 export async function getUserProfileAction(id: string) {
@@ -49,4 +46,5 @@ export async function logoutAction() {
   const cookieStore = await cookies();
   cookieStore.delete("jwt");
   cookieStore.delete("userId");
+  cookieStore.delete("permissions");
 }

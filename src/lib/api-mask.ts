@@ -44,12 +44,21 @@ async function fetcher<T>(
     if (!response.ok) {
       let errorMessage = `API Error: ${response.status}`;
 
-      try {
-        const data = await response.json();
-        errorMessage = data.message || data.error || errorMessage;
-      } catch {
-        // Fallback to text if JSON parsing fails
-        errorMessage = (await response.text()) || response.statusText;
+      // Read the stream exactly ONCE and store it as a plain string
+      const rawText = await response.text();
+
+      if (rawText) {
+        try {
+          // Safely try to parse that string into a JSON object
+          const data = JSON.parse(rawText);
+          errorMessage = data.message || data.error || rawText;
+        } catch {
+          // If JSON.parse fails, it means the server sent plain text or HTML
+          errorMessage = rawText;
+        }
+      } else {
+        // If the server sent absolutely nothing in the body
+        errorMessage = response.statusText;
       }
 
       throw new ApiError(response.status, errorMessage);

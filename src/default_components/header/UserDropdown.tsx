@@ -1,25 +1,15 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { useUserProfile } from "@/hooks/useUserProfile";
-import { getUserIdAction, logoutAction } from "@/actions/auth";
+import { logoutAction } from "@/actions/auth";
 import { useRouter } from "next/navigation";
+import { User } from "@/interfaces/userManagementType";
 
-export default function UserDropdown() {
+export default function UserDropdown({ userInfo }: { userInfo: User }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    async function fetchUserId() {
-      const id = await getUserIdAction();
-      setUserId(id);
-    }
-    fetchUserId();
-  }, []);
-  const { data: userInfo } = useUserProfile(userId || "");
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
@@ -88,7 +78,7 @@ export default function UserDropdown() {
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
-              href={`/profile/${userId ?? ""}`}
+              href={`/profile`}
               className="group text-theme-sm flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg

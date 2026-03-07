@@ -43,17 +43,11 @@ export const userManagementService = {
   //       headers: { Authorization: authToken },
   //     });
   //   },
-  //   getRoleByUsername: async (username: string) => {
-  //     const res = await fetch(
-  //       `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/role`,
-  //       {
-  //         headers: { Authorization: authToken },
-  //         cache: "no-store",
-  //       },
-  //     );
-  //     const text = await res.text(); // nhận string
-  //     return text; // "WAREHOUSE_STAFF"
-  //   },
+  getRoleByUsername: async (username: string) => {
+    return apiClient.get<{ role: string }>(`/users/${username}/role`, {
+      cache: "no-store",
+    });
+  },
   //   updateProfile: async (username: string, phoneNumber: string) => {
   //     return apiClient.put<User>(
   //       `users/${username}/profile`,
@@ -80,16 +74,12 @@ export const userManagementService = {
   //       { headers: { Authorization: authToken } },
   //     );
   //   },
-  //   activateAccount: async (username: string) => {
-  //     return apiClient.put<void>(`/users/${username}/activate`, null, {
-  //       headers: { Authorization: authToken },
-  //     });
-  //   },
-  //   deactivateAccount: async (username: string) => {
-  //     return apiClient.put<void>(`/users/${username}/deactivate`, null, {
-  //       headers: { Authorization: authToken },
-  //     });
-  //   },
+  activateAccount: async (username: string) => {
+    return apiClient.put<void>(`/users/${username}/activate`, null);
+  },
+  deactivateAccount: async (username: string) => {
+    return apiClient.put<void>(`/users/${username}/deactivate`, null);
+  },
   //   deleteAccount: async (username: string) => {
   //     return apiClient.delete<void>(`/users/${username}`, [], {
   //       headers: { Authorization: authToken },

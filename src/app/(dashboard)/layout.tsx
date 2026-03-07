@@ -1,24 +1,19 @@
-"use client";
-
-import { useSidebar } from "@/context/SidebarContext";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import Backdrop from "@/components/layout/Backdrop";
 import React from "react";
+import ClientLayoutWrapper from "./ClientLayoutWrapper";
+import { cookies } from "next/headers";
+import { userManagementService } from "@/services/UserManagementService";
 
-export default function MainLayout({
+export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isExpanded, isHovered, isMobileOpen } = useSidebar();
-
-  // Dynamic class for main content margin based on sidebar state
-  const mainContentMargin = isMobileOpen
-    ? "ml-0"
-    : isExpanded || isHovered
-      ? "lg:ml-[290px]"
-      : "lg:ml-[90px]";
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value || null;
+  const userInfo = await userManagementService.getById(userId || "");
 
   return (
     <div className="min-h-screen xl:flex">
@@ -26,16 +21,14 @@ export default function MainLayout({
       <AppSidebar />
       <Backdrop />
       {/* Main Content Area */}
-      <div
-        className={`flex-1 transition-all duration-300 ease-in-out ${mainContentMargin}`}
-      >
+      <ClientLayoutWrapper>
         {/* Header */}
-        <AppHeader />
+        <AppHeader userInfo={userInfo} />
         {/* Page Content */}
         <div className="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
           {children}
         </div>
-      </div>
+      </ClientLayoutWrapper>
     </div>
   );
 }
