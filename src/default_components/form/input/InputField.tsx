@@ -1,9 +1,10 @@
-import { forwardRef, InputHTMLAttributes } from "react";
+import { forwardRef, InputHTMLAttributes, ReactNode } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   success?: boolean;
   error?: boolean;
   hint?: string; // Optional hint text
+  icon?: ReactNode;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -15,6 +16,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       success = false,
       error = false,
       hint,
+      icon,
       ...props
     },
     ref,
@@ -34,16 +36,18 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     }
 
     return (
-      <div className="relative">
-        <input
-          ref={ref}
-          autoComplete={"off"}
-          id={id}
-          disabled={disabled}
-          className={inputClasses}
-          {...props}
-        />
-
+      <div>
+        <div className="relative">
+          <input
+            ref={ref}
+            autoComplete={"off"}
+            id={id}
+            disabled={disabled}
+            className={inputClasses}
+            {...props}
+          />
+          {icon}
+        </div>
         {/* Optional Hint Text */}
         {hint && (
           <p

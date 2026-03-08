@@ -1,17 +1,16 @@
 import UserAddressCard from "@/default_components/user-profile/UserAddressCard";
 import UserInfoCard from "@/default_components/user-profile/UserInfoCard";
 import UserMetaCard from "@/default_components/user-profile/UserMetaCard";
-import { Metadata } from "next";
+import { userManagementService } from "@/services/UserManagementService";
+import { cookies } from "next/headers";
 
-export const metadata: Metadata = {
-  title: "Next.js Profile | TailAdmin - Next.js Dashboard Template",
-  description:
-    "This is Next.js Profile page for TailAdmin - Next.js Tailwind CSS Admin Dashboard Template",
-};
-
-export default async function Profile({ params }: { params: { id: string } }) {
-  const { id } = await params;
-  console.log("ID:", id);
+export default async function Profile() {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value || null;
+  const userInfo = await userManagementService.getById(userId || "");
+  const userRole = (
+    await userManagementService.getRoleByUsername(userInfo.username)
+  ).role;
 
   return (
     <div>
@@ -20,9 +19,9 @@ export default async function Profile({ params }: { params: { id: string } }) {
           Profile
         </h3>
         <div className="space-y-6">
-          <UserMetaCard id={id} />
-          <UserInfoCard id={id} />
-          <UserAddressCard />
+          <UserMetaCard userInfo={userInfo} userRole={userRole} />
+          {/* <UserInfoCard id={userId} />
+          <UserAddressCard /> */}
         </div>
       </div>
     </div>

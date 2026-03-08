@@ -1,123 +1,87 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import Image from "next/image";
-import { useUserProfile, useUserRole } from "@/hooks/useUserProfile";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
-import { userManagementService } from "@/services/UserManagementService";
-import { ApiError } from "@/lib/api-mask";
 import toast from "react-hot-toast";
+import { User } from "@/interfaces/userManagementType";
 
-type UserMetaCardProps = {
-  id: string;
-};
-
-export default function UserMetaCard({ id }: UserMetaCardProps) {
+export default function UserMetaCard({
+  userInfo,
+  userRole,
+}: {
+  userInfo: User;
+  userRole: string;
+}) {
   const { isOpen, openModal, closeModal } = useModal();
-  const [showPassword, setShowPassword] = useState(false);
-  const { data: user, isLoading, error } = useUserProfile(id);
-  const {
-    data: role,
-    isLoading: isRoleLoading,
-    error: roleError,
-  } = useUserRole(user?.username);
-
+  // const [showPassword, setShowPassword] = useState(false);
+  // const { data: user, isLoading, error } = useUserProfile(id);
+  // const {
+  //   data: role,
   //   isLoading: isRoleLoading,
   //   error: roleError,
   // } = useUserRole(user?.username);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  // const [currentPassword, setCurrentPassword] = useState("");
+  // const [newPassword, setNewPassword] = useState("");
+  // const [loading, setLoading] = useState(false);
 
-  const [currentStatus, setCurrentStatus] = useState(user?.status || "");
+  const [currentStatus, setCurrentStatus] = useState(userInfo.status);
+  // const handleSave = async () => {
+  //   //   if (!currentPassword || !newPassword) {
+  //   //     toast.error("Please fill in both passwords.", { duration: 5000 });
+  //   //     return;
+  //   //   }
+  //   //   setLoading(true);
+  //   //   try {
+  //   //     await userManagementService.changePassword(
+  //   //       user?.username!,
+  //   //       currentPassword,
+  //   //       newPassword,
+  //   //     );
+  //   //     closeModal();
+  //   //     setTimeout(() => {
+  //   //       toast.success("Password changed successfully!", {
+  //   //         duration: 3000, // 5 giây, muốn lâu hơn thì tăng lên
+  //   //       });
+  //   //     }, 150);
+  //   //     setCurrentPassword("");
+  //   //     setNewPassword("");
+  //   //   } catch (error) {
+  //   //     closeModal();
+  //   //     setTimeout(() => {
+  //   //       if (error instanceof ApiError) {
+  //   //         toast.error(error.message, {
+  //   //           duration: 3000, // 3 giây, muốn lâu hơn thì tăng lên
+  //   //         });
+  //   //       } else {
+  //   //         toast.error("An unexpected error occurred", { duration: 5000 });
+  //   //       }
+  //   //     }, 150);
+  //   //   } finally {
+  //   //     setLoading(false);
+  //   //   }
+  // };
 
-  console.log("Current Status:", currentStatus);
-  console.log("User Status:", user?.status);
-  useEffect(() => {
-    if (user?.status) {
-      setCurrentStatus(user.status);
-    }
-  }, [user]);
-  const displayRole =
-    typeof role === "string"
-      ? role
-      : role && typeof role === "object" && "role" in role
-        ? (role as { role?: string }).role
-        : undefined;
-  const handleSave = async () => {
-    if (!currentPassword || !newPassword) {
-      toast.error("Please fill in both passwords.", { duration: 5000 });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await userManagementService.changePassword(
-        user?.username!,
-        currentPassword,
-        newPassword,
-      );
-
-      closeModal();
-
-      setTimeout(() => {
-        toast.success("Password changed successfully!", {
-          duration: 3000, // 5 giây, muốn lâu hơn thì tăng lên
-        });
-      }, 150);
-
-      setCurrentPassword("");
-      setNewPassword("");
-    } catch (error) {
-      closeModal();
-
-      setTimeout(() => {
-        if (error instanceof ApiError) {
-          toast.error(error.message, {
-            duration: 3000, // 3 giây, muốn lâu hơn thì tăng lên
-          });
-        } else {
-          toast.error("An unexpected error occurred", { duration: 5000 });
-        }
-      }, 150);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleConfirm = async () => {
-    setLoading(true);
-    console.log("Current Status:", currentStatus);
-    console.log("User Status:", user?.status);
-    try {
-      // Call appropriate service method to activate/deactivate user
-      // For example:
-      (await currentStatus) === "ACTIVE"
-        ? userManagementService.deactivateAccount(user?.username)
-        : userManagementService.activateAccount(user?.username);
-      setCurrentStatus(currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE");
-      closeModal();
-      setTimeout(() => {
-        toast.success("User status changed successfully!");
-      }, 150);
-    } catch (error) {
-      closeModal();
-
-      setTimeout(() => {
-        if (error instanceof ApiError) {
-          toast.error(error.message);
-        } else {
-          toast.error("An unexpected error occurred");
-        }
-      }, 150);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const handleConfirm = async () => {
+  //   setLoading(true);
+  //   try {
+  //     // (await currentStatus) === "ACTIVE"
+  //     //   ? userManagementService.deactivateAccount(user?.username)
+  //     //   : userManagementService.activateAccount(user?.username);
+  //     setCurrentStatus(currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE");
+  //     closeModal();
+  //     toast.success("User status changed successfully!");
+  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   } catch (error: any) {
+  //     toast.error(error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <>
@@ -130,27 +94,27 @@ export default function UserMetaCard({ id }: UserMetaCardProps) {
               <Image
                 width={80}
                 height={80}
-                src="/images/user/owner.jpg"
+                src="/images/user/default-avatar.png"
                 alt="user"
               />
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-center text-lg font-semibold text-gray-800 xl:text-left dark:text-white/90">
-                {user?.firstName ?? ""} {user?.lastName ?? ""}
+                {userInfo.firstName ?? ""} {userInfo.lastName ?? ""}
               </h4>
               <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {displayRole ?? "N/A"}
+                  {userRole ?? "N/A"}
                 </p>
                 <div className="hidden h-3.5 w-px bg-gray-300 xl:block dark:bg-gray-700"></div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {currentStatus === "" ? user?.status : currentStatus}
+                  {currentStatus}
                 </p>
               </div>
             </div>
           </div>
           <button
-            onClick={openModal}
+            // onClick={openModal}
             className="shadow-theme-xs flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-800 lg:inline-flex lg:w-auto dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
           >
             <svg
@@ -168,13 +132,11 @@ export default function UserMetaCard({ id }: UserMetaCardProps) {
                 fill=""
               />
             </svg>
-            {id === sessionStorage.getItem("userId")
-              ? "Change Password"
-              : "Change Status"}
+            {"Change Password"}
           </button>
         </div>
       </div>
-      {id === sessionStorage.getItem("userId") && (
+      {/* {
         <Modal
           isOpen={isOpen}
           onClose={closeModal}
@@ -251,9 +213,9 @@ export default function UserMetaCard({ id }: UserMetaCardProps) {
             </form>
           </div>
         </Modal>
-      )}
-      {id !== sessionStorage.getItem("userId") && (
-        <Modal
+      } */}
+
+      {/* <Modal
           isOpen={isOpen}
           onClose={closeModal}
           className="m-4 max-w-[700px]"
@@ -283,8 +245,7 @@ export default function UserMetaCard({ id }: UserMetaCardProps) {
               </div>
             </form>
           </div>
-        </Modal>
-      )}
+        </Modal> */}
     </>
   );
 }

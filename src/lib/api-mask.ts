@@ -1,4 +1,4 @@
-// noinspection ExceptionCaughtLocallyJS
+import { cookies } from "next/headers";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -6,7 +6,7 @@ type FetchOptions = RequestInit & {
   headers?: Record<string, string>;
 };
 
-export class ApiError extends Error {
+class ApiError extends Error {
   status: number;
 
   constructor(status: number, message: string) {
@@ -23,40 +23,55 @@ async function fetcher<T>(
   // Handle the Base URL
   const url = `${BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
 
-  const config = {
+  const config: RequestInit = {
     ...options,
     headers: {
       // Set default headers (like JSON)
       "Content-Type": "application/json",
       ...options.headers,
-    },
+    } as Record<string, string>,
   };
 
+  const token = (await cookies()).get("jwt")?.value;
+  if (token) {
+    (config.headers as Record<string, string>)["Authorization"] =
+      `Bearer ${token}`;
+  }
+
   try {
-    // 1. Attempt to connect
     const response = await fetch(url, config);
     // 2. Handle HTTP Errors (400, 500)
     if (!response.ok) {
       let errorMessage = `API Error: ${response.status}`;
 
-      try {
-        const data = await response.json();
-        errorMessage = data.message || data.error || errorMessage;
-      } catch {
-        // Fallback to text if JSON parsing fails
-        errorMessage = (await response.text()) || response.statusText;
+      // Read the stream exactly ONCE and store it as a plain string
+      const rawText = await response.text();
+
+      if (rawText) {
+        try {
+          // Safely try to parse that string into a JSON object
+          const data = JSON.parse(rawText);
+          errorMessage = data.message || data.error || rawText;
+        } catch {
+          // If JSON.parse fails, it means the server sent plain text or HTML
+          errorMessage = rawText;
+        }
+      } else {
+        // If the server sent absolutely nothing in the body
+        errorMessage = response.statusText;
       }
 
       throw new ApiError(response.status, errorMessage);
     }
 
+    // Handle Successful Responses
     if (response.status === 204) return {} as T;
     const text = await response.text();
     // If text is empty, return an empty object (or null) instead of crashing
     if (!text) return {} as T;
-    // Otherwise, parse the JSON
+
     return JSON.parse(text);
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     // 🚨 3. Handle Network Errors (ECONNREFUSED, Network Down)
     // If 'error' is already our custom ApiError, just re-throw it
@@ -90,22 +105,24 @@ export const apiClient = {
   put: <T>(url: string, body: unknown, options?: FetchOptions) =>
     fetcher<T>(url, { method: "PUT", body: JSON.stringify(body), ...options }),
 
-  patch: <T>(url: string, body: unknown, options?: FetchOptions) =>
-    fetcher<T>(url, {
-      method: "PATCH",
-      body: JSON.stringify(body),
-      ...options,
-    }),
+  // patch: <T>(url: string, body: unknown, options?: FetchOptions) =>
+  //   fetcher<T>(url, {
+  //     method: "PATCH",
+  //     body: JSON.stringify(body),
+  //     ...options,
+  //   }),
 
-  delete: <T>(
-    url: string,
-    permissionIds: number[],
-    p0: { headers: { Authorization: string }; cache: string },
-    options?: FetchOptions,
-  ) =>
-    fetcher<T>(url, {
-      method: "DELETE",
-      body: JSON.stringify(permissionIds),
-      ...options,
-    }),
+  // delete: <T>(
+  //   url: string,
+  //   permissionIds: number[],
+  //   p0: { headers: { Authorization: string }; cache: string },
+  //   options?: FetchOptions,
+  // ) =>
+  //   fetcher<T>(url, {
+  //     method: "DELETE",
+  //     body: JSON.stringify(permissionIds),
+  //     ...options,
+  //   }),
+  delete: <T>(url: string, options?: FetchOptions) =>
+    fetcher<T>(url, { method: "DELETE", ...options }),
 };

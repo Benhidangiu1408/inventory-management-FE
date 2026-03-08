@@ -1,14 +1,15 @@
 "use client";
 import Image from "next/image";
-// import Link from "next/link";
 import React, { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { useUserProfile } from "@/hooks/useUserProfile";
+import { logoutAction } from "@/actions/auth";
+import { useRouter } from "next/navigation";
+import { User } from "@/interfaces/userManagementType";
 
-export default function UserDropdown() {
+export default function UserDropdown({ userInfo }: { userInfo: User }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: user } = useUserProfile(sessionStorage.getItem("userId") || "");
+  const router = useRouter();
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
@@ -29,13 +30,13 @@ export default function UserDropdown() {
           <Image
             width={44}
             height={44}
-            src="/images/user/owner.jpg"
+            src="/images/user/default-avatar.png"
             alt="User"
           />
         </span>
 
         <span className="text-theme-sm mr-1 block font-medium">
-          {user?.firstName ?? ""}
+          {userInfo?.username ?? ""}
         </span>
 
         <svg
@@ -65,10 +66,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="text-theme-sm block font-medium text-gray-700 dark:text-gray-400">
-            {user?.firstName ?? ""} {user?.lastName ?? ""}
+            {userInfo?.firstName ?? ""} {userInfo?.lastName ?? ""}
           </span>
           <span className="text-theme-xs mt-0.5 block text-gray-500 dark:text-gray-400">
-            {user?.email ?? ""}
+            {userInfo?.email ?? ""}
           </span>
         </div>
 
@@ -77,7 +78,7 @@ export default function UserDropdown() {
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
-              href={`/profile/${sessionStorage.getItem("userId") ?? ""}`}
+              href={`/profile`}
               className="group text-theme-sm flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg
@@ -98,11 +99,11 @@ export default function UserDropdown() {
               Edit profile
             </DropdownItem>
           </li>
-          <li>
+          {/* <li>
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
-              href={`/profile/${sessionStorage.getItem("userId") ?? ""}`}
+              href={`/profile/${localStorage.getItem("userId") ?? ""}`}
               className="group text-theme-sm flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg
@@ -122,12 +123,12 @@ export default function UserDropdown() {
               </svg>
               Account settings
             </DropdownItem>
-          </li>
-          <li>
+          </li> */}
+          {/* <li>
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
-              href={`/profile/${sessionStorage.getItem("userId") ?? ""}`}
+              href={`/profile/${localStorage.getItem("userId") ?? ""}`}
               className="group text-theme-sm flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg
@@ -147,12 +148,12 @@ export default function UserDropdown() {
               </svg>
               Support
             </DropdownItem>
-          </li>
+          </li> */}
         </ul>
         <DropdownItem
-          onClick={() => {
-            sessionStorage.clear();
-            window.location.replace("/login");
+          onClick={async () => {
+            await logoutAction();
+            router.replace("/login");
           }}
           className="group text-theme-sm mt-3 flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
         >
