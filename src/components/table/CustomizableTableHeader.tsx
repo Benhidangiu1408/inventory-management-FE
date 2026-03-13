@@ -1,5 +1,6 @@
 "use client";
 
+import { updateFaultOrderPriorityAction } from "@/actions/faultHandling";
 import { Column } from "@/components/table/CustomizableTable";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,7 +24,7 @@ import {
 import { Eye, Pencil } from "lucide-react";
 import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
 import { Role, UserStatus } from "@/interfaces/userManagementType";
-import { userManagementService } from "@/services/UserManagementService";
+// import { userManagementService } from "@/services/UserManagementService";
 
 // --- Warehouse General Header ---
 export const warehouseHeaders: Column<WarehouseGeneral>[] = [
@@ -274,7 +275,7 @@ function UserActionsCell({ row }: { row: UserRow }) {
     if (!confirm("Delete this user?")) return;
 
     try {
-      await userManagementService.deleteAccount(row.username);
+      // await userManagementService.deleteAccount(row.username);
       alert("Deleted!");
 
       // Optional: refresh page
@@ -410,11 +411,11 @@ export const userColumns = (roles: Role[]): Column<UserRow>[] => [
         <Select
           defaultValue={String(roles.find((r) => r.name === value)?.id ?? "")}
           onChange={(e) => {
-            userManagementService.assignRole(
-              Number(e.target.value), // roleId mới
-              Number(sessionStorage.getItem("userId")), // assigningUser
-              Number(row.id), // assignedUser
-            );
+            // userManagementService.assignRole(
+            //   Number(e.target.value), // roleId mới
+            //   Number(sessionStorage.getItem("userId")), // assigningUser
+            //   Number(row.id), // assignedUser
+            // );
           }}
           options={roles.map((r) => ({
             value: String(r.id),
@@ -440,6 +441,7 @@ export const userColumns = (roles: Role[]): Column<UserRow>[] => [
 ];
 
 export interface OrderRow {
+  id: number;
   orderId: string;
   date: string; // formatted as DD-MM-YYYY
   warehouse: string;
@@ -449,6 +451,7 @@ export interface OrderRow {
 }
 
 export const orderColumns: Column<OrderRow>[] = [
+  { label: "ID", key: "id" },
   { label: "Order Code", key: "orderId" },
   { label: "Date", key: "date" },
   { label: "Warehouse", key: "warehouse" },
@@ -493,20 +496,20 @@ export const orderColumns: Column<OrderRow>[] = [
     key: "actions",
     render: (value, row) => (
       <div className="flex justify-center gap-3">
-        {value.includes("edit") && (
-          <Link href={`/fault-order/details/${row.orderId}`}>
+        {Array.isArray(value) && value.includes("edit") && (
+          <Link href={`/fault-order/details/${row.id}`}>
             <FontAwesomeIcon
               icon={faPen}
               className="cursor-pointer hover:text-blue-500"
             />
           </Link>
         )}
-        {value.includes("check") && (
+        {/* {Array.isArray(value) && value.includes("check") && (
           <FontAwesomeIcon
             icon={faCheck}
             className="cursor-pointer hover:text-blue-500"
           />
-        )}
+        )} */}
       </div>
     ),
   },
@@ -514,37 +517,56 @@ export const orderColumns: Column<OrderRow>[] = [
 
 // ---------- Types ----------
 export type FaultBatch = {
-  id: string;
+  id: number;
+  code: string;
   date: string; // DD-MM-YYYY
   status: "Pending" | "Completed" | "In progress" | "Approve";
-  priority: "High" | "Medium" | "Low";
+  checked: boolean; // represents the checkbox in Actions
+};
+
+export type AssignedFaultBatch = {
+  id: number;
+  code: string;
+  orderId: number;
+  date: string; // DD-MM-YYYY
+  status: "Pending" | "Completed" | "In progress" | "Approve";
   checked: boolean; // represents the checkbox in Actions
 };
 
 export type ProcessingOrder = {
-  orderId: string;
+  orderId: number;
   orderType: "Returned" | "Canceled" | "Other";
   action: "";
 };
 
 // ---------- Column Definitions ----------
 export const faultBatchColumns: Column<FaultBatch>[] = [
-  { label: "Fault Batch Code", key: "id" },
+  { label: "ID", key: "id" },
+  { label: "Fault Batch Code", key: "code" },
   { label: "Date", key: "date" },
   { label: "Status", key: "status" },
   {
-    label: "Priority",
-    key: "priority",
-    render(value) {
-      return (
-        <select defaultValue={String(value)}>
-          <option value="High">High</option>
-          <option value="Medium">Medium</option>
-          <option value="Low">Low</option>
-        </select>
+    label: "Actions",
+    key: "checked",
+    render: (value) => {
+      return !!value ? (
+        <input defaultChecked={!!value} type="checkbox" />
+      ) : (
+        <FontAwesomeIcon
+          icon={faTrashCan}
+          className="cursor-pointer hover:text-blue-500"
+        />
       );
     },
   },
+];
+
+export const assignedFaultBatchColumns: Column<AssignedFaultBatch>[] = [
+  { label: "ID", key: "id" },
+  { label: "Fault Batch Code", key: "code" },
+  { label: "Related Order ID", key: "orderId" },
+  { label: "Date", key: "date" },
+  { label: "Status", key: "status" },
   {
     label: "Actions",
     key: "checked",
@@ -568,9 +590,14 @@ export const processingOrderColumns: Column<ProcessingOrder>[] = [
     label: "Action",
     key: "action",
     render: () => (
-      <Button className="rounded bg-blue-500 px-3 py-1 text-white">
-        Handle
-      </Button>
+      <div className="grid grid-cols-2 gap-2">
+        <Button className="rounded bg-blue-500 px-3  text-white">
+          Analyze
+        </Button>
+        <Button className="rounded bg-blue-500 px-3  text-white">
+          Assign Tasks
+        </Button>
+      </div>
     ),
   },
 ];

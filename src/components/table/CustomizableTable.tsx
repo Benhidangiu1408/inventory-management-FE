@@ -116,6 +116,7 @@ export default function CustomizableTable<T extends object>({
       filter: true,
       minWidth: 150,
       suppressHeaderMenuButton: true,
+      autoHeight: true, 
       ...defaultColDef,
     }),
     [defaultColDef],
