@@ -11,8 +11,16 @@ import {
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { inboundOutboundService } from "@/services/InboundOutboundService";
+import {
+  ImportSheetResponse,
+  PageResponse,
+} from "@/interfaces/inboundOutboundType";
 
-export default function ImportPage() {
+export default async function ImportPage() {
+  const importSheetList: PageResponse<ImportSheetResponse> =
+    await inboundOutboundService.getAll();
+
   return (
     <div className="flex flex-col gap-6">
       <PageBreadcrumb pageTitle="Import Page" />
@@ -70,7 +78,7 @@ export default function ImportPage() {
       </div>
 
       <div className="rounded-2xl border">
-        <List type="import" />
+        <List type="import" data={importSheetList} />
       </div>
     </div>
   );

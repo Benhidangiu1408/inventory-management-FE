@@ -23,8 +23,14 @@ export const ProgressBarItem = ({
   );
 };
 
-export default function ProgressBar() {
-  const { process, processOrder } = useProcessContext();
+export default function ProgressBar({
+  step,
+}: {
+  step: "quantity-check" | "quality-check" | "storage-location";
+}) {
+  const currentOrder = PROCESS_MAP[step];
+  // console.log(currentOrder);
+  // const { process, processOrder } = useProcessContext();
 
   // const processList = [
   //   {
@@ -45,26 +51,16 @@ export default function ProgressBar() {
   // ];
 
   return (
-    <div className="flex gap-6 rounded-2xl border border-gray-200 px-6 py-5">
+    <div className="flex gap-6 rounded-2xl border border-gray-200 bg-white px-6 py-5">
       {Object.entries(PROCESS_MAP).map(([key, value], index) => (
         <ProgressBarItem
           key={index}
-          process={process}
+          process={step}
           value={key}
           order={value}
-          currentOrder={processOrder}
+          currentOrder={currentOrder}
         />
       ))}
-      {/* {processList.map((item) => (
-        <ProgressBarItem
-          key={item.value}
-          process={process}
-          label={item.label}
-          value={item.value}
-          order={item.order}
-          currentOrder={processOrder}
-        />
-      ))} */}
     </div>
   );
 }

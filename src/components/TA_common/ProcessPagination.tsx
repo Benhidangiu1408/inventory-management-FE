@@ -1,25 +1,15 @@
 "use client";
 
-import { PROCESS_MAP } from "@/constants/constants";
-import { useProcessContext } from "@/context/ProcessContext";
+import { useImport } from "@/context/ImportContext";
+import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useParams } from "next/navigation";
 
 export default function ProcessPagination() {
-  const params = useParams<{ type: string; id: string }>();
-  const { type, id } = params;
-  const { process, setProcess, setProcessOrder } = useProcessContext();
-  const pathname = usePathname();
+  const params = useParams<{ type: string; id: string; step: string }>();
+  const { type, id, step } = params;
 
-  useEffect(() => {
-    const segments = pathname.split("/").filter(Boolean);
-    const currentStep = segments[segments.length - 1];
-    if (currentStep && currentStep !== process) {
-      setProcess(currentStep);
-      setProcessOrder(PROCESS_MAP[currentStep as keyof typeof PROCESS_MAP]);
-    }
-  }, [pathname, process, setProcess, setProcessOrder]);
+  const { importData } = useImport();
 
   const processList: { label: string; value: string }[] = [
     {
@@ -40,14 +30,24 @@ export default function ProcessPagination() {
     <div>
       <div className="my-3 flex w-full items-center justify-center gap-3">
         {processList.map((item) => {
-          const isActive = item.value === process;
+          const isActive = item.value === step;
+          const disabledByStatus =
+            importData.status === SheetStatus.CREATED
+              ? item.value !== "quantity-check"
+              : importData.status === SheetStatus.IN_PROGRESS
+                ? item.value === "storage-location"
+                : importData.status === SheetStatus.APPROVED
+                  ? false
+                  : false;
           const baseClasses =
             "shadow-theme-xs flex h-10 items-center justify-center rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]";
           const stateClasses = isActive
             ? " bg-brand-500 text-white cursor-default pointer-events-none"
-            : " bg-white";
+            : disabledByStatus
+              ? " bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none"
+              : " bg-white";
 
-          if (isActive) {
+          if (isActive || disabledByStatus) {
             return (
               <span
                 key={item.value}

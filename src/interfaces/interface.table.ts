@@ -1,14 +1,11 @@
 import { ReactNode } from "react";
+import { QCSheetDetailStatus } from "./inboundOutboundType";
 
 export interface ImportRow {
-  batchId: string;
-  date: string;
-  type: string; // Loại phiếu nhập: manufacturer, purchase-order, transfer
-  requestStatus?: string; // Trạng thái yêu cầu: REQUEST, PROCESSING
-  createdBy: string;
-  totalQuantity: number;
-  totalValue: number;
-  status: string; // Trạng thái active/inactive
+  id: number;
+  status: string;
+  type: string;
+  createdAt: string;
   actions?: ReactNode;
 }
 
@@ -45,12 +42,17 @@ export interface StorageLocationRow {
 }
 
 export interface ProductTempRow {
+  id: number;
   name: string;
+  description: string;
   expectedQuantity: number;
 }
 
 export interface QuantityCheckRow {
+  detailId: number;
+  productVariantId: number;
   name: string;
+  description: string;
   expectedQuantity: number;
   actualQuantity: number;
   variance: number;
@@ -58,15 +60,21 @@ export interface QuantityCheckRow {
 }
 
 export interface QualityCheckRow {
+  detailId: number;
+  batchCode: string;
   name: string;
+  description: string;
   quantity: number;
-  qualityStatus: "Pass" | "Fail" | "Skip" | "Exempt";
+  qualityStatus: QCSheetDetailStatus;
   reason: string;
   notes: string;
 }
 
 export interface StorageLocationCheckRow {
+  detailId: number;
+  batchCode: string;
   name: string;
+  description: string;
   quantity: number;
   storageLocation: string;
   notes: string;
@@ -86,9 +94,8 @@ export interface ImportCreateRow {
   checkBox: boolean;
   productId: string;
   name: string;
-  stock: number;
+  description: string;
   unit: string;
-  quantity: number | string; // can be number or string for easy input in
   pickQuantity: number | string; // can be number or string for easy input in
 }
 
