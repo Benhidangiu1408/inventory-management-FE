@@ -107,4 +107,11 @@ export const apiClient = {
 
   delete: <T>(url: string, options?: FetchOptions) =>
     fetcher<T>(url, { method: "DELETE", ...options }),
+
+  patch: <T>(url: string, body: unknown, options?: FetchOptions) =>
+    fetcher<T>(url, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      ...options,
+    }),
 };

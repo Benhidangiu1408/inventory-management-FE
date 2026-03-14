@@ -56,6 +56,7 @@ export default function StorageLocationPage() {
   const { qcData } = useQualityCheck();
 
   const [locations, setLocations] = useState<LocationResponse[]>([]);
+  console.log(locations);
   const [loading, setLoading] = useState(false);
   const { confirm, ConfirmationModal } = useConfirmModal();
 

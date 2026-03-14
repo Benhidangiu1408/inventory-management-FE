@@ -25,7 +25,7 @@ export default async function ImportPage() {
     <div className="flex flex-col gap-6">
       <PageBreadcrumb pageTitle="Import Page" />
 
-      <div className="rounded-2xl border">
+      <div className="rounded-2xl border bg-white">
         <CustomFilter
           listButton={[
             {
@@ -77,7 +77,7 @@ export default async function ImportPage() {
         <Summary />
       </div>
 
-      <div className="rounded-2xl border">
+      <div className="rounded-2xl border bg-white">
         <List type="import" data={importSheetList} />
       </div>
     </div>
