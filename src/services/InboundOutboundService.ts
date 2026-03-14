@@ -1,5 +1,10 @@
 import {
   BatchResponse,
+  ExportSheetCreateReq,
+  ExportSheetDetailCreateReq,
+  ExportSheetDetailResponse,
+  ExportSheetDetailUpdateReq,
+  ExportSheetResponse,
   ImportSheetCreateReq,
   ImportSheetDetailCreateReq,
   ImportSheetDetailResponse,
@@ -130,6 +135,46 @@ export const inboundOutboundService = {
   ) => {
     return await apiClient.post<ImportSheetResponse>(
       `/inbound-outbound/v1/import-sheet/${importSheetId}/batch-location`,
+      data,
+    );
+  },
+
+  getAllExportSheets: async () => {
+    return await apiClient.get<ExportSheetResponse[]>(
+      `/inbound-outbound/v1/export-sheet`,
+    );
+  },
+
+  createExportSheet: async (data: ExportSheetCreateReq) => {
+    return await apiClient.post<ExportSheetResponse[]>(
+      `/inbound-outbound/v1/export-sheet`,
+      data,
+    );
+  },
+
+  getExportSheetById: async (id: string) => {
+    return await apiClient.get<ExportSheetResponse>(
+      `/inbound-outbound/v1/export-sheet/${id}`,
+    );
+  },
+
+  createExportSheetDetail: async (
+    exportSheetId: string | number,
+    data: ExportSheetDetailCreateReq,
+  ) => {
+    return await apiClient.post<ExportSheetDetailResponse>(
+      `/inbound-outbound/v1/export-sheet/${exportSheetId}/detail`,
+      data,
+    );
+  },
+
+  updateExportSheetDetail: async (
+    exportSheetId: string | number,
+    exportSheetDetailId: string | number,
+    data: ExportSheetDetailUpdateReq,
+  ) => {
+    return await apiClient.patch<ExportSheetDetailResponse>(
+      `/inbound-outbound/v1/export-sheet/${exportSheetId}/detail/${exportSheetDetailId}`,
       data,
     );
   },

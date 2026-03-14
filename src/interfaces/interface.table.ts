@@ -10,16 +10,18 @@ export interface ImportRow {
 }
 
 export interface ExportRow {
-  batchId: string;
-  date: string;
+  id: number;
+  // code: string;
   type: string; // Loại phiếu xuất: manufacturer, purchase-order, transfer
-  requestStatus?: string; // Trạng thái yêu cầu: REQUEST, PROCESSING
+  // requestStatus?: string; // Trạng thái yêu cầu: REQUEST, PROCESSING
   warehouse: string;
-  receiver: string;
-  createdBy: string;
-  totalQuantity: number;
-  totalValue: number;
+  // receiver: string;
+
+  // totalQuantity: number;
+  // totalValue: number;
   status: string; // Trạng thái active/inactive
+  createdAt: string;
+  // createdBy: string;
   actions?: ReactNode;
 }
 
@@ -100,6 +102,7 @@ export interface ImportCreateRow {
 }
 
 export interface ExportQuantityCheckRow {
+  batchId: string;
   quantity: number;
   location: string;
 }

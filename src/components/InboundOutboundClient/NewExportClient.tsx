@@ -1,48 +1,49 @@
 "use client";
 
-import { createImportSheet } from "@/actions/inbound-outbound";
-import { Loading } from "@/components/TA_common/Loading";
+import { createExportSheet } from "@/actions/inbound-outbound";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import Select, { Option } from "@/default_components/form/Select";
 import Button from "@/default_components/ui/button/Button";
 import {
-  ImportSheetType,
+  ExportSheetCreateReq,
+  ExportSheetType,
   WarehoseResponse,
 } from "@/interfaces/inboundOutboundType";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
-import { inboundOutboundService } from "@/services/InboundOutboundService";
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
   faArrowRightArrowLeft,
-  faDollarSign,
   faHandPointer,
   faIndustry,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-// const warehouses = [
-//   { id: 1, name: "Warehouse 1" },
-//   { id: 2, name: "Warehouse 2" },
-// ];
-
-const importOptions: {
-  key: ImportSheetType;
+const exportOptions: {
+  key: string;
   label: string;
-  icon: IconDefinition;
+  path: ExportSheetType;
+  icon: typeof faIndustry;
 }[] = [
-  { key: ImportSheetType.FACTORY, label: "Manufacturer", icon: faIndustry },
   {
-    key: ImportSheetType.INTERNAL,
+    key: "manufacturer",
+    label: "Manufacturer",
+    path: ExportSheetType.FACTORY,
+    icon: faIndustry,
+  },
+  {
+    key: "transfer",
     label: "Transfer",
+    path: ExportSheetType.INTERNAL,
     icon: faArrowRightArrowLeft,
   },
   {
-    key: ImportSheetType.SUPPLIER,
-    label: "Purchase Order",
-    icon: faDollarSign,
+    key: "customer",
+    label: "Customer",
+    path: ExportSheetType.CUSTOMER,
+    icon: faUser,
   },
 ];
 
@@ -78,41 +79,37 @@ const WarehouseSelector = ({
   );
 };
 
-export const NewImportClient = ({
+export const NewExportClient = ({
   warehouses,
 }: {
   warehouses: WarehoseResponse[];
 }) => {
   const router = useRouter();
-
   const [selectedWarehouseId, setSelectedWarehouseId] = useState<number>(
     warehouses[0]?.id ?? 1,
   );
-  const [selectedImportType, setSelectedImportType] =
-    useState<ImportSheetType | null>(null);
-
-  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedExportType, setSelectedExportType] =
+    useState<ExportSheetType | null>(null);
 
   const handleCreate = async () => {
-    setLoading(true);
+    if (!selectedExportType) return;
 
-    const data = await createImportSheet({
+    const data: ExportSheetCreateReq = {
       warehouseId: selectedWarehouseId,
-      type: selectedImportType ?? ImportSheetType.SUPPLIER,
       status: SheetStatus.CREATED,
-    });
+      type: selectedExportType,
+    };
 
-    setLoading(false);
-    toast.success("Import Sheet Created Successfully");
+    const res = await createExportSheet(data);
 
-    router.push("/import");
-    console.log(data);
+    toast.success("Create Export Sheet Successfully");
+
+    router.push(`/export`);
   };
 
   return (
     <div>
-      {loading && <Loading />}
-      <PageBreadcrumb pageTitle="New Import" />
+      <PageBreadcrumb pageTitle="New Export" />
 
       <WarehouseSelector
         warehouses={warehouses}
@@ -123,16 +120,16 @@ export const NewImportClient = ({
       <div className="rounded-2xl border border-gray-200 bg-white">
         <div className="flex items-center justify-center gap-3 border-b border-gray-200 p-6 text-xl font-bold">
           <FontAwesomeIcon icon={faHandPointer} />
-          <h2>Please Choose Your Type Of Import</h2>
+          <h2>Please Choose Your Type Of Export</h2>
         </div>
         <div className="flex flex-col items-center gap-3 p-6">
-          {importOptions.map((option) => {
-            const isActive = selectedImportType === option.key;
+          {exportOptions.map((option) => {
+            const isActive = selectedExportType === option.path;
             return (
               <Button
                 key={option.key}
                 type="button"
-                onClick={() => setSelectedImportType(option.key)}
+                onClick={() => setSelectedExportType(option.path)}
                 className={`w-1/2 gap-3 p-6 ${
                   isActive
                     ? "border border-blue-500 !bg-blue-800 ring-2 ring-blue-200"
@@ -151,7 +148,7 @@ export const NewImportClient = ({
         <div className="w-[30%] max-w-xs">
           <Button
             className="w-full gap-3 p-4"
-            disabled={!selectedImportType || !selectedWarehouseId}
+            disabled={!selectedExportType || !selectedWarehouseId}
             onClick={handleCreate}
           >
             Create

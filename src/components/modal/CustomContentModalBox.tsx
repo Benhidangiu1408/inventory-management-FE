@@ -4,8 +4,6 @@ import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/default_components/ui/modal";
 import Button from "@/default_components/ui/button/Button";
 import { ReactNode } from "react";
-import { useImport } from "@/context/ImportContext";
-import { SheetStatus } from "@/interfaces/inventoryManagementType";
 
 type ModalProps = {
   width?: string;
@@ -14,6 +12,8 @@ type ModalProps = {
   modalContent: ReactNode;
   onSave: () => void;
   step?: string;
+  /** When true, the Add button is shown. Parent (Import/Export) computes this from context. */
+  showAddButton?: boolean;
 };
 
 export default function CustomContentModalBox({
@@ -22,7 +22,7 @@ export default function CustomContentModalBox({
   btnName,
   modalContent,
   onSave,
-  step = "quantity-check",
+  showAddButton = true,
 }: ModalProps) {
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
@@ -30,12 +30,9 @@ export default function CustomContentModalBox({
     closeModal();
   };
 
-  const { importData } = useImport();
-
   return (
     <div>
-      {step === "quantity-check" &&
-        importData.status === SheetStatus.CREATED && (
+      {showAddButton && (
           <Button size="sm" onClick={openModal} startIcon={startIcon}>
             {btnName}
           </Button>

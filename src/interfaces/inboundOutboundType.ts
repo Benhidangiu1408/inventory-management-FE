@@ -17,6 +17,12 @@ export enum ImportSheetType {
   SUPPLIER = "SUPPLIER",
 }
 
+export enum ExportSheetType {
+  INTERNAL = "INTERNAL",
+  FACTORY = "FACTORY",
+  CUSTOMER = "CUSTOMER",
+}
+
 export interface Sort {
   empty: boolean;
   unsorted: boolean;
@@ -78,6 +84,11 @@ export interface BatchResponse {
   productVariant: ProductVariantResponse;
 }
 
+export interface BatchSummaryResponse {
+  batch: BatchResponse;
+  quantity: number;
+}
+
 export interface ImportSheetDetailResponse {
   id: number;
   description: string;
@@ -91,6 +102,15 @@ export interface ImportSheetDetailResponse {
 export interface ImportSheetDetailCreateReq {
   productVariantId: number;
   expectedQuantity: number;
+}
+
+export interface ExportSheetDetailCreateReq {
+  productVariantId: number;
+  expectedQuantity: number;
+  scannedQuantity?: number;
+  batchId?: number[];
+  destinationLocationId?: number;
+  destinationLocationWarehouseId?: number;
 }
 
 export interface ImportSheetDetailUpdateReq {
@@ -162,4 +182,46 @@ export interface QCSheetUpdateReq {
 export interface SetBatchLocationReq {
   importSheetDetailId: number;
   locationId: number;
+}
+
+export interface ExportSheetDetailResponse {
+  id: number;
+  productVariant: ProductVariantResponse;
+  batches: BatchSummaryResponse[];
+  expectedQuantity: number;
+  scannedQuantity: number;
+  destinationLocationId: number;
+  destinationLocationWarehouseId: number;
+}
+
+export interface ExportSheetDetailCreateReq {
+  productVariantId: number;
+  expectedQuantity: number;
+  estinationLocationId?: number;
+  destinationLocationWarehouseId?: number;
+}
+
+export interface ExportSheetDetailUpdateReq {
+  itemBarcode?: string;
+  expectedQuantity?: number;
+  scannedQuantity?: number;
+  batchId?: number[];
+}
+
+export interface ExportSheetResponse {
+  id: number;
+  status: SheetStatus;
+  type: ExportSheetType;
+  details: ExportSheetDetailResponse[];
+  warehouse: WarehoseResponse;
+  createdAt: string;
+}
+
+export interface ExportSheetCreateReq {
+  type: ExportSheetType;
+  status: SheetStatus;
+  warehouseId: number;
+  sourceWarehouseId?: number;
+  supplierId?: number;
+  details?: ImportSheetDetailCreateReq[];
 }

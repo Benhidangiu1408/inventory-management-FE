@@ -9,69 +9,32 @@ import CreateModal from "./CreateModal";
 import { ProductTempRow } from "../../interfaces/interface.table";
 import CustomizableTable, { Column } from "../table/CustomizableTable";
 import {
-  ImportSheetDetailCreateReq,
-  ImportSheetDetailUpdateReq,
+  ExportSheetDetailCreateReq,
+  ExportSheetDetailResponse,
+  ExportSheetDetailUpdateReq,
   ProductVariantResponse,
 } from "@/interfaces/inboundOutboundType";
-import { inboundOutboundService } from "@/services/InboundOutboundService";
-import { useParams } from "next/navigation";
-import { useImport } from "@/context/ImportContext";
+import { useExport } from "@/context/ExportContext";
 import toast from "react-hot-toast";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import { useParams } from "next/navigation";
 import {
-  createImportSheetDetail,
-  updateImportSheetDetail,
+  createExportSheetDetail,
+  updateExportSheetDetail,
 } from "@/actions/inbound-outbound";
 
-const data: ProductTempRow[] = [
-  {
-    id: 1,
-    name: "Product 1",
-    expectedQuantity: 10,
-    description: "Hihi",
-  },
-  {
-    id: 2,
-    name: "Product 2",
-    expectedQuantity: 20,
-    description: "Hihi",
-  },
-  {
-    id: 3,
-    name: "Product 3",
-    expectedQuantity: 30,
-    description: "Hihi",
-  },
-  {
-    id: 4,
-    name: "Product 4",
-    expectedQuantity: 40,
-    description: "Hihi",
-  },
-  {
-    id: 5,
-    name: "Product 5",
-    expectedQuantity: 50,
-    description: "Hihi",
-  },
-];
-
-export default function ProductListInfoBox({
+export default function ExportProductListInfoBox({
   step = "",
   productVariants,
 }: {
   step?: string;
   productVariants: ProductVariantResponse[];
 }) {
-  const params = useParams();
+  const { id } = useParams();
 
-  const { id } = params;
+  const { exportData, setExportData } = useExport();
 
-  const { importData, setImportData } = useImport();
-
-  const details = importData.details;
-
-  const productTempData: ProductTempRow[] = importData.details.map(
+  const productTempData: ProductTempRow[] = exportData.details.map(
     (detail) => ({
       id: detail.productVariant.id,
       name: detail.productVariant.product.name,
@@ -101,61 +64,66 @@ export default function ProductListInfoBox({
 
   const handleSave = async () => {
     if (selectedProduct) {
-      const item = productTempData.find(
+      const existingItem = productTempData.find(
         (product) => product.id === selectedProduct.id,
       );
-      console.log("Selected product:", selectedProduct);
+      const productVariant = productVariants.find(
+        (pv) => pv.id === selectedProduct.id,
+      );
+      if (!productVariant) {
+        toast.error("Product variant not found");
+        return;
+      }
 
-      const data: ImportSheetDetailCreateReq = {
+      const data: ExportSheetDetailCreateReq = {
         productVariantId: selectedProduct.id,
         expectedQuantity: selectedProduct.expectedQuantity,
       };
 
-      if (!item) {
-        const res = await createImportSheetDetail(id as string, data);
+      if (!existingItem) {
+        // const newDetail: ExportSheetDetailResponse = {};
 
-        setImportData((prev) => ({
+        // const data: ExportSheetDetailCreateReq = {
+        //   productVariantId:
+        // }
+
+        const res = await createExportSheetDetail(id as string, data);
+
+        setExportData((prev) => ({
           ...prev,
           details: [...prev.details, res],
         }));
+        toast.success("Added product to export list");
       } else {
         const updatedQuantity =
-          item.expectedQuantity + selectedProduct.expectedQuantity;
+          existingItem.expectedQuantity + selectedProduct.expectedQuantity;
+        const foundDetail = exportData.details.find(
+          (detail) => detail.productVariant.id === selectedProduct.id,
+        );
+        if (!foundDetail) return;
 
-        const foundedDetail = details.find((detail) => {
-          if (detail.productVariant.id === selectedProduct.id) {
-            return detail;
-          }
-        });
-
-        if (!foundedDetail) {
-          console.log("Not found correct Detail");
-          return;
-        }
-
-        const data: ImportSheetDetailUpdateReq = {
-          productVariantId: selectedProduct.id,
+        const data: ExportSheetDetailUpdateReq = {
           expectedQuantity: updatedQuantity,
         };
 
-        const res = await updateImportSheetDetail(
+        const res = await updateExportSheetDetail(
           id as string,
-          foundedDetail?.id,
+          foundDetail.id,
           data,
         );
 
-        setImportData((prev) => ({
+        console.log(res);
+
+        setExportData((prev) => ({
           ...prev,
           details: prev.details.map((detail) =>
             detail.id === res.id ? res : detail,
           ),
         }));
+        toast.success("Updated quantity in export list");
       }
     } else {
       toast.error("You have to checkbox and input the pick quantity");
-      console.warn(
-        "No product selected or selected product has invalid pickQuantity",
-      );
     }
   };
 
@@ -168,7 +136,7 @@ export default function ProductListInfoBox({
           step={step}
           showAddButton={
             step === "quantity-check" &&
-            importData.status === SheetStatus.CREATED
+            exportData.status === SheetStatus.CREATED
           }
           startIcon={<FontAwesomeIcon icon={faPlus} />}
           width={"max-w-[1200px]"}

@@ -27,12 +27,12 @@ export interface UserRequest {
 }
 
 export interface UserLogin {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 }
 
-export interface EditPhoneNumberRequest{
-    phoneNumber: string;
+export interface EditPhoneNumberRequest {
+  phoneNumber: string;
 }
 
 export interface Permission {
@@ -77,7 +77,7 @@ export interface UserRef {
 
 export interface RoleAssignmentRequest {
   roleAssignmentKey: RoleAssignmentKey;
-  assignedDate: string;        // ISO datetime string
+  assignedDate: string; // ISO datetime string
   role: RoleRef;
   assignedUser: UserRef;
   assigningUser: UserRef;

@@ -1,5 +1,6 @@
 "use client";
 
+import { confirmImportSheet } from "@/actions/inbound-outbound";
 import { Loading } from "@/components/TA_common/Loading";
 import InfoBox from "@/components/TA_create_page/InfoBox";
 import CustomizableTable, {
@@ -73,10 +74,7 @@ export default function ImportProcessPage() {
 
     setLoading(true);
 
-    const res = await inboundOutboundService.confirmImportSheet(
-      importData.id,
-      data,
-    );
+    const res = await confirmImportSheet(importData.id, data);
 
     setImportData(res);
 
