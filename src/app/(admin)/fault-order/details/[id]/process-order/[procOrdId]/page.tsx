@@ -1,122 +1,61 @@
-"use client";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 
-import UtilityBar from "@/components/TA_common/UtilityBar";
-import CustomizableTable from "@/components/table/CustomizableTable";
-import {
-  faultBatchColumns,
-  taskColumns,
-} from "@/components/table/CustomizableTableHeader";
-import { faultBatchData2 } from "@/components/table/TableData";
 import Button from "@/default_components/ui/button/Button";
-import GeneralInfoSection from "@/components/GeneralInformation";
-import FileInput from "@/default_components/form/input/FileInput";
-import Label from "@/default_components/form/Label";
-import Input from "@/default_components/form/input/InputField";
+import { getFaultBatchProcessOrderWithDetailsAction } from "@/actions/faultHandling";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileExport } from "@fortawesome/free-solid-svg-icons";
+import ProcessOrderDetailForm from "./ProcessOrderDetailForm";
 
-export default function FaultOrderDetailPage() {
-  const handleInfoItems = [
-    { label: "Process Order ID", value: "SI-2025-001" },
-    { label: "Create Date", value: "01/01/2025" },
-    { label: "Return Date", value: "01/01/2025" },
-    { label: "Expected Arrival Date", value: "01/01/2025" },
-    { label: "Status", value: "In progress" },
-    { label: "Return To", value: "ABC Supplier" },
-    { label: "Handled By", value: "John Doe" },
-    { label: "Note", value: "ABC" },
-  ];
+type ProcessOrderDetailPageProps = {
+  params: Promise<{
+    id: string;
+    procOrdId: string;
+  }>;
+};
 
-  const resolveInfoItems = [
-    { label: "Resolve Date", value: "01/01/2025" },
-    { label: "Resolve Image", value: "" },
-    { label: "Resolve By", value: "John Doe" },
-    { label: "Status", value: "ABC" },
-  ];
+export default async function FaultOrderDetailPage({
+  params,
+}: ProcessOrderDetailPageProps) {
+  const { procOrdId } = await params;
+  const processOrderId = Number(procOrdId);
 
-  const summaryInfoItems = [
-    { label: "Fault Type", value: "SI-2025-001" },
-    { label: "Fault Reason", value: "Product defect" },
-    { label: "Processing Date", value: "01/01/2025" },
-    { label: "Status", value: "Pending" },
-    { label: "Handled By", value: "John Doe" },
-    { label: "Note", value: "ABC" },
-  ];
+  if (Number.isNaN(processOrderId)) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700">
+        Invalid process order id.
+      </div>
+    );
+  }
+
+  const { data, error } =
+    await getFaultBatchProcessOrderWithDetailsAction(processOrderId);
+
+  if (error || !data) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700">
+        {error ?? "Unable to load process order details."}
+      </div>
+    );
+  }
+
   return (
     <div>
       <PageBreadcrumb
-        pageTitle="Process Order #1"
+        pageTitle={`Process Order #${data.id}`}
         filters={["details", "process-order"]}
       />
       <div className="flex flex-col gap-6">
-        <UtilityBar />
-        <div className="flex justify-between gap-6">
-          <div className="flex flex-3 flex-col gap-6">
-            {/* Summary */}
-            <GeneralInfoSection title="Summary" items={summaryInfoItems} />
-            {/* Inputs */}
-            <h2 className="m-3 font-medium">Problem Description</h2>
-            <div>
-              <Label>What happended?</Label>
-              <FileInput />
-            </div>
-            <div>
-              <Label>What is impacted?</Label>
-              <FileInput />
-            </div>
-            <h2 className="m-3 font-medium">Reasons</h2>
-            <div>
-              <Label>Why is it happening?</Label>
-              <FileInput />
-            </div>
-            <div>
-              <Label>Why is that?</Label>
-              <FileInput />
-            </div>
-            <div>
-              <Label>Why is that?</Label>
-              <FileInput />
-            </div>
-            <div>
-              <Label>Why is that?</Label>
-              <FileInput />
-            </div>
-            <div>
-              <Label>Why is that?</Label>
-              <FileInput />
-            </div>
-            {/* <div>
-              <Label>How?</Label>
-              <FileInput />
-            </div> */}
-            <h2 className="mt-3 font-medium">Root Causes</h2>
-            <Input />
-            {/* Action Table */}
-            <div>
-              <h2 className="m-3 font-medium">Action</h2>
-              <Button className="my-4 w-full">+ New Task</Button>
-              <CustomizableTable headers={taskColumns} data={[]} />
-            </div>
-            {/* Batch Table */}
-            <div>
-              <h2 className="m-3 font-medium">Processing</h2>
-              <Button className="my-4 w-full">+ Add Batch</Button>
-              <CustomizableTable
-                headers={faultBatchColumns}
-                data={faultBatchData2}
-              />
-            </div>
-            {/* Approve */}
-            <h2 className="mt-3 font-medium">Approval</h2>
-            <div className="grid grid-cols-2">
-              <Input placeholder="Name:" type="text"></Input>
-              <Input placeholder="Date:" type="date"></Input>
-            </div>
-            <div className="flex gap-4">
-              <GeneralInfoSection title=" Handle" items={handleInfoItems} />
-              <GeneralInfoSection title="Resolve" items={resolveInfoItems} />
-            </div>
-          </div>
+        {/* <UtilityBar /> */}
+        <div className="flex justify-end rounded-2xl border border-gray-200 p-3">
+          <Button
+            size="sm"
+            variant="primary"
+            startIcon={<FontAwesomeIcon icon={faFileExport} />}
+          >
+            Export
+          </Button>
         </div>
+        <ProcessOrderDetailForm processOrder={data} />
       </div>
     </div>
   );

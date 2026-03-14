@@ -71,15 +71,20 @@ const buildFaultBatchRows = (
     return [];
   }
 
+  const getProcessOrderId = (batch: FaultBatchResponse) =>
+    batch.faultBatchProcessOrder?.id ?? batch.faultBatchProcessOrderId;
+
   // const priorityLabel = mapPriorityToLabel(faultOrder);
 
-  return batches.map((batch) => ({
-    id: batch.id,
-    code: batch.code ?? `FB-${batch.id}`,
-    date: formatDisplayDate(batch.createdAt),
-    status: mapBatchStatusToLabel(batch.handlingStatus),
-    checked: batch.handlingStatus === FaultBatchStatus.RESOLVED,
-  }));
+  return batches
+    .filter((batch) => !getProcessOrderId(batch))
+    .map((batch) => ({
+      id: batch.id,
+      code: batch.code ?? `FB-${batch.id}`,
+      date: formatDisplayDate(batch.createdAt),
+      status: mapBatchStatusToLabel(batch.handlingStatus),
+      checked: batch.handlingStatus === FaultBatchStatus.RESOLVED,
+    }));
 };
 
 const buildAssignedFaultBatchRow = (
@@ -89,20 +94,26 @@ const buildAssignedFaultBatchRow = (
     return [];
   }
 
-  const hasProcessOrder = (
-    batch: FaultBatchResponse,
-  ): batch is FaultBatchResponse & {
-    faultBatchProcessOrder: FaultBatchProcessOrderSummary;
-  } => !!batch.faultBatchProcessOrder?.id;
+  const getProcessOrderId = (batch: FaultBatchResponse) =>
+    batch.faultBatchProcessOrder?.id ?? batch.faultBatchProcessOrderId;
 
-  return batches.filter(hasProcessOrder).map((batch) => ({
-    id: batch.id,
-    code: batch.code ?? `FB-${batch.id}`,
-    orderId: batch.faultBatchProcessOrder.id,
-    date: formatDisplayDate(batch.createdAt),
-    status: mapBatchStatusToLabel(batch.handlingStatus),
-    checked: batch.handlingStatus === FaultBatchStatus.RESOLVED,
-  }));
+  return batches
+    .map((batch) => {
+      const processOrderId = getProcessOrderId(batch);
+      if (!processOrderId) {
+        return null;
+      }
+
+      return {
+        id: batch.id,
+        code: batch.code ?? `FB-${batch.id}`,
+        orderId: processOrderId,
+        date: formatDisplayDate(batch.createdAt),
+        status: mapBatchStatusToLabel(batch.handlingStatus),
+        checked: batch.handlingStatus === FaultBatchStatus.RESOLVED,
+      };
+    })
+    .filter((row): row is AssignedFaultBatch => row !== null);
 };
 
 const mapProcessOrderTypeToLabel = (

@@ -22,6 +22,7 @@ import {
   getFaultOrderAction,
 } from "@/actions/faultHandling";
 import {
+  FaultBatchStatus,
   FaultProcessOrderStatus,
   FaultProcessOrderType,
   type FaultOrderDetail,
@@ -65,14 +66,21 @@ export default function FaultOrderDetailClient({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const pendingBatchRows = useMemo(
+  const unassignedFaultBatchRows = useMemo(
     () =>
       faultBatchRows.filter(
         (batch) =>
-          batch.status.toLowerCase() === "pending" &&
           !assignedFaultBatchRows.some((assigned) => assigned.id === batch.id),
       ),
     [faultBatchRows, assignedFaultBatchRows],
+  );
+
+  const pendingBatchRows = useMemo(
+    () =>
+      unassignedFaultBatchRows.filter(
+        (batch) => batch.status.toLowerCase() === "pending",
+      ),
+    [unassignedFaultBatchRows],
   );
 
   const toggleBatch = (batchId: number) => {
@@ -119,6 +127,37 @@ export default function FaultOrderDetailClient({
     [selectedBatchIds],
   );
 
+  const processingOrderColumnsWithActions = useMemo<Column<ProcessingOrder>[]>(
+    () =>
+      processingOrderColumns.map((column) => {
+        if (column.key !== "action") {
+          return column;
+        }
+
+        return {
+          ...column,
+          render: (_, row) => (
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                className="rounded bg-blue-500 px-3 text-white"
+                onClick={() =>
+                  router.push(
+                    `/fault-order/details/${routeOrderId}/process-order/${row.orderId}`,
+                  )
+                }
+              >
+                Analyze
+              </Button>
+              <Button className="rounded bg-blue-500 px-3 text-white">
+                Assign Tasks
+              </Button>
+            </div>
+          ),
+        };
+      }),
+    [routeOrderId, router],
+  );
+
   const handleCreateProcessOrder = async () => {
     const selectedIds = Array.from(selectedBatchIds);
     if (!selectedIds.length) {
@@ -147,53 +186,120 @@ export default function FaultOrderDetailClient({
       return;
     }
 
+    const formatDate = (value?: string | null) => {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "-";
+      return new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }).format(date);
+    };
+
     const latest = await getFaultOrderAction(faultOrderId);
     if (latest.data) {
       const refreshed: FaultOrderDetail = latest.data;
 
       if (refreshed.faultBatches) {
+        const getProcessOrderId = (batch: {
+          faultBatchProcessOrder?: { id: number } | null;
+          faultBatchProcessOrderId?: number | null;
+        }) =>
+          batch.faultBatchProcessOrder?.id ?? batch.faultBatchProcessOrderId;
+
         const updatedFaultBatchRows = refreshed.faultBatches.map((batch) => ({
           id: batch.id,
           code: batch.code ?? `FB-${batch.id}`,
-          date: batch.createdAt
-            ? new Intl.DateTimeFormat("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-              }).format(new Date(batch.createdAt))
-            : "-",
+          date: formatDate(batch.createdAt),
           status: toFaultBatchStatus(batch.handlingStatus),
           checked: batch.handlingStatus === "RESOLVED",
         }));
         setFaultBatchRows(updatedFaultBatchRows);
+
+        // Derive assigned rows from server data — batches that now have a process order
+        const serverAssigned: AssignedFaultBatch[] = refreshed.faultBatches
+          .map((batch) => {
+            const processOrderId = getProcessOrderId(batch);
+            if (!processOrderId) {
+              return null;
+            }
+
+            return {
+              id: batch.id,
+              code: batch.code ?? `FB-${batch.id}`,
+              orderId: processOrderId,
+              date: formatDate(batch.createdAt),
+              status: toFaultBatchStatus(batch.handlingStatus),
+              checked: batch.handlingStatus === FaultBatchStatus.RESOLVED,
+            };
+          })
+          .filter((row): row is AssignedFaultBatch => row !== null);
+
+        if (serverAssigned.length > 0) {
+          // Server returned faultBatchProcessOrder — use authoritative data
+          setAssignedFaultBatchRows(serverAssigned);
+        } else {
+          // Fallback: API didn't embed faultBatchProcessOrder — add selected rows manually
+          const selectedBatchLookup = new Set(selectedIds);
+          const selectedRows = faultBatchRows.filter((row) =>
+            selectedBatchLookup.has(row.id),
+          );
+          setAssignedFaultBatchRows((prev) => [
+            ...prev,
+            ...selectedRows.map((row) => ({
+              id: row.id,
+              code: row.code,
+              orderId: data.id,
+              date: row.date,
+              status: "In progress" as AssignedFaultBatch["status"],
+              checked: false,
+            })),
+          ]);
+        }
       }
+
+      if (refreshed.processOrders) {
+        setProcessingOrderRows(
+          refreshed.processOrders.map((order) => ({
+            orderId: order.id,
+            orderType:
+              order.type === "RETURNED"
+                ? "Returned"
+                : order.type === "CANCELLED"
+                  ? "Canceled"
+                  : "Other",
+            action: "" as const,
+          })),
+        );
+      } else {
+        setProcessingOrderRows((prev) => [
+          ...prev,
+          { orderId: data.id, orderType: "Other", action: "" as const },
+        ]);
+      }
+    } else {
+      // Refresh failed — fall back to local state updates
+      const selectedBatchLookup = new Set(selectedIds);
+      const selectedRows = faultBatchRows.filter((row) =>
+        selectedBatchLookup.has(row.id),
+      );
+      setAssignedFaultBatchRows((prev) => [
+        ...prev,
+        ...selectedRows.map((row) => ({
+          id: row.id,
+          code: row.code,
+          orderId: data.id,
+          date: row.date,
+          status: "In progress" as AssignedFaultBatch["status"],
+          checked: false,
+        })),
+      ]);
+      setProcessingOrderRows((prev) => [
+        ...prev,
+        { orderId: data.id, orderType: "Other", action: "" as const },
+      ]);
     }
-
-    const selectedBatchLookup = new Set(selectedIds);
-    const selectedRows = faultBatchRows.filter((row) =>
-      selectedBatchLookup.has(row.id),
-    );
-
-    setAssignedFaultBatchRows((prev) => [
-      ...prev,
-      ...selectedRows.map((row) => ({
-        id: row.id,
-        code: row.code,
-        orderId: data.id,
-        date: row.date,
-        status: "In progress" as AssignedFaultBatch["status"],
-        checked: false,
-      })),
-    ]);
-
-    setProcessingOrderRows((prev) => [
-      ...prev,
-      {
-        orderId: data.id,
-        orderType: "Other",
-        action: "",
-      },
-    ]);
 
     setSelectedBatchIds(new Set());
     setIsSubmitting(false);
@@ -219,7 +325,7 @@ export default function FaultOrderDetailClient({
             </div>
             <CustomizableTable
               headers={faultBatchColumnsWithToggle}
-              data={faultBatchRows}
+              data={unassignedFaultBatchRows}
             />
           </div>
           <div className="rounded-2xl border border-gray-200 p-6">
@@ -235,7 +341,7 @@ export default function FaultOrderDetailClient({
         <div className="rounded-2xl border border-gray-200 p-6">
           <h2 className="mb-3 font-medium">Processing Order List</h2>
           <CustomizableTable
-            headers={processingOrderColumns}
+            headers={processingOrderColumnsWithActions}
             data={processingOrderRows}
           />
         </div>

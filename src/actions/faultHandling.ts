@@ -8,6 +8,7 @@ import type {
 	CreateFaultQuestionRequest,
 	CreateFaultTaskRequest,
 	FaultOrderStatus,
+	UpdateFaultBatchProcessOrderRequest,
 	UpdateFaultBatchHandlingStatusRequest,
 	UpdateTasksStatusRequest,
 } from "@/interfaces/inventoryManagementType";
@@ -138,6 +139,21 @@ export async function createFaultBatchProcessOrderAction(
 ) {
 	try {
 		const response = await faultOrderService.createFaultBatchProcessOrder(data);
+		return { data: response, error: null };
+	} catch (error: unknown) {
+		return { data: null, error: getErrorMessage(error) };
+	}
+}
+
+export async function updateFaultBatchProcessOrderAction(
+	faultBatchProcessOrderId: number,
+	data: UpdateFaultBatchProcessOrderRequest,
+) {
+	try {
+		const response = await faultOrderService.updateFaultBatchProcessOrder(
+			faultBatchProcessOrderId,
+			data,
+		);
 		return { data: response, error: null };
 	} catch (error: unknown) {
 		return { data: null, error: getErrorMessage(error) };

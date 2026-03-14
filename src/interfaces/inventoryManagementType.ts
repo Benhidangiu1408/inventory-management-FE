@@ -86,6 +86,7 @@ export enum FaultOrderStatus {
 }
 
 export enum FaultProcessOrderStatus {
+  APPROVED= "APPROVED",
   REJECTED = "REJECTED",
   FAILED = "FAILED",
   CANCELLED = "CANCELLED",
@@ -190,6 +191,7 @@ export interface FaultBatch extends Batch {
   createdAt?: string | null;
   faultOrder?: FaultOrderSummary | null;
   faultBatchProcessOrder?: FaultBatchProcessOrderSummary | null;
+  faultBatchProcessOrderId?: number | null;
 }
 
 export interface FaultOrderDetail extends FaultOrderSummary {
@@ -280,6 +282,16 @@ export interface CreateFaultBatchProcessOrderRequest {
   whatHappened?: string | null;
   impact?: string | null;
   faultBatchIds?: number[];
+  questions?: CreateFaultQuestionRequest[];
+}
+
+export interface UpdateFaultBatchProcessOrderRequest {
+  status: FaultProcessOrderStatus;
+  type: FaultProcessOrderType;
+  note?: string;
+  rootCause?: string | null;
+  whatHappened?: string | null;
+  impact?: string | null;
   questions?: CreateFaultQuestionRequest[];
 }
 
