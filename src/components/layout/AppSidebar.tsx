@@ -14,6 +14,7 @@ import {
 } from "../../icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faBell,
   faDolly,
   faTruckRampBox,
   faWarehouse,
@@ -24,6 +25,8 @@ import {
   UsersRound,
   UserCircle,
   ClipboardCheck,
+  Package,
+  ArchiveX,
 } from "lucide-react";
 
 type NavItem = {
@@ -40,20 +43,15 @@ export const navItems: NavItem[] = [
     name: "Dashboard",
     path: "/",
   },
-  // {
-  //   icon: <Warehouse />,
-  //   name: "Inventory On Hand",
-  //   path: "/import",
-  // },
 
-  // {
-  //   icon: <Package />,
-  //   name: "Inventory",
-  //   subItems: [
-  //     { name: "Item", path: "/s" },
-  //     { name: "Batch", path: "/s" },
-  //   ],
-  // },
+  {
+    icon: <Package />,
+    name: "Inventory",
+    subItems: [
+      { name: "Item", path: "/s" },
+      { name: "Batch", path: "/s" },
+    ],
+  },
   {
     icon: <FontAwesomeIcon icon={faDolly} size="lg" />,
     name: "Import",
@@ -69,14 +67,14 @@ export const navItems: NavItem[] = [
     name: "Stocktaking",
     path: "/warehouse-management/inventory-check",
   },
-  // {
-  //   icon: <ArchiveX />,
-  //   name: "Defective",
-  //   subItems: [
-  //     { name: "Root Cause Analysis", path: "/s" },
-  //     { name: "Fault Order", path: "/s" },
-  //   ],
-  // },
+  {
+    icon: <ArchiveX />,
+    name: "Defective",
+    subItems: [
+      { name: "Root Cause Analysis", path: "/s" },
+      { name: "Fault Order", path: "/s" },
+    ],
+  },
   {
     icon: <FileBox />,
     name: "Master Data",
@@ -98,27 +96,23 @@ export const navItems: NavItem[] = [
   },
 
   {
-    name: "Users Control",
+    name: "Users Settings",
     icon: <UserRoundCog />,
     subItems: [
-      // {
-      //   name: "Profile",
-      //   path: `/profile/${sessionStorage.getItem("userId") ?? ""}`,
-      // },
       { name: "Users Management", path: "/admin/user-management" },
       { name: "Role & Permission", path: "/admin/role-management" },
       { name: "User History", path: "/s" },
     ],
   },
-  // {
-  //   icon: <FontAwesomeIcon icon={faBell} size="lg" />,
-  //   name: "Notification",
-  //   path: "/notification",
-  // },
+  {
+    icon: <FontAwesomeIcon icon={faBell} size="lg" />,
+    name: "Notification",
+    path: "/notification",
+  },
   {
     icon: <UserCircle />,
     name: "Profile",
-    path: `/profile/${sessionStorage.getItem("userId") ?? ""}`,
+    path: `/profile`,
   },
 ];
 
@@ -431,7 +425,7 @@ const AppSidebar: React.FC = () => {
               {renderMenuItems(navItems, "main")}
             </div>
 
-            {/* <div className="">
+            <div className="">
               <h2
                 className={`mb-4 flex h-[20px] text-xs leading-[20px] text-gray-400 uppercase ${
                   !isExpanded && !isHovered
@@ -446,7 +440,7 @@ const AppSidebar: React.FC = () => {
                 )}
               </h2>
               {renderMenuItems(othersItems, "others")}
-            </div> */}
+            </div>
           </div>
         </nav>
         {/* widget upgrade to pro */}
