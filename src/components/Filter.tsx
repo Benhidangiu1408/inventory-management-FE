@@ -3,9 +3,8 @@
 import { faChevronDown, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "@/default_components/form/Select";
-import DatePicker from "@/default_components/form/date-picker";
 import Button from "@/default_components/ui/button/Button";
-import { useCallback, useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "@/default_components/ui/modal";
 import NewPermissionForm from "@/default_components/new-creation/NewPermissionForm";
 import NewRoleForm from "@/default_components/new-creation/NewRoleForm";
@@ -47,18 +46,9 @@ interface FilterProps {
 export default function Filter({
   type,
   onDateRangeChange,
-  dateRangePlaceholder,
   roles,
   onRoleChange,
 }: FilterProps) {
-  const fromInputId = useId();
-  const toInputId = useId();
-  const [range, setRange] = useState<DateRange>({});
-  const placeholders = {
-    from: dateRangePlaceholder?.from ?? "From date",
-    to: dateRangePlaceholder?.to ?? "To date",
-  };
-
   const [isOpen, setIsOpen] = useState(false);
   const [isPermissionOpen, setIsPermissionOpen] = useState(false);
 
@@ -89,27 +79,9 @@ export default function Filter({
     }
   };
 
-  const handleDateChange = useCallback(
-    (key: "from" | "to") =>
-      (selectedDates: Date[], currentDateString: string) => {
-        const selectedDate = selectedDates[0]
-          ? new Date(selectedDates[0])
-          : undefined;
+  
 
-        setRange((prev) => {
-          return {
-            ...prev,
-            [key]: selectedDate,
-            [`${key}Text`]: currentDateString || undefined,
-          };
-        });
-      },
-    [],
-  );
-
-  useEffect(() => {
-    onDateRangeChange?.(range);
-  }, [range, onDateRangeChange]);
+ 
 
   // const selectList = [
   //   {
@@ -147,27 +119,6 @@ export default function Filter({
   return (
     <div className="flex items-center justify-between gap-20 border-b border-[#E4E7EC] p-6 dark:border-gray-800">
       <div className="flex flex-1 gap-3">
-        {type != "role" && (
-          <div className="flex-1">
-            <DatePicker
-              id={`${fromInputId}-from`}
-              label=""
-              placeholder={placeholders.from}
-              onChange={handleDateChange("from")}
-            />
-          </div>
-        )}
-
-        {type != "role" && (
-          <div className="flex-1">
-            <DatePicker
-              id={`${toInputId}-to`}
-              label=""
-              placeholder={placeholders.to}
-              onChange={handleDateChange("to")}
-            />
-          </div>
-        )}
 
         {type === "role" && (
           <div className="relative flex-1">

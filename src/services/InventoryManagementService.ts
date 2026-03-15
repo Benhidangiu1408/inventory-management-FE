@@ -1,8 +1,24 @@
 import {
+  AssignFaultOrderUsersRequest,
+  CreateFaultBatchProcessOrderRequest,
+  CreateFaultBatchRequest,
+  CreateFaultOrderRequest,
+  CreateFaultQuestionRequest,
+  CreateFaultTaskRequest,
   CreateInventoryCheckRequest,
+  FaultBatch,
+  FaultBatchProcessOrder,
+  FaultOrderDetail,
+  FaultQuestion,
+  FaultOrderStatus,
+  FaultOrderSummary,
+  FaultTask,
   InventoryCheckResponse,
   InventoryCheckSheetData,
   SubmitCheckResultRequest,
+  UpdateFaultBatchHandlingStatusRequest,
+  UpdateFaultBatchProcessOrderRequest,
+  UpdateTasksStatusRequest,
 } from "@/interfaces/inventoryManagementType";
 import { apiClient } from "@/lib/api-mask";
 
@@ -57,6 +73,174 @@ export const inventoryCheckService = {
     return apiClient.post<void>(
       `/inventory/v1/inventory-check/${id}/reject?userId=${userId}`,
       null,
+    );
+  },
+};
+
+export const faultOrderService = {
+  createFaultBatch: async (data: CreateFaultBatchRequest) => {
+    const query = new URLSearchParams({
+      batchId: String(data.batchId),
+      handlingStatus: data.handlingStatus,
+      referenceSheetId: String(data.referenceSheetId),
+    }).toString();
+
+    return apiClient.post<FaultBatch>(
+      `/inventory/v1/fault-batches?${query}`,
+      null,
+    );
+  },
+
+  createFaultOrder: async (data: CreateFaultOrderRequest) => {
+    const query = new URLSearchParams({
+      referenceSheetId: String(data.referenceSheetId),
+    }).toString();
+
+    return apiClient.post<FaultOrderDetail>(
+      `/inventory/v1/fault-orders?${query}`,
+      null,
+    );
+  },
+
+  assignAnalyzerAndAssignee: async (
+    faultOrderId: number,
+    data: AssignFaultOrderUsersRequest,
+  ) => {
+    return apiClient.post<FaultOrderDetail>(
+      `/inventory/v1/fault-orders/${faultOrderId}/assign-users`,
+      data,
+    );
+  },
+
+  updateFaultOrderStatus: async (
+    faultOrderId: number,
+    status: FaultOrderStatus,
+  ) => {
+    const query = new URLSearchParams({
+      status,
+    }).toString();
+
+    return apiClient.put<FaultOrderDetail>(
+      `/inventory/v1/fault-orders/${faultOrderId}/status?${query}`,
+      null,
+    );
+  },
+
+  updateFaultOrderPriority: async (
+    faultOrderId: number,
+    priorityId?: number | null,
+  ) => {
+    const query =
+      priorityId === null || priorityId === undefined
+        ? ""
+        : `?${new URLSearchParams({ priorityId: String(priorityId) }).toString()}`;
+
+    return apiClient.put<FaultOrderDetail>(
+      `/inventory/v1/fault-orders/${faultOrderId}/priority${query}`,
+      null,
+    );
+  },
+
+  getFaultOrder: async (faultOrderId: number) => {
+    return apiClient.get<FaultOrderDetail>(
+      `/inventory/v1/fault-orders/${faultOrderId}`,
+      {
+        cache: "no-cache",
+      },
+    );
+  },
+
+  getFaultOrdersByWarehouse: async (warehouseId?: number | null) => {
+    const query = warehouseId ? `?warehouseId=${warehouseId}` : "";
+
+    return apiClient.get<FaultOrderSummary[]>(
+      `/inventory/v1/fault-orders${query}`,
+      {
+        cache: "no-store",
+      },
+    );
+  },
+
+  getFaultBatchProcessOrderWithDetails: async (
+    faultBatchProcessOrderId: number,
+  ) => {
+    return apiClient.get<FaultBatchProcessOrder>(
+      `/inventory/v1/process-orders/${faultBatchProcessOrderId}`,
+      {
+        cache: "no-cache",
+      },
+    );
+  },
+
+  getFaultBatchProcessOrdersByFaultOrderId: async (faultOrderId: number) => {
+    return apiClient.get<FaultBatchProcessOrder[]>(
+      `/inventory/v1/fault-orders/${faultOrderId}/process-orders`,
+      {
+        cache: "no-cache",
+      },
+    );
+  },
+
+  createFaultBatchProcessOrder: async (data: CreateFaultBatchProcessOrderRequest) => {
+    return apiClient.post<FaultBatchProcessOrder>(
+      "/inventory/v1/process-orders",
+      data,
+    );
+  },
+
+  updateFaultBatchProcessOrder: async (
+    faultBatchProcessOrderId: number,
+    data: UpdateFaultBatchProcessOrderRequest,
+  ) => {
+    return apiClient.put<FaultBatchProcessOrder>(
+      `/inventory/v1/process-orders/${faultBatchProcessOrderId}`,
+      data,
+    );
+  },
+
+  updateProcessOrderApproval: async (
+    faultBatchProcessOrderId: number,
+    approverUserId: number | null,
+  ) => {
+    return apiClient.put<FaultBatchProcessOrder>(
+      `/inventory/v1/process-orders/${faultBatchProcessOrderId}/approval`,
+      approverUserId,
+    );
+  },
+
+  createTasksForProcessOrder: async (
+    faultBatchProcessOrderId: number,
+    tasks: CreateFaultTaskRequest[],
+  ) => {
+    return apiClient.post<FaultTask[]>(
+      `/inventory/v1/process-orders/${faultBatchProcessOrderId}/tasks`,
+      tasks,
+    );
+  },
+
+  addQuestionsToProcessOrder: async (
+    faultBatchProcessOrderId: number,
+    questions: CreateFaultQuestionRequest[],
+  ) => {
+    return apiClient.post<FaultQuestion[]>(
+      `/inventory/v1/process-orders/${faultBatchProcessOrderId}/questions`,
+      questions,
+    );
+  },
+
+  updateTasksStatus: async (data: UpdateTasksStatusRequest) => {
+    return apiClient.put<FaultTask[]>(
+      "/inventory/v1/tasks/status",
+      data,
+    );
+  },
+
+  markFaultBatchesFixed: async (
+    data: UpdateFaultBatchHandlingStatusRequest[],
+  ) => {
+    return apiClient.put<FaultBatch[]>(
+      "/inventory/v1/fault-batches/handling-status",
+      data,
     );
   },
 };
