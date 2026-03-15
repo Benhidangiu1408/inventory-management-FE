@@ -1,7 +1,13 @@
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowsLeftRight,
+  faEye,
+  faIndustry,
+  faPen,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { ExportRow, ImportRow } from "@/interfaces/interface.table";
 import CustomizableTable, { Column } from "../table/CustomizableTable";
@@ -67,7 +73,23 @@ export default function List({ type, data, exportData }: ListProps) {
       render: (value: ExportRow[keyof ExportRow]) => {
         if (typeof value === "string") {
           const formattedValue = value.replace("-", " ");
-          return <span className="capitalize">{formattedValue}</span>;
+          return (
+            <Badge
+              startIcon={
+                <FontAwesomeIcon
+                  icon={
+                    value === "CUSTOMER"
+                      ? faUser
+                      : value === "INTERNAL"
+                        ? faArrowsLeftRight
+                        : faIndustry
+                  }
+                />
+              }
+            >
+              {formattedValue}
+            </Badge>
+          );
         }
       },
     },
@@ -94,6 +116,20 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       key: "status",
       label: "Status",
+      render: (value) => {
+        switch (value) {
+          case SheetStatus.CREATED:
+            return <Badge color="light">{value}</Badge>;
+          case SheetStatus.IN_PROGRESS:
+            return <Badge color="warning">{value}</Badge>;
+          case SheetStatus.APPROVED:
+            return <Badge color="info">{value}</Badge>;
+          case SheetStatus.COMPLETED:
+            return <Badge color="success">{value}</Badge>;
+          default:
+            return value;
+        }
+      },
     },
     {
       key: "createdAt",
@@ -154,21 +190,6 @@ export default function List({ type, data, exportData }: ListProps) {
     },
   ];
 
-  const tableImportData: ImportRow[] = [
-    {
-      id: 89,
-      status: "CREATED",
-      type: "SUPPLIER",
-      createdAt: "2026-03-03T14:25:18.423406",
-    },
-    {
-      id: 90,
-      status: "CREATED",
-      type: "SUPPLIER",
-      createdAt: "2026-03-03T15:00:00.000000",
-    },
-  ];
-
   const fetchedImportData: ImportRow[] =
     data?.content.map((detaill) => {
       return {
@@ -186,45 +207,6 @@ export default function List({ type, data, exportData }: ListProps) {
     status: item.status,
     createdAt: format(item.createdAt, "dd/MM/yyyy HH:mm"),
   }));
-
-  // const tableExportData: ExportRow[] = [
-  //   {
-  //     batchId: "1234567891",
-  //     date: "2025-01-01",
-  //     type: "manufacturer",
-  //     requestStatus: "PROCESSING",
-  //     warehouse: "Warehouse 1",
-  //     receiver: "Receiver 1",
-  //     createdBy: "John Doe",
-  //     totalQuantity: 100,
-  //     totalValue: 10000,
-  //     status: "Pending",
-  //   },
-  //   {
-  //     batchId: "1234567892",
-  //     date: "2025-01-01",
-  //     type: "manufacturer",
-  //     requestStatus: "REQUEST",
-  //     warehouse: "Warehouse 1",
-  //     receiver: "Receiver 1",
-  //     createdBy: "John Doe",
-  //     totalQuantity: 100,
-  //     totalValue: 10000,
-  //     status: "Pending",
-  //   },
-  //   {
-  //     batchId: "1234567893",
-  //     date: "2025-01-01",
-  //     type: "purchase-order",
-  //     requestStatus: "PROCESSING",
-  //     warehouse: "Warehouse 1",
-  //     receiver: "Receiver 1",
-  //     createdBy: "John Doe",
-  //     totalQuantity: 100,
-  //     totalValue: 10000,
-  //     status: "Pending",
-  //   },
-  // ];
 
   return (
     <div className="p-6">

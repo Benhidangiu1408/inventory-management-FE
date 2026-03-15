@@ -1,10 +1,14 @@
 import {
   BatchResponse,
+  CustomerCreateReq,
+  CustomerResponse,
+  ExportedItemResponse,
   ExportSheetCreateReq,
   ExportSheetDetailCreateReq,
   ExportSheetDetailResponse,
   ExportSheetDetailUpdateReq,
   ExportSheetResponse,
+  ExportSheetUpdateReq,
   ImportSheetCreateReq,
   ImportSheetDetailCreateReq,
   ImportSheetDetailResponse,
@@ -17,6 +21,8 @@ import {
   QCSheetResponse,
   QCSheetUpdateReq,
   SetBatchLocationReq,
+  SupplierCreateReq,
+  SupplierResponse,
   WarehoseResponse,
 } from "@/interfaces/inboundOutboundType";
 import { LocationType } from "@/interfaces/warehouseManagementType";
@@ -175,6 +181,50 @@ export const inboundOutboundService = {
   ) => {
     return await apiClient.patch<ExportSheetDetailResponse>(
       `/inbound-outbound/v1/export-sheet/${exportSheetId}/detail/${exportSheetDetailId}`,
+      data,
+    );
+  },
+
+  getExportedItemsByBatchId: async (batchId: number) => {
+    return await apiClient.get<ExportedItemResponse[]>(
+      `/inbound-outbound/v1/export-sheet/${batchId}/items`,
+    );
+  },
+
+  confirmExportSheet: async (
+    exportSheetId: number | string,
+    data: ExportSheetUpdateReq,
+  ) => {
+    return await apiClient.post<ExportSheetResponse>(
+      `/inbound-outbound/v1/export-sheet/${exportSheetId}/confirm`,
+      data,
+    );
+  },
+
+  getCustomers: async () => {
+    return await apiClient.get<CustomerResponse[]>(
+      "/inbound-outbound/v1/customers",
+      { cache: "no-cache" },
+    );
+  },
+
+  createCustomer: async (data: CustomerCreateReq) => {
+    return await apiClient.post<CustomerResponse>(
+      "/inbound-outbound/v1/customers",
+      data,
+    );
+  },
+
+  getSuppliers: async () => {
+    return await apiClient.get<SupplierResponse[]>(
+      "/inbound-outbound/v1/suppliers",
+      { cache: "no-cache" },
+    );
+  },
+
+  createSupplier: async (data: SupplierCreateReq) => {
+    return await apiClient.post<SupplierResponse>(
+      "/inbound-outbound/v1/suppliers",
       data,
     );
   },

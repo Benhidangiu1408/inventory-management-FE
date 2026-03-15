@@ -102,9 +102,11 @@ export interface ImportCreateRow {
 }
 
 export interface ExportQuantityCheckRow {
-  batchId: string;
+  batchId: number;
+  batchCode: string;
   quantity: number;
   location: string;
+  actions?: ReactNode;
 }
 
 export interface ThirdPartyRequestProduct {
@@ -120,4 +122,25 @@ export interface ThirdPartyRequest {
   thirdPartyContact: string;
   date: string;
   products: ThirdPartyRequestProduct[];
+}
+
+/** Row type cho bảng items trong modal xem chi tiết */
+export interface ExportItemModalRow {
+  id: number;
+  itemId: number;
+  barcode: string;
+  serialNumber: string;
+}
+
+/** Parent row: one per product, with expandable location/quantity sub-table */
+export interface ExportQuantityCheckParentRow {
+  /** ID phiếu xuất detail (để biết đang scan cho dòng nào khi gọi API) */
+  detailId: number;
+  productName: string;
+  description: string;
+  expectedQuantity: number;
+  scannedQuantity: number;
+  locations: ExportQuantityCheckRow[];
+  /** Chỉ dùng cho cột nút Scan Item, không lưu trong data */
+  scanItem?: never;
 }

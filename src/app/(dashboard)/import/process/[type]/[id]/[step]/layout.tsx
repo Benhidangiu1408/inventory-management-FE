@@ -40,24 +40,16 @@ export default async function ImportProcessLayout({
   const productVariants: ProductVariantResponse[] =
     await inboundOutboundService.getProductVariants();
 
-  // const sampleData = {
-  //   name: "ABCXYZ",
-  //   email: "abcxyz@gmail.com",
-  //   address: "1234567890",
-  //   phone: "0909090909",
-  //   status: "Active",
-  // };
-
   const title =
     type === "SUPPLIER".toLowerCase()
-      ? "Purchase Order"
+      ? "Supplier Information"
       : type === "INTERNAL".toLowerCase()
         ? "Transfer Information"
         : "Manufacturer Information";
 
   const description =
     type === "SUPPLIER".toLowerCase()
-      ? "Purchase Order Description"
+      ? "Supplier Description"
       : type === "INTERNAL".toLowerCase()
         ? "Transfer Information Description"
         : "Manufacturer Information Description";
@@ -77,6 +69,10 @@ export default async function ImportProcessLayout({
         status={<InfoBoxStatus icon={icon} type={type} />}
       />
 
+      <div className="mb-6">
+        Sheet Status: <Badge>{importSheetDetail.status}</Badge>
+      </div>
+
       <ImportProvider initialData={importSheetDetail}>
         <QualityCheckProvider initialData={qcSheetDetail}>
           <div className="flex flex-col gap-6">
@@ -87,15 +83,24 @@ export default async function ImportProcessLayout({
             >
               {type === "SUPPLIER".toLowerCase() ? (
                 <InfoList>
-                  {/* {Object.entries(sampleData).map(([key, value]) => (
-                    <div key={key}>
-                      <span className="font-bold capitalize">{key}</span>:{" "}
-                      {value}
-                    </div>
-                  ))} */}
-                  <div>
-                    Status: <Badge>{importSheetDetail.status}</Badge>
-                  </div>
+                  <ul className="flex flex-col gap-3">
+                    <li>
+                      <span className="font-bold">Name:</span>{" "}
+                      {importSheetDetail.supplier.name}
+                    </li>
+                    <li>
+                      <span className="font-bold">Email:</span>{" "}
+                      {importSheetDetail.supplier.email}
+                    </li>
+                    <li>
+                      <span className="font-bold">Phone:</span>{" "}
+                      {importSheetDetail.supplier.phone}
+                    </li>
+                    <li>
+                      <span className="font-bold">Address:</span>{" "}
+                      {importSheetDetail.supplier.address}
+                    </li>
+                  </ul>
                 </InfoList>
               ) : (
                 <>

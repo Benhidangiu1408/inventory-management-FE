@@ -16,6 +16,8 @@ import {
   ImportSheetResponse,
   PageResponse,
 } from "@/interfaces/inboundOutboundType";
+import Button from "@/default_components/ui/button/Button";
+import Link from "next/link";
 
 export default async function ImportPage() {
   const importSheetList: PageResponse<ImportSheetResponse> =
@@ -25,7 +27,15 @@ export default async function ImportPage() {
     <div className="flex flex-col gap-6">
       <PageBreadcrumb pageTitle="Import Page" />
 
-      <div className="rounded-2xl border bg-white">
+      <div className="flex justify-end">
+        <Link href="/import/new">
+          <Button startIcon={<FontAwesomeIcon icon={faPlus} />}>
+            New Import
+          </Button>
+        </Link>
+      </div>
+
+      {/* <div className="rounded-2xl border bg-white">
         <CustomFilter
           listButton={[
             {
@@ -71,7 +81,7 @@ export default async function ImportPage() {
             icon={faCalendar}
           />
         </CustomFilter>
-      </div>
+      </div> */}
 
       <div>
         <Summary />

@@ -6,46 +6,15 @@ import ExportProcessPagination from "@/components/TA_common/ExportProcessPaginat
 import {
   faCircleInfo,
   faCube,
-  faDollarSign,
   faIndustry,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ExportProgressBar from "@/components/TA_create_page/ExportProgressBar";
 import InfoBoxStatus from "@/components/TA_create_page/InfoBoxStatus";
 import ExportProductListInfoBox from "@/components/TA_create_page/ExportProductListInfoBox";
-import { ImportSheetResponse } from "@/interfaces/inboundOutboundType";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { ExportProvider } from "@/context/ExportContext";
 import Badge from "@/default_components/ui/badge/Badge";
-import { SheetStatus } from "@/interfaces/inventoryManagementType";
-import { ImportSheetType } from "@/interfaces/inboundOutboundType";
-
-// function createMockExportSheetDetail(
-//   id: string,
-//   productVariants: {
-//     id: number;
-//     description: string;
-//     product: { id: number; name: string; code: string };
-//   }[],
-// ): ImportSheetResponse {
-//   const details = productVariants.slice(0, 3).map((pv, index) => ({
-//     id: index + 1,
-//     description: pv.description,
-//     productVariant: pv,
-//     expectedQuantity: 10 + index * 5,
-//     actualQuantity: undefined,
-//     reason: undefined,
-//   }));
-//   return {
-//     id: Number(id),
-//     status: SheetStatus.CREATED,
-//     type: ImportSheetType.SUPPLIER,
-//     details,
-//     createdAt: new Date().toISOString(),
-//     warehouse: { id: 1, name: "Warehouse 1" },
-//   };
-// }
 
 export default async function ExportProcessLayout({
   params,
@@ -59,34 +28,40 @@ export default async function ExportProcessLayout({
   const productVariants = await inboundOutboundService.getProductVariants();
   const exportSheetDetail = await inboundOutboundService.getExportSheetById(id);
 
-  // const exportSheetDetail = createMockExportSheetDetail(id, productVariants);
-
   const title =
-    type === "purchase-order"
-      ? "Purchase Order"
-      : type === "transfer"
-        ? "Transfer Information"
-        : type === "customer"
-          ? "Customer Information"
-          : "Manufacturer Information";
+    type === "customer"
+      ? "Customer Information"
+      : type === "internal"
+        ? "Internal Transfer Information"
+        : "Manufacturer Information";
 
   const description =
-    type === "purchase-order"
-      ? "Purchase Order Description"
-      : type === "transfer"
-        ? "Transfer Information Description"
-        : type === "customer"
-          ? "Customer Information Description"
-          : "Manufacturer Information Description";
+    type === "customer"
+      ? "Customer Information Description"
+      : type === "internal"
+        ? "Internal Transfer Information Description"
+        : "Manufacturer Information Description";
 
   const icon =
-    type === "purchase-order"
-      ? faDollarSign
-      : type === "transfer"
-        ? faCube
-        : type === "customer"
-          ? faUser
-          : faIndustry;
+    type === "customer" ? faUser : type === "internal" ? faCube : faIndustry;
+
+  // Trang confirm không dùng layout chung (breadcrumb, InfoBox, progress, pagination)
+  if (step === "confirm") {
+    return (
+      <ExportProvider initialData={exportSheetDetail}>
+        <PageBreadcrumb
+          pageTitle="Export Process"
+          filters={["process", type, id]}
+          status={<InfoBoxStatus icon={icon} type={type} />}
+        />
+        <div className="mb-6">
+          Sheet Status: <Badge>{exportSheetDetail.status}</Badge>
+        </div>
+        {children}
+        <ExportProcessPagination />
+      </ExportProvider>
+    );
+  }
 
   return (
     <div>
@@ -96,6 +71,10 @@ export default async function ExportProcessLayout({
         status={<InfoBoxStatus icon={icon} type={type} />}
       />
 
+      <div className="mb-6">
+        Sheet Status: <Badge>{exportSheetDetail.status}</Badge>
+      </div>
+
       <ExportProvider initialData={exportSheetDetail}>
         <div className="flex flex-col gap-6">
           <InfoBox
@@ -103,11 +82,30 @@ export default async function ExportProcessLayout({
             title={title}
             description={description}
           >
-            {type === "purchase-order" ? (
+            {type === "customer" ? (
               <InfoList>
-                <div>
-                  Status: <Badge>{exportSheetDetail.status}</Badge>
-                </div>
+                <ul className="flex flex-col gap-4">
+                  <li>
+                    <span className="mr-1 font-bold">Status:</span>
+                    <Badge>{exportSheetDetail.customer.status}</Badge>
+                  </li>
+                  <li>
+                    <span className="font-bold">Name:</span>{" "}
+                    {exportSheetDetail.customer.name}
+                  </li>
+                  <li>
+                    <span className="font-bold">Address:</span>{" "}
+                    {exportSheetDetail.customer.address}
+                  </li>
+                  <li>
+                    <span className="font-bold">Email:</span>{" "}
+                    {exportSheetDetail.customer.email}
+                  </li>
+                  <li>
+                    <span className="font-bold">Phone Number:</span>{" "}
+                    {exportSheetDetail.customer.phoneNumber}
+                  </li>
+                </ul>
               </InfoList>
             ) : (
               <>
@@ -115,21 +113,15 @@ export default async function ExportProcessLayout({
                   <SmallInfoBox
                     title="FROM"
                     data={{
-                      warehouse: "Warehouse 1",
-                      name: "Name 1",
-                      address: "Address 1",
-                      location: "Location 1",
-                      status: "Status 1",
+                      warehouse: exportSheetDetail.warehouse.id,
+                      name: exportSheetDetail.warehouse.name,
                     }}
                   />
                   <SmallInfoBox
                     title="TO"
                     data={{
-                      warehouse: "Warehouse 2",
-                      name: "Name 2",
-                      address: "Address 2",
-                      location: "Location 2",
-                      status: "Status 2",
+                      warehouse: exportSheetDetail.destinationWarehouse.id,
+                      name: exportSheetDetail.destinationWarehouse.name,
                     }}
                   />
                 </InfoList>
@@ -141,8 +133,6 @@ export default async function ExportProcessLayout({
             step={step}
             productVariants={productVariants}
           />
-
-          <ExportProgressBar step={step as "quantity-check" | "confirm"} />
 
           {children}
 

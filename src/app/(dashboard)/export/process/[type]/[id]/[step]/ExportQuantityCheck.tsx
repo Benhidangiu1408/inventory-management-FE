@@ -2,8 +2,13 @@
 
 import { Column } from "@/components/table/CustomizableTable";
 import AccordionTable from "@/components/table/AccordionTable";
+import CustomizableTable from "@/components/table/CustomizableTable";
 import InfoBox from "@/components/TA_create_page/InfoBox";
-import { ExportQuantityCheckRow } from "@/interfaces/interface.table";
+import {
+  ExportItemModalRow,
+  ExportQuantityCheckParentRow,
+  ExportQuantityCheckRow,
+} from "@/interfaces/interface.table";
 import Button from "@/default_components/ui/button/Button";
 import Input from "@/default_components/form/input/InputField";
 import { Modal } from "@/default_components/ui/modal";
@@ -12,39 +17,19 @@ import {
   faArrowRight,
   faCircleCheck,
   faBarcode,
+  faEye,
+  faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams } from "next/navigation";
 import { useExport } from "@/context/ExportContext";
 import { useState } from "react";
-import { updateExportSheetDetail } from "@/actions/inbound-outbound";
+import {
+  getExportedItemsByBatchId,
+  updateExportSheetDetail,
+} from "@/actions/inbound-outbound";
 import toast from "react-hot-toast";
-import { ApiError } from "next/dist/server/api-utils";
-
-/** Parent row: one per product, with expandable location/quantity sub-table */
-interface ExportQuantityCheckParentRow {
-  /** ID phiếu xuất detail (để biết đang scan cho dòng nào khi gọi API) */
-  detailId: number;
-  productName: string;
-  description: string;
-  expectedQuantity: number;
-  scannedQuantity: number;
-  locations: ExportQuantityCheckRow[];
-  /** Chỉ dùng cho cột nút Scan Item, không lưu trong data */
-  scanItem?: never;
-}
-
-// const defaultLocationData: ExportQuantityCheckRow[] = [
-//   { quantity: 10, location: "Warehouse B/ Shelf A" },
-//   { quantity: 10, location: "Warehouse C/ Shelf D" },
-//   { quantity: 30, location: "Warehouse F/ Shelf H" },
-// ];
-
-const subTableColumns: Column<ExportQuantityCheckRow>[] = [
-  { key: "batchId", label: "Batch ID" },
-  { key: "quantity", label: "Quantity" },
-  { key: "location", label: "Location" },
-];
+import { SheetStatus } from "@/interfaces/inventoryManagementType";
 
 export default function ExportQuantityCheck() {
   const params = useParams();
@@ -53,27 +38,79 @@ export default function ExportQuantityCheck() {
   const [scanningRow, setScanningRow] =
     useState<ExportQuantityCheckParentRow | null>(null);
   const [itemBarCode, setItemBarCode] = useState("");
+  const [viewItemsRow, setViewItemsRow] =
+    useState<ExportQuantityCheckRow | null>(null);
+  const [items, setItems] = useState<ExportItemModalRow[]>([]);
+  const [loadingBatchId, setLoadingBatchId] = useState<number | null>(null);
+
+  const itemModalColumns: Column<ExportItemModalRow>[] = [
+    { key: "itemId", label: "Item ID" },
+    { key: "barcode", label: "Barcode" },
+    { key: "serialNumber", label: "Serial Number" },
+  ];
+
+  const subTableColumns: Column<ExportQuantityCheckRow>[] = [
+    { key: "batchCode", label: "Batch Code" },
+    { key: "quantity", label: "Quantity" },
+    { key: "location", label: "Location" },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (_value, row) => {
+        const isLoading = loadingBatchId === row.batchId;
+        return (
+          <Button
+            variant="primary"
+            size="sm"
+            disabled={isLoading}
+            onClick={async () => {
+              setLoadingBatchId(row.batchId);
+              try {
+                const res = await getExportedItemsByBatchId(row.batchId);
+                setItems(res);
+                setViewItemsRow(row);
+              } catch (err: unknown) {
+                toast.error(
+                  err instanceof Error ? err.message : "Failed to load items",
+                );
+              } finally {
+                setLoadingBatchId(null);
+              }
+            }}
+            aria-label="View items"
+          >
+            <FontAwesomeIcon
+              icon={isLoading ? faSpinner : faEye}
+              className={isLoading ? "animate-spin" : ""}
+            />
+          </Button>
+        );
+      },
+    },
+  ];
+
+  const scanItemColumn: Column<ExportQuantityCheckParentRow> = {
+    key: "scanItem",
+    label: "Scan Item",
+    render: (_value, row) => (
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => setScanningRow(row)}
+        className="h-[35px] w-full"
+        startIcon={<FontAwesomeIcon icon={faBarcode} />}
+      >
+        Scan Item
+      </Button>
+    ),
+  };
 
   const mainColumns: Column<ExportQuantityCheckParentRow>[] = [
     { key: "productName", label: "Product Name" },
     { key: "description", label: "Description" },
     { key: "expectedQuantity", label: "Expected Quantity" },
     { key: "scannedQuantity", label: "ScannedQuantity Quantity" },
-    {
-      key: "scanItem",
-      label: "Scan Item",
-      render: (_value, row) => (
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => setScanningRow(row)}
-          className="h-[35px] w-full"
-          startIcon={<FontAwesomeIcon icon={faBarcode} />}
-        >
-          Scan Item
-        </Button>
-      ),
-    },
+    ...(exportData.status !== SheetStatus.COMPLETED ? [scanItemColumn] : []),
   ];
 
   const accordionData: ExportQuantityCheckParentRow[] = exportData.details.map(
@@ -87,7 +124,8 @@ export default function ExportQuantityCheck() {
         0,
       ),
       locations: detail.batches.map((item) => ({
-        batchId: item.batch.code,
+        batchId: item.batch.id,
+        batchCode: item.batch.code,
         quantity: item.quantity,
         location: `${item.batch.location.code} - ${item.batch.location.name}`,
       })),
@@ -95,7 +133,7 @@ export default function ExportQuantityCheck() {
   );
 
   const totalQuantity = accordionData.reduce(
-    (sum, row) => sum + row.expectedQuantity,
+    (sum, row) => sum + row.scannedQuantity,
     0,
   );
 
@@ -136,7 +174,8 @@ export default function ExportQuantityCheck() {
       toast.success("Scan Item Successfully");
 
       handleCloseScanModal();
-    } catch (err: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
       toast.error(err.message);
     }
   };
@@ -171,6 +210,32 @@ export default function ExportQuantityCheck() {
           </div>
         </div>
       </Modal>
+
+      <Modal
+        isOpen={viewItemsRow !== null}
+        onClose={() => {
+          setViewItemsRow(null);
+          setItems([]);
+        }}
+        className="max-w-4xl px-6 py-3"
+      >
+        <div className="flex w-full flex-col gap-4 py-6">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+            Items
+            {viewItemsRow && (
+              <span className="ml-2 font-normal text-gray-500">
+                — Batch: {viewItemsRow.batchCode}
+              </span>
+            )}
+          </h3>
+          <div className="">
+            <CustomizableTable<ExportItemModalRow>
+              headers={itemModalColumns}
+              data={items}
+            />
+          </div>
+        </div>
+      </Modal>
       <InfoBox
         icon={<FontAwesomeIcon icon={faCircleCheck} />}
         title="Quantity Check"
@@ -186,17 +251,21 @@ export default function ExportQuantityCheck() {
             data={accordionData}
             subTableKey="locations"
             subTableHeaders={subTableColumns}
+            getRowId={(params) => String(params.data.detailId)}
           />
+
+          <div className="flex justify-end">
+            <Link href={`/export/process/${type}/${id}/confirm`}>
+              <Button
+                size="md"
+                endIcon={<FontAwesomeIcon icon={faArrowRight} />}
+              >
+                Confirm
+              </Button>
+            </Link>
+          </div>
         </div>
       </InfoBox>
-
-      <div className="flex justify-end">
-        <Link href={`/export/process/${type}/${id}/confirm`}>
-          <Button size="md" endIcon={<FontAwesomeIcon icon={faArrowRight} />}>
-            Continue
-          </Button>
-        </Link>
-      </div>
     </div>
   );
 }

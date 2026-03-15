@@ -1,6 +1,13 @@
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import { LocationStatus, LocationType } from "./warehouseManagementType";
 
+export enum CustomerStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  SUSPENDED = "SUSPENDED",
+  DELETED = "DELETED",
+}
+
 export enum QCSheetDetailStatus {
   PENDING = "PENDING",
   IN_PROGRESS = "IN_PROGRESS",
@@ -54,6 +61,38 @@ export interface PageResponse<T> {
   sort: Sort;
   numberOfElements: number;
   empty: boolean;
+}
+
+export interface SupplierCreateReq {
+  address: string;
+  email: string;
+  name: string;
+  phone: string;
+}
+
+export interface SupplierResponse {
+  id: number;
+  address: string;
+  email: string;
+  name: string;
+  phone: string;
+}
+
+export interface CustomerCreateReq {
+  address: string;
+  email: string;
+  name: string;
+  phoneNumber: string;
+  status: CustomerStatus;
+}
+
+export interface CustomerResponse {
+  id: number;
+  address: string;
+  email: string;
+  name: string;
+  phoneNumber: string;
+  status: CustomerStatus;
 }
 
 export interface ProductRepsonse {
@@ -127,6 +166,7 @@ export interface ImportSheetResponse {
   details: ImportSheetDetailResponse[];
   createdAt: string;
   warehouse: WarehoseResponse;
+  supplier: SupplierResponse;
 }
 
 export interface WarehoseResponse {
@@ -214,7 +254,16 @@ export interface ExportSheetResponse {
   type: ExportSheetType;
   details: ExportSheetDetailResponse[];
   warehouse: WarehoseResponse;
+  destinationWarehouse: WarehoseResponse;
   createdAt: string;
+  customer: CustomerResponse;
+}
+
+export interface ExportSheetUpdateReq {
+  status?: SheetStatus;
+  customerId?: number;
+  destinationWarehouseId?: number;
+  details?: ExportSheetDetailUpdateReq[];
 }
 
 export interface ExportSheetCreateReq {
@@ -222,6 +271,15 @@ export interface ExportSheetCreateReq {
   status: SheetStatus;
   warehouseId: number;
   sourceWarehouseId?: number;
+  destinationWarehouseId?: number;
   supplierId?: number;
+  customerId?: number;
   details?: ImportSheetDetailCreateReq[];
+}
+
+export interface ExportedItemResponse {
+  id: number;
+  itemId: number;
+  barcode: string;
+  serialNumber: string;
 }

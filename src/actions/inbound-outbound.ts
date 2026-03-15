@@ -1,15 +1,18 @@
 "use server";
 
 import {
+  CustomerCreateReq,
   ExportSheetCreateReq,
   ExportSheetDetailCreateReq,
   ExportSheetDetailUpdateReq,
+  ExportSheetUpdateReq,
   ImportSheetCreateReq,
   ImportSheetDetailCreateReq,
   ImportSheetDetailUpdateReq,
   ImportSheetUpdateReq,
   QCSheetUpdateReq,
   SetBatchLocationReq,
+  SupplierCreateReq,
 } from "@/interfaces/inboundOutboundType";
 import { LocationType } from "@/interfaces/warehouseManagementType";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
@@ -95,4 +98,31 @@ export async function updateExportSheetDetail(
     exportSheetDetailId,
     data,
   );
+}
+
+export async function getExportedItemsByBatchId(batchId: number) {
+  return await inboundOutboundService.getExportedItemsByBatchId(batchId);
+}
+
+export async function getCustomers() {
+  return await inboundOutboundService.getCustomers();
+}
+
+export async function createCustomer(data: CustomerCreateReq) {
+  return await inboundOutboundService.createCustomer(data);
+}
+
+export async function getSuppliers() {
+  return await inboundOutboundService.getSuppliers();
+}
+
+export async function createSupplier(data: SupplierCreateReq) {
+  return await inboundOutboundService.createSupplier(data);
+}
+
+export async function confirmExportSheet(
+  exportSheetId: number | string,
+  data: ExportSheetUpdateReq,
+) {
+  return await inboundOutboundService.confirmExportSheet(exportSheetId, data);
 }
