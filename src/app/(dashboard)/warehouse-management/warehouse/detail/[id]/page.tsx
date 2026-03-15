@@ -1,7 +1,6 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import GeneralInfoSection from "@/components/GeneralInformation";
 import { warehouseService } from "@/services/WarehouseManagementService";
-import { ApiError } from "@/lib/api-mask";
 import { WarehouseDetail } from "@/interfaces/warehouseManagementType";
 import { ModalUpdateWarehouseForm } from "@/components/form/ModalUpdateWarehouseForm";
 import { ModalCreateLocationForm } from "@/components/form/ModalCreateLocationForm";
@@ -18,11 +17,9 @@ export default async function WarehouseDetailPage({
 
   try {
     data = await warehouseService.getDetail(Number(id));
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`API Error ${error.status}: ${error.message}`);
-      errorMsg = `Could not load data from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    errorMsg = `Could not load data from server. ${error.message}`;
   }
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
 

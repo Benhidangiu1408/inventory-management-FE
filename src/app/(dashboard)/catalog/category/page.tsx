@@ -3,7 +3,6 @@ import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import { categoryService } from "@/services/WarehouseManagementService";
 import { Category } from "@/interfaces/warehouseManagementType";
 import { ModalCategoryForm } from "@/components/form/ModalCategoryForm";
-import { ApiError } from "@/lib/api-mask";
 
 export default async function CategoryPage() {
   // Handle initial page data
@@ -12,11 +11,9 @@ export default async function CategoryPage() {
 
   try {
     data = await categoryService.getAll();
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`API Error ${error.status}: ${error.message}`);
-      errorMsg = `Could not load data from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    errorMsg = `Could not load data from server. ${error.message}`;
   }
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
 

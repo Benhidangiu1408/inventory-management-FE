@@ -1,5 +1,6 @@
 "use client";
 
+import { ProductCreateAction } from "@/actions/system-info";
 import ComponentCard from "@/default_components/common/ComponentCard";
 import Input from "@/default_components/form/input/InputField";
 import Label from "@/default_components/form/Label";
@@ -10,8 +11,6 @@ import {
   ProductCreateRequest,
   UnitResponse,
 } from "@/interfaces/warehouseManagementType";
-import { ApiError } from "@/lib/api-mask";
-import { productService } from "@/services/WarehouseManagementService";
 import { Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -102,16 +101,13 @@ export const CreateProductForm = ({
           }),
         );
       }
-      await productService.create(payload);
+      await ProductCreateAction(payload);
       reset();
       toast.success("Product created successfully!");
       router.replace("/catalog/product");
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }

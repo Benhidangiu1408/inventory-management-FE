@@ -1,5 +1,6 @@
 "use client";
 
+import { warehouseCreateAction } from "@/actions/system-info";
 import Input from "@/default_components/form/input/InputField";
 import Label from "@/default_components/form/Label";
 import Select from "@/default_components/form/Select";
@@ -9,9 +10,6 @@ import {
   WarehouseStatus,
   WarehouseType,
 } from "@/interfaces/warehouseManagementType";
-import { ApiError } from "@/lib/api-mask";
-import { userManagementService } from "@/services/UserManagementService";
-import { warehouseService } from "@/services/WarehouseManagementService";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -81,16 +79,13 @@ export const CreateWarehouseForm = () => {
         managerId: Number(data.managerId),
       };
       console.log(payload);
-      await warehouseService.create(payload);
+      await warehouseCreateAction(payload);
       reset();
       toast.success("Warehouse created successfully!");
       router.replace("/warehouse-management/warehouse");
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }

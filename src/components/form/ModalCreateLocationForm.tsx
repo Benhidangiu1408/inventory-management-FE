@@ -20,12 +20,15 @@ import {
   useWatch,
 } from "react-hook-form";
 import toast from "react-hot-toast";
-import { ApiError } from "@/lib/api-mask";
 import Select, { Option } from "@/default_components/form/Select";
 import Label from "@/default_components/form/Label";
 import Input from "@/default_components/form/input/InputField";
 import Radio from "@/default_components/form/input/Radio";
-import { locationService } from "@/services/WarehouseManagementService";
+import {
+  locationCreateAction,
+  locationGetChildrenAction,
+  locationGetRootAction,
+} from "@/actions/system-info";
 
 // Form input structure helper
 const HIERARCHY = [
@@ -132,16 +135,13 @@ const CreateForm = ({
         parentId: anchorParentId,
         levels: levelsConfig,
       };
-      await locationService.create(payload);
+      await locationCreateAction(payload);
       toast.success("Location created successfully!");
       router.refresh();
       onSuccess();
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -226,21 +226,18 @@ const LevelRow = ({
     try {
       let res: LocationResponse[] = [];
       if (index === 0) {
-        res = await locationService.getRoot(warehouseId);
+        res = await locationGetRootAction(warehouseId);
       } else if (parentId) {
-        res = await locationService.getChildren(warehouseId, Number(parentId));
+        res = await locationGetChildrenAction(warehouseId, Number(parentId));
       }
       const formattedOptions: Option[] = res.map((loc) => ({
         value: loc.id.toString(),
         label: `${loc.name} (${loc.code})`,
       }));
       setOptions(formattedOptions);
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
       setOptions([]);
     } finally {
       setLoading(false);

@@ -9,13 +9,12 @@ import {
   AttributeResponse,
   VariantCreateRequest,
 } from "@/interfaces/warehouseManagementType";
-import { productService } from "@/services/WarehouseManagementService";
-import { ApiError } from "@/lib/api-mask";
 import ComponentCard from "@/default_components/common/ComponentCard";
 import Input from "@/default_components/form/input/InputField";
 import Label from "@/default_components/form/Label";
 import Select from "@/default_components/form/Select";
 import Button from "@/default_components/ui/button/Button";
+import { ProductCreateVariantAction } from "@/actions/system-info";
 
 export const CreateVariantForm = ({
   availableAttributes,
@@ -69,17 +68,12 @@ export const CreateVariantForm = ({
           "Please add at least one attribute (e.g. Color, Size).",
         );
       }
-      await productService.createVariant(payload);
+      await ProductCreateVariantAction(payload);
       toast.success("Variant created successfully!");
       router.replace("/catalog/product");
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }

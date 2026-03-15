@@ -8,10 +8,9 @@ import CustomizableTable from "./table/CustomizableTable";
 import { LocationHeaders } from "./table/CustomizableTableHeader";
 import DefaultTab from "./ui-elements/Tabs";
 import { useEffect, useState } from "react";
-import { locationService } from "@/services/WarehouseManagementService";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
-import { ApiError } from "@/lib/api-mask";
+import { locationGetByTypeAction } from "@/actions/system-info";
 
 const TableFetch = ({
   warehouseId,
@@ -28,14 +27,11 @@ const TableFetch = ({
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await locationService.getByType(warehouseId, type);
+        const res = await locationGetByTypeAction(warehouseId, type);
         setData(res);
-      } catch (error) {
-        if (error instanceof ApiError) {
-          toast.error(error.message);
-        } else {
-          toast.error("An unexpected error occurred");
-        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        toast.error(error.message ?? "An unexpected error occurred");
       } finally {
         setLoading(false);
       }
