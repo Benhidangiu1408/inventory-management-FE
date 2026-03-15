@@ -17,6 +17,7 @@ import {
   InventoryCheckSheetData,
   SubmitCheckResultRequest,
   UpdateFaultBatchHandlingStatusRequest,
+  UpdateFaultBatchProcessOrderRequest,
   UpdateTasksStatusRequest,
 } from "@/interfaces/inventoryManagementType";
 import { apiClient } from "@/lib/api-mask";
@@ -183,6 +184,16 @@ export const faultOrderService = {
   createFaultBatchProcessOrder: async (data: CreateFaultBatchProcessOrderRequest) => {
     return apiClient.post<FaultBatchProcessOrder>(
       "/inventory/v1/process-orders",
+      data,
+    );
+  },
+
+  updateFaultBatchProcessOrder: async (
+    faultBatchProcessOrderId: number,
+    data: UpdateFaultBatchProcessOrderRequest,
+  ) => {
+    return apiClient.put<FaultBatchProcessOrder>(
+      `/inventory/v1/process-orders/${faultBatchProcessOrderId}`,
       data,
     );
   },

@@ -20,9 +20,11 @@ import Button from "@/default_components/ui/button/Button";
 import {
   createFaultBatchProcessOrderAction,
   getFaultOrderAction,
+  updateFaultOrderStatusAction,
 } from "@/actions/faultHandling";
 import {
   FaultBatchStatus,
+  FaultOrderStatus,
   FaultProcessOrderStatus,
   FaultProcessOrderType,
   type FaultOrderDetail,
@@ -148,7 +150,14 @@ export default function FaultOrderDetailClient({
               >
                 Analyze
               </Button>
-              <Button className="rounded bg-blue-500 px-3 text-white">
+              <Button
+                className="rounded bg-blue-500 px-3 text-white"
+                onClick={() =>
+                  router.push(
+                    `/fault-order/details/${routeOrderId}/assign-task/${row.orderId}`,
+                  )
+                }
+              >
                 Assign Tasks
               </Button>
             </div>
@@ -159,6 +168,7 @@ export default function FaultOrderDetailClient({
   );
 
   const handleCreateProcessOrder = async () => {
+    const isFirstProcessOrder = processingOrderRows.length === 0;
     const selectedIds = Array.from(selectedBatchIds);
     if (!selectedIds.length) {
       toast.error("Please select at least one pending fault batch.");
@@ -184,6 +194,18 @@ export default function FaultOrderDetailClient({
       setIsSubmitting(false);
       toast.error(error ?? "Failed to create process order.");
       return;
+    }
+
+    if (isFirstProcessOrder) {
+      const { error: updateFaultOrderStatusError } =
+        await updateFaultOrderStatusAction(
+          faultOrderId,
+          FaultOrderStatus.IN_PROGRESS,
+        );
+
+      if (updateFaultOrderStatusError) {
+        toast.error(updateFaultOrderStatusError);
+      }
     }
 
     const formatDate = (value?: string | null) => {

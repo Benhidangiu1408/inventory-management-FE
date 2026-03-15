@@ -269,7 +269,7 @@ export interface CreateFaultTaskRequest {
   result?: string | null;
   due_date?: string | null;
   status?: TaskStatus;
-  assignedUser?: number | null;
+  assignedUser?: { id: number } | null;
 }
 
 export interface CreateFaultBatchProcessOrderRequest {

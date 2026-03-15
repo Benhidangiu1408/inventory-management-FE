@@ -430,6 +430,8 @@ export default function ProcessOrderDetailForm({
         </div>
 
         <div className="space-y-6">
+          <h2 className="text-xl font-semibold">Decision</h2>
+
           {/* Approver info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
@@ -457,8 +459,6 @@ export default function ProcessOrderDetailForm({
 
           {/* Decision */}
           <div className="space-y-3">
-            <h2 className="text-lg font-semibold">Decision</h2>
-
             <div className="flex gap-6">
               <label className="flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 hover:bg-gray-50">
                 <input

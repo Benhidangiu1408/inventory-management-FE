@@ -445,7 +445,6 @@ export interface OrderRow {
   orderId: string;
   date: string; // formatted as DD-MM-YYYY
   warehouse: string;
-  priority: "High" | "Medium" | "Low";
   handle: "Pending" | "Completed" | "In progress";
   actions: string[]; // e.g. ["edit","check"]
 }
@@ -455,23 +454,6 @@ export const orderColumns: Column<OrderRow>[] = [
   { label: "Order Code", key: "orderId" },
   { label: "Date", key: "date" },
   { label: "Warehouse", key: "warehouse" },
-  {
-    label: "Priority",
-    key: "priority",
-    render(value) {
-      return (
-        <Select
-          defaultValue={String(value)}
-          onChange={() => {}}
-          options={[
-            { value: "High", label: "High" },
-            { value: "Medium", label: "Medium" },
-            { value: "Low", label: "Low" },
-          ]}
-        />
-      );
-    },
-  },
   {
     label: "Handle",
     key: "handle",

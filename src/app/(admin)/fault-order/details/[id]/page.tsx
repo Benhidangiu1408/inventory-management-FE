@@ -16,10 +16,11 @@ import {
   type FaultBatchProcessOrderSummary,
 } from "@/interfaces/inventoryManagementType";
 import { getFaultOrderAction } from "@/actions/faultHandling";
-import Input from "@/default_components/form/input/InputField";
+import { getAllUsersByRoleAction } from "@/actions/user";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileExport } from "@fortawesome/free-solid-svg-icons";
 import FaultOrderDetailClient from "./FaultOrderDetailClient";
+import AnalyzerAssigneeSelect from "./AnalyzerAssigneeSelect";
 
 type FaultOrderDetailPageProps = {
   params: Promise<{
@@ -181,6 +182,8 @@ export default async function FaultOrderDetailPage({
   const assignedFaultBatchRows = buildAssignedFaultBatchRow(data.faultBatches);
   const processingOrderRows = buildProcessOrderRows(data.processOrders);
 
+  const { data: users } = await getAllUsersByRoleAction(1);
+
   return (
     <div>
       <PageBreadcrumb
@@ -201,13 +204,12 @@ export default async function FaultOrderDetailPage({
           </Button>
         </div>
         <div className="grid grid-cols-[auto_1fr_auto_1fr] items-center gap-2">
-          <label className="font-semibold text-black">
-            Root Cause Analyzer:
-          </label>
-          <Input type="text" />
-
-          <label className="font-semibold text-black">Task Assigner:</label>
-          <Input type="text" />
+          <AnalyzerAssigneeSelect
+            faultOrderId={faultOrderId}
+            users={users ?? []}
+            initialAnalyzerId={data.analyzerId}
+            initialAssigneeId={data.taskAssigneeId}
+          />
         </div>
         <FaultOrderDetailClient
           currentUserId={currentUserId}

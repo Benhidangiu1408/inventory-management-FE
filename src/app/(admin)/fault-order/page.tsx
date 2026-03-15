@@ -42,7 +42,6 @@ function mapFaultOrderToRow(order: FaultOrderSummary): OrderRow {
     orderId: order.code,
     date: formatCreatedAt(order.createdAt),
     warehouse: "-",
-    priority: (formatEnumLabel(order.priorityName) as OrderRow["priority"]) ?? "Low",
     handle: (formatEnumLabel(order.status) as OrderRow["handle"]) ?? "Pending",
     actions: ["edit", "check"],
   };
