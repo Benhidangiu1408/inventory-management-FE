@@ -14,13 +14,15 @@ import {
   ImportSheetDetailUpdateReq,
   ImportSheetUpdateReq,
 } from "@/interfaces/inboundOutboundType";
-import { QuantityCheckRow } from "@/interfaces/interface.table";
+import {
+  QuantityCheckParentRow,
+  QuantityCheckRow,
+} from "@/interfaces/interface.table";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
-import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function ImportProcessPage() {

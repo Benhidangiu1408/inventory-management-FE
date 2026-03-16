@@ -100,8 +100,14 @@ export async function updateExportSheetDetail(
   );
 }
 
-export async function getExportedItemsByBatchId(batchId: number) {
-  return await inboundOutboundService.getExportedItemsByBatchId(batchId);
+export async function getExportedItemsByBatchId(
+  batchId: number,
+  detailId: number,
+) {
+  return await inboundOutboundService.getExportedItemsByBatchId(
+    batchId,
+    detailId,
+  );
 }
 
 export async function getCustomers() {
@@ -125,4 +131,14 @@ export async function confirmExportSheet(
   data: ExportSheetUpdateReq,
 ) {
   return await inboundOutboundService.confirmExportSheet(exportSheetId, data);
+}
+
+export async function getItemsByProductVariantInExportSheet(
+  productVariantId: number,
+  exportSheetId: number,
+) {
+  return await inboundOutboundService.getItemsByProductVariantInExportSheet(
+    productVariantId,
+    exportSheetId,
+  );
 }

@@ -115,6 +115,12 @@ export interface LocationResponse {
   locationStatus: LocationStatus;
 }
 
+export interface ItemResponse {
+  id: number;
+  barcode: string;
+  serialNumber: string;
+}
+
 export interface BatchResponse {
   id: number;
   code: string;
@@ -166,7 +172,9 @@ export interface ImportSheetResponse {
   details: ImportSheetDetailResponse[];
   createdAt: string;
   warehouse: WarehoseResponse;
+  sourceWarehouse: WarehoseResponse;
   supplier: SupplierResponse;
+  referenceExportSheet: ExportSheetResponse;
 }
 
 export interface WarehoseResponse {

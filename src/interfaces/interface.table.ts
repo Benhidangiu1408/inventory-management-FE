@@ -102,6 +102,7 @@ export interface ImportCreateRow {
 }
 
 export interface ExportQuantityCheckRow {
+  detailId: number;
   batchId: number;
   batchCode: string;
   quantity: number;
@@ -130,6 +131,16 @@ export interface ExportItemModalRow {
   itemId: number;
   barcode: string;
   serialNumber: string;
+}
+
+export interface ItemRow {
+  id: number;
+  barcode: string;
+  serialNumber: string;
+}
+
+export interface QuantityCheckParentRow extends QuantityCheckRow {
+  items: ItemRow[];
 }
 
 /** Parent row: one per product, with expandable location/quantity sub-table */

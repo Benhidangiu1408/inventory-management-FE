@@ -150,6 +150,29 @@ export default function List({ type, data, exportData }: ListProps) {
       key: "id",
     },
     {
+      label: "Type",
+      key: "type",
+      render: (value: ImportRow[keyof ImportRow]) => {
+        return (
+          <Badge
+            startIcon={
+              <FontAwesomeIcon
+                icon={
+                  value === "SUPPLIER"
+                    ? faUser
+                    : value === "INTERNAL"
+                      ? faArrowsLeftRight
+                      : faIndustry
+                }
+              />
+            }
+          >
+            {value}
+          </Badge>
+        );
+      },
+    },
+    {
       label: "Status",
       key: "status",
       render: (value) => {
@@ -167,16 +190,7 @@ export default function List({ type, data, exportData }: ListProps) {
         }
       },
     },
-    {
-      label: "Type",
-      key: "type",
-      render: (value: ImportRow[keyof ImportRow]) => {
-        if (typeof value === "string") {
-          const formattedValue = value.replace("-", " ");
-          return <span className="capitalize">{formattedValue}</span>;
-        }
-      },
-    },
+
     {
       label: "Created At",
       key: "createdAt",

@@ -108,21 +108,15 @@ export default async function ImportProcessLayout({
                     <SmallInfoBox
                       title="FROM"
                       data={{
-                        warehouse: "Warehouse 1",
-                        name: "Name 1",
-                        address: "Address 1",
-                        location: "Location 1",
-                        status: "Status 1",
+                        warehouse: importSheetDetail.sourceWarehouse.id,
+                        name: importSheetDetail.sourceWarehouse.name,
                       }}
                     />
                     <SmallInfoBox
                       title="TO"
                       data={{
-                        warehouse: "Warehouse 2",
-                        name: "Name 2",
-                        address: "Address 2",
-                        location: "Location 2",
-                        status: "Status 2",
+                        warehouse: importSheetDetail.warehouse.id,
+                        name: importSheetDetail.warehouse.name,
                       }}
                     />
                   </InfoList>

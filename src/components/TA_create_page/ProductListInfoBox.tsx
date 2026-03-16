@@ -65,7 +65,7 @@ export default function ProductListInfoBox({
 }) {
   const params = useParams();
 
-  const { id } = params;
+  const { type, id } = params;
 
   const { importData, setImportData } = useImport();
 

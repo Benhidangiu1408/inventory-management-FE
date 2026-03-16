@@ -69,7 +69,10 @@ export default function ExportConfirm() {
             onClick={async () => {
               setLoadingBatchId(row.batchId);
               try {
-                const res = await getExportedItemsByBatchId(row.batchId);
+                const res = await getExportedItemsByBatchId(
+                  row.batchId,
+                  row.detailId,
+                );
                 setItems(res);
                 setViewItemsRow(row);
               } catch (err: unknown) {
@@ -110,6 +113,7 @@ export default function ExportConfirm() {
         0,
       ),
       locations: detail.batches.map((item) => ({
+        detailId: detail.id,
         batchId: item.batch.id,
         batchCode: item.batch.code,
         quantity: item.quantity,

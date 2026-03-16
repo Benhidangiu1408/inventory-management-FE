@@ -15,6 +15,7 @@ import {
   ImportSheetDetailUpdateReq,
   ImportSheetResponse,
   ImportSheetUpdateReq,
+  ItemResponse,
   LocationResponse,
   PageResponse,
   ProductVariantResponse,
@@ -185,9 +186,9 @@ export const inboundOutboundService = {
     );
   },
 
-  getExportedItemsByBatchId: async (batchId: number) => {
+  getExportedItemsByBatchId: async (batchId: number, detailId: number) => {
     return await apiClient.get<ExportedItemResponse[]>(
-      `/inbound-outbound/v1/export-sheet/${batchId}/items`,
+      `/inbound-outbound/v1/export-sheet/detail/${detailId}/${batchId}/items`,
     );
   },
 
@@ -226,6 +227,15 @@ export const inboundOutboundService = {
     return await apiClient.post<SupplierResponse>(
       "/inbound-outbound/v1/suppliers",
       data,
+    );
+  },
+
+  getItemsByProductVariantInExportSheet: async (
+    productVariantId: number,
+    exportSheetId: number,
+  ) => {
+    return await apiClient.get<ItemResponse>(
+      `/inbound-outbound/v1/items/${exportSheetId}/${productVariantId}`,
     );
   },
 };
