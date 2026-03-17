@@ -1,8 +1,12 @@
 "use server";
 
-import { UserLogin } from "@/interfaces/userManagementType";
+import { UserLogin, UserRequest } from "@/interfaces/userManagementType";
 import { userManagementService } from "@/services/UserManagementService";
 import { cookies } from "next/headers";
+
+export async function RegisterAction(data: UserRequest) {
+  await userManagementService.register(data);
+}
 
 export async function loginAction(data: UserLogin) {
   try {
@@ -21,7 +25,7 @@ export async function loginAction(data: UserLogin) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax" as const,
       path: "/",
-      maxAge: 3600, // 1d
+      maxAge: 3600 * 24, // 1d
     };
     cookieStore.set("jwt", accessToken, cookieOptions);
     cookieStore.set("userId", userId, cookieOptions);
@@ -32,15 +36,15 @@ export async function loginAction(data: UserLogin) {
   }
 }
 
-export async function getUserProfileAction(id: string) {
-  try {
-    const user = await userManagementService.getById(id);
-    return { data: user, error: null };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return { data: null, error: error.message };
-  }
-}
+// export async function getUserProfileAction(id: string) {
+//   try {
+//     const user = await userManagementService.getById(id);
+//     return { data: user, error: null };
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   } catch (error: any) {
+//     return { data: null, error: error.message };
+//   }
+// }
 
 export async function logoutAction() {
   const cookieStore = await cookies();

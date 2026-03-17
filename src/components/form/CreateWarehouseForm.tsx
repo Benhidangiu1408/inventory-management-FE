@@ -47,24 +47,24 @@ export const CreateWarehouseForm = () => {
   const [managerOptions, setManagerOptions] = useState<
     { value: string; label: string }[]
   >([]);
-  useEffect(() => {
-    const fetchManagers = async () => {
-      try {
-        const users = await userManagementService.getAll(1);
-        if (users) {
-          const options = users.map((u) => ({
-            value: u.id.toString(),
-            label: `${u.username}`,
-          }));
-          setManagerOptions(options);
-        }
-      } catch (error) {
-        console.error("Failed to load managers:", error);
-        toast.error("Could not load user list");
-      }
-    };
-    fetchManagers();
-  }, []);
+  // useEffect(() => {
+  //   const fetchManagers = async () => {
+  //     try {
+  //       const users = await userManagementService.getAll(1);
+  //       if (users) {
+  //         const options = users.map((u) => ({
+  //           value: u.id.toString(),
+  //           label: `${u.username}`,
+  //         }));
+  //         setManagerOptions(options);
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to load managers:", error);
+  //       toast.error("Could not load user list");
+  //     }
+  //   };
+  //   fetchManagers();
+  // }, []);
 
   //Validation Logic
   const onSubmit: SubmitHandler<NewWarehouseRequest> = async (data) => {

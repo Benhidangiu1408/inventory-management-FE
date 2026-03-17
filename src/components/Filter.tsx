@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { Modal } from "@/default_components/ui/modal";
 import NewPermissionForm from "@/default_components/new-creation/NewPermissionForm";
 import NewRoleForm from "@/default_components/new-creation/NewRoleForm";
-import NewUserForm from "@/default_components/new-creation/NewUserForm";
 
 export type DateRange = {
   from?: Date;
@@ -68,20 +67,14 @@ export default function Filter({
       //   return <InventoryCheckForm />;
       // case "fault order":
       //   return <FaultOrderForm />;
-      case "user":
-        return <NewUserForm onClose={() => setIsOpen(false)}/>;
       case "role":
-        return <NewRoleForm onClose={() => setIsOpen(false)}/>;
+        return <NewRoleForm onClose={() => setIsOpen(false)} />;
       // case "permission":
       //   return <PermissionForm />;
       default:
         return null;
     }
   };
-
-  
-
- 
 
   // const selectList = [
   //   {
@@ -119,7 +112,6 @@ export default function Filter({
   return (
     <div className="flex items-center justify-between gap-20 border-b border-[#E4E7EC] p-6 dark:border-gray-800">
       <div className="flex flex-1 gap-3">
-
         {type === "role" && (
           <div className="relative flex-1">
             <FontAwesomeIcon

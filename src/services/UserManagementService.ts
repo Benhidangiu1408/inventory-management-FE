@@ -7,29 +7,20 @@ import {
   RoleRequest,
   PermissionRequest,
   RoleAssignmentRequest,
+  RoleAssignmentResponse,
 } from "@/interfaces/userManagementType";
 import { apiClient } from "@/lib/api-mask";
 
 export const userManagementService = {
-  //   register: async (data: UserRequest) => {
-  //     console.log(data);
-  //     return apiClient.post<UserRequest>("users/register", data, {
-  //       headers: { Authorization: authToken },
-  //     });
-  //   },
+  register: async (data: UserRequest) => {
+    return apiClient.post<UserRequest>("users/register", data, {});
+  },
   login: async (data: UserLogin) => {
     return apiClient.post<{ accessToken: string }>("/users/login", data);
   },
-  //   // getAll: async () => {
-  //   //   return apiClient.get<User[]>("users", {
-  //   //     headers: { Authorization: authToken },
-  //   //     cache: "no-store",
-  //   //   });
-  //   // },
   getAll: async (roleId?: number) => {
     const query = roleId ? `?roleId=${roleId}` : "";
     return apiClient.get<User[]>(`users${query}`, {
-      // headers: { Authorization: authToken },
       cache: "no-store",
     });
   },
@@ -43,11 +34,6 @@ export const userManagementService = {
   //       headers: { Authorization: authToken },
   //     });
   //   },
-  getRoleByUsername: async (username: string) => {
-    return apiClient.get<{ role: string }>(`/users/${username}/role`, {
-      cache: "no-store",
-    });
-  },
   //   updateProfile: async (username: string, phoneNumber: string) => {
   //     return apiClient.put<User>(
   //       `users/${username}/profile`,
@@ -86,42 +72,30 @@ export const userManagementService = {
   //       cache: "no-store",
   //     });
   //   },
-  //   assignRole: async (
-  //     roleId: number,
-  //     assigningId: number,
-  //     assignedId: number,
-  //   ) => {
-  //     const payload: RoleAssignmentRequest = {
-  //       roleAssignmentKey: {
-  //         roleId: roleId,
-  //         assignedUserId: assignedId,
-  //       },
-  //       assignedDate: new Date().toISOString().slice(0, 19),
-  //       role: {
-  //         id: roleId,
-  //       },
-  //       assignedUser: {
-  //         id: assignedId,
-  //       },
-  //       assigningUser: {
-  //         id: assigningId,
-  //       },
-  //     };
-  //     return apiClient.post<RoleAssignmentRequest>(
-  //       `/users/role-assignments`,
-  //       payload,
-  //       {
-  //         headers: { Authorization: authToken },
-  //       },
-  //     );
-  //   },
+  assignRole: async (
+    roleId: number,
+    assignedUserId: number,
+    assigningUserId: number,
+  ) => {
+    const payload: RoleAssignmentRequest = {
+      roleId,
+      assignedUserId,
+      assigningUserId,
+    };
+    return apiClient.post<RoleAssignmentResponse>(
+      `/users/role-assignments`,
+      payload,
+    );
+  },
   //   // delete: async (id: number) => {
   //   //   return apiClient.delete<void>(`/api/users/${id}`, {
   //   //     headers: { Authorization: authToken },
   //   //   });
   //   // },
   // };
-  // export const roleAssignment = {
+};
+
+export const roleManagementService = {
   //   createRole: async (data: RoleRequest) => {
   //     return apiClient.post<Role>("/users/roles", data, {
   //       headers: { Authorization: authToken },
@@ -132,12 +106,11 @@ export const userManagementService = {
   //       headers: { Authorization: authToken },
   //     });
   //   },
-  //   getAllRole: async () => {
-  //     return apiClient.get<Role[]>("/users/roles", {
-  //       headers: { Authorization: authToken },
-  //       cache: "no-store",
-  //     });
-  //   },
+  getAllRole: async () => {
+    return apiClient.get<Role[]>("/users/roles", {
+      cache: "no-store",
+    });
+  },
   //   getAllPermission: async () => {
   //     return apiClient.get<Permission[]>("/users/permissions", {
   //       headers: { Authorization: authToken },
@@ -163,5 +136,4 @@ export const userManagementService = {
   //         cache: "no-store",
   //       },
   //     );
-  //   },
 };
