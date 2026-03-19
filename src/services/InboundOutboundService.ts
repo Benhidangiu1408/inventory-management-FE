@@ -1,17 +1,29 @@
 import {
   BatchResponse,
+  CustomerCreateReq,
+  CustomerResponse,
+  ExportedItemResponse,
+  ExportSheetCreateReq,
+  ExportSheetDetailCreateReq,
+  ExportSheetDetailResponse,
+  ExportSheetDetailUpdateReq,
+  ExportSheetResponse,
+  ExportSheetUpdateReq,
   ImportSheetCreateReq,
   ImportSheetDetailCreateReq,
   ImportSheetDetailResponse,
   ImportSheetDetailUpdateReq,
   ImportSheetResponse,
   ImportSheetUpdateReq,
+  ItemResponse,
   LocationResponse,
   PageResponse,
   ProductVariantResponse,
   QCSheetResponse,
   QCSheetUpdateReq,
   SetBatchLocationReq,
+  SupplierCreateReq,
+  SupplierResponse,
   WarehoseResponse,
 } from "@/interfaces/inboundOutboundType";
 import { LocationType } from "@/interfaces/warehouseManagementType";
@@ -131,6 +143,99 @@ export const inboundOutboundService = {
     return await apiClient.post<ImportSheetResponse>(
       `/inbound-outbound/v1/import-sheet/${importSheetId}/batch-location`,
       data,
+    );
+  },
+
+  getAllExportSheets: async () => {
+    return await apiClient.get<ExportSheetResponse[]>(
+      `/inbound-outbound/v1/export-sheet`,
+    );
+  },
+
+  createExportSheet: async (data: ExportSheetCreateReq) => {
+    return await apiClient.post<ExportSheetResponse[]>(
+      `/inbound-outbound/v1/export-sheet`,
+      data,
+    );
+  },
+
+  getExportSheetById: async (id: string) => {
+    return await apiClient.get<ExportSheetResponse>(
+      `/inbound-outbound/v1/export-sheet/${id}`,
+    );
+  },
+
+  createExportSheetDetail: async (
+    exportSheetId: string | number,
+    data: ExportSheetDetailCreateReq,
+  ) => {
+    return await apiClient.post<ExportSheetDetailResponse>(
+      `/inbound-outbound/v1/export-sheet/${exportSheetId}/detail`,
+      data,
+    );
+  },
+
+  updateExportSheetDetail: async (
+    exportSheetId: string | number,
+    exportSheetDetailId: string | number,
+    data: ExportSheetDetailUpdateReq,
+  ) => {
+    return await apiClient.patch<ExportSheetDetailResponse>(
+      `/inbound-outbound/v1/export-sheet/${exportSheetId}/detail/${exportSheetDetailId}`,
+      data,
+    );
+  },
+
+  getExportedItemsByBatchId: async (batchId: number, detailId: number) => {
+    return await apiClient.get<ExportedItemResponse[]>(
+      `/inbound-outbound/v1/export-sheet/detail/${detailId}/${batchId}/items`,
+    );
+  },
+
+  confirmExportSheet: async (
+    exportSheetId: number | string,
+    data: ExportSheetUpdateReq,
+  ) => {
+    return await apiClient.post<ExportSheetResponse>(
+      `/inbound-outbound/v1/export-sheet/${exportSheetId}/confirm`,
+      data,
+    );
+  },
+
+  getCustomers: async () => {
+    return await apiClient.get<CustomerResponse[]>(
+      "/inbound-outbound/v1/customers",
+      { cache: "no-cache" },
+    );
+  },
+
+  createCustomer: async (data: CustomerCreateReq) => {
+    return await apiClient.post<CustomerResponse>(
+      "/inbound-outbound/v1/customers",
+      data,
+    );
+  },
+
+  getSuppliers: async () => {
+    return await apiClient.get<SupplierResponse[]>(
+      "/inbound-outbound/v1/suppliers",
+      { cache: "no-cache" },
+    );
+  },
+
+  createSupplier: async (data: SupplierCreateReq) => {
+    return await apiClient.post<SupplierResponse>(
+      "/inbound-outbound/v1/suppliers",
+      data,
+    );
+  },
+
+  getItemsByProductVariantInExportSheet: async (
+    productVariantId: number,
+    exportSheetId: number,
+  ) => {
+    return await apiClient.get<ItemResponse>(
+      `/inbound-outbound/v1/items/${exportSheetId}/${productVariantId}`,
     );
   },
 };

@@ -19,7 +19,6 @@ import {
   SetBatchLocationReq,
 } from "@/interfaces/inboundOutboundType";
 import { useCallback, useEffect, useState } from "react";
-import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { useImport } from "@/context/ImportContext";
 import { LocationType } from "@/interfaces/warehouseManagementType";
 import Button from "@/default_components/ui/button/Button";
@@ -29,6 +28,10 @@ import toast from "react-hot-toast";
 import { Loading } from "@/components/TA_common/Loading";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import {
+  getLocationByType,
+  setBatchLocations,
+} from "@/actions/inbound-outbound";
 
 const Title = ({
   icon,
@@ -56,6 +59,7 @@ export default function StorageLocationPage() {
   const { qcData } = useQualityCheck();
 
   const [locations, setLocations] = useState<LocationResponse[]>([]);
+  console.log(locations);
   const [loading, setLoading] = useState(false);
   const { confirm, ConfirmationModal } = useConfirmModal();
 
@@ -146,14 +150,11 @@ export default function StorageLocationPage() {
     }));
 
     setLoading(true);
-    await inboundOutboundService.setBatchLocations(id as string, data);
+    await setBatchLocations(id as string, data);
 
     setLoading(false);
     toast.success("Storage Location Successfully");
     router.refresh();
-
-    // console.log(res);
-    // console.log(importData);
   };
 
   const handleOpenConfirmModal = async () => {
@@ -206,7 +207,7 @@ export default function StorageLocationPage() {
   };
 
   const fetchLocations = useCallback(async () => {
-    const res = await inboundOutboundService.getLocationByType(
+    const res = await getLocationByType(
       importData.warehouse.id,
       LocationType.BIN,
     );

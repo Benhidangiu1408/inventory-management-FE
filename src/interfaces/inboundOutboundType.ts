@@ -1,6 +1,13 @@
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import { LocationStatus, LocationType } from "./warehouseManagementType";
 
+export enum CustomerStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  SUSPENDED = "SUSPENDED",
+  DELETED = "DELETED",
+}
+
 export enum QCSheetDetailStatus {
   PENDING = "PENDING",
   IN_PROGRESS = "IN_PROGRESS",
@@ -15,6 +22,12 @@ export enum ImportSheetType {
   INTERNAL = "INTERNAL",
   FACTORY = "FACTORY",
   SUPPLIER = "SUPPLIER",
+}
+
+export enum ExportSheetType {
+  INTERNAL = "INTERNAL",
+  FACTORY = "FACTORY",
+  CUSTOMER = "CUSTOMER",
 }
 
 export interface Sort {
@@ -50,6 +63,38 @@ export interface PageResponse<T> {
   empty: boolean;
 }
 
+export interface SupplierCreateReq {
+  address: string;
+  email: string;
+  name: string;
+  phone: string;
+}
+
+export interface SupplierResponse {
+  id: number;
+  address: string;
+  email: string;
+  name: string;
+  phone: string;
+}
+
+export interface CustomerCreateReq {
+  address: string;
+  email: string;
+  name: string;
+  phoneNumber: string;
+  status: CustomerStatus;
+}
+
+export interface CustomerResponse {
+  id: number;
+  address: string;
+  email: string;
+  name: string;
+  phoneNumber: string;
+  status: CustomerStatus;
+}
+
 export interface ProductRepsonse {
   id: number;
   name: string;
@@ -70,12 +115,23 @@ export interface LocationResponse {
   locationStatus: LocationStatus;
 }
 
+export interface ItemResponse {
+  id: number;
+  barcode: string;
+  serialNumber: string;
+}
+
 export interface BatchResponse {
   id: number;
   code: string;
   initialQuantity: number;
   location: LocationResponse;
   productVariant: ProductVariantResponse;
+}
+
+export interface BatchSummaryResponse {
+  batch: BatchResponse;
+  quantity: number;
 }
 
 export interface ImportSheetDetailResponse {
@@ -93,6 +149,15 @@ export interface ImportSheetDetailCreateReq {
   expectedQuantity: number;
 }
 
+export interface ExportSheetDetailCreateReq {
+  productVariantId: number;
+  expectedQuantity: number;
+  scannedQuantity?: number;
+  batchId?: number[];
+  destinationLocationId?: number;
+  destinationLocationWarehouseId?: number;
+}
+
 export interface ImportSheetDetailUpdateReq {
   productVariantId?: number;
   expectedQuantity?: number;
@@ -107,6 +172,9 @@ export interface ImportSheetResponse {
   details: ImportSheetDetailResponse[];
   createdAt: string;
   warehouse: WarehoseResponse;
+  sourceWarehouse: WarehoseResponse;
+  supplier: SupplierResponse;
+  referenceExportSheet: ExportSheetResponse;
 }
 
 export interface WarehoseResponse {
@@ -162,4 +230,64 @@ export interface QCSheetUpdateReq {
 export interface SetBatchLocationReq {
   importSheetDetailId: number;
   locationId: number;
+}
+
+export interface ExportSheetDetailResponse {
+  id: number;
+  productVariant: ProductVariantResponse;
+  batches: BatchSummaryResponse[];
+  expectedQuantity: number;
+  scannedQuantity: number;
+  destinationLocationId: number;
+  destinationLocationWarehouseId: number;
+}
+
+export interface ExportSheetDetailCreateReq {
+  productVariantId: number;
+  expectedQuantity: number;
+  estinationLocationId?: number;
+  destinationLocationWarehouseId?: number;
+}
+
+export interface ExportSheetDetailUpdateReq {
+  itemBarcode?: string;
+  expectedQuantity?: number;
+  scannedQuantity?: number;
+  batchId?: number[];
+}
+
+export interface ExportSheetResponse {
+  id: number;
+  status: SheetStatus;
+  type: ExportSheetType;
+  details: ExportSheetDetailResponse[];
+  warehouse: WarehoseResponse;
+  destinationWarehouse: WarehoseResponse;
+  createdAt: string;
+  customer: CustomerResponse;
+}
+
+export interface ExportSheetUpdateReq {
+  status?: SheetStatus;
+  customerId?: number;
+  destinationWarehouseId?: number;
+  details?: ExportSheetDetailUpdateReq[];
+}
+
+export interface ExportSheetCreateReq {
+  type: ExportSheetType;
+  status: SheetStatus;
+  warehouseId: number;
+  sourceWarehouseId?: number;
+  destinationWarehouseId?: number;
+  supplierId?: number;
+  customerId?: number;
+  details?: ImportSheetDetailCreateReq[];
+}
+
+export interface ExportedItemResponse {
+  id: number;
+  itemId: number;
+  barcode: string;
+  serialNumber: string;
 }

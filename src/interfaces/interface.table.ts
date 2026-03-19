@@ -10,16 +10,18 @@ export interface ImportRow {
 }
 
 export interface ExportRow {
-  batchId: string;
-  date: string;
+  id: number;
+  // code: string;
   type: string; // Loại phiếu xuất: manufacturer, purchase-order, transfer
-  requestStatus?: string; // Trạng thái yêu cầu: REQUEST, PROCESSING
+  // requestStatus?: string; // Trạng thái yêu cầu: REQUEST, PROCESSING
   warehouse: string;
-  receiver: string;
-  createdBy: string;
-  totalQuantity: number;
-  totalValue: number;
+  // receiver: string;
+
+  // totalQuantity: number;
+  // totalValue: number;
   status: string; // Trạng thái active/inactive
+  createdAt: string;
+  // createdBy: string;
   actions?: ReactNode;
 }
 
@@ -100,8 +102,12 @@ export interface ImportCreateRow {
 }
 
 export interface ExportQuantityCheckRow {
+  detailId: number;
+  batchId: number;
+  batchCode: string;
   quantity: number;
   location: string;
+  actions?: ReactNode;
 }
 
 export interface ThirdPartyRequestProduct {
@@ -117,4 +123,35 @@ export interface ThirdPartyRequest {
   thirdPartyContact: string;
   date: string;
   products: ThirdPartyRequestProduct[];
+}
+
+/** Row type cho bảng items trong modal xem chi tiết */
+export interface ExportItemModalRow {
+  id: number;
+  itemId: number;
+  barcode: string;
+  serialNumber: string;
+}
+
+export interface ItemRow {
+  id: number;
+  barcode: string;
+  serialNumber: string;
+}
+
+export interface QuantityCheckParentRow extends QuantityCheckRow {
+  items: ItemRow[];
+}
+
+/** Parent row: one per product, with expandable location/quantity sub-table */
+export interface ExportQuantityCheckParentRow {
+  /** ID phiếu xuất detail (để biết đang scan cho dòng nào khi gọi API) */
+  detailId: number;
+  productName: string;
+  description: string;
+  expectedQuantity: number;
+  scannedQuantity: number;
+  locations: ExportQuantityCheckRow[];
+  /** Chỉ dùng cho cột nút Scan Item, không lưu trong data */
+  scanItem?: never;
 }
