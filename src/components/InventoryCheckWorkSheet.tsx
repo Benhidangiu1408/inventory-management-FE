@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { inventoryCheckService } from "@/services/InventoryManagementService";
 import {
   InventoryCheckSheetData,
   SheetStatus,
@@ -10,7 +9,6 @@ import {
 import Button from "@/default_components/ui/button/Button";
 import { CheckCircle, Play, Save, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
-import { ApiError } from "@/lib/api-mask";
 import AccordionTable from "./table/AccordionTable";
 import {
   getIcSheetBatchSubheaders,
@@ -18,6 +16,12 @@ import {
   icSheetProductHeaders,
 } from "./table/AccordionTableHeader";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
+import {
+  inventoryCheckApproveAction,
+  inventoryCheckCompleteAction,
+  inventoryCheckRejectAction,
+  inventoryCheckStartAction,
+} from "@/actions/inventory-check";
 
 export function InventoryCheckWorkSheet({
   initialData,
@@ -79,15 +83,12 @@ export function InventoryCheckWorkSheet({
     }
     try {
       setLoading(true);
-      await inventoryCheckService.start(sheetId);
+      await inventoryCheckStartAction(sheetId);
       toast.success("Inventory Check Started! Snapshot taken.");
       router.refresh();
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -102,15 +103,12 @@ export function InventoryCheckWorkSheet({
     if (!ok) return;
     try {
       setLoading(true);
-      await inventoryCheckService.complete(sheetId);
+      await inventoryCheckCompleteAction(sheetId);
       toast.success("Inventory Check Completed! Ready for review.");
       router.replace("/warehouse-management/inventory-check");
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -129,12 +127,12 @@ export function InventoryCheckWorkSheet({
     if (!ok) return;
     try {
       setLoading(true);
-      await inventoryCheckService.approve(sheetId, Number(currentUser));
+      await inventoryCheckApproveAction(sheetId, Number(currentUser));
       toast.success("Sheet Approved");
       router.replace("/warehouse-management/inventory-check");
-    } catch (error) {
-      if (error instanceof ApiError) toast.error(error.message);
-      else toast.error("An unexpected error occurred");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -153,12 +151,12 @@ export function InventoryCheckWorkSheet({
     if (!ok) return;
     try {
       setLoading(true);
-      await inventoryCheckService.reject(sheetId, Number(currentUser));
+      await inventoryCheckRejectAction(sheetId, Number(currentUser));
       toast.success("Sheet Rejected");
       router.replace("/warehouse-management/inventory-check");
-    } catch (error) {
-      if (error instanceof ApiError) toast.error(error.message);
-      else toast.error("An unexpected error occurred");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }

@@ -7,11 +7,12 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber: string;
+  phoneNumber: string | null;
   username: string;
   status: UserStatus;
   createdDate: string | null;
   updatedDate: string | null;
+  role: string;
 }
 
 export interface UserRequest {
@@ -22,8 +23,6 @@ export interface UserRequest {
   username: string;
   passwordHash: string;
   status: UserStatus;
-  createdDate: string | null;
-  updatedDate: string | null;
 }
 
 export interface UserLogin {
@@ -52,7 +51,7 @@ export interface Role {
   id: number;
   name: string;
   description: string;
-  status: RoleStatus; // or "ACTIVE" | "INACTIVE"
+  status: RoleStatus;
   permissions: Permission[];
 }
 
@@ -62,23 +61,18 @@ export interface RoleRequest {
   status: RoleStatus; // or "ACTIVE" | "INACTIVE"
 }
 
-export interface RoleAssignmentKey {
+export interface RoleAssignmentRequest {
   roleId: number;
   assignedUserId: number;
+  assigningUserId: number;
 }
 
-export interface RoleRef {
-  id: number;
-}
-
-export interface UserRef {
-  id: number;
-}
-
-export interface RoleAssignmentRequest {
-  roleAssignmentKey: RoleAssignmentKey;
-  assignedDate: string; // ISO datetime string
-  role: RoleRef;
-  assignedUser: UserRef;
-  assigningUser: UserRef;
+export interface RoleAssignmentResponse {
+  roleId: number;
+  roleName: string;
+  assignedUserId: number;
+  assignedUsername: string;
+  assigningUserId: number;
+  assigningUsername: string;
+  assignedDate: "2026-03-17T10:06:05.141174600Z";
 }

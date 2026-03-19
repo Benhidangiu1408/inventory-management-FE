@@ -1,5 +1,6 @@
 "use client";
 
+import { inventoryCheckCreateAction } from "@/actions/inventory-check";
 import ComponentCard from "@/default_components/common/ComponentCard";
 import Checkbox from "@/default_components/form/input/Checkbox";
 import Input from "@/default_components/form/input/InputField";
@@ -12,9 +13,6 @@ import {
   ProductResponse,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
-import { ApiError } from "@/lib/api-mask";
-import { inventoryCheckService } from "@/services/InventoryManagementService";
-import { userManagementService } from "@/services/UserManagementService";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
@@ -127,16 +125,13 @@ export const CreateICSheetForm = ({
         isCycleCheck: Boolean(data.isCycleCheck),
         cycleIntervalDays: calculatedDays,
       };
-      await inventoryCheckService.create(payload);
+      await inventoryCheckCreateAction(payload);
       reset();
       toast.success("Inventory Check Scheduled!");
       router.replace("/warehouse-management/inventory-check");
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }

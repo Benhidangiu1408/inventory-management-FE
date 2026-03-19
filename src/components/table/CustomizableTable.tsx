@@ -52,6 +52,7 @@ export interface Column<T extends object> {
   width?: number;
   minWidth?: number;
   sortable?: boolean;
+  sort?: boolean;
   stopCenterData?: boolean;
   filter?: boolean | string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -100,6 +101,7 @@ export default function CustomizableTable<T extends object>({
           flex: header.width ? 0 : 1,
           width: header.width,
           minWidth: header.minWidth,
+          sort: header.sort ? "asc" : undefined,
           sortable: header.sortable ?? true,
           cellClass: header.stopCenterData ? "" : "text-center",
           cellRenderer,

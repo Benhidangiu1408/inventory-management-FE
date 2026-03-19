@@ -6,7 +6,6 @@ import {
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import Button from "@/default_components/ui/button/Button";
 import { ProductResponse } from "@/interfaces/warehouseManagementType";
-import { ApiError } from "@/lib/api-mask";
 import { productService } from "@/services/WarehouseManagementService";
 import { Plus } from "lucide-react";
 import Link from "next/link";
@@ -17,11 +16,9 @@ export default async function ProductPage() {
 
   try {
     data = await productService.getAll();
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`API Error ${error.status}: ${error.message}`);
-      errorMsg = `Could not load data from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    errorMsg = `Could not load data from server. ${error.message}`;
   }
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
   return (
@@ -29,7 +26,7 @@ export default async function ProductPage() {
       <PageBreadcrumb pageTitle="Product" filters={["catalog"]} />
       <div>
         <div className="default-card p-6">
-          <div className="mb-6 pt-2 px-1 flex justify-end">
+          <div className="mb-6 flex justify-end px-1 pt-2">
             <Link href={`/catalog/product/new`}>
               <Button
                 size="sm"

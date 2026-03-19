@@ -6,7 +6,6 @@ import {
   ProductResponse,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
-import { ApiError } from "@/lib/api-mask";
 import {
   productService,
   warehouseService,
@@ -20,11 +19,9 @@ export default async function CreateICPage() {
   try {
     warehouseData = await warehouseService.getAll();
     productData = await productService.getAll();
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`API Error ${error.status}: ${error.message}`);
-      errorMsg = `Could not load data from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    errorMsg = `Could not load data from server. ${error.message}`;
   }
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
   return (

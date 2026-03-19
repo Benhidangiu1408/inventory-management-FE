@@ -13,16 +13,18 @@ import {
 } from "@/interfaces/warehouseManagementType";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { ApiError } from "@/lib/api-mask";
 import Select from "@/default_components/form/Select";
 import AccordionTable from "@/components/table/AccordionTable";
 import {
   getCategoryHeaders,
   getSubCategoryHeaders,
 } from "@/components/table/AccordionTableHeader";
-import { categoryService } from "@/services/WarehouseManagementService";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Radio from "@/default_components/form/input/Radio";
+import {
+  categoryCreateAction,
+  categoryUpdateAction,
+} from "@/actions/system-info";
 
 interface CategoryFormProps {
   setLoading: (loading: boolean) => void;
@@ -78,20 +80,17 @@ const CategoryForm = ({
           : null,
       };
       if (isEditMode) {
-        await categoryService.update(initialData.id, payload);
+        await categoryUpdateAction(initialData.id, payload);
         toast.success("Category updated successfully!");
       } else {
-        await categoryService.create(payload);
+        await categoryCreateAction(payload);
         toast.success("Category created successfully!");
       }
       router.refresh();
       onSuccess();
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -193,7 +192,7 @@ export function ModalCategoryForm({ data }: { data: Category[] }) {
 
   return (
     <div>
-      <div className={"pt-6 px-6 flex justify-end"}>
+      <div className={"flex justify-end px-6 pt-6"}>
         <NoControlModalBox
           startIcon={<Plus size={16} />}
           openBtnTitle={"New Category"}

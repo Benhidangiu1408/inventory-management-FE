@@ -19,10 +19,10 @@ export default function GeneralInfoSection({
   return (
     <div className="default-card w-full p-6">
       <div className="mb-3 flex items-center gap-3">
-        <div className="font-medium">{title}</div>
+        <div className="font-semibold text-xl">{title}</div>
         {editBtn}
       </div>
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-3 gap-5">
         {items.map((item) => (
           <div
             key={item.label}

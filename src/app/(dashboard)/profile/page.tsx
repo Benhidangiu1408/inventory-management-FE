@@ -8,9 +8,6 @@ export default async function Profile() {
   const cookieStore = await cookies();
   const userId = cookieStore.get("userId")?.value || null;
   const userInfo = await userManagementService.getById(userId || "");
-  const userRole = (
-    await userManagementService.getRoleByUsername(userInfo.username)
-  ).role;
 
   return (
     <div>
@@ -19,7 +16,7 @@ export default async function Profile() {
           Profile
         </h3>
         <div className="space-y-6">
-          <UserMetaCard userInfo={userInfo} userRole={userRole} />
+          {/* <UserMetaCard userInfo={userInfo} userRole={userRole} /> */}
           {/* <UserInfoCard id={userId} />
           <UserAddressCard /> */}
         </div>

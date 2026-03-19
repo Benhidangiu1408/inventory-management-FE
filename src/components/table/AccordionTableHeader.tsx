@@ -18,9 +18,8 @@ import {
 import { useEffect, useEffectEvent, useState } from "react";
 import Input from "@/default_components/form/input/InputField";
 import Checkbox from "@/default_components/form/input/Checkbox";
-import { inventoryCheckService } from "@/services/InventoryManagementService";
-import { ApiError } from "@/lib/api-mask";
 import toast from "react-hot-toast";
+import { inventoryCheckSubmitAction } from "@/actions/inventory-check";
 
 // Category header
 export const getCategoryHeaders = (
@@ -303,19 +302,16 @@ const BatchActionCell = ({
 
     try {
       setLoading(true);
-      await inventoryCheckService.submit({
+      await inventoryCheckSubmitAction({
         detailId: Number(row.detailId),
         scannedQuantity: Number(input.value),
         hasFaults: checkbox.checked,
       });
       onSave(Number(row.detailId), Number(input.value), checkbox.checked);
       toast.success("Inventory Check Detail Submitted");
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }

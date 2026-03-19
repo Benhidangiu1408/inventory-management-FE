@@ -12,11 +12,10 @@ import {
 } from "@/interfaces/warehouseManagementType";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { ApiError } from "@/lib/api-mask";
-import { attributesService } from "@/services/WarehouseManagementService";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { getAttributeHeaders } from "../table/CustomizableTableHeader";
 import CustomizableTable from "../table/CustomizableTable";
+import { AttrCreateAction, AttrUpdateAction } from "@/actions/system-info";
 
 interface AttributeFormProps {
   setLoading: (loading: boolean) => void;
@@ -57,20 +56,17 @@ const AttributeForm = ({
         description: data.description !== "" ? data.description : null,
       };
       if (isEditMode) {
-        await attributesService.update(initialData.id, payload);
+        await AttrUpdateAction(initialData.id, payload);
         toast.success("Attribute updated successfully!");
       } else {
-        await attributesService.create(payload);
+        await AttrCreateAction(payload);
         toast.success("Attribute created successfully!");
       }
       router.refresh();
       onSuccess();
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -133,7 +129,7 @@ export function ModalAttributesForm({ data }: { data: AttributeResponse[] }) {
 
   return (
     <div>
-      <div className={"pt-6 px-6 flex justify-end"}>
+      <div className={"flex justify-end px-6 pt-6"}>
         <NoControlModalBox
           startIcon={<Plus size={16} />}
           openBtnTitle={"New Attribute"}

@@ -1,6 +1,5 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import CustomizableTable from "@/components/table/CustomizableTable";
-import { ApiError } from "@/lib/api-mask";
 import { inventoryCheckSheetHeaders } from "@/components/table/CustomizableTableHeader";
 import Link from "next/link";
 import Button from "@/default_components/ui/button/Button";
@@ -14,11 +13,9 @@ export default async function InventoryCheckPage() {
 
   try {
     data = await inventoryCheckService.getAll();
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`API Error ${error.status}: ${error.message}`);
-      errorMsg = `Could not load data from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    errorMsg = `Could not load data from server. ${error.message}`;
   }
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
   return (
@@ -29,7 +26,7 @@ export default async function InventoryCheckPage() {
       />
       <div>
         <div className="default-card p-6">
-          <div className="mb-6 pt-2 px-1 flex justify-end">
+          <div className="mb-6 flex justify-end px-1 pt-2">
             <Link href={`/warehouse-management/inventory-check/new`}>
               <Button
                 size="sm"

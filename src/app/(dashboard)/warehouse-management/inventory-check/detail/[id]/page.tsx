@@ -2,7 +2,6 @@ import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import GeneralInfoSection from "@/components/GeneralInformation";
 import { InventoryCheckSheetData } from "@/interfaces/inventoryManagementType";
 import { inventoryCheckService } from "@/services/InventoryManagementService";
-import { ApiError } from "@/lib/api-mask";
 import { InventoryCheckWorkSheet } from "@/components/InventoryCheckWorkSheet";
 
 export default async function InventoryCheckDetailPage({
@@ -16,11 +15,9 @@ export default async function InventoryCheckDetailPage({
 
   try {
     data = await inventoryCheckService.getDetail(Number(id));
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`API Error ${error.status}: ${error.message}`);
-      errorMsg = `Could not load data from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    errorMsg = `Could not load data from server. ${error.message}`;
   }
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
 

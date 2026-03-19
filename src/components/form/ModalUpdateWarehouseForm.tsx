@@ -9,8 +9,6 @@ import {
   WarehouseStatus,
   WarehouseType,
 } from "@/interfaces/warehouseManagementType";
-import { ApiError } from "@/lib/api-mask";
-import { warehouseService } from "@/services/WarehouseManagementService";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -18,6 +16,7 @@ import toast from "react-hot-toast";
 import NoControlModalBox from "../modal/NoControlModalBox";
 import { useModal } from "@/hooks/useModal";
 import { Pencil } from "lucide-react";
+import { warehouseUpdateAction } from "@/actions/system-info";
 
 interface WarehouseFormProps {
   setLoading: (loading: boolean) => void;
@@ -66,16 +65,13 @@ const UpdateWarehouseForm = ({
         type: data.type,
         status: data.status,
       };
-      await warehouseService.update(Number(initialData?.id), payload);
+      await warehouseUpdateAction(Number(initialData?.id), payload);
       toast.success("Warehouse created successfully!");
       router.refresh();
       onSuccess();
-    } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
