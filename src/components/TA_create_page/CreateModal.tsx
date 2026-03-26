@@ -19,110 +19,12 @@ import CustomizableTable, { Column } from "../table/CustomizableTable";
 import Input from "../../default_components/form/input/InputField";
 import Checkbox from "../../default_components/form/input/Checkbox";
 import { ProductVariantResponse } from "@/interfaces/inboundOutboundType";
+import Select from "@/default_components/form/Select";
 
 type CreateModalProps = {
   productVariants: ProductVariantResponse[];
   onSelectedProductsChange?: (product: ProductTempRow | null) => void;
 };
-
-const mockData: ImportCreateRow[] = [
-  {
-    checkBox: false,
-    productId: "1",
-    name: "Laptop Dell XPS 15",
-    unit: "Cái",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-  {
-    checkBox: false,
-    productId: "2",
-    name: "Mouse Logitech MX Master",
-    unit: "Cái",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-  {
-    checkBox: false,
-    productId: "3",
-    name: "Keyboard Mechanical RGB",
-    unit: "Cái",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-  {
-    checkBox: false,
-    productId: "4",
-    name: "Monitor Samsung 27 inch",
-    unit: "Cái",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-  {
-    checkBox: false,
-    productId: "5",
-    name: "Webcam Logitech C920",
-    unit: "Cái",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-  {
-    checkBox: false,
-    productId: "6",
-    name: "USB Cable Type-C",
-    unit: "Cái",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-  {
-    checkBox: false,
-    productId: "7",
-    name: "Headphone Sony WH-1000XM4",
-    unit: "Cái",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-  {
-    checkBox: false,
-    productId: "8",
-    name: "SSD Samsung 1TB",
-    unit: "Cái",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-  {
-    checkBox: false,
-    productId: "9",
-    name: "RAM DDR4 16GB",
-    unit: "Thanh",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-  {
-    checkBox: false,
-    productId: "10",
-    name: "Power Bank 20000mAh",
-    unit: "Cái",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-  {
-    checkBox: false,
-    productId: "11",
-    name: "Laptop Stand Aluminum",
-    unit: "Cái",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-  {
-    checkBox: false,
-    productId: "12",
-    name: "HDMI Cable 2.0",
-    unit: "Cái",
-    pickQuantity: "",
-    description: "Hihi",
-  },
-];
 
 export default function CreateModal({
   productVariants,
@@ -134,12 +36,14 @@ export default function CreateModal({
       productId: variant.id.toString(),
       name: variant.product.name,
       description: variant.description,
-      unit: "Piece",
+      unit: variant.product.baseUnit,
+      unitId: variant.product.baseUnit.id,
+      unitConversions: variant.product.unitConversions,
       pickQuantity: "",
     };
   });
 
-  const [data, setData] = useState<ImportCreateRow[]>(variants ?? mockData);
+  const [data, setData] = useState<ImportCreateRow[]>(variants ?? []);
 
   // Notify parent whenever selected products change
   useEffect(() => {
@@ -157,6 +61,12 @@ export default function CreateModal({
           name: selectedItem.name,
           expectedQuantity: Number(selectedItem.pickQuantity),
           description: selectedItem.description ?? "",
+          unit:
+            selectedItem.unitId === selectedItem.unit.id
+              ? selectedItem.unit
+              : selectedItem.unitConversions.find(
+                    (c) => c.fromUnit.id === selectedItem.unitId,
+                  )?.fromUnit ?? selectedItem.unit,
         }
       : null;
 
@@ -184,6 +94,19 @@ export default function CreateModal({
         prev.map((item) =>
           item.productId === productId
             ? { ...item, pickQuantity: value }
+            : item,
+        ),
+      );
+    },
+    [],
+  );
+
+  const handleUnitChange = useCallback(
+    (productId: string, unitId: string) => {
+      setData((prev) =>
+        prev.map((item) =>
+          item.productId === productId
+            ? { ...item, unitId: Number(unitId) }
             : item,
         ),
       );
@@ -221,7 +144,26 @@ export default function CreateModal({
       },
       {
         label: "Unit",
-        key: "unit",
+        key: "unitId",
+        render: (_, row) => (
+          <Select
+            className="h-[38px]"
+            options={[
+              {
+                value: String(row.unit.id),
+                label: row.unit.name,
+              },
+              ...row.unitConversions.map((item) => ({
+                value: String(item.fromUnit.id),
+                label: item.fromUnit.name,
+              })),
+            ]}
+            value={String(row.unitId)}
+            onChange={(e) =>
+              handleUnitChange(row.productId, e.target.value)
+            }
+          />
+        ),
       },
 
       {
@@ -239,7 +181,7 @@ export default function CreateModal({
         ),
       },
     ],
-    [handleCheckboxChange, handlePickQuantityChange],
+    [handleCheckboxChange, handlePickQuantityChange, handleUnitChange],
   );
 
   return (

@@ -63,6 +63,20 @@ export interface PageResponse<T> {
   empty: boolean;
 }
 
+export interface UnitResponse {
+  id: number;
+  abb: string;
+  name: string;
+  description: string;
+}
+
+export interface UnitConversionResponse {
+  id: number;
+  conversionRate: number;
+  fromUnit: UnitResponse;
+  toUnit: UnitResponse;
+}
+
 export interface SupplierCreateReq {
   address: string;
   email: string;
@@ -99,6 +113,8 @@ export interface ProductRepsonse {
   id: number;
   name: string;
   code: string;
+  baseUnit: UnitResponse;
+  unitConversions: UnitConversionResponse[];
 }
 
 export interface ProductVariantResponse {
@@ -127,6 +143,7 @@ export interface BatchResponse {
   initialQuantity: number;
   location: LocationResponse;
   productVariant: ProductVariantResponse;
+  unit: UnitResponse;
 }
 
 export interface BatchSummaryResponse {
@@ -138,6 +155,7 @@ export interface ImportSheetDetailResponse {
   id: number;
   description: string;
   productVariant: ProductVariantResponse;
+  unit?: UnitResponse;
   batch?: BatchResponse;
   expectedQuantity?: number;
   actualQuantity?: number;
@@ -147,12 +165,14 @@ export interface ImportSheetDetailResponse {
 export interface ImportSheetDetailCreateReq {
   productVariantId: number;
   expectedQuantity: number;
+  unitId: number;
 }
 
 export interface ExportSheetDetailCreateReq {
   productVariantId: number;
   expectedQuantity: number;
   scannedQuantity?: number;
+  unitId?: number;
   batchId?: number[];
   destinationLocationId?: number;
   destinationLocationWarehouseId?: number;
@@ -238,8 +258,11 @@ export interface ExportSheetDetailResponse {
   batches: BatchSummaryResponse[];
   expectedQuantity: number;
   scannedQuantity: number;
+  expectedBaseQuantity: number;
+  scannedBaseQuantity: number;
   destinationLocationId: number;
   destinationLocationWarehouseId: number;
+  unit: UnitResponse;
 }
 
 export interface ExportSheetDetailCreateReq {

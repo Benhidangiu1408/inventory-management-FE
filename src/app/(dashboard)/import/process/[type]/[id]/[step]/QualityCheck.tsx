@@ -125,6 +125,7 @@ export default function QualityCheckPage() {
       { key: "name", label: "Product Name" },
       { key: "description", label: "Description" },
       { key: "quantity", label: "Quantity" },
+      { key: "unit", label: "Unit" },
       {
         key: "qualityStatus",
         label: "Quality Status",
@@ -189,6 +190,7 @@ export default function QualityCheckPage() {
         qualityStatus: detail.status,
         reason: detail.reason ?? "",
         notes: detail.notes ?? "",
+        unit: detail.batch.unit.name ?? "",
       })) ?? [],
     [qcData],
   );

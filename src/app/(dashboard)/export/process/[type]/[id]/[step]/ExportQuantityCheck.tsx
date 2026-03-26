@@ -113,7 +113,9 @@ export default function ExportQuantityCheck() {
     { key: "productName", label: "Product Name" },
     { key: "description", label: "Description" },
     { key: "expectedQuantity", label: "Expected Quantity" },
-    { key: "scannedQuantity", label: "ScannedQuantity Quantity" },
+    { key: "expectedBaseQuantity", label: "Expected Base Quantity" },
+    { key: "scannedQuantity", label: "Scanned Quantity" },
+    { key: "scannedBaseQuantity", label: "Scanned Base Quantity" },
     ...(exportData.status !== SheetStatus.COMPLETED ? [scanItemColumn] : []),
   ];
 
@@ -123,7 +125,9 @@ export default function ExportQuantityCheck() {
       productName: detail.productVariant.product.name,
       description: detail.productVariant.description,
       expectedQuantity: detail.expectedQuantity ?? 0,
-      scannedQuantity: detail.batches.reduce(
+      scannedQuantity: 0,
+      expectedBaseQuantity: detail.expectedBaseQuantity ?? 0,
+      scannedBaseQuantity: detail.batches.reduce(
         (sum, item) => sum + (item.quantity ?? 0),
         0,
       ),
@@ -138,7 +142,7 @@ export default function ExportQuantityCheck() {
   );
 
   const totalQuantity = accordionData.reduce(
-    (sum, row) => sum + row.scannedQuantity,
+    (sum, row) => sum + row.scannedBaseQuantity,
     0,
   );
 
