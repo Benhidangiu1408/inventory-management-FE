@@ -46,6 +46,7 @@ export default function ImportProcessPage() {
     actualQuantity: detail.actualQuantity ?? 0,
     variance: (detail.actualQuantity ?? 0) - (detail.expectedQuantity ?? 0),
     reason: detail.reason ?? "",
+    unit: detail.unit?.name ?? "",
   }));
 
   const updateRow = (detailId: number, changes: Partial<QuantityCheckRow>) => {
@@ -134,6 +135,10 @@ export default function ImportProcessPage() {
           />
         );
       },
+    },
+    {
+      key: "unit",
+      label: "Unit",
     },
     {
       key: "variance",

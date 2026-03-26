@@ -10,7 +10,6 @@ import { ProductTempRow } from "../../interfaces/interface.table";
 import CustomizableTable, { Column } from "../table/CustomizableTable";
 import {
   ExportSheetDetailCreateReq,
-  ExportSheetDetailResponse,
   ExportSheetDetailUpdateReq,
   ProductVariantResponse,
 } from "@/interfaces/inboundOutboundType";
@@ -40,6 +39,7 @@ export default function ExportProductListInfoBox({
       name: detail.productVariant.product.name,
       description: detail.productVariant.description,
       expectedQuantity: detail.expectedQuantity ?? 0,
+      unit: detail.productVariant.product.baseUnit,
     }),
   );
 
@@ -60,6 +60,11 @@ export default function ExportProductListInfoBox({
       key: "expectedQuantity",
       label: "Expected Quantity",
     },
+    {
+      key: "unit",
+      label: "Unit",
+      render: (_, row) => row.unit.name,
+    },
   ];
 
   const handleSave = async () => {
@@ -78,15 +83,10 @@ export default function ExportProductListInfoBox({
       const data: ExportSheetDetailCreateReq = {
         productVariantId: selectedProduct.id,
         expectedQuantity: selectedProduct.expectedQuantity,
+        unitId: selectedProduct.unit.id,
       };
 
       if (!existingItem) {
-        // const newDetail: ExportSheetDetailResponse = {};
-
-        // const data: ExportSheetDetailCreateReq = {
-        //   productVariantId:
-        // }
-
         const res = await createExportSheetDetail(id as string, data);
 
         setExportData((prev) => ({

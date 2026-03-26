@@ -1,5 +1,9 @@
 import { ReactNode } from "react";
-import { QCSheetDetailStatus } from "./inboundOutboundType";
+import {
+  QCSheetDetailStatus,
+  UnitConversionResponse,
+  UnitResponse,
+} from "./inboundOutboundType";
 
 export interface ImportRow {
   id: number;
@@ -48,6 +52,7 @@ export interface ProductTempRow {
   name: string;
   description: string;
   expectedQuantity: number;
+  unit: UnitResponse;
 }
 
 export interface QuantityCheckRow {
@@ -57,6 +62,7 @@ export interface QuantityCheckRow {
   description: string;
   expectedQuantity: number;
   actualQuantity: number;
+  unit: string;
   variance: number;
   reason: string;
 }
@@ -68,6 +74,7 @@ export interface QualityCheckRow {
   description: string;
   quantity: number;
   qualityStatus: QCSheetDetailStatus;
+  unit: string;
   reason: string;
   notes: string;
 }
@@ -97,8 +104,12 @@ export interface ImportCreateRow {
   productId: string;
   name: string;
   description: string;
-  unit: string;
+  unit: UnitResponse;
+  /** Unit selected for creating import detail */
+  unitId: number;
+  unitConversions: UnitConversionResponse[];
   pickQuantity: number | string; // can be number or string for easy input in
+  unitSelect?: ReactNode;
 }
 
 export interface ExportQuantityCheckRow {
@@ -150,6 +161,8 @@ export interface ExportQuantityCheckParentRow {
   productName: string;
   description: string;
   expectedQuantity: number;
+  expectedBaseQuantity: number;
+  scannedBaseQuantity: number;
   scannedQuantity: number;
   locations: ExportQuantityCheckRow[];
   /** Chỉ dùng cho cột nút Scan Item, không lưu trong data */

@@ -1,5 +1,4 @@
 import {
-  BatchResponse,
   CustomerCreateReq,
   CustomerResponse,
   ExportedItemResponse,
@@ -31,7 +30,7 @@ import { apiClient } from "@/lib/api-mask";
 
 export const inboundOutboundService = {
   getAll: async () => {
-    return await apiClient.get<PageResponse<ImportSheetResponse>>(
+    return await apiClient.get<ImportSheetResponse[]>(
       "/inbound-outbound/v1/import-sheet",
       {
         cache: "no-cache",

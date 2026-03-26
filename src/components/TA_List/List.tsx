@@ -22,7 +22,7 @@ import Badge from "@/default_components/ui/badge/Badge";
 
 interface ListProps {
   type: "import" | "export";
-  data?: PageResponse<ImportSheetResponse>;
+  data?: ImportSheetResponse[];
   exportData?: ExportSheetResponse[];
 }
 
@@ -205,7 +205,7 @@ export default function List({ type, data, exportData }: ListProps) {
   ];
 
   const fetchedImportData: ImportRow[] =
-    data?.content.map((detaill) => {
+    data?.map((detaill) => {
       return {
         id: detaill.id,
         status: detaill.status,

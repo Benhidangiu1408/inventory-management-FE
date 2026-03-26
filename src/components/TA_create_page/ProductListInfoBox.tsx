@@ -23,39 +23,6 @@ import {
   updateImportSheetDetail,
 } from "@/actions/inbound-outbound";
 
-const data: ProductTempRow[] = [
-  {
-    id: 1,
-    name: "Product 1",
-    expectedQuantity: 10,
-    description: "Hihi",
-  },
-  {
-    id: 2,
-    name: "Product 2",
-    expectedQuantity: 20,
-    description: "Hihi",
-  },
-  {
-    id: 3,
-    name: "Product 3",
-    expectedQuantity: 30,
-    description: "Hihi",
-  },
-  {
-    id: 4,
-    name: "Product 4",
-    expectedQuantity: 40,
-    description: "Hihi",
-  },
-  {
-    id: 5,
-    name: "Product 5",
-    expectedQuantity: 50,
-    description: "Hihi",
-  },
-];
-
 export default function ProductListInfoBox({
   step = "",
   productVariants,
@@ -77,6 +44,7 @@ export default function ProductListInfoBox({
       name: detail.productVariant.product.name,
       description: detail.productVariant.description,
       expectedQuantity: detail.expectedQuantity ?? 0,
+      unit: detail.unit ?? detail.productVariant.product.baseUnit,
     }),
   );
 
@@ -97,6 +65,11 @@ export default function ProductListInfoBox({
       key: "expectedQuantity",
       label: "Expected Quantity",
     },
+    {
+      key: "unit",
+      label: "Unit",
+      render: (_, row) => row.unit.name,
+    },
   ];
 
   const handleSave = async () => {
@@ -109,6 +82,7 @@ export default function ProductListInfoBox({
       const data: ImportSheetDetailCreateReq = {
         productVariantId: selectedProduct.id,
         expectedQuantity: selectedProduct.expectedQuantity,
+        unitId: selectedProduct.unit.id,
       };
 
       if (!item) {
