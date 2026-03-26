@@ -5,7 +5,6 @@ import {
   Role,
   Permission,
   RoleRequest,
-  PermissionRequest,
   RoleAssignmentRequest,
   RoleAssignmentResponse,
 } from "@/interfaces/userManagementType";
@@ -109,23 +108,13 @@ export const roleManagementService = {
       cache: "no-store",
     });
   },
-  //   updateRolePermissions: async (roleId: number, permissionIds: number[]) => {
-  //     return apiClient.put<Role>(
-  //       `/users/roles/${roleId}/permissions`,
-  //       permissionIds,
-  //       {
-  //         headers: { Authorization: authToken },
-  //         cache: "no-store",
-  //       },
-  //     );
-  //   },
-  //   removeRolePermissions: async (roleId: number, permissionIds: number[]) => {
-  //     return apiClient.delete<Role>(
-  //       `/users/roles/${roleId}/permissions`,
-  //       permissionIds,
-  //       {
-  //         headers: { Authorization: authToken },
-  //         cache: "no-store",
-  //       },
-  //     );
+  updateRolePermissions: async (roleId: number, permissionIds: number[]) => {
+    return apiClient.put<Role>(
+      `/users/roles/${roleId}/update-permissions`,
+      permissionIds,
+      {
+        cache: "no-store",
+      },
+    );
+  },
 };

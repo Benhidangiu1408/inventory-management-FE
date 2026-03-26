@@ -1,5 +1,6 @@
 "use client";
 
+import { updateRolePermissionsAction } from "@/actions/user";
 import ComponentCard from "@/default_components/common/ComponentCard";
 import Checkbox from "@/default_components/form/input/Checkbox";
 import Label from "@/default_components/form/Label";
@@ -8,6 +9,8 @@ import Button from "@/default_components/ui/button/Button";
 import { Permission, Role } from "@/interfaces/userManagementType";
 import { ArrowRightLeft } from "lucide-react";
 import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import ModalRoleForm from "./form/ModalRoleForm";
 
 export function RoleAssignmentList({
   initialRolesData,
@@ -16,6 +19,7 @@ export function RoleAssignmentList({
   initialRolesData: Role[];
   initialPermissionsData: Permission[];
 }) {
+  const [loading, setLoading] = useState(false);
   const [rolesData, setRolesData] = useState<Role[]>(initialRolesData);
   // Role Select Options
   const selectOpts = useMemo<Option[]>(() => {
@@ -69,38 +73,60 @@ export function RoleAssignmentList({
       );
     }
   };
-
   // transfer button
-  // const handleTransfer = () => {
-  //   if (!hasSelection) return;
+  const handleTransfer = async () => {
+    try {
+      setLoading(true);
+      // Find the current role
+      const currentRole = rolesData.find((r) => r.id === selectedRoleId);
+      if (!currentRole) return;
+      // Find the correct perms id list
+      let updatedPermissions = [...currentRole.permissions];
+      updatedPermissions = updatedPermissions.filter(
+        (p) => !selectedGranted.includes(p.name),
+      );
+      const permissionsToAdd = initialPermissionsData.filter((p) =>
+        selectedUngranted.includes(p.name),
+      );
+      updatedPermissions = [...updatedPermissions, ...permissionsToAdd];
+      const permissionIds = updatedPermissions.map((p) => p.id);
 
-  //   if (selectedGranted.length > 0) {
-  //     const grantedIds = selectedGranted
-  //       .map((name) => fullPermission.find((p) => p.name === name)?.id)
-  //       .filter((id): id is number => id !== undefined);
-  //     console.log(grantedIds);
-  //     roleAssignment.removeRolePermissions(selectedRole, grantedIds);
-  //   }
+      const updatedRole = await updateRolePermissionsAction(
+        selectedRoleId,
+        permissionIds,
+      );
 
-  //   if (selectedUngranted.length > 0) {
-  //     const ungrantedIds = selectedUngranted
-  //       .map((name) => fullPermission.find((p) => p.name === name)?.id)
-  //       .filter((id): id is number => id !== undefined);
-  //     roleAssignment.updateRolePermissions(selectedRole, ungrantedIds);
-  //   }
+      setRolesData((prevRoles) =>
+        prevRoles.map((role) =>
+          role.id === updatedRole.id ? updatedRole : role,
+        ),
+      );
+      toast.success("Permissions updated successfully!");
+      setLoading(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
+    }
 
-  //   setSelectedUngranted([]);
-  //   setSelectedGranted([]);
-  // };
+    setSelectedUngranted([]);
+    setSelectedGranted([]);
+  };
 
   return (
     <div className="flex flex-col">
-      <div className="flex p-3">
-        <Select
-          options={selectOpts}
-          placeholder="Select a role"
-          onChange={handleRoleChange}
-          disabled={rolesData.length === 0}
+      <div className="flex justify-between border-b-1 p-6">
+        <div className="w-3/5">
+          <Select
+            options={selectOpts}
+            placeholder="Select a role"
+            onChange={handleRoleChange}
+            disabled={rolesData.length === 0}
+          />
+        </div>
+        <ModalRoleForm
+          onRoleCreated={(newRole: Role) => {
+            setRolesData((prevRoles) => [...prevRoles, newRole]);
+          }}
         />
       </div>
       <div className="flex p-6">
@@ -131,8 +157,8 @@ export function RoleAssignmentList({
           type="button"
           variant="outline"
           className={`m-6 !rounded-full`}
-          // onClick={handleTransfer}
-          disabled={!hasSelection}
+          onClick={handleTransfer}
+          disabled={!hasSelection || loading}
         >
           <ArrowRightLeft size={30} />
         </Button>

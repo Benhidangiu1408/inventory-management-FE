@@ -6,7 +6,6 @@ import Select from "@/default_components/form/Select";
 import Button from "@/default_components/ui/button/Button";
 import { useState } from "react";
 import { Modal } from "@/default_components/ui/modal";
-import NewRoleForm from "@/default_components/new-creation/NewRoleForm";
 
 export type DateRange = {
   from?: Date;
@@ -60,8 +59,8 @@ export default function Filter({ type, roles, onRoleChange }: FilterProps) {
       //   return <InventoryCheckForm />;
       // case "fault order":
       //   return <FaultOrderForm />;
-      case "role":
-        return <NewRoleForm onClose={() => setIsOpen(false)} />;
+      // case "role":
+      //   return <NewRoleForm onClose={() => setIsOpen(false)} />;
       // case "permission":
       //   return <PermissionForm />;
       default:
