@@ -96,27 +96,19 @@ export const userManagementService = {
 };
 
 export const roleManagementService = {
-  //   createRole: async (data: RoleRequest) => {
-  //     return apiClient.post<Role>("/users/roles", data, {
-  //       headers: { Authorization: authToken },
-  //     });
-  //   },
-  //   createPermission: async (data: PermissionRequest) => {
-  //     return apiClient.post<Permission>("/users/permissions", data, {
-  //       headers: { Authorization: authToken },
-  //     });
-  //   },
+  createRole: async (data: RoleRequest) => {
+    return apiClient.post<Role>("/users/roles", data);
+  },
   getAllRole: async () => {
     return apiClient.get<Role[]>("/users/roles", {
       cache: "no-store",
     });
   },
-  //   getAllPermission: async () => {
-  //     return apiClient.get<Permission[]>("/users/permissions", {
-  //       headers: { Authorization: authToken },
-  //       cache: "no-store",
-  //     });
-  //   },
+  getAllPermission: async () => {
+    return apiClient.get<Permission[]>("/users/permissions", {
+      cache: "no-store",
+    });
+  },
   //   updateRolePermissions: async (roleId: number, permissionIds: number[]) => {
   //     return apiClient.put<Role>(
   //       `/users/roles/${roleId}/permissions`,

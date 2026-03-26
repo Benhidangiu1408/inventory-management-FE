@@ -4,6 +4,7 @@ import React, { forwardRef, InputHTMLAttributes } from "react";
 
 interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  labelSize?: string;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
   hint?: string; // Added hint support
@@ -14,6 +15,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   (
     {
       label,
+      labelSize = "text-sm",
       id,
       className = "",
       disabled = false,
@@ -70,7 +72,10 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           {(label || startIcon || endIcon) && (
             <div className="flex flex-col select-none">
               <span
-                className={`flex items-center gap-2 text-sm font-medium ${error ? "text-red-500" : "text-gray-700 dark:text-gray-200"}`}
+                className={
+                  `flex items-center gap-2 font-medium ${error ? "text-red-500 " : "text-gray-700 dark:text-gray-200 "}` +
+                  labelSize
+                }
               >
                 {startIcon}
                 {label}
