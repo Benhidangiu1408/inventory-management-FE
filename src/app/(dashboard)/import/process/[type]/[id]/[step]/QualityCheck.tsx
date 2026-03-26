@@ -23,6 +23,7 @@ import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Loading } from "@/components/TA_common/Loading";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
+import { updateQCSheet } from "@/actions/inbound-outbound";
 
 export default function QualityCheckPage() {
   const router = useRouter();
@@ -51,7 +52,7 @@ export default function QualityCheckPage() {
 
     setLoading(true);
 
-    const res = await inboundOutboundService.updateQCSheet(qcData?.id, data);
+    const res = await updateQCSheet(qcData?.id, data);
 
     setLoading(false);
 

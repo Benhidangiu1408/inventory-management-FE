@@ -10,20 +10,35 @@ import {
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { inboundOutboundService } from "@/services/InboundOutboundService";
+import Button from "@/default_components/ui/button/Button";
+import Link from "next/link";
 
-export default function ExportPage() {
+export default async function ExportPage() {
+  const exportSheets = await inboundOutboundService.getAllExportSheets();
+
+  console.log(exportSheets);
+
   return (
     <div className="flex flex-col gap-6">
       <PageBreadcrumb pageTitle="Export Page" />
 
-      <div className="rounded-2xl border">
+      <div className="flex justify-end">
+        <Link href="/export/new">
+          <Button startIcon={<FontAwesomeIcon icon={faPlus} />}>
+            New Export
+          </Button>
+        </Link>
+      </div>
+
+      {/* <div className="rounded-2xl border bg-white">
         <CustomFilter
           listButton={[
             {
               size: "sm",
               type: "link",
               title: "New Export",
-              href: "/export/create",
+              href: "/export/new",
               startIcon: <FontAwesomeIcon icon={faPlus} />,
             },
           ]}
@@ -62,14 +77,14 @@ export default function ExportPage() {
             icon={faCalendar}
           />
         </CustomFilter>
-      </div>
+      </div> */}
 
       <div>
         <Summary />
       </div>
 
       <div className="rounded-2xl border">
-        <List type="export" />
+        <List type="export" exportData={exportSheets} />
       </div>
     </div>
   );

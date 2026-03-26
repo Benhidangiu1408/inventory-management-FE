@@ -105,12 +105,12 @@ export const apiClient = {
   put: <T>(url: string, body: unknown, options?: FetchOptions) =>
     fetcher<T>(url, { method: "PUT", body: JSON.stringify(body), ...options }),
 
-  // patch: <T>(url: string, body: unknown, options?: FetchOptions) =>
-  //   fetcher<T>(url, {
-  //     method: "PATCH",
-  //     body: JSON.stringify(body),
-  //     ...options,
-  //   }),
+  patch: <T>(url: string, body: unknown, options?: FetchOptions) =>
+    fetcher<T>(url, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      ...options,
+    }),
 
   delete: <T>(url: string, body: unknown, options?: FetchOptions) =>
     fetcher<T>(url, {
