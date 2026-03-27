@@ -8,6 +8,7 @@ import {
   faCube,
   faDollarSign,
   faIndustry,
+  faTruck,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ProgressBar from "@/components/TA_create_page/ProgressBar";
@@ -27,6 +28,11 @@ export default async function ImportProcessLayout({
   params: { type: string; id: string; step: string };
 }>) {
   const { type, id, step } = await params;
+  const isProductMappingStep = step === "product-mapping";
+  const progressStep =
+    step === "product-mapping"
+      ? "quantity-check"
+      : (step as "quantity-check" | "quality-check" | "storage-location");
 
   const importSheetDetail =
     await inboundOutboundService.getImportSheetDetail(id);
@@ -59,14 +65,16 @@ export default async function ImportProcessLayout({
       ? faDollarSign
       : type === "INTERNAL".toLowerCase()
         ? faCube
-        : faIndustry;
+        : type === "EXTERNAL_SUPPLIER".toLowerCase()
+          ? faTruck
+          : faIndustry;
 
   return (
     <div>
       <PageBreadcrumb
         pageTitle="Import Process"
         filters={["process", type, id]}
-        status={<InfoBoxStatus icon={icon} type={type} />}
+        status={<InfoBoxStatus icon={icon} type={type.replace("_", " ")} />}
       />
 
       <div className="mb-6">
@@ -76,61 +84,66 @@ export default async function ImportProcessLayout({
       <ImportProvider initialData={importSheetDetail}>
         <QualityCheckProvider initialData={qcSheetDetail}>
           <div className="flex flex-col gap-6">
-            <InfoBox
-              icon={<FontAwesomeIcon icon={faCircleInfo} />}
-              title={title}
-              description={description}
-            >
-              {type === "SUPPLIER".toLowerCase() ? (
-                <InfoList>
-                  <ul className="flex flex-col gap-3">
-                    <li>
-                      <span className="font-bold">Name:</span>{" "}
-                      {importSheetDetail.supplier.name}
-                    </li>
-                    <li>
-                      <span className="font-bold">Email:</span>{" "}
-                      {importSheetDetail.supplier.email}
-                    </li>
-                    <li>
-                      <span className="font-bold">Phone:</span>{" "}
-                      {importSheetDetail.supplier.phone}
-                    </li>
-                    <li>
-                      <span className="font-bold">Address:</span>{" "}
-                      {importSheetDetail.supplier.address}
-                    </li>
-                  </ul>
-                </InfoList>
-              ) : (
-                <>
-                  <InfoList className="grid grid-cols-2 gap-6 p-6">
-                    <SmallInfoBox
-                      title="FROM"
-                      data={{
-                        warehouse: importSheetDetail.sourceWarehouse.id,
-                        name: importSheetDetail.sourceWarehouse.name,
-                      }}
-                    />
-                    <SmallInfoBox
-                      title="TO"
-                      data={{
-                        warehouse: importSheetDetail.warehouse.id,
-                        name: importSheetDetail.warehouse.name,
-                      }}
-                    />
-                  </InfoList>
-                </>
-              )}
-            </InfoBox>
+            {!isProductMappingStep && (
+              <>
+                <InfoBox
+                  icon={<FontAwesomeIcon icon={faCircleInfo} />}
+                  title={title}
+                  description={description}
+                >
+                  {type === "SUPPLIER".toLowerCase() ? (
+                    <InfoList>
+                      <ul className="flex flex-col gap-3">
+                        <li>
+                          <span className="font-bold">Name:</span>{" "}
+                          {importSheetDetail.supplier.name}
+                        </li>
+                        <li>
+                          <span className="font-bold">Email:</span>{" "}
+                          {importSheetDetail.supplier.email}
+                        </li>
+                        <li>
+                          <span className="font-bold">Phone:</span>{" "}
+                          {importSheetDetail.supplier.phone}
+                        </li>
+                        <li>
+                          <span className="font-bold">Address:</span>{" "}
+                          {importSheetDetail.supplier.address}
+                        </li>
+                      </ul>
+                    </InfoList>
+                  ) : (
+                    <>
+                      <InfoList className="grid grid-cols-2 gap-6 p-6">
+                        <SmallInfoBox
+                          title="FROM"
+                          data={{
+                            warehouse:
+                              importSheetDetail.sourceWarehouse?.id ?? "N/A",
+                            name:
+                              importSheetDetail.sourceWarehouse?.name ?? "N/A",
+                          }}
+                        />
+                        <SmallInfoBox
+                          title="TO"
+                          data={{
+                            warehouse: importSheetDetail.warehouse?.id ?? "N/A",
+                            name: importSheetDetail.warehouse?.name ?? "N/A",
+                          }}
+                        />
+                      </InfoList>
+                    </>
+                  )}
+                </InfoBox>
 
-            <ProductListInfoBox step={step} productVariants={productVariants} />
+                <ProductListInfoBox
+                  step={step}
+                  productVariants={productVariants}
+                />
+              </>
+            )}
 
-            <ProgressBar
-              step={
-                step as "quantity-check" | "quality-check" | "storage-location"
-              }
-            />
+            <ProgressBar step={progressStep} />
 
             {children}
 

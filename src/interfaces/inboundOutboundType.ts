@@ -22,6 +22,7 @@ export enum ImportSheetType {
   INTERNAL = "INTERNAL",
   FACTORY = "FACTORY",
   SUPPLIER = "SUPPLIER",
+  EXTERNAL_SUPPLIER = "EXTERNAL_SUPPLIER",
 }
 
 export enum ExportSheetType {
@@ -160,6 +161,9 @@ export interface ImportSheetDetailResponse {
   expectedQuantity?: number;
   actualQuantity?: number;
   reason?: string;
+  rawProductName: string;
+  rawUnitName: string;
+  rawSku: string;
 }
 
 export interface ImportSheetDetailCreateReq {

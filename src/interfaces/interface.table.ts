@@ -15,17 +15,10 @@ export interface ImportRow {
 
 export interface ExportRow {
   id: number;
-  // code: string;
   type: string; // Loại phiếu xuất: manufacturer, purchase-order, transfer
-  // requestStatus?: string; // Trạng thái yêu cầu: REQUEST, PROCESSING
   warehouse: string;
-  // receiver: string;
-
-  // totalQuantity: number;
-  // totalValue: number;
   status: string; // Trạng thái active/inactive
   createdAt: string;
-  // createdBy: string;
   actions?: ReactNode;
 }
 
@@ -156,7 +149,6 @@ export interface QuantityCheckParentRow extends QuantityCheckRow {
 
 /** Parent row: one per product, with expandable location/quantity sub-table */
 export interface ExportQuantityCheckParentRow {
-  /** ID phiếu xuất detail (để biết đang scan cho dòng nào khi gọi API) */
   detailId: number;
   productName: string;
   description: string;
@@ -165,6 +157,9 @@ export interface ExportQuantityCheckParentRow {
   scannedBaseQuantity: number;
   scannedQuantity: number;
   locations: ExportQuantityCheckRow[];
+  unit: UnitResponse;
+  baseUnit: UnitResponse;
+  conversionRate: number;
   /** Chỉ dùng cho cột nút Scan Item, không lưu trong data */
   scanItem?: never;
 }

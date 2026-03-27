@@ -2,6 +2,7 @@
 
 import { useImport } from "@/context/ImportContext";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import { ImportSheetType } from "@/interfaces/inboundOutboundType";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -11,7 +12,7 @@ export default function ProcessPagination() {
 
   const { importData } = useImport();
 
-  const processList: { label: string; value: string }[] = [
+  const baseProcessList: { label: string; value: string }[] = [
     {
       label: "Quantity Check",
       value: "quantity-check",
@@ -26,6 +27,14 @@ export default function ProcessPagination() {
     },
   ];
 
+  const processList: { label: string; value: string }[] =
+    importData.type === ImportSheetType.EXTERNAL_SUPPLIER
+      ? [
+          { label: "Product Mapping", value: "product-mapping" },
+          ...baseProcessList,
+        ]
+      : baseProcessList;
+
   return (
     <div>
       <div className="my-3 flex w-full items-center justify-center gap-3">
@@ -33,7 +42,8 @@ export default function ProcessPagination() {
           const isActive = item.value === step;
           const disabledByStatus =
             importData.status === SheetStatus.CREATED
-              ? item.value !== "quantity-check"
+              ? item.value !== "quantity-check" &&
+                item.value !== "product-mapping"
               : importData.status === SheetStatus.IN_PROGRESS
                 ? item.value === "storage-location"
                 : importData.status === SheetStatus.APPROVED

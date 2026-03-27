@@ -6,6 +6,7 @@ import {
   faEye,
   faIndustry,
   faPen,
+  faTruck,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
@@ -14,7 +15,6 @@ import CustomizableTable, { Column } from "../table/CustomizableTable";
 import {
   ExportSheetResponse,
   ImportSheetResponse,
-  PageResponse,
 } from "@/interfaces/inboundOutboundType";
 import { format } from "date-fns";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
@@ -152,22 +152,24 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       label: "Type",
       key: "type",
-      render: (value: ImportRow[keyof ImportRow]) => {
+      render: (_, row) => {
         return (
           <Badge
             startIcon={
               <FontAwesomeIcon
                 icon={
-                  value === "SUPPLIER"
+                  row.type === "SUPPLIER"
                     ? faUser
-                    : value === "INTERNAL"
+                    : row.type === "INTERNAL"
                       ? faArrowsLeftRight
-                      : faIndustry
+                      : row.type === "EXTERNAL_SUPPLIER"
+                        ? faTruck
+                        : faIndustry
                 }
               />
             }
           >
-            {value}
+            {row.type.replace("_", " ")}
           </Badge>
         );
       },

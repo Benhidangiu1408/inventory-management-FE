@@ -39,7 +39,7 @@ export default function ExportProductListInfoBox({
       name: detail.productVariant.product.name,
       description: detail.productVariant.description,
       expectedQuantity: detail.expectedQuantity ?? 0,
-      unit: detail.productVariant.product.baseUnit,
+      unit: detail.unit ?? detail.productVariant.product.baseUnit,
     }),
   );
 

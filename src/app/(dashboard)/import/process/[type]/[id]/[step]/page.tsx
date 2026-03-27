@@ -1,5 +1,6 @@
 "use client";
 
+import ProductMappingPage from "@/app/(dashboard)/import/process/[type]/[id]/[step]/ProductMapping";
 import QualityCheckPage from "@/app/(dashboard)/import/process/[type]/[id]/[step]/QualityCheck";
 import ImportProcessPage from "@/app/(dashboard)/import/process/[type]/[id]/[step]/QuantityCheck";
 import StorageLocationPage from "@/app/(dashboard)/import/process/[type]/[id]/[step]/StorageLocation";
@@ -18,5 +19,9 @@ export default function StepPage() {
 
   if (step === "quantity-check") {
     return <ImportProcessPage />;
+  }
+
+  if (step === "product-mapping") {
+    return <ProductMappingPage />;
   }
 }
