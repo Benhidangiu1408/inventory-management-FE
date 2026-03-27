@@ -98,6 +98,9 @@ export const roleManagementService = {
   createRole: async (data: RoleRequest) => {
     return apiClient.post<Role>("/users/roles", data);
   },
+  updateRole: async (roleId: number, data: RoleRequest) => {
+    return apiClient.put<Role>(`/users/roles/${roleId}`, data);
+  },
   getAllRole: async () => {
     return apiClient.get<Role[]>("/users/roles", {
       cache: "no-store",

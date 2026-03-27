@@ -11,6 +11,7 @@ import { ArrowRightLeft } from "lucide-react";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import ModalRoleForm from "./form/ModalRoleForm";
+import GeneralInfoSection from "./GeneralInformation";
 
 export function RoleAssignmentList({
   initialRolesData,
@@ -112,9 +113,24 @@ export function RoleAssignmentList({
     setSelectedGranted([]);
   };
 
+  const handleRoleSaved = (savedRole: Role) => {
+    setRolesData((prev) => {
+      const exists = prev.find((r) => r.id === savedRole.id);
+      if (exists) {
+        // It was an update, map over and replace it
+        return prev.map((r) => (r.id === savedRole.id ? savedRole : r));
+      } else {
+        // It was a creation, add to the end
+        return [...prev, savedRole];
+      }
+    });
+    setSelectedRoleId(savedRole.id);
+  };
+  const currentRole = rolesData.find((r) => r.id === selectedRoleId);
+
   return (
-    <div className="flex flex-col">
-      <div className="flex justify-between border-b-1 p-6">
+    <div className="flex flex-col gap-6">
+      <div className="default-card flex justify-between p-6">
         <div className="w-3/5">
           <Select
             options={selectOpts}
@@ -123,13 +139,19 @@ export function RoleAssignmentList({
             disabled={rolesData.length === 0}
           />
         </div>
-        <ModalRoleForm
-          onRoleCreated={(newRole: Role) => {
-            setRolesData((prevRoles) => [...prevRoles, newRole]);
-          }}
-        />
+        <div className="flex gap-3">
+          <ModalRoleForm onSuccess={handleRoleSaved} />
+          <ModalRoleForm onSuccess={handleRoleSaved} roleToEdit={currentRole} />
+        </div>
       </div>
-      <div className="flex p-6">
+      <GeneralInfoSection
+        title="Role Information"
+        items={[
+          { label: "Name", value: currentRole?.name },
+          { label: "Description", value: currentRole?.description },
+        ]}
+      />
+      <div className="flex">
         <ComponentCard title="Ungranted" className="h-full w-full">
           <div className="m-5 max-h-96 overflow-y-auto pr-2">
             <div className="grid grid-cols-2 gap-2">
