@@ -1,6 +1,10 @@
 "use server";
 
-import { userManagementService } from "@/services/UserManagementService";
+import { RoleRequest } from "@/interfaces/userManagementType";
+import {
+  roleManagementService,
+  userManagementService,
+} from "@/services/UserManagementService";
 import { cookies } from "next/headers";
 
 function getErrorMessage(error: unknown) {
@@ -27,4 +31,18 @@ export async function AssignRoleAction(roleId: number, assignedUserId: number) {
     assignedUserId,
     Number(cookieStore.get("userId")?.value),
   );
+}
+
+export async function updateRolePermissionsAction(
+  roleId: number,
+  permissionIds: number[],
+) {
+  return await roleManagementService.updateRolePermissions(
+    roleId,
+    permissionIds,
+  );
+}
+
+export async function CreateRoleAction(data: RoleRequest) {
+  return await roleManagementService.createRole(data);
 }

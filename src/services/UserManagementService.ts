@@ -5,7 +5,6 @@ import {
   Role,
   Permission,
   RoleRequest,
-  PermissionRequest,
   RoleAssignmentRequest,
   RoleAssignmentResponse,
 } from "@/interfaces/userManagementType";
@@ -96,44 +95,26 @@ export const userManagementService = {
 };
 
 export const roleManagementService = {
-  //   createRole: async (data: RoleRequest) => {
-  //     return apiClient.post<Role>("/users/roles", data, {
-  //       headers: { Authorization: authToken },
-  //     });
-  //   },
-  //   createPermission: async (data: PermissionRequest) => {
-  //     return apiClient.post<Permission>("/users/permissions", data, {
-  //       headers: { Authorization: authToken },
-  //     });
-  //   },
+  createRole: async (data: RoleRequest) => {
+    return apiClient.post<Role>("/users/roles", data);
+  },
   getAllRole: async () => {
     return apiClient.get<Role[]>("/users/roles", {
       cache: "no-store",
     });
   },
-  //   getAllPermission: async () => {
-  //     return apiClient.get<Permission[]>("/users/permissions", {
-  //       headers: { Authorization: authToken },
-  //       cache: "no-store",
-  //     });
-  //   },
-  //   updateRolePermissions: async (roleId: number, permissionIds: number[]) => {
-  //     return apiClient.put<Role>(
-  //       `/users/roles/${roleId}/permissions`,
-  //       permissionIds,
-  //       {
-  //         headers: { Authorization: authToken },
-  //         cache: "no-store",
-  //       },
-  //     );
-  //   },
-  //   removeRolePermissions: async (roleId: number, permissionIds: number[]) => {
-  //     return apiClient.delete<Role>(
-  //       `/users/roles/${roleId}/permissions`,
-  //       permissionIds,
-  //       {
-  //         headers: { Authorization: authToken },
-  //         cache: "no-store",
-  //       },
-  //     );
+  getAllPermission: async () => {
+    return apiClient.get<Permission[]>("/users/permissions", {
+      cache: "no-store",
+    });
+  },
+  updateRolePermissions: async (roleId: number, permissionIds: number[]) => {
+    return apiClient.put<Role>(
+      `/users/roles/${roleId}/update-permissions`,
+      permissionIds,
+      {
+        cache: "no-store",
+      },
+    );
+  },
 };

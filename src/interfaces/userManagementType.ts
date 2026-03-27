@@ -42,6 +42,7 @@ export interface Permission {
 }
 
 export interface PermissionRequest {
+  id: number;
   code: string;
   name: string;
   description: string;
@@ -68,11 +69,10 @@ export interface RoleAssignmentRequest {
 }
 
 export interface RoleAssignmentResponse {
-  roleId: number;
   roleName: string;
   assignedUserId: number;
   assignedUsername: string;
   assigningUserId: number;
   assigningUsername: string;
-  assignedDate: "2026-03-17T10:06:05.141174600Z";
+  assignedDate: string;
 }

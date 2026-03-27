@@ -93,7 +93,7 @@ const AttributeForm = ({
       </div>
       {/* Description Input */}
       <div>
-        <Label>Category Description</Label>
+        <Label>Attribute Description</Label>
         <Input
           type="text"
           placeholder={"Describe your attribute"}
