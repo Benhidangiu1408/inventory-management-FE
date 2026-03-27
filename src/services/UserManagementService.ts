@@ -33,32 +33,19 @@ export const userManagementService = {
   //       headers: { Authorization: authToken },
   //     });
   //   },
-  //   updateProfile: async (username: string, phoneNumber: string) => {
-  //     return apiClient.put<User>(
-  //       `users/${username}/profile`,
-  //       { phoneNumber },
-  //       {
-  //         headers: { Authorization: authToken },
-  //       },
-  //     );
-  //   },
-  //   //   changePassword: async (username: string, currentPassword: string, newPassword: string) => {
-  //   //     const query = new URLSearchParams({ currentPassword, newPassword }).toString();
-  //   //     return apiClient.put<User>(`users/${username}/password?${query}`, null, {
-  //   //       headers: { Authorization: authToken },
-  //   //     });
-  //   //   }
-  //   changePassword: async (
-  //     username: string,
-  //     currentPassword: string,
-  //     newPassword: string,
-  //   ) => {
-  //     return apiClient.put(
-  //       `users/${username}/password`,
-  //       { oldPassword: currentPassword, newPassword },
-  //       { headers: { Authorization: authToken } },
-  //     );
-  //   },
+  updateProfile: async (username: string, phoneNumber: string) => {
+    return apiClient.put<User>(`users/${username}/profile`, { phoneNumber });
+  },
+  changePassword: async (
+    username: string,
+    oldPassword: string,
+    newPassword: string,
+  ) => {
+    return apiClient.put(`users/${username}/change-password`, {
+      oldPassword,
+      newPassword,
+    });
+  },
   activateAccount: async (username: string) => {
     return apiClient.put<void>(`/users/${username}/activate`, null);
   },

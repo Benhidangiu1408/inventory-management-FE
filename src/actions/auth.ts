@@ -1,6 +1,10 @@
 "use server";
 
-import { UserLogin, UserRequest } from "@/interfaces/userManagementType";
+import {
+  ChangePasswordRequest,
+  UserLogin,
+  UserRequest,
+} from "@/interfaces/userManagementType";
 import { userManagementService } from "@/services/UserManagementService";
 import { cookies } from "next/headers";
 
@@ -51,4 +55,15 @@ export async function logoutAction() {
   cookieStore.delete("jwt");
   cookieStore.delete("userId");
   cookieStore.delete("permissions");
+}
+
+export async function changePasswordAction(data: ChangePasswordRequest) {
+  await userManagementService.changePassword(
+    data.username,
+    data.oldPassword,
+    data.newPassword,
+  );
+}
+export async function changePhoneAction(username: string, phoneNumber: string) {
+  await userManagementService.updateProfile(username, phoneNumber);
 }

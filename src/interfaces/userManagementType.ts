@@ -30,8 +30,10 @@ export interface UserLogin {
   password: string;
 }
 
-export interface EditPhoneNumberRequest {
-  phoneNumber: string;
+export interface ChangePasswordRequest {
+  username: string;
+  oldPassword: string;
+  newPassword: string;
 }
 
 export interface Permission {

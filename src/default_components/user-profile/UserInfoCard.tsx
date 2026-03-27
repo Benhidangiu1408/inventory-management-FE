@@ -1,34 +1,50 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
-import { useUserProfile, useUserRole } from "@/hooks/useUserProfile";
-import { userManagementService } from "@/services/UserManagementService";
+import { User } from "@/interfaces/userManagementType";
+import { changePhoneAction } from "@/actions/auth";
+import toast from "react-hot-toast";
+import { SubmitHandler, useForm } from "react-hook-form";
 
-export interface Props {
-  id:string
-}
-export default function UserInfoCard({ id }: Props) {
+export default function UserInfoCard({
+  initialUserInfo,
+}: {
+  initialUserInfo: User;
+}) {
   const { isOpen, openModal, closeModal } = useModal();
-  const { data: user, isLoading, error } = useUserProfile(id);
+  const [userInfo, setUserInfo] = useState(initialUserInfo);
+  const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
   const {
-    data: role,
-    isLoading: isRoleLoading,
-    error: roleError,
-  } = useUserRole(user?.username);
-  const [phone, setPhone] = useState(user?.phoneNumber || "");
-  const displayRole =
-    typeof role === "string"
-      ? role
-      : typeof role === "object" && role !== null && "role" in role
-        ? (role as { role?: string }).role
-        : undefined;
-  const handleSave = () => {
-    userManagementService.updateProfile(user?.username!, phone);
-    closeModal();
+    register,
+    handleSubmit,
+    formState: { errors, isDirty },
+  } = useForm<{ phoneNumber: string }>({
+    defaultValues: {
+      phoneNumber: userInfo.phoneNumber ?? "",
+    },
+  });
+  useEffect(() => {
+    setDisable(!isDirty);
+  }, [isDirty, setDisable]);
+
+  const onSubmit: SubmitHandler<{ phoneNumber: string }> = async (data) => {
+    setLoading(true);
+    try {
+      await changePhoneAction(userInfo.username, String(data.phoneNumber));
+      closeModal();
+      toast.success("Phone number changed successfully!");
+      setUserInfo((prev) => ({ ...prev, phoneNumber: data.phoneNumber }));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,7 +63,7 @@ export default function UserInfoCard({ id }: Props) {
                 First Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.firstName!}
+                {userInfo.firstName ?? ""}
               </p>
             </div>
 
@@ -56,7 +72,7 @@ export default function UserInfoCard({ id }: Props) {
                 Last Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.lastName!}
+                {userInfo.lastName ?? ""}
               </p>
             </div>
 
@@ -65,7 +81,7 @@ export default function UserInfoCard({ id }: Props) {
                 Email address
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.email!}
+                {userInfo.email ?? ""}
               </p>
             </div>
 
@@ -74,7 +90,7 @@ export default function UserInfoCard({ id }: Props) {
                 Username
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.username}
+                {userInfo.username}
               </p>
             </div>
 
@@ -83,16 +99,16 @@ export default function UserInfoCard({ id }: Props) {
                 Phone
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {phone === "" ? user?.phoneNumber : phone}
+                {userInfo.phoneNumber ?? ""}
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Bio
+                Role
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {displayRole ?? "N/A"}
+                {userInfo.role}
               </p>
             </div>
           </div>
@@ -132,20 +148,19 @@ export default function UserInfoCard({ id }: Props) {
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
               Edit Your Phone Number
             </h4>
-            <p className="mb-6 text-sm text-gray-500 lg:mb-7 dark:text-gray-400">
-              Update your Phone Number to keep your profile up-to-date.
-            </p>
           </div>
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
             <div className="custom-scrollbar h-[100px] overflow-y-auto px-2 pb-3">
               <div className="mt-4">
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Phone</Label>
                     <Input
-                      type="text"
-                      placeholder={phone === "" ? user?.phoneNumber : phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      type="tel"
+                      placeholder={"0123456789"}
+                      {...register("phoneNumber")}
+                      error={!!errors.phoneNumber}
+                      hint={errors.phoneNumber?.message}
                     />
                   </div>
                 </div>
@@ -155,7 +170,7 @@ export default function UserInfoCard({ id }: Props) {
               <Button size="sm" variant="outline" onClick={closeModal}>
                 Close
               </Button>
-              <Button size="sm" onClick={handleSave}>
+              <Button size="sm" disabled={loading || disable} type="submit">
                 Save Changes
               </Button>
             </div>
