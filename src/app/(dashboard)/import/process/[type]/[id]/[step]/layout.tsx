@@ -19,6 +19,7 @@ import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { ImportProvider } from "@/context/ImportContext";
 import Badge from "@/default_components/ui/badge/Badge";
 import { QualityCheckProvider } from "@/context/QualityCheckContext";
+import { ProductVariantProvider } from "@/context/ProductVariantContext";
 
 export default async function ImportProcessLayout({
   params,
@@ -84,58 +85,58 @@ export default async function ImportProcessLayout({
       <ImportProvider initialData={importSheetDetail}>
         <QualityCheckProvider initialData={qcSheetDetail}>
           <div className="flex flex-col gap-6">
+            <InfoBox
+              icon={<FontAwesomeIcon icon={faCircleInfo} />}
+              title={title}
+              description={description}
+            >
+              {type === "SUPPLIER".toLowerCase() ||
+              type === "EXTERNAL_SUPPLIER".toLowerCase() ? (
+                <InfoList>
+                  <ul className="flex flex-col gap-3">
+                    <li>
+                      <span className="font-bold">Name:</span>{" "}
+                      {importSheetDetail.supplier.name}
+                    </li>
+                    <li>
+                      <span className="font-bold">Email:</span>{" "}
+                      {importSheetDetail.supplier.email}
+                    </li>
+                    <li>
+                      <span className="font-bold">Phone:</span>{" "}
+                      {importSheetDetail.supplier.phone}
+                    </li>
+                    <li>
+                      <span className="font-bold">Address:</span>{" "}
+                      {importSheetDetail.supplier.address}
+                    </li>
+                  </ul>
+                </InfoList>
+              ) : (
+                <>
+                  <InfoList className="grid grid-cols-2 gap-6 p-6">
+                    <SmallInfoBox
+                      title="FROM"
+                      data={{
+                        warehouse:
+                          importSheetDetail.sourceWarehouse?.id ?? "N/A",
+                        name: importSheetDetail.sourceWarehouse?.name ?? "N/A",
+                      }}
+                    />
+                    <SmallInfoBox
+                      title="TO"
+                      data={{
+                        warehouse: importSheetDetail.warehouse?.id ?? "N/A",
+                        name: importSheetDetail.warehouse?.name ?? "N/A",
+                      }}
+                    />
+                  </InfoList>
+                </>
+              )}
+            </InfoBox>
+
             {!isProductMappingStep && (
               <>
-                <InfoBox
-                  icon={<FontAwesomeIcon icon={faCircleInfo} />}
-                  title={title}
-                  description={description}
-                >
-                  {type === "SUPPLIER".toLowerCase() ? (
-                    <InfoList>
-                      <ul className="flex flex-col gap-3">
-                        <li>
-                          <span className="font-bold">Name:</span>{" "}
-                          {importSheetDetail.supplier.name}
-                        </li>
-                        <li>
-                          <span className="font-bold">Email:</span>{" "}
-                          {importSheetDetail.supplier.email}
-                        </li>
-                        <li>
-                          <span className="font-bold">Phone:</span>{" "}
-                          {importSheetDetail.supplier.phone}
-                        </li>
-                        <li>
-                          <span className="font-bold">Address:</span>{" "}
-                          {importSheetDetail.supplier.address}
-                        </li>
-                      </ul>
-                    </InfoList>
-                  ) : (
-                    <>
-                      <InfoList className="grid grid-cols-2 gap-6 p-6">
-                        <SmallInfoBox
-                          title="FROM"
-                          data={{
-                            warehouse:
-                              importSheetDetail.sourceWarehouse?.id ?? "N/A",
-                            name:
-                              importSheetDetail.sourceWarehouse?.name ?? "N/A",
-                          }}
-                        />
-                        <SmallInfoBox
-                          title="TO"
-                          data={{
-                            warehouse: importSheetDetail.warehouse?.id ?? "N/A",
-                            name: importSheetDetail.warehouse?.name ?? "N/A",
-                          }}
-                        />
-                      </InfoList>
-                    </>
-                  )}
-                </InfoBox>
-
                 <ProductListInfoBox
                   step={step}
                   productVariants={productVariants}
@@ -145,7 +146,13 @@ export default async function ImportProcessLayout({
 
             <ProgressBar step={progressStep} />
 
-            {children}
+            {!isProductMappingStep ? (
+              children
+            ) : (
+              <ProductVariantProvider initialData={productVariants}>
+                {children}
+              </ProductVariantProvider>
+            )}
 
             <InfoPagination paginationType="process" />
           </div>

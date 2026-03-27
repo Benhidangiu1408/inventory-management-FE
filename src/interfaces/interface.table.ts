@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import {
+  ImportSheetDetailMappingStatus,
   QCSheetDetailStatus,
   UnitConversionResponse,
   UnitResponse,
@@ -112,6 +113,18 @@ export interface ExportQuantityCheckRow {
   quantity: number;
   location: string;
   actions?: ReactNode;
+}
+
+export interface ProductMappingRow {
+  detailId: number;
+  index: number;
+  rawProductName: string;
+  rawSku: string;
+  rawUnit: string;
+  expectedQuantity: number;
+  systemProductId: string;
+  systemUnitId: string;
+  mappingStatus: ImportSheetDetailMappingStatus;
 }
 
 export interface ThirdPartyRequestProduct {

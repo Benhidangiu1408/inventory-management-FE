@@ -10,32 +10,39 @@ import Button from "@/default_components/ui/button/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeCompare, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
-
-interface ProductMappingRow {
-  detailId: number;
-  index: number;
-  rawProductName: string;
-  rawSku: string;
-  rawUnit: string;
-  systemProductId: string;
-  systemUnitId: string;
-}
+import { useCallback, useMemo, useState } from "react";
+import { ProductMappingRow } from "@/interfaces/interface.table";
+import { useProductVariant } from "@/context/ProductVariantContext";
+import {
+  updateImportSheet,
+  updateImportSheetDetail,
+} from "@/actions/inbound-outbound";
+import { ImportSheetDetailMappingStatus } from "@/interfaces/inboundOutboundType";
+import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import { useConfirmModal } from "@/hooks/useConfirmModal";
 
 export default function ProductMappingPage() {
   const router = useRouter();
   const { type, id } = useParams();
   const { importData } = useImport();
+  const { productVariants } = useProductVariant();
+  const { confirm, ConfirmationModal } = useConfirmModal();
 
-  const productOptions = useMemo(
-    () =>
-      importData.details
-        .filter((detail) => detail.productVariant)
-        .map((detail) => ({
-          value: String(detail.productVariant!.id),
-          label: `${detail.productVariant!.product.name} - ${detail.productVariant!.description}`,
-        })),
-    [importData.details],
+  const disableAllButtons = importData.status !== SheetStatus.WAIT_FOR_MAPPING;
+
+  const mappedDetailIdsFromStatus = useMemo(() => {
+    const mapped = importData.details
+      .filter(
+        (d) =>
+          d.mappingStatus === ImportSheetDetailMappingStatus.MANUAL_MAPPED ||
+          d.mappingStatus === ImportSheetDetailMappingStatus.AUTO_MAPPED,
+      )
+      .map((d) => d.id);
+    return new Set<number>(mapped);
+  }, [importData.details]);
+
+  const [mappedDetailIds, setMappedDetailIds] = useState<Set<number>>(
+    () => mappedDetailIdsFromStatus,
   );
 
   const initRows = useMemo<ProductMappingRow[]>(
@@ -46,26 +53,34 @@ export default function ProductMappingPage() {
         rawProductName: detail.rawProductName ?? "N/A",
         rawSku: detail.rawSku ?? "N/A",
         rawUnit: detail.rawUnitName ?? "N/A",
+        expectedQuantity: detail.expectedQuantity ?? 0,
         systemProductId: detail.productVariant
           ? String(detail.productVariant.id)
           : "",
         systemUnitId: String(
           detail.unit?.id ?? detail.productVariant?.product.baseUnit.id ?? "",
         ),
+        mappingStatus: detail.mappingStatus,
       })),
     [importData.details],
   );
 
   const [rows, setRows] = useState<ProductMappingRow[]>(initRows);
-  useEffect(() => {
-    setRows(initRows);
-  }, [initRows]);
+
+  const productOptions = useMemo(
+    () =>
+      (productVariants ?? []).map((productVariant) => ({
+        label: `${productVariant.code} - ${productVariant.product.name} - ${productVariant.description}`,
+        value: String(productVariant.id),
+      })),
+    [productVariants],
+  );
 
   const getUnitOptions = useCallback(
     (row: ProductMappingRow) => {
-      const selectedProduct = importData.details.find(
-        (detail) => String(detail.productVariant?.id) === row.systemProductId,
-      )?.productVariant?.product;
+      const selectedProduct = productVariants?.find(
+        (productVariant) => String(productVariant?.id) === row.systemProductId,
+      )?.product;
 
       if (!selectedProduct) {
         return [];
@@ -82,7 +97,7 @@ export default function ProductMappingPage() {
         })),
       ];
     },
-    [importData.details],
+    [productVariants],
   );
 
   const handleChangeSystemProduct = useCallback(
@@ -90,49 +105,96 @@ export default function ProductMappingPage() {
       setRows((prev) =>
         prev.map((row) => {
           if (row.detailId !== detailId) return row;
-          const foundDetail = importData.details.find(
-            (detail) => String(detail.productVariant?.id) === productId,
+          const foundProductVariant = (productVariants ?? []).find(
+            (productVariant) => productVariant.id === Number(productId),
           );
           return {
             ...row,
             systemProductId: productId,
-            systemUnitId: foundDetail
-              ? String(foundDetail.productVariant?.product.baseUnit.id ?? "")
+            systemUnitId: foundProductVariant
+              ? String(foundProductVariant.product.baseUnit.id ?? "")
               : "",
+            // User changed the selection => not mapped anymore until pressing "Map"
+            mappingStatus: ImportSheetDetailMappingStatus.UNMAPPED,
           };
         }),
       );
+      setMappedDetailIds((prev) => {
+        const next = new Set(prev);
+        next.delete(detailId);
+        return next;
+      });
     },
-    [importData.details],
+    [productVariants],
   );
 
   const handleChangeSystemUnit = (detailId: number, unitId: string) => {
     setRows((prev) =>
       prev.map((row) =>
-        row.detailId === detailId ? { ...row, systemUnitId: unitId } : row,
+        row.detailId === detailId
+          ? {
+              ...row,
+              systemUnitId: unitId,
+              // User changed the selection => not mapped anymore until pressing "Map"
+              mappingStatus: ImportSheetDetailMappingStatus.UNMAPPED,
+            }
+          : row,
       ),
     );
+    setMappedDetailIds((prev) => {
+      const next = new Set(prev);
+      next.delete(detailId);
+      return next;
+    });
   };
 
-  const unmatchedCount = useMemo(
-    () =>
-      rows.filter((row) => !row.systemProductId || !row.systemUnitId).length,
-    [rows],
-  );
+  const unmappedCount = useMemo(() => {
+    if (!rows.length) return 0;
+    return rows.filter((row) => !mappedDetailIds.has(row.detailId)).length;
+  }, [mappedDetailIds, rows]);
 
-  const canContinue = unmatchedCount === 0 && rows.length > 0;
+  const canContinue = unmappedCount === 0 && rows.length > 0;
+
+  const handleMapDetail = useCallback(
+    async (row: ProductMappingRow) => {
+      const data = {
+        productVariantId: Number(row.systemProductId),
+        unitId: Number(row.systemUnitId),
+        expectedQuantity: row.expectedQuantity,
+        mappingStatus: ImportSheetDetailMappingStatus.MANUAL_MAPPED,
+      };
+
+      await updateImportSheetDetail(id as string, row.detailId, data);
+
+      setMappedDetailIds((prev) => {
+        const next = new Set(prev);
+        next.add(row.detailId);
+        return next;
+      });
+
+      setRows((prev) =>
+        prev.map((r) =>
+          r.detailId === row.detailId
+            ? {
+                ...r,
+                mappingStatus: ImportSheetDetailMappingStatus.MANUAL_MAPPED,
+              }
+            : r,
+        ),
+      );
+    },
+    [id],
+  );
 
   const mappingColumns: Column<ProductMappingRow>[] = useMemo(
     () => [
       {
         key: "index",
         label: "#",
-        width: 70,
       },
       {
         key: "rawProductName",
         label: "Raw product name",
-        minWidth: 220,
         render: (value) => (
           <span className="text-sm text-gray-700">{String(value)}</span>
         ),
@@ -140,7 +202,6 @@ export default function ProductMappingPage() {
       {
         key: "rawSku",
         label: "Raw SKU",
-        minWidth: 170,
         render: (value) => (
           <span className="text-sm text-gray-700">{String(value)}</span>
         ),
@@ -148,7 +209,13 @@ export default function ProductMappingPage() {
       {
         key: "rawUnit",
         label: "Raw unit",
-        minWidth: 130,
+        render: (value) => (
+          <span className="text-sm text-gray-700">{String(value)}</span>
+        ),
+      },
+      {
+        key: "expectedQuantity",
+        label: "Expected quantity",
         render: (value) => (
           <span className="text-sm text-gray-700">{String(value)}</span>
         ),
@@ -161,11 +228,12 @@ export default function ProductMappingPage() {
           <div className="flex items-center gap-2">
             <Select
               value={String(value)}
+              disabled={disableAllButtons}
               onChange={(e) =>
                 handleChangeSystemProduct(row.detailId, e.target.value)
               }
               options={productOptions}
-              placeholder="-- Select product --"
+              placeholder="Select product"
               className="h-[38px] flex-1 py-0 text-sm"
             />
             <Button
@@ -173,6 +241,7 @@ export default function ProductMappingPage() {
               variant="outline"
               type="button"
               className="h-[38px] text-sm"
+              disabled={disableAllButtons}
             >
               <FontAwesomeIcon icon={faPlus} />
               New
@@ -188,6 +257,7 @@ export default function ProductMappingPage() {
           return (
             <Select
               value={String(value)}
+              disabled={disableAllButtons}
               onChange={(e) =>
                 handleChangeSystemUnit(row.detailId, e.target.value)
               }
@@ -199,31 +269,67 @@ export default function ProductMappingPage() {
         },
       },
       {
-        key: "detailId",
-        label: "Status",
+        key: "mappingStatus",
+        label: "Mapping",
         minWidth: 140,
         render: (_, row) => {
-          const isMapped = Boolean(row.systemProductId && row.systemUnitId);
-
-          return isMapped ? (
-            <span className="text-success-600 inline-flex items-center gap-2 text-sm font-medium">
-              <span className="bg-success-600 h-1.5 w-1.5 rounded-full" />
-              Mapped
-            </span>
-          ) : (
-            <span className="text-warning-600 inline-flex items-center gap-2 text-sm font-medium">
-              <span className="bg-warning-600 h-1.5 w-1.5 rounded-full" />
-              Pending
-            </span>
+          const isMappable = Boolean(row.systemProductId && row.systemUnitId);
+          const isMapped = mappedDetailIds.has(row.detailId);
+          return (
+            <Button
+              size="sm"
+              type="button"
+              className="h-[38px] text-sm"
+              disabled={disableAllButtons || !isMappable || isMapped}
+              variant={isMapped ? "outline" : "primary"}
+              onClick={() => handleMapDetail(row)}
+            >
+              {isMapped ||
+              row.mappingStatus ===
+                ImportSheetDetailMappingStatus.MANUAL_MAPPED ||
+              row.mappingStatus === ImportSheetDetailMappingStatus.AUTO_MAPPED
+                ? "Mapped"
+                : "Map"}
+            </Button>
           );
         },
       },
     ],
-    [getUnitOptions, handleChangeSystemProduct, productOptions],
+    [
+      disableAllButtons,
+      getUnitOptions,
+      handleChangeSystemProduct,
+      handleMapDetail,
+      mappedDetailIds,
+      productOptions,
+    ],
   );
+
+  const handleConfirmProductMapping = async () => {
+    const data = {
+      status: SheetStatus.CREATED,
+    };
+
+    await updateImportSheet(id as string, data);
+
+    router.push(`/import/process/${type}/${id}/quantity-check`);
+  };
+
+  const handleOpenConfirmModal = async () => {
+    const isConfirmed = await confirm({
+      title: "Confirm Product Mapping",
+      message:
+        "Are you sure you want to confirm the product mapping for all rows?",
+    });
+
+    if (!isConfirmed) return;
+
+    await handleConfirmProductMapping();
+  };
 
   return (
     <div>
+      {ConfirmationModal}
       <InfoBox
         icon={<FontAwesomeIcon icon={faCodeCompare} />}
         title="Product Mapping"
@@ -233,7 +339,7 @@ export default function ProductMappingPage() {
           <div className="flex justify-end">
             <div className="bg-warning-50 text-warning-600 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium">
               <span className="bg-warning-600 h-1.5 w-1.5 rounded-full" />
-              {unmatchedCount} unmatched
+              {unmappedCount} unmapped
             </div>
           </div>
 
@@ -249,22 +355,12 @@ export default function ProductMappingPage() {
             </p>
             <div className="flex items-center gap-2">
               <Button
-                variant="outline"
                 type="button"
                 className="h-[38px] text-sm"
-                onClick={() => router.back()}
+                disabled={disableAllButtons || !canContinue}
+                onClick={handleOpenConfirmModal}
               >
-                Back
-              </Button>
-              <Button
-                type="button"
-                className="h-[38px] text-sm"
-                disabled={!canContinue}
-                onClick={() =>
-                  router.push(`/import/process/${type}/${id}/quantity-check`)
-                }
-              >
-                Next: Quantity check
+                Confirm Product Mapping
               </Button>
             </div>
           </div>

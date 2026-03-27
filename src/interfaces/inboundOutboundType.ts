@@ -18,6 +18,13 @@ export enum QCSheetDetailStatus {
   SKIPPED = "SKIPPED",
 }
 
+export enum ImportSheetDetailMappingStatus {
+  UNMAPPED = "UNMAPPED",
+  AUTO_MAPPED = "AUTO_MAPPED",
+  MANUAL_MAPPED = "MANUAL_MAPPED",
+  CREATED_NEW = "CREATED_NEW",
+}
+
 export enum ImportSheetType {
   INTERNAL = "INTERNAL",
   FACTORY = "FACTORY",
@@ -121,6 +128,7 @@ export interface ProductRepsonse {
 export interface ProductVariantResponse {
   id: number;
   description: string;
+  code: string;
   product: ProductRepsonse;
 }
 
@@ -164,6 +172,7 @@ export interface ImportSheetDetailResponse {
   rawProductName: string;
   rawUnitName: string;
   rawSku: string;
+  mappingStatus: ImportSheetDetailMappingStatus;
 }
 
 export interface ImportSheetDetailCreateReq {
@@ -185,8 +194,10 @@ export interface ExportSheetDetailCreateReq {
 export interface ImportSheetDetailUpdateReq {
   productVariantId?: number;
   expectedQuantity?: number;
+  unitId?: number;
   actualQuantity?: number;
   reason?: string;
+  mappingStatus?: ImportSheetDetailMappingStatus;
 }
 
 export interface ImportSheetResponse {
