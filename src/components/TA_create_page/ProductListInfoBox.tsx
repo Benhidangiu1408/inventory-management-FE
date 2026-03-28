@@ -11,6 +11,7 @@ import CustomizableTable, { Column } from "../table/CustomizableTable";
 import {
   ImportSheetDetailCreateReq,
   ImportSheetDetailUpdateReq,
+  ImportSheetType,
   ProductVariantResponse,
 } from "@/interfaces/inboundOutboundType";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
@@ -142,7 +143,9 @@ export default function ProductListInfoBox({
           step={step}
           showAddButton={
             step === "quantity-check" &&
-            importData.status === SheetStatus.CREATED
+            importData.status === SheetStatus.CREATED &&
+            importData.type !== ImportSheetType.EXTERNAL_SUPPLIER &&
+            importData.type !== ImportSheetType.INTERNAL
           }
           startIcon={<FontAwesomeIcon icon={faPlus} />}
           width={"max-w-[1200px]"}

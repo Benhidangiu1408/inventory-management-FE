@@ -122,6 +122,7 @@ export interface ProductRepsonse {
   name: string;
   code: string;
   baseUnit: UnitResponse;
+  itemUnit: UnitResponse;
   unitConversions: UnitConversionResponse[];
 }
 

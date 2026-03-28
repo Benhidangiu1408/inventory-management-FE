@@ -9,7 +9,7 @@ import Select from "@/default_components/form/Select";
 import Button from "@/default_components/ui/button/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeCompare, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { ProductMappingRow } from "@/interfaces/interface.table";
 import { useProductVariant } from "@/context/ProductVariantContext";
@@ -23,6 +23,7 @@ import { useConfirmModal } from "@/hooks/useConfirmModal";
 
 export default function ProductMappingPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const { type, id } = useParams();
   const { importData } = useImport();
   const { productVariants } = useProductVariant();
@@ -186,6 +187,21 @@ export default function ProductMappingPage() {
     [id],
   );
 
+  const handleOpenCreateProduct = useCallback(() => {
+    router.push(
+      `/catalog/product/new?returnTo=${encodeURIComponent(pathname)}`,
+    );
+  }, [router, pathname]);
+
+  const handleOpenCreateVariant = useCallback(
+    (productId: number) => {
+      router.push(
+        `/catalog/product/${productId}/variant/new?returnTo=${encodeURIComponent(pathname)}`,
+      );
+    },
+    [router, pathname],
+  );
+
   const mappingColumns: Column<ProductMappingRow>[] = useMemo(
     () => [
       {
@@ -223,31 +239,58 @@ export default function ProductMappingPage() {
       {
         key: "systemProductId",
         label: "System product",
-        minWidth: 340,
-        render: (value, row) => (
-          <div className="flex items-center gap-2">
-            <Select
-              value={String(value)}
-              disabled={disableAllButtons}
-              onChange={(e) =>
-                handleChangeSystemProduct(row.detailId, e.target.value)
-              }
-              options={productOptions}
-              placeholder="Select product"
-              className="h-[38px] flex-1 py-0 text-sm"
-            />
-            <Button
-              size="sm"
-              variant="outline"
-              type="button"
-              className="h-[38px] text-sm"
-              disabled={disableAllButtons}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-              New
-            </Button>
-          </div>
-        ),
+        minWidth: 420,
+        render: (value, row) => {
+          const selectedVariant = productVariants?.find(
+            (v) => String(v.id) === row.systemProductId,
+          );
+          const parentProductId = selectedVariant?.product.id;
+
+          return (
+            <div className="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+              <div className="min-w-0 flex-1">
+                <Select
+                  value={String(value)}
+                  disabled={disableAllButtons}
+                  onChange={(e) =>
+                    handleChangeSystemProduct(row.detailId, e.target.value)
+                  }
+                  options={productOptions}
+                  placeholder="Select variant"
+                  className="h-[38px] w-full py-0 text-sm"
+                />
+              </div>
+              <div className="grid w-full grid-cols-2 gap-1 sm:flex sm:w-auto sm:shrink-0">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  type="button"
+                  className="h-[38px] justify-center text-sm sm:min-w-[6.75rem]"
+                  disabled={disableAllButtons}
+                  onClick={handleOpenCreateProduct}
+                  title="Create a new catalog product"
+                >
+                  <FontAwesomeIcon icon={faPlus} className="mr-1" />
+                  Product
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  type="button"
+                  className="h-[38px] justify-center text-sm sm:min-w-[6.75rem]"
+                  disabled={disableAllButtons || parentProductId === undefined}
+                  onClick={() =>
+                    parentProductId !== undefined &&
+                    handleOpenCreateVariant(parentProductId)
+                  }
+                  title="Add a variant under the same product as the selected row (pick any existing variant of that product first)"
+                >
+                  Variant
+                </Button>
+              </div>
+            </div>
+          );
+        },
       },
       {
         key: "systemUnitId",
@@ -300,8 +343,11 @@ export default function ProductMappingPage() {
       getUnitOptions,
       handleChangeSystemProduct,
       handleMapDetail,
+      handleOpenCreateProduct,
+      handleOpenCreateVariant,
       mappedDetailIds,
       productOptions,
+      productVariants,
     ],
   );
 

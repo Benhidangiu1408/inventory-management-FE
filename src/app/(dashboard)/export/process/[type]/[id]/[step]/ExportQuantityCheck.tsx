@@ -164,6 +164,7 @@ export default function ExportQuantityCheck() {
       ),
       unit: detail.unit,
       baseUnit: detail.productVariant.product.baseUnit,
+      itemUnit: detail.productVariant.product.itemUnit,
       conversionRate:
         detail.productVariant.product.unitConversions.find(
           (unitConversion) =>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Plus, Trash2 } from "lucide-react";
@@ -22,6 +22,7 @@ export const CreateVariantForm = ({
   availableAttributes: AttributeResponse[];
 }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const productId = useParams().id;
   // Transform attributes for the Select component
@@ -70,7 +71,15 @@ export const CreateVariantForm = ({
       }
       await ProductCreateVariantAction(payload);
       toast.success("Variant created successfully!");
-      router.replace("/catalog/product");
+      const raw = searchParams.get("returnTo");
+      let nextPath = "/catalog/product";
+      if (raw) {
+        const decoded = decodeURIComponent(raw);
+        if (decoded.startsWith("/") && !decoded.startsWith("//")) {
+          nextPath = decoded;
+        }
+      }
+      router.replace(nextPath);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message ?? "An unexpected error occurred");

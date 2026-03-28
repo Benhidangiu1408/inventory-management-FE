@@ -1,5 +1,6 @@
 import { CreateVariantForm } from "@/components/form/CreateVariantForm";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import { Suspense } from "react";
 import { AttributeResponse } from "@/interfaces/warehouseManagementType";
 import { attributesService } from "@/services/WarehouseManagementService";
 
@@ -25,7 +26,9 @@ export default async function CreateVariantPage({
         pageTitle="Create Product Variant"
         filters={["catalog", "variant", `${id}`]}
       />
-      <CreateVariantForm availableAttributes={attributeData} />
+      <Suspense fallback={<div className="mt-4 text-sm text-gray-600">Loading…</div>}>
+        <CreateVariantForm availableAttributes={attributeData} />
+      </Suspense>
     </div>
   );
 }
