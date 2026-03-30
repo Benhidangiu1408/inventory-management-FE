@@ -415,6 +415,17 @@ export default function ProcessOrderDetailForm({
               <input
                 type="radio"
                 name="faultType"
+                value={FaultProcessOrderType.WAREHOUSE_TRANSFER}
+                checked={faultType === FaultProcessOrderType.WAREHOUSE_TRANSFER}
+                onChange={() => setFaultType(FaultProcessOrderType.WAREHOUSE_TRANSFER)}
+              />
+              Warehouse Transfer
+            </label>
+
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="faultType"
                 value={FaultProcessOrderType.OTHER}
                 checked={
                   faultType === FaultProcessOrderType.OTHER ||

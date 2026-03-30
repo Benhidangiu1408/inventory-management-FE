@@ -404,6 +404,8 @@ export type FaultBatch = {
   code: string;
   date: string; // DD-MM-YYYY
   status: "Pending" | "Completed" | "In progress" | "Approve";
+  taskId: string;
+  taskName?: string;
   checked: boolean; // represents the checkbox in Actions
 };
 
