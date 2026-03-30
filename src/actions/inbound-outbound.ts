@@ -98,6 +98,13 @@ export async function createExportSheetDetail(
   );
 }
 
+export async function updateExportSheet(
+  exportSheetId: string | number,
+  data: ExportSheetUpdateReq,
+) {
+  return await inboundOutboundService.updateExportSheet(exportSheetId, data);
+}
+
 export async function updateExportSheetDetail(
   exportSheetId: string | number,
   exportSheetDetailId: string | number,

@@ -20,6 +20,8 @@ import { ImportProvider } from "@/context/ImportContext";
 import Badge from "@/default_components/ui/badge/Badge";
 import { QualityCheckProvider } from "@/context/QualityCheckContext";
 import { ProductVariantProvider } from "@/context/ProductVariantContext";
+import CancelSheetButton from "@/components/InboundOutboundClient/CancelSheetButton";
+import { SheetStatus } from "@/interfaces/inventoryManagementType";
 
 export default async function ImportProcessLayout({
   params,
@@ -78,8 +80,13 @@ export default async function ImportProcessLayout({
         status={<InfoBoxStatus icon={icon} type={type.replace("_", " ")} />}
       />
 
-      <div className="mb-6">
-        Sheet Status: <Badge>{importSheetDetail.status}</Badge>
+      <div className="mb-6 flex items-center justify-between">
+        <div className="">
+          Sheet Status: <Badge>{importSheetDetail.status}</Badge>
+        </div>
+        <CancelSheetButton
+          disabled={importSheetDetail.status !== SheetStatus.CREATED}
+        />
       </div>
 
       <ImportProvider initialData={importSheetDetail}>

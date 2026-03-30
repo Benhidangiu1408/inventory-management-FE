@@ -35,6 +35,7 @@ export default function ExportQuantityCheck() {
   const params = useParams();
   const { type, id } = params;
   const { exportData, setExportData } = useExport();
+  const isRejected = exportData.status === SheetStatus.REJECTED;
   const [scanningRow, setScanningRow] =
     useState<ExportQuantityCheckParentRow | null>(null);
   const [itemBarCode, setItemBarCode] = useState("");
@@ -62,8 +63,9 @@ export default function ExportQuantityCheck() {
           <Button
             variant="primary"
             size="sm"
-            disabled={isLoading}
+            disabled={isLoading || isRejected}
             onClick={async () => {
+              if (isRejected) return;
               setLoadingBatchId(row.batchId);
               try {
                 console.log(row.batchId);
@@ -100,7 +102,11 @@ export default function ExportQuantityCheck() {
       <Button
         size="sm"
         variant="outline"
-        onClick={() => setScanningRow(row)}
+        disabled={isRejected}
+        onClick={() => {
+          if (isRejected) return;
+          setScanningRow(row);
+        }}
         className="h-[35px] w-full"
         startIcon={<FontAwesomeIcon icon={faBarcode} />}
       >
@@ -193,6 +199,7 @@ export default function ExportQuantityCheck() {
   };
 
   const handleScan = async () => {
+    if (isRejected) return;
     if (!scanningRow) return;
     // scanningRow.detailId = ID dòng phiếu xuất đang scan
     // itemBarCode = mã vạch vừa nhập
@@ -252,9 +259,10 @@ export default function ExportQuantityCheck() {
             onChange={(e) => setItemBarCode(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleScan()}
             className="h-11"
+            disabled={isRejected}
           />
           <div className="flex justify-end gap-2">
-            <Button size="md" onClick={handleScan}>
+            <Button size="md" onClick={handleScan} disabled={isRejected}>
               Scan
             </Button>
           </div>
@@ -305,14 +313,20 @@ export default function ExportQuantityCheck() {
           />
 
           <div className="flex justify-end">
-            <Link href={`/export/process/${type}/${id}/confirm`}>
-              <Button
-                size="md"
-                endIcon={<FontAwesomeIcon icon={faArrowRight} />}
-              >
+            {isRejected ? (
+              <Button size="md" endIcon={<FontAwesomeIcon icon={faArrowRight} />} disabled>
                 Confirm
               </Button>
-            </Link>
+            ) : (
+              <Link href={`/export/process/${type}/${id}/confirm`}>
+                <Button
+                  size="md"
+                  endIcon={<FontAwesomeIcon icon={faArrowRight} />}
+                >
+                  Confirm
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </InfoBox>
