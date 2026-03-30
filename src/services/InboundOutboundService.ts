@@ -164,6 +164,16 @@ export const inboundOutboundService = {
     );
   },
 
+  updateExportSheet: async (
+    id: string | number,
+    data: ExportSheetUpdateReq,
+  ) => {
+    return await apiClient.patch<ExportSheetResponse>(
+      `/inbound-outbound/v1/export-sheet/${id}`,
+      data,
+    );
+  },
+
   createExportSheetDetail: async (
     exportSheetId: string | number,
     data: ExportSheetDetailCreateReq,

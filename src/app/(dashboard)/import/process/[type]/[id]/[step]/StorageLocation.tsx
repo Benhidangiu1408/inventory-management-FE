@@ -64,6 +64,7 @@ export default function StorageLocationPage() {
   const { confirm, ConfirmationModal } = useConfirmModal();
 
   const isCompleted = importData.status === SheetStatus.COMPLETED;
+  const isRejected = importData.status === SheetStatus.REJECTED;
 
   const options: Option[] = locations.map((location) => ({
     value: String(location.id),
@@ -120,7 +121,7 @@ export default function StorageLocationPage() {
       render: (value, row) => (
         <Select
           className="h-[38px]"
-          disabled={isCompleted}
+          disabled={isCompleted || isRejected}
           value={value}
           options={options}
           onChange={(e) =>
@@ -275,7 +276,10 @@ export default function StorageLocationPage() {
             />
           </div>
           <div className="flex justify-end">
-            <Button onClick={handleOpenConfirmModal} disabled={isCompleted}>
+            <Button
+              onClick={handleOpenConfirmModal}
+              disabled={isCompleted || isRejected}
+            >
               Confirm Storage Location
             </Button>
           </div>

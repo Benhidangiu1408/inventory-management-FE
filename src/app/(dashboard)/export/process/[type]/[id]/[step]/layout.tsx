@@ -15,6 +15,8 @@ import ExportProductListInfoBox from "@/components/TA_create_page/ExportProductL
 import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { ExportProvider } from "@/context/ExportContext";
 import Badge from "@/default_components/ui/badge/Badge";
+import CancelSheetButton from "@/components/InboundOutboundClient/CancelSheetButton";
+import { SheetStatus } from "@/interfaces/inventoryManagementType";
 
 export default async function ExportProcessLayout({
   params,
@@ -71,8 +73,14 @@ export default async function ExportProcessLayout({
         status={<InfoBoxStatus icon={icon} type={type} />}
       />
 
-      <div className="mb-6">
-        Sheet Status: <Badge>{exportSheetDetail.status}</Badge>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          Sheet Status: <Badge>{exportSheetDetail.status}</Badge>
+        </div>
+        <CancelSheetButton
+          type="export"
+          disabled={exportSheetDetail.status !== SheetStatus.CREATED}
+        />
       </div>
 
       <ExportProvider initialData={exportSheetDetail}>

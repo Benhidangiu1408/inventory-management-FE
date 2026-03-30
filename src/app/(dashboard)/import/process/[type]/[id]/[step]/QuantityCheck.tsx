@@ -14,15 +14,12 @@ import {
   ImportSheetDetailUpdateReq,
   ImportSheetUpdateReq,
 } from "@/interfaces/inboundOutboundType";
-import {
-  QuantityCheckParentRow,
-  QuantityCheckRow,
-} from "@/interfaces/interface.table";
+import { QuantityCheckRow } from "@/interfaces/interface.table";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function ImportProcessPage() {
@@ -96,6 +93,18 @@ export default function ImportProcessPage() {
     });
 
     if (!isConfirmed) return;
+
+    const invalidRows = rows.filter(
+      (row) =>
+        row.actualQuantity !== row.expectedQuantity && !row.reason?.trim(),
+    );
+
+    if (invalidRows.length > 0) {
+      toast.error(
+        `${invalidRows.length} batches have extra or missing quantities. Please provide a reason.`,
+      );
+      return;
+    }
 
     await handleConfirm();
   };

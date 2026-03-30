@@ -41,18 +41,20 @@ export default function ProcessPagination() {
         {processList.map((item) => {
           const isActive = item.value === step;
           const disabledByStatus =
-            importData.status === SheetStatus.CREATED
-              ? item.value !== "quantity-check" &&
-                item.value !== "product-mapping"
-              : importData.status === SheetStatus.WAIT_FOR_MAPPING
-                ? item.value === "quantity-check" ||
-                  item.value === "quality-check" ||
-                  item.value === "storage-location"
-                : importData.status === SheetStatus.IN_PROGRESS
-                  ? item.value === "storage-location"
-                  : importData.status === SheetStatus.APPROVED
-                    ? false
-                    : false;
+            importData.status === SheetStatus.REJECTED
+              ? true
+              : importData.status === SheetStatus.CREATED
+                ? item.value !== "quantity-check" &&
+                  item.value !== "product-mapping"
+                : importData.status === SheetStatus.WAIT_FOR_MAPPING
+                  ? item.value === "quantity-check" ||
+                    item.value === "quality-check" ||
+                    item.value === "storage-location"
+                  : importData.status === SheetStatus.IN_PROGRESS
+                    ? item.value === "storage-location"
+                    : importData.status === SheetStatus.APPROVED
+                      ? false
+                      : false;
           const baseClasses =
             "shadow-theme-xs flex h-10 items-center justify-center rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]";
           const stateClasses = isActive

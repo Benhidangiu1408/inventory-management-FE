@@ -101,22 +101,6 @@ export default function List({ type, data, exportData }: ListProps) {
       key: "warehouse",
       label: "Warehouse",
     },
-    // {
-    //   key: "receiver",
-    //   label: "Receiver",
-    // },
-    // {
-    //   key: "createdBy",
-    //   label: "Created By",
-    // },
-    // {
-    //   key: "totalQuantity",
-    //   label: "Total Quantity",
-    // },
-    // {
-    //   key: "totalValue",
-    //   label: "Total Value",
-    // },
     {
       key: "status",
       label: "Status",
@@ -126,6 +110,8 @@ export default function List({ type, data, exportData }: ListProps) {
             return <Badge color="light">{value}</Badge>;
           case SheetStatus.IN_PROGRESS:
             return <Badge color="warning">{value}</Badge>;
+          case SheetStatus.REJECTED:
+            return <Badge color="error">{value}</Badge>;
           case SheetStatus.APPROVED:
             return <Badge color="info">{value}</Badge>;
           case SheetStatus.COMPLETED:
@@ -190,6 +176,8 @@ export default function List({ type, data, exportData }: ListProps) {
         switch (row.status) {
           case SheetStatus.CREATED:
             return <Badge color="light">{row.status}</Badge>;
+          case SheetStatus.REJECTED:
+            return <Badge color="error">{row.status}</Badge>;
           case SheetStatus.WAIT_FOR_MAPPING:
             return <Badge color="light">{row.status.replace(/_/g, " ")}</Badge>;
           case SheetStatus.IN_PROGRESS:
