@@ -323,6 +323,11 @@ export const userHeaders = (
     label: "Status",
     key: "status",
     width: 120,
+    render: (value) => (
+      <Badge variant={"solid"} color={value === "ACTIVE" ? "success" : "error"}>
+        {value as string}
+      </Badge>
+    ),
   },
   {
     label: "Created Date",

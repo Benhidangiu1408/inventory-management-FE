@@ -52,12 +52,9 @@ export const userManagementService = {
   deactivateAccount: async (username: string) => {
     return apiClient.put<void>(`/users/${username}/deactivate`, null);
   },
-  //   deleteAccount: async (username: string) => {
-  //     return apiClient.delete<void>(`/users/${username}`, [], {
-  //       headers: { Authorization: authToken },
-  //       cache: "no-store",
-  //     });
-  //   },
+  deleteAccount: async (username: string) => {
+    return apiClient.delete<void>(`/users/${username}`, null);
+  },
   assignRole: async (
     roleId: number,
     assignedUserId: number,
