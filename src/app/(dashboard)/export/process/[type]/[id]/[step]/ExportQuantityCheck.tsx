@@ -112,10 +112,41 @@ export default function ExportQuantityCheck() {
   const mainColumns: Column<ExportQuantityCheckParentRow>[] = [
     { key: "productName", label: "Product Name" },
     { key: "description", label: "Description" },
-    { key: "expectedQuantity", label: "Expected Quantity" },
-    { key: "expectedBaseQuantity", label: "Expected Base Quantity" },
-    { key: "scannedQuantity", label: "Scanned Quantity" },
-    { key: "scannedBaseQuantity", label: "Scanned Base Quantity" },
+    {
+      key: "expectedQuantity",
+      label: "Expected Quantity",
+      render: (value, row) => {
+        return (
+          <div>
+            {row.expectedQuantity} {row.unit.abb}{" "}
+            <span>
+              ({row.expectedBaseQuantity} {row.baseUnit.abb})
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      key: "scannedQuantity",
+      label: "Scanned Quantity",
+      render: (value, row) => {
+        const realScannedQuantity =
+          row.scannedBaseQuantity / row.conversionRate;
+
+        const isValid =
+          realScannedQuantity > 0 && Number.isInteger(realScannedQuantity);
+
+        return (
+          <div>
+            {isValid ? realScannedQuantity : 0} {row.unit.abb}{" "}
+            <span>
+              ({row.scannedBaseQuantity} {row.baseUnit.abb})
+            </span>
+          </div>
+        );
+      },
+    },
+    // { key: "scannedBaseQuantity", label: "Scanned Base Quantity" },
     ...(exportData.status !== SheetStatus.COMPLETED ? [scanItemColumn] : []),
   ];
 
@@ -131,6 +162,16 @@ export default function ExportQuantityCheck() {
         (sum, item) => sum + (item.quantity ?? 0),
         0,
       ),
+      unit: detail.unit,
+      baseUnit: detail.productVariant.product.baseUnit,
+      itemUnit: detail.productVariant.product.itemUnit,
+      conversionRate:
+        detail.productVariant.product.unitConversions.find(
+          (unitConversion) =>
+            unitConversion.fromUnit.id === detail.unit.id &&
+            unitConversion.toUnit.id ===
+              detail.productVariant.product.baseUnit.id,
+        )?.conversionRate ?? 1,
       locations: detail.batches.map((item) => ({
         detailId: detail.id,
         batchId: item.batch.id,

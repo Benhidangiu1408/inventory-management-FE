@@ -1,7 +1,6 @@
 "use client";
 
 import { PROCESS_MAP } from "@/constants/constants";
-import { useProcessContext } from "@/context/ProcessContext";
 
 export const ProgressBarItem = ({
   process,
@@ -26,29 +25,13 @@ export const ProgressBarItem = ({
 export default function ProgressBar({
   step,
 }: {
-  step: "quantity-check" | "quality-check" | "storage-location";
+  step:
+    | "product-mapping"
+    | "quantity-check"
+    | "quality-check"
+    | "storage-location";
 }) {
   const currentOrder = PROCESS_MAP[step];
-  // console.log(currentOrder);
-  // const { process, processOrder } = useProcessContext();
-
-  // const processList = [
-  //   {
-  //     label: "Quantity Check",
-  //     value: "quantity-check",
-  //     order: 1,
-  //   },
-  //   {
-  //     label: "Quality Check",
-  //     value: "quality-check",
-  //     order: 2,
-  //   },
-  //   {
-  //     label: "Storage Location",
-  //     value: "storage-location",
-  //     order: 3,
-  //   },
-  // ];
 
   return (
     <div className="flex gap-6 rounded-2xl border border-gray-200 bg-white px-6 py-5">

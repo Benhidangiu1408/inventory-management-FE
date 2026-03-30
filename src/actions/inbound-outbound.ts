@@ -43,6 +43,16 @@ export async function updateImportSheetDetail(
   );
 }
 
+export async function updateImportSheet(
+  importSheetId: string | number,
+  data: ImportSheetUpdateReq,
+) {
+  return await inboundOutboundService.updateImportSheet(
+    Number(importSheetId),
+    data,
+  );
+}
+
 export async function confirmImportSheet(
   importSheetId: number,
   data: ImportSheetUpdateReq,

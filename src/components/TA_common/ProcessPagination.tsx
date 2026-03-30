@@ -2,6 +2,7 @@
 
 import { useImport } from "@/context/ImportContext";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import { ImportSheetType } from "@/interfaces/inboundOutboundType";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -11,7 +12,7 @@ export default function ProcessPagination() {
 
   const { importData } = useImport();
 
-  const processList: { label: string; value: string }[] = [
+  const baseProcessList: { label: string; value: string }[] = [
     {
       label: "Quantity Check",
       value: "quantity-check",
@@ -26,6 +27,14 @@ export default function ProcessPagination() {
     },
   ];
 
+  const processList: { label: string; value: string }[] =
+    importData.type === ImportSheetType.EXTERNAL_SUPPLIER
+      ? [
+          { label: "Product Mapping", value: "product-mapping" },
+          ...baseProcessList,
+        ]
+      : baseProcessList;
+
   return (
     <div>
       <div className="my-3 flex w-full items-center justify-center gap-3">
@@ -33,12 +42,17 @@ export default function ProcessPagination() {
           const isActive = item.value === step;
           const disabledByStatus =
             importData.status === SheetStatus.CREATED
-              ? item.value !== "quantity-check"
-              : importData.status === SheetStatus.IN_PROGRESS
-                ? item.value === "storage-location"
-                : importData.status === SheetStatus.APPROVED
-                  ? false
-                  : false;
+              ? item.value !== "quantity-check" &&
+                item.value !== "product-mapping"
+              : importData.status === SheetStatus.WAIT_FOR_MAPPING
+                ? item.value === "quantity-check" ||
+                  item.value === "quality-check" ||
+                  item.value === "storage-location"
+                : importData.status === SheetStatus.IN_PROGRESS
+                  ? item.value === "storage-location"
+                  : importData.status === SheetStatus.APPROVED
+                    ? false
+                    : false;
           const baseClasses =
             "shadow-theme-xs flex h-10 items-center justify-center rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]";
           const stateClasses = isActive
