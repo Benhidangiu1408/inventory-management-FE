@@ -243,4 +243,8 @@ export const faultOrderService = {
       data,
     );
   },
+  assignTaskToFaultBatch: async (faultBatchId: number, taskId?: number | null) => {
+    const query = taskId === null || taskId === undefined ? "" : `?taskId=${taskId}`;
+    return apiClient.put<FaultBatch>(`/inventory/v1/fault-batches/${faultBatchId}/task${query}`, null);
+  },
 };

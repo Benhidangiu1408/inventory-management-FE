@@ -209,6 +209,7 @@ export default async function FaultOrderDetailPage({
             users={users ?? []}
             initialAnalyzerId={data.analyzerId}
             initialAssigneeId={data.taskAssigneeId}
+            initialQuestionCreatorId={data.questionCreatorId}
           />
         </div>
         <FaultOrderDetailClient

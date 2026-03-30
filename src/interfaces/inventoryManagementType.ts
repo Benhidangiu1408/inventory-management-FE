@@ -99,6 +99,7 @@ export enum FaultProcessOrderType {
   CANCELLED = "CANCELLED",
   OTHER = "OTHER",
   SHORTAGE = "SHORTAGE",
+  WAREHOUSE_TRANSFER = "WAREHOUSE_TRANSFER",  
 }
 
 export enum TaskStatus {
@@ -171,6 +172,9 @@ export interface FaultOrderSummary {
   analyzerUsername?: string | null;
   taskAssigneeId?: number | null;
   taskAssigneeUsername?: string | null;
+  questionCreatorId?: number | null;
+  questionCreatorUsername?: string | null;
+  
   faultBatches?: FaultBatch[];
   processOrders?: FaultBatchProcessOrderSummary[];
 }
@@ -192,6 +196,7 @@ export interface FaultBatch extends Batch {
   faultOrder?: FaultOrderSummary | null;
   faultBatchProcessOrder?: FaultBatchProcessOrderSummary | null;
   faultBatchProcessOrderId?: number | null;
+  taskId?: number | null;
 }
 
 export interface FaultOrderDetail extends FaultOrderSummary {
@@ -249,6 +254,7 @@ export interface CreateFaultOrderRequest {
 export interface AssignFaultOrderUsersRequest {
   analyzerUserId?: number | null;
   assigneeUserId?: number | null;
+  questionCreatorUserId?: number | null;
 }
 
 export interface UpdateFaultOrderStatusRequest {

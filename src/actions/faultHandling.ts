@@ -224,3 +224,15 @@ export async function markFaultBatchesFixedAction(
 		return { data: null, error: getErrorMessage(error) };
 	}
 }
+
+export async function assignTaskToFaultBatchAction(
+	faultBatchId: number,
+	taskId?: number | null,
+) {
+	try {
+		const response = await faultOrderService.assignTaskToFaultBatch(faultBatchId, taskId);
+		return { data: response, error: null };
+	} catch (error: unknown) {
+		return { data: null, error: getErrorMessage(error) };
+	}
+}
