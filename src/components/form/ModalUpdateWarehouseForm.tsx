@@ -22,7 +22,7 @@ interface WarehouseFormProps {
   setLoading: (loading: boolean) => void;
   setDisable: (loading: boolean) => void;
   onSuccess: () => void;
-  initialData?: WarehouseDetail;
+  initialData: WarehouseDetail;
 }
 
 const UpdateWarehouseForm = ({
@@ -64,9 +64,10 @@ const UpdateWarehouseForm = ({
         address: data.address,
         type: data.type,
         status: data.status,
+        managerId: data.managerId,
       };
       await warehouseUpdateAction(Number(initialData?.id), payload);
-      toast.success("Warehouse created successfully!");
+      toast.success("Warehouse update successfully!");
       router.refresh();
       onSuccess();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

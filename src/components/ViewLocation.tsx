@@ -11,13 +11,16 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { locationGetByTypeAction } from "@/actions/system-info";
+import { ModalCreateLocationForm } from "./form/ModalCreateLocationForm";
 
 const TableFetch = ({
   warehouseId,
   type,
+  refreshKey,
 }: {
   warehouseId: number;
   type: LocationType;
+  refreshKey: number;
 }) => {
   const [data, setData] = useState<LocationResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +41,7 @@ const TableFetch = ({
     };
 
     fetchData();
-  }, [type, warehouseId]);
+  }, [type, warehouseId, refreshKey]);
 
   return (
     <CustomizableTable
@@ -59,17 +62,30 @@ export function ViewLocation() {
     LocationType.SHELF,
     LocationType.BIN,
   ];
+  const [refreshKey, setRefreshKey] = useState(0);
+  // Create a function to trigger the refresh
+  const handleLocationCreated = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
   const headers = locationTypes.map((type) => ({
     title: type.charAt(0) + type.slice(1).toLowerCase(),
   }));
 
   const contents = locationTypes.map((type) => (
-    <TableFetch key={type} warehouseId={id} type={type} />
+    <TableFetch
+      key={type}
+      warehouseId={id}
+      type={type}
+      refreshKey={refreshKey}
+    />
   ));
 
   return (
-    <div className="flex flex-col gap-6">
-      <DefaultTab tabHeaders={headers} tabContents={contents} />
+    <div className="default-card flex flex-col gap-6 p-6">
+      <ModalCreateLocationForm onSuccess={handleLocationCreated} />
+      <div className="flex flex-col gap-6">
+        <DefaultTab tabHeaders={headers} tabContents={contents} />
+      </div>
     </div>
   );
 }

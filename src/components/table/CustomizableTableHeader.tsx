@@ -1,16 +1,10 @@
 "use client";
 
-import { updateFaultOrderPriorityAction } from "@/actions/faultHandling";
 import { Column } from "@/components/table/CustomizableTable";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { format, parseISO } from "date-fns";
-import {
-  faCheck,
-  faEye,
-  faPen,
-  faTrashCan,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPen, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import Select from "@/default_components/form/Select";
 import Badge from "@/default_components/ui/badge/Badge";
 import Button from "@/default_components/ui/button/Button";
@@ -32,19 +26,33 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
   {
     label: "Code",
     key: "code",
+    sort: true,
+    filter: "agTextColumnFilter",
+    width: 100,
   },
   {
     label: "Warehouse Name",
     key: "name",
     width: 250,
+    filter: "agTextColumnFilter",
+    render: (value, row) => (
+      <Link
+        href={`/warehouse-management/warehouse/detail/${row.id}`}
+        className="text-brand-500 dark:text-brand-500 text-sm font-normal underline transition-colors"
+      >
+        {value as string}
+      </Link>
+    ),
   },
   {
     label: "Type",
     key: "type",
+    width: 100,
   },
   {
     label: "Status",
     key: "status",
+    width: 100,
     render: (value) => (
       <Badge
         variant={"solid"}
@@ -63,21 +71,11 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
   {
     label: "Description",
     key: "description",
+    filter: "agTextColumnFilter",
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
       ),
-  },
-  {
-    label: "Actions",
-    key: "id",
-    render: (_, row) => (
-      <div className="flex h-full items-center justify-center gap-2">
-        <Link href={`/warehouse-management/warehouse/detail/${row.id}`}>
-          <Eye size={16} />
-        </Link>
-      </div>
-    ),
   },
 ];
 
@@ -86,14 +84,20 @@ export const LocationHeaders: Column<LocationResponse>[] = [
   {
     label: "Code",
     key: "code",
+    width: 300,
+    sort: true,
+    filter: "agTextColumnFilter",
   },
   {
     label: "Location Name",
     key: "name",
+    width: 100,
+    filter: "agTextColumnFilter",
   },
   {
     label: "Status",
     key: "status",
+    width: 100,
     render: (value) => {
       const statusColors: Record<
         string,
@@ -115,17 +119,6 @@ export const LocationHeaders: Column<LocationResponse>[] = [
       );
     },
   },
-  // {
-  //   label: "Actions",
-  //   key: "id",
-  //   render: (_, row) => (
-  //     <div className="flex h-full items-center justify-center gap-2">
-  //       <Link href={`/warehouse-management/warehouse/detail/${row.id}`}>
-  //         <Pencil size={16} />
-  //       </Link>
-  //     </div>
-  //   ),
-  // },
 ];
 
 export const getUnitHeaders = (
@@ -280,7 +273,7 @@ export const userHeaders = (
       return (
         <Link
           href={`/profile/${row.id}`}
-          className="text-blue-600 hover:underline"
+          className="text-brand-500 text-sm font-normal underline transition-colors"
         >
           {row.username}
         </Link>
@@ -302,7 +295,7 @@ export const userHeaders = (
               const newRoleId = Number(e.target.value);
               const newRoleName =
                 roles.find((r) => r.id === newRoleId)?.name || "Default User";
-              const response = await AssignRoleAction(newRoleId, row.id);
+              await AssignRoleAction(newRoleId, row.id);
               toast.success("Assign successfully");
               onRoleUpdated(row.id, newRoleName);
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
