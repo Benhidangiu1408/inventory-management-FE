@@ -19,6 +19,7 @@ import {
   WarehouseType,
 } from "@/interfaces/warehouseManagementType";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
+import { cookies } from "next/headers";
 
 export async function getWarehouses(
   warehouseType: WarehouseType = WarehouseType.STORAGE,
@@ -27,6 +28,9 @@ export async function getWarehouses(
 }
 
 export async function createImportSheet(data: ImportSheetCreateReq) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+  data.userId = Number(userId);
   return await inboundOutboundService.createImportSheet(data);
 }
 
@@ -56,6 +60,9 @@ export async function updateImportSheet(
   importSheetId: string | number,
   data: ImportSheetUpdateReq,
 ) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+  data.userId = Number(userId);
   return await inboundOutboundService.updateImportSheet(
     Number(importSheetId),
     data,
@@ -94,6 +101,9 @@ export async function getLocationByType(
 }
 
 export async function createExportSheet(data: ExportSheetCreateReq) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+  data.userId = Number(userId);
   return await inboundOutboundService.createExportSheet(data);
 }
 

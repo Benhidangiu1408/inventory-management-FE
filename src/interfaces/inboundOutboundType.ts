@@ -224,6 +224,7 @@ export interface ImportSheetCreateReq {
   warehouseId: number;
   sourceWarehouseId?: number;
   supplierId?: number;
+  userId?: number;
   details?: ImportSheetDetailCreateReq[];
 }
 
@@ -232,6 +233,7 @@ export interface ImportSheetUpdateReq {
   warehouseId?: number;
   sourceWarehouseId?: number;
   supplierId?: number;
+  userId?: number;
   details?: ImportSheetDetailUpdateReq[];
 }
 
@@ -320,6 +322,7 @@ export interface ExportSheetCreateReq {
   sourceWarehouseId?: number;
   destinationWarehouseId?: number;
   supplierId?: number;
+  userId?: number;
   customerId?: number;
   details?: ImportSheetDetailCreateReq[];
 }
