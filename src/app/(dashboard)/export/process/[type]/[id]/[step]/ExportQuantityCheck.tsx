@@ -152,7 +152,17 @@ export default function ExportQuantityCheck() {
         );
       },
     },
-    // { key: "scannedBaseQuantity", label: "Scanned Base Quantity" },
+    {
+      key: "variance",
+      label: "Variance",
+      render: (_, row) => (
+        <div
+          className={`${row.variance === 0 ? "text-success-500" : row.variance > 0 ? "text-warning-500" : "text-error-500"} font-bold`}
+        >
+          {row.variance}
+        </div>
+      ),
+    },
     ...(exportData.status !== SheetStatus.COMPLETED ? [scanItemColumn] : []),
   ];
 
@@ -168,6 +178,9 @@ export default function ExportQuantityCheck() {
         (sum, item) => sum + (item.quantity ?? 0),
         0,
       ),
+      variance:
+        detail.batches.reduce((sum, item) => sum + (item.quantity ?? 0), 0) -
+        detail.expectedQuantity,
       unit: detail.unit,
       baseUnit: detail.productVariant.product.baseUnit,
       itemUnit: detail.productVariant.product.itemUnit,
@@ -314,7 +327,11 @@ export default function ExportQuantityCheck() {
 
           <div className="flex justify-end">
             {isRejected ? (
-              <Button size="md" endIcon={<FontAwesomeIcon icon={faArrowRight} />} disabled>
+              <Button
+                size="md"
+                endIcon={<FontAwesomeIcon icon={faArrowRight} />}
+                disabled
+              >
                 Confirm
               </Button>
             ) : (
