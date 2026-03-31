@@ -33,44 +33,28 @@ export const userManagementService = {
   //       headers: { Authorization: authToken },
   //     });
   //   },
-  //   updateProfile: async (username: string, phoneNumber: string) => {
-  //     return apiClient.put<User>(
-  //       `users/${username}/profile`,
-  //       { phoneNumber },
-  //       {
-  //         headers: { Authorization: authToken },
-  //       },
-  //     );
-  //   },
-  //   //   changePassword: async (username: string, currentPassword: string, newPassword: string) => {
-  //   //     const query = new URLSearchParams({ currentPassword, newPassword }).toString();
-  //   //     return apiClient.put<User>(`users/${username}/password?${query}`, null, {
-  //   //       headers: { Authorization: authToken },
-  //   //     });
-  //   //   }
-  //   changePassword: async (
-  //     username: string,
-  //     currentPassword: string,
-  //     newPassword: string,
-  //   ) => {
-  //     return apiClient.put(
-  //       `users/${username}/password`,
-  //       { oldPassword: currentPassword, newPassword },
-  //       { headers: { Authorization: authToken } },
-  //     );
-  //   },
+  updateProfile: async (username: string, phoneNumber: string) => {
+    return apiClient.put<User>(`users/${username}/profile`, { phoneNumber });
+  },
+  changePassword: async (
+    username: string,
+    oldPassword: string,
+    newPassword: string,
+  ) => {
+    return apiClient.put(`users/${username}/change-password`, {
+      oldPassword,
+      newPassword,
+    });
+  },
   activateAccount: async (username: string) => {
     return apiClient.put<void>(`/users/${username}/activate`, null);
   },
   deactivateAccount: async (username: string) => {
     return apiClient.put<void>(`/users/${username}/deactivate`, null);
   },
-  //   deleteAccount: async (username: string) => {
-  //     return apiClient.delete<void>(`/users/${username}`, [], {
-  //       headers: { Authorization: authToken },
-  //       cache: "no-store",
-  //     });
-  //   },
+  deleteAccount: async (username: string) => {
+    return apiClient.delete<void>(`/users/${username}`, null);
+  },
   assignRole: async (
     roleId: number,
     assignedUserId: number,
@@ -97,6 +81,9 @@ export const userManagementService = {
 export const roleManagementService = {
   createRole: async (data: RoleRequest) => {
     return apiClient.post<Role>("/users/roles", data);
+  },
+  updateRole: async (roleId: number, data: RoleRequest) => {
+    return apiClient.put<Role>(`/users/roles/${roleId}`, data);
   },
   getAllRole: async () => {
     return apiClient.get<Role[]>("/users/roles", {

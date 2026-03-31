@@ -1,93 +1,59 @@
 "use client";
-import React, { useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import Image from "next/image";
-import { EyeCloseIcon, EyeIcon } from "../../icons";
+import { ChangePasswordRequest, User } from "@/interfaces/userManagementType";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { User } from "@/interfaces/userManagementType";
+import { changePasswordAction } from "@/actions/auth";
 
-export default function UserMetaCard({
-  userInfo,
-  userRole,
-}: {
-  userInfo: User;
-  userRole: string;
-}) {
+export default function UserMetaCard({ userInfo }: { userInfo: User }) {
   const { isOpen, openModal, closeModal } = useModal();
-  // const [showPassword, setShowPassword] = useState(false);
-  // const { data: user, isLoading, error } = useUserProfile(id);
-  // const {
-  //   data: role,
-  //   isLoading: isRoleLoading,
-  //   error: roleError,
-  // } = useUserRole(user?.username);
-  // const [currentPassword, setCurrentPassword] = useState("");
-  // const [newPassword, setNewPassword] = useState("");
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<ChangePasswordRequest & { confirmPassword: string }>({
+    defaultValues: {
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+  const password = watch("newPassword");
+  const oldPassword = watch("oldPassword");
 
-  const [currentStatus, setCurrentStatus] = useState(userInfo.status);
-  // const handleSave = async () => {
-  //   //   if (!currentPassword || !newPassword) {
-  //   //     toast.error("Please fill in both passwords.", { duration: 5000 });
-  //   //     return;
-  //   //   }
-  //   //   setLoading(true);
-  //   //   try {
-  //   //     await userManagementService.changePassword(
-  //   //       user?.username!,
-  //   //       currentPassword,
-  //   //       newPassword,
-  //   //     );
-  //   //     closeModal();
-  //   //     setTimeout(() => {
-  //   //       toast.success("Password changed successfully!", {
-  //   //         duration: 3000, // 5 giây, muốn lâu hơn thì tăng lên
-  //   //       });
-  //   //     }, 150);
-  //   //     setCurrentPassword("");
-  //   //     setNewPassword("");
-  //   //   } catch (error) {
-  //   //     closeModal();
-  //   //     setTimeout(() => {
-  //   //       if (error instanceof ApiError) {
-  //   //         toast.error(error.message, {
-  //   //           duration: 3000, // 3 giây, muốn lâu hơn thì tăng lên
-  //   //         });
-  //   //       } else {
-  //   //         toast.error("An unexpected error occurred", { duration: 5000 });
-  //   //       }
-  //   //     }, 150);
-  //   //   } finally {
-  //   //     setLoading(false);
-  //   //   }
-  // };
-
-  // const handleConfirm = async () => {
-  //   setLoading(true);
-  //   try {
-  //     // (await currentStatus) === "ACTIVE"
-  //     //   ? userManagementService.deactivateAccount(user?.username)
-  //     //   : userManagementService.activateAccount(user?.username);
-  //     setCurrentStatus(currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE");
-  //     closeModal();
-  //     toast.success("User status changed successfully!");
-  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  //   } catch (error: any) {
-  //     toast.error(error.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
+  const onSubmit: SubmitHandler<
+    ChangePasswordRequest & { confirmPassword: string }
+  > = async (data) => {
+    setLoading(true);
+    try {
+      const payload: ChangePasswordRequest = {
+        username: userInfo.username,
+        oldPassword: data.oldPassword,
+        newPassword: data.newPassword,
+      };
+      await changePasswordAction(payload);
+      reset();
+      closeModal();
+      toast.success("Password changed successfully!");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
-      <div
-        className={`rounded-2xl border border-gray-200 p-5 transition-all duration-300 lg:p-6 dark:border-gray-800 ${isOpen ? "blur-[2px]" : ""}`}
-      >
+      <div className="rounded-2xl border border-gray-200 p-5 lg:p-6 dark:border-gray-800">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex w-full flex-col items-center gap-6 xl:flex-row">
             <div className="h-20 w-20 overflow-hidden rounded-full border border-gray-200 dark:border-gray-800">
@@ -104,18 +70,18 @@ export default function UserMetaCard({
               </h4>
               <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {userRole ?? "N/A"}
+                  {userInfo.role}
                 </p>
                 <div className="hidden h-3.5 w-px bg-gray-300 xl:block dark:bg-gray-700"></div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {currentStatus}
+                  {userInfo.status}
                 </p>
               </div>
             </div>
           </div>
           <button
-            // onClick={openModal}
-            className="shadow-theme-xs flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-800 lg:inline-flex lg:w-auto dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+            onClick={openModal}
+            className="shadow-theme-xs flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-800 lg:inline-flex lg:w-auto xl:w-1/4 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
           >
             <svg
               className="fill-current"
@@ -132,120 +98,74 @@ export default function UserMetaCard({
                 fill=""
               />
             </svg>
-            {"Change Password"}
+            Change Password
           </button>
         </div>
       </div>
-      {/* {
-        <Modal
-          isOpen={isOpen}
-          onClose={closeModal}
-          className="m-4 max-w-[700px]"
-          overlayClassName="bg-gray-900/10 backdrop-blur-sm"
-        >
-          <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 lg:p-11 dark:bg-gray-900">
-            <div className="px-2 pr-14">
-              <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-                Change Your Password
-              </h4>
-            </div>
-            <form className="flex flex-col">
-              <div className="custom-scrollbar h-[200px] overflow-y-auto px-2 pb-3">
-                <div className="mt-4">
-                  <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                    <div className="col-span-2">
-                      <Label>Current Password</Label>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Enter your current password"
-                          onChange={(e) => setCurrentPassword(e.target.value)}
-                        />
-                        <span
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute top-1/2 right-4 z-30 -translate-y-1/2 cursor-pointer"
-                        >
-                          {showPassword ? (
-                            <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
-                          ) : (
-                            <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
-                          )}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="col-span-2">
-                      <Label>New Password</Label>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Enter your new password"
-                          onChange={(e) => setNewPassword(e.target.value)}
-                        />
-                        <span
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute top-1/2 right-4 z-30 -translate-y-1/2 cursor-pointer"
-                        >
-                          {showPassword ? (
-                            <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
-                          ) : (
-                            <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-1 flex items-center gap-3 px-2 lg:justify-end">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={closeModal}
-                >
-                  Close
-                </Button>
-                <Button type="button" size="sm" onClick={handleSave}>
-                  Save Changes
-                </Button>
-              </div>
-            </form>
+      <Modal isOpen={isOpen} onClose={closeModal} className="m-4 max-w-[584px]">
+        <div className="relative w-full overflow-y-auto rounded-3xl bg-white p-4 lg:p-11 dark:bg-gray-900">
+          <div className="px-2 pr-14">
+            <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+              Change Password
+            </h4>
           </div>
-        </Modal>
-      } */}
-
-      {/* <Modal
-          isOpen={isOpen}
-          onClose={closeModal}
-          className="m-4 max-w-[700px]"
-          overlayClassName="bg-gray-900/10 backdrop-blur-sm"
-        >
-          <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 lg:p-11 dark:bg-gray-900">
-            <div className="px-2 pr-14">
-              <h4 className="mb-4 text-2xl font-semibold text-gray-800 dark:text-white/90">
-                {currentStatus === "ACTIVE"
-                  ? "Deactivate Account"
-                  : "Activate Account"}
-              </h4>
-              <p className="mb-6 text-sm text-gray-500 lg:mb-7 dark:text-gray-400">
-                {currentStatus === "ACTIVE"
-                  ? "Are you sure you want to deactivate this account? The user will be unable to access the system until reactivated."
-                  : "Are you sure you want to activate this account? The user will be able to access the system upon activation."}
-              </p>
-            </div>
-            <form className="flex flex-col">
-              <div className="mt-1 flex items-center gap-3 px-2 lg:justify-end">
-                <Button size="sm" variant="outline" onClick={closeModal}>
-                  Close
-                </Button>
-                <Button size="sm" onClick={handleConfirm}>
-                  Confirm
-                </Button>
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+            <div className="flex flex-col gap-6 px-2 pb-3">
+              <div>
+                <Label>Current Password</Label>
+                <Input
+                  type="password"
+                  placeholder="Current Password"
+                  {...register("oldPassword", {
+                    required: "Password is required",
+                  })}
+                  error={!!errors.oldPassword}
+                  hint={errors.oldPassword?.message}
+                />
               </div>
-            </form>
-          </div>
-        </Modal> */}
+
+              <div>
+                <Label>New Password</Label>
+                <Input
+                  type="password"
+                  placeholder="New Password"
+                  {...register("newPassword", {
+                    required: "Password is required",
+                    validate: (value) =>
+                      value !== oldPassword ||
+                      "New password same as old password",
+                  })}
+                  error={!!errors.newPassword}
+                  hint={errors.newPassword?.message}
+                />
+              </div>
+
+              <div>
+                <Label>Confirm Password</Label>
+                <Input
+                  type="password"
+                  placeholder="Confirm Password"
+                  {...register("confirmPassword", {
+                    required: "Please confirm your password",
+                    validate: (value) =>
+                      value === password || "Password do not match",
+                  })}
+                  error={!!errors.confirmPassword}
+                  hint={errors.confirmPassword?.message}
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex items-center gap-3 px-2 lg:justify-end">
+              <Button size="sm" variant="outline" onClick={closeModal}>
+                Close
+              </Button>
+              <Button size="sm" type="submit" disabled={loading}>
+                Save Changes
+              </Button>
+            </div>
+          </form>
+        </div>
+      </Modal>
     </>
   );
 }

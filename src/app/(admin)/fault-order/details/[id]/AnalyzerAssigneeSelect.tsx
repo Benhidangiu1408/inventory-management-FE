@@ -10,6 +10,7 @@ type AnalyzerAssigneeSelectProps = {
   users: User[];
   initialAnalyzerId?: number | null;
   initialAssigneeId?: number | null;
+  initialQuestionCreatorId?: number | null;
 };
 
 export default function AnalyzerAssigneeSelect({
@@ -17,6 +18,7 @@ export default function AnalyzerAssigneeSelect({
   users,
   initialAnalyzerId,
   initialAssigneeId,
+  initialQuestionCreatorId,
 }: AnalyzerAssigneeSelectProps) {
   const [analyzerId, setAnalyzerId] = useState<number | null>(
     initialAnalyzerId ?? null,
@@ -24,16 +26,21 @@ export default function AnalyzerAssigneeSelect({
   const [assigneeId, setAssigneeId] = useState<number | null>(
     initialAssigneeId ?? null,
   );
+  const [questionCreatorId, setQuestionCreatorId] = useState<number | null>(
+    initialQuestionCreatorId ?? null,
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async (
     nextAnalyzerId: number | null,
     nextAssigneeId: number | null,
+    nextQuestionCreatorId?: number | null,
   ) => {
     setIsSaving(true);
     const { error } = await assignAnalyzerAndAssigneeAction(faultOrderId, {
       analyzerUserId: nextAnalyzerId,
       assigneeUserId: nextAssigneeId,
+      questionCreatorUserId: nextQuestionCreatorId ?? null,
     });
     setIsSaving(false);
 
@@ -47,13 +54,21 @@ export default function AnalyzerAssigneeSelect({
   const handleAnalyzerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value ? Number(e.target.value) : null;
     setAnalyzerId(value);
-    void handleSave(value, assigneeId);
+    void handleSave(value, assigneeId, questionCreatorId);
   };
 
   const handleAssigneeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value ? Number(e.target.value) : null;
     setAssigneeId(value);
-    void handleSave(analyzerId, value);
+    void handleSave(analyzerId, value, questionCreatorId);
+  };
+
+  const handleQuestionCreatorChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const value = e.target.value ? Number(e.target.value) : null;
+    setQuestionCreatorId(value);
+    void handleSave(analyzerId, assigneeId, value);
   };
 
   const selectClass =
@@ -81,6 +96,21 @@ export default function AnalyzerAssigneeSelect({
         className={selectClass}
         value={assigneeId ?? ""}
         onChange={handleAssigneeChange}
+        disabled={isSaving}
+      >
+        <option value="">-- Select user --</option>
+        {users.map((user) => (
+          <option key={user.id} value={user.id}>
+            {user.firstName} {user.lastName}
+          </option>
+        ))}
+      </select>
+
+      <label className="font-semibold text-black">Question Creator:</label>
+      <select
+        className={selectClass}
+        value={questionCreatorId ?? ""}
+        onChange={handleQuestionCreatorChange}
         disabled={isSaving}
       >
         <option value="">-- Select user --</option>

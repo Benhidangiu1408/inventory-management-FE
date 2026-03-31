@@ -14,14 +14,17 @@ import {
   type FaultBatch as FaultBatchRow,
   type TaskItem,
 } from "@/components/table/CustomizableTableHeader";
-import { faultOrderService } from "@/services/InventoryManagementService";
-import { getAllUsersByRoleAction } from "@/actions/user";
 import {
+  createTasksForProcessOrderAction,
+  getFaultBatchProcessOrderWithDetailsAction,
   getFaultOrderAction,
-  updateFaultOrderStatusAction,
+  markFaultBatchesFixedAction,
+  assignTaskToFaultBatchAction,
   updateFaultBatchProcessOrderAction,
+  updateFaultOrderStatusAction,
   updateTasksStatusAction,
 } from "@/actions/faultHandling";
+import { getAllUsersByRoleAction } from "@/actions/user";
 import type { User } from "@/interfaces/userManagementType";
 
 import {
@@ -177,18 +180,29 @@ const mapBatchLabelToStatus = (
   }
 };
 
-const buildFaultBatchRows = (batches?: FaultBatch[]): FaultBatchRow[] => {
+const buildFaultBatchRows = (
+  batches?: FaultBatch[],
+  tasks?: { id?: number; task?: string }[],
+): FaultBatchRow[] => {
   if (!batches?.length) {
     return [];
   }
 
-  return batches.map((batch) => ({
-    id: batch.id,
-    code: batch.code ?? `FB-${batch.id}`,
-    date: formatDisplayDate(batch.createdAt),
-    status: mapBatchStatusToLabel(batch.handlingStatus),
-    checked: batch.handlingStatus === FaultBatchStatus.RESOLVED,
-  }));
+  return batches.map((batch) => {
+    const taskIdStr = batch.taskId ? String(batch.taskId) : "";
+    const taskName =
+      tasks?.find((t) => String(t.id ?? "") === taskIdStr)?.task ?? "";
+
+    return {
+      id: batch.id,
+      code: batch.code ?? `FB-${batch.id}`,
+      date: formatDisplayDate(batch.createdAt),
+      status: mapBatchStatusToLabel(batch.handlingStatus),
+      checked: batch.handlingStatus === FaultBatchStatus.RESOLVED,
+      taskId: taskIdStr,
+      taskName,
+    };
+  });
 };
 
 const BATCH_STATUS_OPTIONS = [
@@ -219,6 +233,7 @@ export default function AssignTaskPage() {
   const [faultBatchRows, setFaultBatchRows] = useState<FaultBatchRow[]>([]);
   const [updatingBatchIds, setUpdatingBatchIds] = useState<number[]>([]);
   const [taskRows, setTaskRows] = useState<TaskTableRow[]>([]);
+  const [batchTaskFilter, setBatchTaskFilter] = useState<string>("");
   const [updatingTaskIds, setUpdatingTaskIds] = useState<number[]>([]);
   const [owners, setOwners] = useState<User[]>([]);
   const [isLoadingOwners, setIsLoadingOwners] = useState(false);
@@ -336,15 +351,21 @@ export default function AssignTaskPage() {
       setError(null);
 
       try {
-        const response =
-          await faultOrderService.getFaultBatchProcessOrderWithDetails(
-            processOrderId,
+        const { data: response, error: responseError } =
+          await getFaultBatchProcessOrderWithDetailsAction(processOrderId);
+
+        if (responseError || !response) {
+          throw new Error(
+            responseError ?? "Unable to load process order details.",
           );
+        }
 
         if (!isMounted) return;
 
         setProcessOrderData(response);
-        setFaultBatchRows(buildFaultBatchRows(response.faultBatches));
+        setFaultBatchRows(
+          buildFaultBatchRows(response.faultBatches, response.tasks),
+        );
         setTaskRows(
           (response.tasks ?? []).map((task) => ({
             id: task.id ?? -1,
@@ -427,17 +448,19 @@ export default function AssignTaskPage() {
         owners.find((owner) => String(owner.id) === newTaskDraft.assignedUserId)
           ?.username ?? "-";
 
-      const created = await faultOrderService.createTasksForProcessOrder(
-        processOrderId,
-        [
+      const { data: created, error: createTaskError } =
+        await createTasksForProcessOrderAction(processOrderId, [
           {
             task: newTaskDraft.task.trim(),
             due_date: formatDueDateTimeForApi(newTaskDraft.dueDate),
             status: newTaskDraft.status,
             assignedUser: { id: Number(newTaskDraft.assignedUserId) },
           },
-        ],
-      );
+        ]);
+
+      if (createTaskError || !created) {
+        throw new Error(createTaskError ?? "Failed to create task.");
+      }
 
       const newRows: TaskTableRow[] = created.map((t) => ({
         id: t.id ?? -1,
@@ -507,12 +530,16 @@ export default function AssignTaskPage() {
       );
 
       try {
-        await faultOrderService.markFaultBatchesFixed([
+        const { error: updateError } = await markFaultBatchesFixedAction([
           {
             id: batchId,
             handlingStatus: mapBatchLabelToStatus(nextStatus),
           },
         ]);
+
+        if (updateError) {
+          throw new Error(updateError);
+        }
       } catch (updateError: unknown) {
         setFaultBatchRows((prevRows) =>
           prevRows.map((row) =>
@@ -530,6 +557,84 @@ export default function AssignTaskPage() {
           updateError instanceof Error
             ? updateError.message
             : "Failed to update batch status.",
+        );
+      } finally {
+        setUpdatingBatchIds((prev) => prev.filter((id) => id !== batchId));
+      }
+    },
+    [taskRows],
+  );
+
+  const handleBatchTaskChange = useCallback(
+    async (batchId: number, nextTaskId: string, previousTaskId: string) => {
+      if (nextTaskId === previousTaskId) {
+        return;
+      }
+
+      const nextTaskName =
+        taskRows.find((t) => String(t.id) === nextTaskId)?.task ?? "";
+
+      setFaultBatchRows((prevRows) =>
+        prevRows.map((row) =>
+          row.id === batchId
+            ? {
+                ...row,
+                taskId: nextTaskId,
+                taskName: nextTaskName,
+              }
+            : row,
+        ),
+      );
+
+      setUpdatingBatchIds((prev) =>
+        prev.includes(batchId) ? prev : [...prev, batchId],
+      );
+
+      try {
+        // Persist assignment to backend
+        const taskIdNumber = nextTaskId ? Number(nextTaskId) : null;
+        const { data, error } = await assignTaskToFaultBatchAction(
+          batchId,
+          taskIdNumber,
+        );
+
+        if (error || !data) {
+          throw new Error(error ?? "Failed to assign task.");
+        }
+
+        // update processOrderData with response
+        setProcessOrderData((prev) => {
+          if (!prev) return prev;
+          const newBatches = (prev.faultBatches ?? []).map((b) =>
+            b.id === batchId
+              ? { ...b, assignedTaskId: data.assignedTaskId ?? null }
+              : b,
+          );
+          return {
+            ...prev,
+            faultBatches: newBatches,
+          } as FaultBatchProcessOrder;
+        });
+
+        toast.success("Task assignment updated.");
+      } catch (err) {
+        const prevTaskName =
+          taskRows.find((t) => String(t.id) === previousTaskId)?.task ?? "";
+
+        setFaultBatchRows((prevRows) =>
+          prevRows.map((row) =>
+            row.id === batchId
+              ? {
+                  ...row,
+                  taskId: previousTaskId,
+                  taskName: prevTaskName,
+                }
+              : row,
+          ),
+        );
+
+        toast.error(
+          err instanceof Error ? err.message : "Failed to assign task.",
         );
       } finally {
         setUpdatingBatchIds((prev) => prev.filter((id) => id !== batchId));
@@ -622,14 +727,18 @@ export default function AssignTaskPage() {
     [taskRows, updateProcessOrderStatus],
   );
 
-  const faultBatchColumnsWithStatusSelect = useMemo<Column<FaultBatchRow>[]>(
-    () =>
-      faultBatchColumns.map((column) => {
-        if (column.key !== "status") {
-          return column;
-        }
+  const faultBatchColumnsWithStatusSelect = useMemo<
+    Column<FaultBatchRow>[]
+  >(() => {
+    const taskOptions = taskRows.map((t) => ({
+      value: String(t.id),
+      label: t.task,
+    }));
 
-        return {
+    return faultBatchColumns.reduce<Column<FaultBatchRow>[]>((acc, column) => {
+      if (column.key === "status") {
+        // push status column with select
+        acc.push({
           ...column,
           render: (value, row) => (
             <Select
@@ -651,10 +760,61 @@ export default function AssignTaskPage() {
               className="h-9 py-1.5"
             />
           ),
-        };
-      }),
-    [handleBatchStatusChange, updatingBatchIds],
-  );
+        });
+
+        // insert a new Task column right after status — use taskName as field so table filter works by name
+        acc.push({
+          label: "Task",
+          key: "taskName",
+          filter: "agSetColumnFilter",
+          filterParams: {
+            values: taskOptions.map((o) => o.label),
+          },
+          render: (value, row) => (
+            <Select
+              options={taskOptions.map((option) => ({
+                value: option.value,
+                label: option.label,
+              }))}
+              disablePlaceholderOpt={false}
+              placeholder="Select task"
+              value={(row as any).taskId ?? ""}
+              onChange={(event) =>
+                handleBatchTaskChange(
+                  row.id,
+                  event.target.value as string,
+                  (row as any).taskId ?? "",
+                )
+              }
+              disabled={updatingBatchIds.includes(row.id)}
+              className="h-9 py-1.5"
+            />
+          ),
+        });
+
+        return acc;
+      }
+
+      acc.push(column);
+      return acc;
+    }, []);
+  }, [
+    handleBatchStatusChange,
+    handleBatchTaskChange,
+    taskRows,
+    updatingBatchIds,
+  ]);
+
+  const filteredFaultBatchRows = useMemo(() => {
+    if (!batchTaskFilter) return faultBatchRows;
+    const matchingTaskIds = taskRows
+      .filter((t) => t.task === batchTaskFilter)
+      .map((t) => String(t.id));
+    if (matchingTaskIds.length === 0) return [];
+    return faultBatchRows.filter((row) =>
+      matchingTaskIds.includes(String((row as any).taskId)),
+    );
+  }, [faultBatchRows, batchTaskFilter]);
 
   const taskColumnsWithStatusSelect = useMemo<Column<TaskTableRow>[]>(
     () => [
@@ -897,7 +1057,7 @@ export default function AssignTaskPage() {
             {/* <Button className="my-4 w-full text-xl">+ Add Batch</Button> */}
             <CustomizableTable
               headers={faultBatchColumnsWithStatusSelect}
-              data={faultBatchRows}
+              data={filteredFaultBatchRows}
             />
           </div>
         </div>

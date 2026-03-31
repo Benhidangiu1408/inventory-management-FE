@@ -7,26 +7,31 @@ import { Role, RoleRequest } from "@/interfaces/userManagementType";
 import toast from "react-hot-toast";
 import { useModal } from "@/hooks/useModal";
 import NoControlModalBox from "../modal/NoControlModalBox";
-import { Plus } from "lucide-react";
+import { Edit, Plus } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Radio from "@/default_components/form/input/Radio";
-import { CreateRoleAction } from "@/actions/user";
+import { CreateRoleAction, UpdateRoleAction } from "@/actions/user";
 
 interface RoleFormProps {
   setLoading: (loading: boolean) => void;
   setDisable: (loading: boolean) => void;
   onSuccess: (newRole: Role) => void;
+  roleToEdit?: Role;
 }
 
-const RoleForm = ({ setLoading, setDisable, onSuccess }: RoleFormProps) => {
+const RoleForm = ({
+  setLoading,
+  setDisable,
+  onSuccess,
+  roleToEdit,
+}: RoleFormProps) => {
   const {
     register,
     handleSubmit,
     formState: { errors, isDirty },
   } = useForm<RoleRequest>({
     defaultValues: {
-      name: "",
-      description: "",
+      name: roleToEdit ? roleToEdit.name : "",
+      description: roleToEdit ? roleToEdit.description : "",
       status: "ACTIVE",
     },
   });
@@ -43,10 +48,17 @@ const RoleForm = ({ setLoading, setDisable, onSuccess }: RoleFormProps) => {
         description: data.description,
         status: data.status,
       };
-      const newRole = await CreateRoleAction(payload);
-      toast.success("Role created successfully!");
+      let savedRole: Role;
+      // Determine if we are creating or updating based on roleToEdit
+      if (roleToEdit) {
+        savedRole = await UpdateRoleAction(roleToEdit.id, payload);
+        toast.success("Role updated successfully!");
+      } else {
+        savedRole = await CreateRoleAction(payload);
+        toast.success("Role created successfully!");
+      }
 
-      onSuccess(newRole);
+      onSuccess(savedRole);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message ?? "An unexpected error occurred");
@@ -57,7 +69,7 @@ const RoleForm = ({ setLoading, setDisable, onSuccess }: RoleFormProps) => {
 
   return (
     <form
-      id={"roleForm"}
+      id={roleToEdit ? "editRoleForm" : "newRoleForm"}
       onSubmit={handleSubmit(onSubmit)}
       className={"mt-4 space-y-6"}
     >
@@ -91,7 +103,7 @@ const RoleForm = ({ setLoading, setDisable, onSuccess }: RoleFormProps) => {
         />
       </div>
       {/* Status Radio */}
-      <div className="flex flex-col gap-1">
+      {/* <div className="flex flex-col gap-1">
         <Label>Role Status</Label>
         <div className="flex items-center gap-3">
           <Radio
@@ -107,25 +119,28 @@ const RoleForm = ({ setLoading, setDisable, onSuccess }: RoleFormProps) => {
             {...register("status")}
           />
         </div>
-      </div>
+      </div> */}
     </form>
   );
 };
 
 export default function ModalRoleForm({
-  onRoleCreated,
+  onSuccess,
+  roleToEdit,
 }: {
-  onRoleCreated: (role: Role) => void;
+  onSuccess: (role: Role) => void;
+  roleToEdit?: Role;
 }) {
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
+  const isEditMode = !!roleToEdit;
 
   return (
     <NoControlModalBox
-      startIcon={<Plus size={16} />}
-      openBtnTitle={"New Role"}
-      formId={"roleForm"}
+      startIcon={isEditMode ? <Edit size={16} /> : <Plus size={16} />}
+      openBtnTitle={isEditMode ? "Edit Role" : "New Role"}
+      formId={isEditMode ? "editRoleForm" : "newRoleForm"}
       isLoading={loading}
       isOpen={isOpen}
       disableSaveBtn={disable}
@@ -135,9 +150,10 @@ export default function ModalRoleForm({
         <RoleForm
           setDisable={setDisable}
           setLoading={setLoading}
-          onSuccess={(newRole) => {
+          roleToEdit={roleToEdit}
+          onSuccess={(savedRole) => {
+            onSuccess(savedRole);
             closeModal();
-            onRoleCreated(newRole);
           }}
         />
       }

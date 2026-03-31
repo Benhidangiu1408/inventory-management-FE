@@ -323,6 +323,11 @@ export const userHeaders = (
     label: "Status",
     key: "status",
     width: 120,
+    render: (value) => (
+      <Badge variant={"solid"} color={value === "ACTIVE" ? "success" : "error"}>
+        {value as string}
+      </Badge>
+    ),
   },
   {
     label: "Created Date",
@@ -399,6 +404,8 @@ export type FaultBatch = {
   code: string;
   date: string; // DD-MM-YYYY
   status: "Pending" | "Completed" | "In progress" | "Approve";
+  taskId: string;
+  taskName?: string;
   checked: boolean; // represents the checkbox in Actions
 };
 

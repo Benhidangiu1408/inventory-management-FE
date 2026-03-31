@@ -20,12 +20,10 @@ export default async function RoleManagementPage() {
   return (
     <div>
       <PageBreadcrumb pageTitle="Role Management" />
-      <div className="default-card">
-        <RoleAssignmentList
-          initialRolesData={rolesData}
-          initialPermissionsData={permissionsData}
-        />
-      </div>
+      <RoleAssignmentList
+        initialRolesData={rolesData}
+        initialPermissionsData={permissionsData}
+      />
     </div>
   );
 }

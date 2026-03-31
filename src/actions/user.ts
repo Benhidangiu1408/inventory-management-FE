@@ -46,3 +46,6 @@ export async function updateRolePermissionsAction(
 export async function CreateRoleAction(data: RoleRequest) {
   return await roleManagementService.createRole(data);
 }
+export async function UpdateRoleAction(roleId: number, data: RoleRequest) {
+  return await roleManagementService.updateRole(roleId, data);
+}

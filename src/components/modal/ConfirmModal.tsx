@@ -31,10 +31,10 @@ export function ConfirmModal({
         {message}
       </p>
       <div className="mt-8 flex w-full items-center justify-end gap-3">
-        <Button size="sm" variant="outline" onClick={onCancel}>
+        <Button size="sm" variant="danger" onClick={onCancel}>
           Cancel
         </Button>
-        <Button size="sm" onClick={onConfirm}>
+        <Button size="sm" variant="success" onClick={onConfirm}>
           Confirm
         </Button>
       </div>

@@ -1,5 +1,5 @@
 // userManagementType.ts
-export type UserStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED";
+export type UserStatus = "ACTIVE" | "DISABLED" | "SUSPENDED";
 export type RoleStatus = "ACTIVE" | "DISABLED" | "DELETED";
 
 export interface User {
@@ -30,8 +30,10 @@ export interface UserLogin {
   password: string;
 }
 
-export interface EditPhoneNumberRequest {
-  phoneNumber: string;
+export interface ChangePasswordRequest {
+  username: string;
+  oldPassword: string;
+  newPassword: string;
 }
 
 export interface Permission {
