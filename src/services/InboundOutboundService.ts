@@ -16,7 +16,6 @@ import {
   ImportSheetUpdateReq,
   ItemResponse,
   LocationResponse,
-  PageResponse,
   ProductVariantResponse,
   QCSheetResponse,
   QCSheetUpdateReq,
@@ -25,7 +24,10 @@ import {
   SupplierResponse,
   WarehoseResponse,
 } from "@/interfaces/inboundOutboundType";
-import { LocationType } from "@/interfaces/warehouseManagementType";
+import {
+  LocationType,
+  WarehouseType,
+} from "@/interfaces/warehouseManagementType";
 import { apiClient } from "@/lib/api-mask";
 
 export const inboundOutboundService = {
@@ -47,9 +49,11 @@ export const inboundOutboundService = {
     );
   },
 
-  getWarehouses: async () => {
+  getWarehouses: async (
+    warehouseType: WarehouseType = WarehouseType.STORAGE,
+  ) => {
     return await apiClient.get<WarehoseResponse[]>(
-      "/inbound-outbound/v1/warehouses",
+      `/inbound-outbound/v1/warehouses?warehouseType=${warehouseType}`,
       {
         cache: "no-cache",
       },

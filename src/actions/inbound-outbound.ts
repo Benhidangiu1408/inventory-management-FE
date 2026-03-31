@@ -14,8 +14,17 @@ import {
   SetBatchLocationReq,
   SupplierCreateReq,
 } from "@/interfaces/inboundOutboundType";
-import { LocationType } from "@/interfaces/warehouseManagementType";
+import {
+  LocationType,
+  WarehouseType,
+} from "@/interfaces/warehouseManagementType";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
+
+export async function getWarehouses(
+  warehouseType: WarehouseType = WarehouseType.STORAGE,
+) {
+  return await inboundOutboundService.getWarehouses(warehouseType);
+}
 
 export async function createImportSheet(data: ImportSheetCreateReq) {
   return await inboundOutboundService.createImportSheet(data);

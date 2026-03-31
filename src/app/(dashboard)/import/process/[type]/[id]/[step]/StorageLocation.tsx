@@ -17,10 +17,11 @@ import {
   LocationResponse,
   QCSheetDetailStatus,
   SetBatchLocationReq,
+  WarehoseResponse,
 } from "@/interfaces/inboundOutboundType";
 import { useCallback, useEffect, useState } from "react";
 import { useImport } from "@/context/ImportContext";
-import { LocationType } from "@/interfaces/warehouseManagementType";
+import { LocationType, WarehouseType } from "@/interfaces/warehouseManagementType";
 import Button from "@/default_components/ui/button/Button";
 import { useQualityCheck } from "@/context/QualityCheckContext";
 import { useParams, useRouter } from "next/navigation";
@@ -30,6 +31,7 @@ import { useConfirmModal } from "@/hooks/useConfirmModal";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import {
   getLocationByType,
+  getWarehouses,
   setBatchLocations,
 } from "@/actions/inbound-outbound";
 
@@ -59,7 +61,9 @@ export default function StorageLocationPage() {
   const { qcData } = useQualityCheck();
 
   const [locations, setLocations] = useState<LocationResponse[]>([]);
-  console.log(locations);
+  const [defectWarehouses, setDefectWarehouses] = useState<WarehoseResponse[]>([]);
+  const [selectedDefectWarehouseId, setSelectedDefectWarehouseId] = useState<number | null>(null);
+  const [defectLocations, setDefectLocations] = useState<LocationResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const { confirm, ConfirmationModal } = useConfirmModal();
 
@@ -67,6 +71,16 @@ export default function StorageLocationPage() {
   const isRejected = importData.status === SheetStatus.REJECTED;
 
   const options: Option[] = locations.map((location) => ({
+    value: String(location.id),
+    label: `${location.code} - ${location.name}`,
+  }));
+
+  const defectWarehouseOptions: Option[] = defectWarehouses.map((w) => ({
+    value: String(w.id),
+    label: w.name,
+  }));
+
+  const defectLocationOptions: Option[] = defectLocations.map((location) => ({
     value: String(location.id),
     label: `${location.code} - ${location.name}`,
   }));
@@ -135,6 +149,43 @@ export default function StorageLocationPage() {
     },
   ];
 
+  const storageFailLocationColumn: Column<StorageLocationCheckRow>[] = [
+    {
+      key: "batchCode",
+      label: "Batch Code",
+    },
+    {
+      key: "name",
+      label: "Name",
+    },
+    {
+      key: "description",
+      label: "Description",
+    },
+    {
+      key: "quantity",
+      label: "Quantity",
+    },
+    {
+      key: "storageLocation",
+      label: "Storage Location",
+      render: (value, row) => (
+        <Select
+          className="h-[38px]"
+          disabled={isCompleted || isRejected}
+          value={value}
+          options={defectLocationOptions}
+          onChange={(e) =>
+            updateRows(row.detailId, {
+              storageLocation: e.target.value,
+            }, defectLocations)
+          }
+        />
+      ),
+      width: 375,
+    },
+  ];
+
   const storagePassData: StorageLocationCheckRow[] = buildStorageData([
     QCSheetDetailStatus.PASSED,
     QCSheetDetailStatus.SKIPPED,
@@ -173,6 +224,7 @@ export default function StorageLocationPage() {
   const updateRows = (
     detailId: number,
     changes: Partial<StorageLocationCheckRow>,
+    locationList: LocationResponse[] = locations,
   ) => {
     setImportData((prev) => ({
       ...prev,
@@ -187,7 +239,7 @@ export default function StorageLocationPage() {
           String(currentBatchLocation?.id ?? firstLocationValue) !==
           changes.storageLocation
         ) {
-          const newLocation = locations.find(
+          const newLocation = locationList.find(
             (location) => String(location.id) === changes.storageLocation,
           );
 
@@ -216,10 +268,31 @@ export default function StorageLocationPage() {
     setLocations(res);
   }, [importData.warehouse.id]);
 
+  const fetchDefectWarehouses = useCallback(async () => {
+    const res = await getWarehouses(WarehouseType.DEFECT);
+    setDefectWarehouses(res);
+    if (res.length > 0) {
+      setSelectedDefectWarehouseId(res[0].id);
+    }
+  }, []);
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchLocations().catch(console.error);
   }, [fetchLocations]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchDefectWarehouses().catch(console.error);
+  }, [fetchDefectWarehouses]);
+
+  useEffect(() => {
+    if (!selectedDefectWarehouseId) return;
+
+    getLocationByType(selectedDefectWarehouseId, LocationType.BIN)
+      .then(setDefectLocations)
+      .catch(console.error);
+  }, [selectedDefectWarehouseId]);
 
   useEffect(() => {
     if (!locations.length) return;
@@ -254,7 +327,7 @@ export default function StorageLocationPage() {
           <div>
             <Title
               icon={faCircleCheck}
-              title="Passed Products"
+              title="Passed Batches"
               quantity={storagePassData.length}
             />
             <CustomizableTable<StorageLocationCheckRow>
@@ -266,11 +339,25 @@ export default function StorageLocationPage() {
           <div>
             <Title
               icon={faCircleXmark}
-              title="Failed Products"
+              title="Failed Batches"
               quantity={storageFailData.length}
             />
+            <div className="mb-4 flex items-center gap-3">
+              <label className="text-sm font-medium whitespace-nowrap">
+                Defect Warehouse
+              </label>
+              <Select
+                className="h-[38px] w-[300px]"
+                disabled={isCompleted || isRejected}
+                value={String(selectedDefectWarehouseId ?? "")}
+                options={defectWarehouseOptions}
+                onChange={(e) =>
+                  setSelectedDefectWarehouseId(Number(e.target.value))
+                }
+              />
+            </div>
             <CustomizableTable<StorageLocationCheckRow>
-              headers={storageLocationColumn}
+              headers={storageFailLocationColumn}
               data={storageFailData}
               getRowId={(params) => String(params.data.detailId)}
             />
