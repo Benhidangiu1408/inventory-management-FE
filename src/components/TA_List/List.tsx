@@ -48,7 +48,7 @@ const ActionsButton = ({
 
   return (
     <div className="flex justify-center gap-3">
-      <Link
+      {/* <Link
         href={`/${type}/details/${
           type === "import" ? (item as ImportRow).id : (item as ExportRow).id
         }`}
@@ -57,7 +57,7 @@ const ActionsButton = ({
           icon={faEye}
           className="cursor-pointer hover:text-blue-500"
         />
-      </Link>
+      </Link> */}
       <Link href={getEditLink()}>
         <FontAwesomeIcon icon={faPen} className="cursor-pointer" />
       </Link>
@@ -70,6 +70,7 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       key: "id",
       label: "Export Sheet ID",
+      sort: true,
     },
     {
       key: "type",
@@ -143,6 +144,8 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       label: "Import Sheet ID",
       key: "id",
+      sort: true,
+      width: 180,
     },
     {
       label: "Type",
@@ -201,6 +204,7 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       label: "Actions",
       key: "actions",
+      width: 100,
       render: (_, row: ImportRow) => {
         return (
           <ActionsButton

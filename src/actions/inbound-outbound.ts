@@ -73,6 +73,9 @@ export async function confirmImportSheet(
   importSheetId: number,
   data: ImportSheetUpdateReq,
 ) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+  data.userId = Number(userId);
   return await inboundOutboundService.confirmImportSheet(importSheetId, data);
 }
 

@@ -20,35 +20,36 @@ import {
   SupplierImportSection,
   type SupplierMode,
 } from "./SupplierImportSection";
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import {
-  faArrowRightArrowLeft,
-  faDollarSign,
-  faHandPointer,
-  faIndustry,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+// import {
+//   faArrowRightArrowLeft,
+//   faDollarSign,
+//   faHandPointer,
+//   faIndustry,
+// } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-const importOptions: {
-  key: ImportSheetType;
-  label: string;
-  icon: IconDefinition;
-}[] = [
-  { key: ImportSheetType.FACTORY, label: "Manufacturer", icon: faIndustry },
-  {
-    key: ImportSheetType.INTERNAL,
-    label: "Transfer",
-    icon: faArrowRightArrowLeft,
-  },
-  {
-    key: ImportSheetType.SUPPLIER,
-    label: "Supplier",
-    icon: faDollarSign,
-  },
-];
+// Tạo kho thủ công: chỉ dùng Supplier — không cần Manufacturer / Transfer
+// const importOptions: {
+//   key: ImportSheetType;
+//   label: string;
+//   icon: IconDefinition;
+// }[] = [
+//   { key: ImportSheetType.FACTORY, label: "Manufacturer", icon: faIndustry },
+//   {
+//     key: ImportSheetType.INTERNAL,
+//     label: "Transfer",
+//     icon: faArrowRightArrowLeft,
+//   },
+//   {
+//     key: ImportSheetType.SUPPLIER,
+//     label: "Supplier",
+//     icon: faDollarSign,
+//   },
+// ];
 
 type WarehouseSelectorProps = {
   warehouses: WarehoseResponse[];
@@ -110,35 +111,42 @@ export const NewImportClient = ({
   const [selectedWarehouseId, setSelectedWarehouseId] = useState<number>(
     warehouses[0]?.id ?? 1,
   );
-  const [selectedImportType, setSelectedImportType] =
-    useState<ImportSheetType | null>(null);
+  /** Luôn SUPPLIER khi tạo kho thủ công */
+  const selectedImportType = ImportSheetType.SUPPLIER;
 
-  // Supplier section (only when type = SUPPLIER)
+  // Supplier section
   const [supplierMode, setSupplierMode] = useState<SupplierMode>("existing");
   const [suppliers, setSuppliers] = useState<SupplierResponse[]>([]);
   const [selectedSupplierId, setSelectedSupplierId] = useState<number | null>(
     null,
   );
   const [newSupplier, setNewSupplier] = useState(emptyNewSupplier);
-  const [suppliersLoading, setSuppliersLoading] = useState(false);
+  const [suppliersLoading, setSuppliersLoading] = useState(true);
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSelectImportType = (type: ImportSheetType) => {
-    if (type !== ImportSheetType.SUPPLIER) {
-      setSupplierMode("existing");
-      setSelectedSupplierId(null);
-      setNewSupplier(emptyNewSupplier);
-      setSuppliers([]);
-    } else {
-      setSuppliersLoading(true);
-      getSuppliers()
-        .then((list) => setSuppliers(Array.isArray(list) ? list : []))
-        .catch(() => setSuppliers([]))
-        .finally(() => setSuppliersLoading(false));
-    }
-    setSelectedImportType(type);
-  };
+  useEffect(() => {
+    getSuppliers()
+      .then((list) => setSuppliers(Array.isArray(list) ? list : []))
+      .catch(() => setSuppliers([]))
+      .finally(() => setSuppliersLoading(false));
+  }, []);
+
+  // const handleSelectImportType = (type: ImportSheetType) => {
+  //   if (type !== ImportSheetType.SUPPLIER) {
+  //     setSupplierMode("existing");
+  //     setSelectedSupplierId(null);
+  //     setNewSupplier(emptyNewSupplier);
+  //     setSuppliers([]);
+  //   } else {
+  //     setSuppliersLoading(true);
+  //     getSuppliers()
+  //       .then((list) => setSuppliers(Array.isArray(list) ? list : []))
+  //       .catch(() => setSuppliers([]))
+  //       .finally(() => setSuppliersLoading(false));
+  //   }
+  //   setSelectedImportType(type);
+  // };
 
   const supplierOptions: Option[] = [
     { value: "", label: "Select supplier..." },
@@ -149,40 +157,36 @@ export const NewImportClient = ({
   ];
 
   const isSupplierReady =
-    selectedImportType !== ImportSheetType.SUPPLIER ||
     (supplierMode === "existing" && selectedSupplierId != null) ||
     (supplierMode === "new" && isNewSupplierFilled(newSupplier));
 
-  const canCreate =
-    !!selectedImportType && !!selectedWarehouseId && isSupplierReady;
+  const canCreate = !!selectedWarehouseId && isSupplierReady;
 
   const handleCreate = async () => {
-    if (!selectedImportType || !selectedWarehouseId) return;
+    if (!selectedWarehouseId) return;
 
     let supplierId: number | undefined;
-    if (selectedImportType === ImportSheetType.SUPPLIER) {
-      if (supplierMode === "existing" && selectedSupplierId != null) {
-        supplierId = selectedSupplierId;
-      } else if (supplierMode === "new" && isNewSupplierFilled(newSupplier)) {
-        try {
-          const created = await createSupplier({
-            ...newSupplier,
-            name: newSupplier.name.trim(),
-            email: newSupplier.email.trim(),
-            phone: newSupplier.phone.trim(),
-            address: newSupplier.address.trim(),
-          });
-          supplierId = created.id;
-        } catch (err) {
-          toast.error("Failed to create new supplier.");
-          return;
-        }
-      } else {
-        toast.error(
-          "Please select a supplier or fill in all new supplier details.",
-        );
+    if (supplierMode === "existing" && selectedSupplierId != null) {
+      supplierId = selectedSupplierId;
+    } else if (supplierMode === "new" && isNewSupplierFilled(newSupplier)) {
+      try {
+        const created = await createSupplier({
+          ...newSupplier,
+          name: newSupplier.name.trim(),
+          email: newSupplier.email.trim(),
+          phone: newSupplier.phone.trim(),
+          address: newSupplier.address.trim(),
+        });
+        supplierId = created.id;
+      } catch {
+        toast.error("Failed to create new supplier.");
         return;
       }
+    } else {
+      toast.error(
+        "Please select a supplier or fill in all new supplier details.",
+      );
+      return;
     }
 
     setLoading(true);
@@ -211,7 +215,8 @@ export const NewImportClient = ({
         onChange={setSelectedWarehouseId}
       />
 
-      <div className="rounded-2xl border border-gray-200 bg-white">
+      {/* Chọn loại nhập: Manufacturer / Transfer — tắt khi chỉ dùng Supplier */}
+      {/* <div className="rounded-2xl border border-gray-200 bg-white">
         <div className="flex items-center justify-center gap-3 border-b border-gray-200 p-6 text-xl font-bold">
           <FontAwesomeIcon icon={faHandPointer} />
           <h2>Please Choose Your Type Of Import</h2>
@@ -236,20 +241,18 @@ export const NewImportClient = ({
             );
           })}
         </div>
-      </div>
+      </div> */}
 
-      {selectedImportType === ImportSheetType.SUPPLIER && (
-        <SupplierImportSection
-          supplierMode={supplierMode}
-          onSupplierModeChange={setSupplierMode}
-          selectedSupplierId={selectedSupplierId}
-          onSelectedSupplierIdChange={setSelectedSupplierId}
-          newSupplier={newSupplier}
-          onNewSupplierChange={setNewSupplier}
-          supplierOptions={supplierOptions}
-          suppliersLoading={suppliersLoading}
-        />
-      )}
+      <SupplierImportSection
+        supplierMode={supplierMode}
+        onSupplierModeChange={setSupplierMode}
+        selectedSupplierId={selectedSupplierId}
+        onSelectedSupplierIdChange={setSelectedSupplierId}
+        newSupplier={newSupplier}
+        onNewSupplierChange={setNewSupplier}
+        supplierOptions={supplierOptions}
+        suppliersLoading={suppliersLoading}
+      />
 
       <div className="mt-6 flex justify-center">
         <div className="w-[30%] max-w-xs">

@@ -135,34 +135,40 @@ export default function ExportConfirm() {
   ];
 
   const accordionData: ExportQuantityCheckParentRow[] = exportData.details.map(
-    (detail) => ({
-      detailId: detail.id,
-      productName: detail.productVariant.product.name,
-      description: detail.productVariant.description,
-      expectedQuantity: detail.expectedQuantity ?? 0,
-      scannedQuantity: 0,
-      expectedBaseQuantity: detail.expectedBaseQuantity ?? 0,
-      scannedBaseQuantity: detail.batches.reduce(
+    (detail) => {
+      const scannedQuantity = detail.batches.reduce(
         (sum, item) => sum + (item.quantity ?? 0),
         0,
-      ),
-      unit: detail.unit,
-      baseUnit: detail.productVariant.product.baseUnit,
-      conversionRate:
-        detail.productVariant.product.unitConversions.find(
-          (unitConversion) =>
-            unitConversion.fromUnit.id === detail.unit.id &&
-            unitConversion.toUnit.id ===
-              detail.productVariant.product.baseUnit.id,
-        )?.conversionRate ?? 1,
-      locations: detail.batches.map((item) => ({
+      );
+
+      return {
         detailId: detail.id,
-        batchId: item.batch.id,
-        batchCode: item.batch.code,
-        quantity: item.quantity,
-        location: `${item.batch.location.code} - ${item.batch.location.name}`,
-      })),
-    }),
+        productName: detail.productVariant.product.name,
+        description: detail.productVariant.description,
+        expectedQuantity: detail.expectedQuantity ?? 0,
+        scannedQuantity: 0,
+        expectedBaseQuantity: detail.expectedBaseQuantity ?? 0,
+        scannedBaseQuantity: scannedQuantity,
+        variance: scannedQuantity - detail.expectedQuantity,
+        unit: detail.unit,
+        baseUnit: detail.productVariant.product.baseUnit,
+        itemUnit: detail.productVariant.product.itemUnit,
+        conversionRate:
+          detail.productVariant.product.unitConversions.find(
+            (unitConversion) =>
+              unitConversion.fromUnit.id === detail.unit.id &&
+              unitConversion.toUnit.id ===
+                detail.productVariant.product.baseUnit.id,
+          )?.conversionRate ?? 1,
+        locations: detail.batches.map((item) => ({
+          detailId: detail.id,
+          batchId: item.batch.id,
+          batchCode: item.batch.code,
+          quantity: item.quantity,
+          location: `${item.batch.location.code} - ${item.batch.location.name}`,
+        })),
+      };
+    },
   );
 
   const totalQuantity = accordionData.reduce(

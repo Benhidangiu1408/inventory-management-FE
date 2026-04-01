@@ -21,7 +21,10 @@ import {
 } from "@/interfaces/inboundOutboundType";
 import { useCallback, useEffect, useState } from "react";
 import { useImport } from "@/context/ImportContext";
-import { LocationType, WarehouseType } from "@/interfaces/warehouseManagementType";
+import {
+  LocationType,
+  WarehouseType,
+} from "@/interfaces/warehouseManagementType";
 import Button from "@/default_components/ui/button/Button";
 import { useQualityCheck } from "@/context/QualityCheckContext";
 import { useParams, useRouter } from "next/navigation";
@@ -61,9 +64,15 @@ export default function StorageLocationPage() {
   const { qcData } = useQualityCheck();
 
   const [locations, setLocations] = useState<LocationResponse[]>([]);
-  const [defectWarehouses, setDefectWarehouses] = useState<WarehoseResponse[]>([]);
-  const [selectedDefectWarehouseId, setSelectedDefectWarehouseId] = useState<number | null>(null);
-  const [defectLocations, setDefectLocations] = useState<LocationResponse[]>([]);
+  const [defectWarehouses, setDefectWarehouses] = useState<WarehoseResponse[]>(
+    [],
+  );
+  const [selectedDefectWarehouseId, setSelectedDefectWarehouseId] = useState<
+    number | null
+  >(null);
+  const [defectLocations, setDefectLocations] = useState<LocationResponse[]>(
+    [],
+  );
   const [loading, setLoading] = useState(false);
   const { confirm, ConfirmationModal } = useConfirmModal();
 
@@ -90,26 +99,24 @@ export default function StorageLocationPage() {
   const buildStorageData = (
     statuses: QCSheetDetailStatus[],
   ): StorageLocationCheckRow[] => {
-    return importData.details
-      .filter((detail) => {
-        const foundedQcDetail = qcData?.details.find(
-          (qcDetail) => qcDetail.batch.id === detail.batch?.id,
-        );
+    const filterData = importData.details.filter((detail) => {
+      const foundedQcDetail = qcData?.details.find(
+        (qcDetail) => qcDetail.batch.id === detail.batch?.id,
+      );
 
-        return statuses.includes(
-          foundedQcDetail?.status as QCSheetDetailStatus,
-        );
-      })
-      .map((detail) => ({
-        detailId: detail.id,
-        batchCode: detail.batch?.code ?? "",
-        name: detail.batch?.productVariant.product.name ?? "",
-        description: detail.batch?.productVariant.description ?? "",
-        quantity: detail.batch?.initialQuantity ?? 0,
-        storageLocation:
-          detail.batch?.location?.id?.toString() ?? String(firstLocationValue),
-        notes: "",
-      }));
+      return statuses.includes(foundedQcDetail?.status as QCSheetDetailStatus);
+    });
+
+    return filterData.map((detail) => ({
+      detailId: detail.id,
+      batchCode: detail.batch?.code ?? "",
+      name: detail.batch?.productVariant.product.name ?? "",
+      description: detail.batch?.productVariant.description ?? "",
+      quantity: detail.batch?.initialQuantity ?? 0,
+      storageLocation:
+        detail.batch?.location?.id?.toString() ?? String(firstLocationValue),
+      notes: "",
+    }));
   };
 
   const storageLocationColumn: Column<StorageLocationCheckRow>[] = [
@@ -132,19 +139,22 @@ export default function StorageLocationPage() {
     {
       key: "storageLocation",
       label: "Storage Location",
-      render: (value, row) => (
-        <Select
-          className="h-[38px]"
-          disabled={isCompleted || isRejected}
-          value={value}
-          options={options}
-          onChange={(e) =>
-            updateRows(row.detailId, {
-              storageLocation: e.target.value,
-            })
-          }
-        />
-      ),
+      render: (value, row) => {
+        console.log(row.storageLocation);
+        return (
+          <Select
+            className="h-[38px]"
+            disabled={isCompleted || isRejected}
+            value={row.storageLocation}
+            options={options}
+            onChange={(e) =>
+              updateRows(row.detailId, {
+                storageLocation: e.target.value,
+              })
+            }
+          />
+        );
+      },
       width: 375,
     },
   ];
@@ -176,9 +186,13 @@ export default function StorageLocationPage() {
           value={value}
           options={defectLocationOptions}
           onChange={(e) =>
-            updateRows(row.detailId, {
-              storageLocation: e.target.value,
-            }, defectLocations)
+            updateRows(
+              row.detailId,
+              {
+                storageLocation: e.target.value,
+              },
+              defectLocations,
+            )
           }
         />
       ),
@@ -200,6 +214,13 @@ export default function StorageLocationPage() {
       importSheetDetailId: detail.id,
       locationId: detail.batch!.location!.id,
     }));
+
+    const locationIds = data.map((d) => d.locationId);
+    const hasDuplicate = new Set(locationIds).size !== locationIds.length;
+    if (hasDuplicate) {
+      toast.error("Duplicate locations are not allowed");
+      return;
+    }
 
     setLoading(true);
     await setBatchLocations(id as string, data);

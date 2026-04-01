@@ -23,12 +23,14 @@ import Select from "@/default_components/form/Select";
 
 type CreateModalProps = {
   productVariants: ProductVariantResponse[];
-  onSelectedProductsChange?: (product: ProductTempRow | null) => void;
+  onSelectedProductsChange?: (products: ProductTempRow[]) => void;
+  onHasInvalidChange?: (hasInvalid: boolean) => void;
 };
 
 export default function CreateModal({
   productVariants,
   onSelectedProductsChange,
+  onHasInvalidChange,
 }: CreateModalProps) {
   const variants = productVariants.map((variant) => {
     return {
@@ -47,41 +49,41 @@ export default function CreateModal({
 
   // Notify parent whenever selected products change
   useEffect(() => {
-    if (!onSelectedProductsChange) return;
-    const selectedItem = data.find(
-      (item) =>
-        item.checkBox &&
-        item.pickQuantity !== "" &&
-        Number(item.pickQuantity) > 0,
+    const checkedItems = data.filter((item) => item.checkBox);
+
+    const invalidItems = checkedItems.filter(
+      (item) => item.pickQuantity === "" || Number(item.pickQuantity) <= 0,
     );
 
-    const selected: ProductTempRow | null = selectedItem
-      ? {
-          id: Number(selectedItem.productId),
-          name: selectedItem.name,
-          expectedQuantity: Number(selectedItem.pickQuantity),
-          description: selectedItem.description ?? "",
-          unit:
-            selectedItem.unitId === selectedItem.unit.id
-              ? selectedItem.unit
-              : selectedItem.unitConversions.find(
-                    (c) => c.fromUnit.id === selectedItem.unitId,
-                  )?.fromUnit ?? selectedItem.unit,
-        }
-      : null;
+    onHasInvalidChange?.(invalidItems.length > 0);
 
-    console.log("Current data:", data);
-    console.log("Selected product from modal:", selected);
+    if (!onSelectedProductsChange) return;
+
+    const selected: ProductTempRow[] = checkedItems
+      .filter(
+        (item) => item.pickQuantity !== "" && Number(item.pickQuantity) > 0,
+      )
+      .map((selectedItem) => ({
+        id: Number(selectedItem.productId),
+        name: selectedItem.name,
+        expectedQuantity: Number(selectedItem.pickQuantity),
+        description: selectedItem.description ?? "",
+        unit:
+          selectedItem.unitId === selectedItem.unit.id
+            ? selectedItem.unit
+            : (selectedItem.unitConversions.find(
+                (c) => c.fromUnit.id === selectedItem.unitId,
+              )?.fromUnit ?? selectedItem.unit),
+      }));
+
     onSelectedProductsChange(selected);
-  }, [data, onSelectedProductsChange]);
+  }, [data, onSelectedProductsChange, onHasInvalidChange]);
 
   const handleCheckboxChange = useCallback(
     (productId: string, checked: boolean) => {
       setData((prev) =>
         prev.map((item) =>
-          item.productId === productId
-            ? { ...item, checkBox: checked }
-            : { ...item, checkBox: false },
+          item.productId === productId ? { ...item, checkBox: checked } : item,
         ),
       );
     },
@@ -101,18 +103,15 @@ export default function CreateModal({
     [],
   );
 
-  const handleUnitChange = useCallback(
-    (productId: string, unitId: string) => {
-      setData((prev) =>
-        prev.map((item) =>
-          item.productId === productId
-            ? { ...item, unitId: Number(unitId) }
-            : item,
-        ),
-      );
-    },
-    [],
-  );
+  const handleUnitChange = useCallback((productId: string, unitId: string) => {
+    setData((prev) =>
+      prev.map((item) =>
+        item.productId === productId
+          ? { ...item, unitId: Number(unitId) }
+          : item,
+      ),
+    );
+  }, []);
 
   const columns: Column<ImportCreateRow>[] = useMemo(
     () => [
@@ -159,9 +158,7 @@ export default function CreateModal({
               })),
             ]}
             value={String(row.unitId)}
-            onChange={(e) =>
-              handleUnitChange(row.productId, e.target.value)
-            }
+            onChange={(e) => handleUnitChange(row.productId, e.target.value)}
           />
         ),
       },
@@ -187,7 +184,7 @@ export default function CreateModal({
   return (
     <div className="flex flex-col gap-6">
       <div className="rounded-2xl border border-[#E4E7EC] bg-white">
-        <CustomFilter>
+        {/* <CustomFilter>
           <FilterItem
             type="input"
             label="Search"
@@ -214,7 +211,7 @@ export default function CreateModal({
             placeholder="Date"
             icon={faCalendar}
           />
-        </CustomFilter>
+        </CustomFilter> */}
         <div className="flex flex-col gap-6 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
