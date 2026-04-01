@@ -5,28 +5,24 @@ import Input from "@/default_components/form/input/InputField";
 import Label from "@/default_components/form/Label";
 import Select from "@/default_components/form/Select";
 import Button from "@/default_components/ui/button/Button";
+import { User } from "@/interfaces/userManagementType";
 import {
   NewWarehouseRequest,
   WarehouseStatus,
   WarehouseType,
 } from "@/interfaces/warehouseManagementType";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-export const CreateWarehouseForm = () => {
+export const CreateWarehouseForm = ({ userData }: { userData: User[] }) => {
   // Initiate form control
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const typeOptions = Object.values(WarehouseType).map((type) => ({
     value: type,
     label: type.replace("_", " "), // Makes "COLD_STORAGE" look like "COLD STORAGE"
-  }));
-
-  const statusOptions = Object.values(WarehouseStatus).map((status) => ({
-    value: status,
-    label: status.replace("_", " "),
   }));
   const {
     register,
@@ -44,27 +40,12 @@ export const CreateWarehouseForm = () => {
     },
   });
 
-  const [managerOptions, setManagerOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
-  // useEffect(() => {
-  //   const fetchManagers = async () => {
-  //     try {
-  //       const users = await userManagementService.getAll(1);
-  //       if (users) {
-  //         const options = users.map((u) => ({
-  //           value: u.id.toString(),
-  //           label: `${u.username}`,
-  //         }));
-  //         setManagerOptions(options);
-  //       }
-  //     } catch (error) {
-  //       console.error("Failed to load managers:", error);
-  //       toast.error("Could not load user list");
-  //     }
-  //   };
-  //   fetchManagers();
-  // }, []);
+  const managerOptions = useMemo(() => {
+    return userData.map((u) => ({
+      value: u.id.toString(),
+      label: u.username,
+    }));
+  }, [userData]);
 
   //Validation Logic
   const onSubmit: SubmitHandler<NewWarehouseRequest> = async (data) => {
@@ -118,17 +99,30 @@ export const CreateWarehouseForm = () => {
           hint={errors.address?.message}
         />
       </div>
-      {/* Manager Select (New Field) */}
-      <div>
-        <Label>Warehouse Manager</Label>
-        <Select
-          {...register("managerId", { required: "Please select a manager" })}
-          placeholder={"Select manager"}
-          options={managerOptions}
-          disabled={managerOptions.length === 0}
-          error={!!errors.managerId}
-          hint={errors.managerId?.message}
-        />
+      {/* Manager & Warehouse Type Select */}
+      {/* Select */}
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="w-full">
+          <Label>Warehouse Manager</Label>
+          <Select
+            {...register("managerId", { required: "Please select a manager" })}
+            placeholder={"Select manager"}
+            options={managerOptions}
+            disabled={managerOptions.length === 0}
+            error={!!errors.managerId}
+            hint={errors.managerId?.message}
+          />
+        </div>
+        <div className="w-full">
+          <Label>Warehouse Type</Label>
+          <Select
+            {...register("type", { required: "Please select a type" })}
+            placeholder={"Select type"}
+            options={typeOptions}
+            error={!!errors.type}
+            hint={errors.type?.message}
+          />
+        </div>
       </div>
       {/* Description */}
       <div>
@@ -146,29 +140,6 @@ export const CreateWarehouseForm = () => {
           hint={errors.description?.message}
         />
       </div>
-      {/* Select */}
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="w-full">
-          <Label>Warehouse Type</Label>
-          <Select
-            {...register("type", { required: "Please select a type" })}
-            placeholder={"Select type"}
-            options={typeOptions}
-            error={!!errors.type}
-            hint={errors.type?.message}
-          />
-        </div>
-        <div className="w-full">
-          <Label>Status</Label>
-          <Select
-            {...register("status", { required: "Please select a status" })}
-            placeholder={"Select status"}
-            options={statusOptions}
-            error={!!errors.status}
-            hint={errors.status?.message}
-          />
-        </div>
-      </div>
       <div className="flex gap-3">
         <Button
           size="sm"
@@ -179,7 +150,7 @@ export const CreateWarehouseForm = () => {
           Cancel
         </Button>
         <Button size="sm" disabled={loading} type="submit">
-          Save
+          Create
         </Button>
       </div>
     </form>

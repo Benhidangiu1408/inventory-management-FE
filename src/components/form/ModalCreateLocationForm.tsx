@@ -4,7 +4,7 @@ import { Loader2, Plus, Trash2 } from "lucide-react";
 import NoControlModalBox from "../modal/NoControlModalBox";
 import { useModal } from "@/hooks/useModal";
 import { useCallback, useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
   LocationBulkCreate,
   LocationResponse,
@@ -59,7 +59,6 @@ const CreateForm = ({
   onSuccess: () => void;
 }) => {
   // Initiate form control
-  const router = useRouter();
   const warehouseId = Number(useParams().id);
   const {
     control,
@@ -136,8 +135,7 @@ const CreateForm = ({
         levels: levelsConfig,
       };
       await locationCreateAction(payload);
-      toast.success("Location created successfully!");
-      router.refresh();
+      toast.success("Location(s) created successfully!");
       onSuccess();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -389,7 +387,11 @@ const LevelRow = ({
   );
 };
 
-export function ModalCreateLocationForm() {
+export function ModalCreateLocationForm({
+  onSuccess,
+}: {
+  onSuccess: () => void;
+}) {
   const { isOpen, openModal, closeModal } = useModal();
   const [loading, setLoading] = useState(false);
 
@@ -403,7 +405,13 @@ export function ModalCreateLocationForm() {
       onOpen={openModal}
       onClose={closeModal}
       modalContent={
-        <CreateForm setLoading={setLoading} onSuccess={closeModal} />
+        <CreateForm
+          setLoading={setLoading}
+          onSuccess={() => {
+            closeModal();
+            onSuccess();
+          }}
+        />
       }
     />
   );

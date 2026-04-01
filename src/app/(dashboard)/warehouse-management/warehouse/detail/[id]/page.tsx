@@ -3,7 +3,6 @@ import GeneralInfoSection from "@/components/GeneralInformation";
 import { warehouseService } from "@/services/WarehouseManagementService";
 import { WarehouseDetail } from "@/interfaces/warehouseManagementType";
 import { ModalUpdateWarehouseForm } from "@/components/form/ModalUpdateWarehouseForm";
-import { ModalCreateLocationForm } from "@/components/form/ModalCreateLocationForm";
 import { ViewLocation } from "@/components/ViewLocation";
 
 export default async function WarehouseDetailPage({
@@ -56,10 +55,7 @@ export default async function WarehouseDetailPage({
             },
           ]}
         />
-        <div className="default-card flex flex-col gap-6 p-6">
-          <ModalCreateLocationForm />
-          <ViewLocation />
-        </div>
+        <ViewLocation />
       </div>
     </div>
   );

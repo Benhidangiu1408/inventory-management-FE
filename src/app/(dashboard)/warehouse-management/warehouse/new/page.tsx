@@ -1,21 +1,19 @@
 import { CreateWarehouseForm } from "@/components/form/CreateWarehouseForm";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-// import { User } from "@/interfaces/userManagementType";
-// import { ApiError } from "@/lib/api-mask";
-// import { userManagementService } from "@/services/UserManagementService";
+import { User } from "@/interfaces/userManagementType";
+import { userManagementService } from "@/services/UserManagementService";
 
-export default function CreateWarehousePage() {
-  // let errorMsg = null;
+export default async function CreateWarehousePage() {
+  let errorMsg = null;
+  let data: User[] = [];
 
-  // try {
-  //   data = await userManagementService.getAll(1);
-  // } catch (error) {
-  //   if (error instanceof ApiError) {
-  //     console.error(`API Error ${error.status}: ${error.message}`);
-  //     errorMsg = `Could not load data from server.\nError Code: ${error.status}\nMessage: ${error.message}`;
-  //   }
-  // }
-  // if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
+  try {
+    data = await userManagementService.getAll();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    errorMsg = `Could not load data from server. ${error.message}`;
+  }
+  if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
   return (
     <div>
       <PageBreadcrumb
@@ -23,7 +21,7 @@ export default function CreateWarehousePage() {
         filters={["warehouse-management"]}
       />
       <div className="default-card p-6">
-        <CreateWarehouseForm />
+        <CreateWarehouseForm userData={data} />
       </div>
     </div>
   );
