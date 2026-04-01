@@ -1,6 +1,7 @@
 "use client";
 
 import Select, { Option } from "@/default_components/form/Select";
+import Input from "@/default_components/form/input/InputField";
 import CustomizableTable, {
   Column,
 } from "@/components/table/CustomizableTable";
@@ -140,11 +141,26 @@ export default function StorageLocationPage() {
       key: "storageLocation",
       label: "Storage Location",
       render: (value, row) => {
-        console.log(row.storageLocation);
+        if (isCompleted) {
+          const foundDetail = importData.details.find(
+            (detail) => detail.id === row.detailId,
+          );
+
+          console.log(foundDetail);
+          const label = `${foundDetail?.batch?.location.code} - ${foundDetail?.batch?.location.name}`;
+          return (
+            <Input
+              className="h-[38px]"
+              disabled={isCompleted}
+              value={label}
+              readOnly
+            />
+          );
+        }
         return (
           <Select
             className="h-[38px]"
-            disabled={isCompleted || isRejected}
+            disabled={isRejected}
             value={row.storageLocation}
             options={options}
             onChange={(e) =>
@@ -179,23 +195,31 @@ export default function StorageLocationPage() {
     {
       key: "storageLocation",
       label: "Storage Location",
-      render: (value, row) => (
-        <Select
-          className="h-[38px]"
-          disabled={isCompleted || isRejected}
-          value={value}
-          options={defectLocationOptions}
-          onChange={(e) =>
-            updateRows(
-              row.detailId,
-              {
-                storageLocation: e.target.value,
-              },
-              defectLocations,
-            )
-          }
-        />
-      ),
+      render: (value, row) => {
+        if (isCompleted) {
+          const label =
+            defectLocationOptions.find((o) => o.value === value)?.label ??
+            value;
+          return <Input className="h-[38px]" value={label} readOnly />;
+        }
+        return (
+          <Select
+            className="h-[38px]"
+            disabled={isRejected}
+            value={value}
+            options={defectLocationOptions}
+            onChange={(e) =>
+              updateRows(
+                row.detailId,
+                {
+                  storageLocation: e.target.value,
+                },
+                defectLocations,
+              )
+            }
+          />
+        );
+      },
       width: 375,
     },
   ];
