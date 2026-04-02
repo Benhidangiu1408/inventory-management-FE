@@ -17,8 +17,6 @@ import Link from "next/link";
 export default async function ExportPage() {
   const exportSheets = await inboundOutboundService.getAllExportSheets();
 
-  console.log(exportSheets);
-
   return (
     <div className="flex flex-col gap-6">
       <PageBreadcrumb pageTitle="Export Page" />

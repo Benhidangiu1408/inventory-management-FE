@@ -54,7 +54,12 @@ export interface Column<T extends object> {
   sortable?: boolean;
   sort?: boolean;
   stopCenterData?: boolean;
-  filter?: boolean | string;
+  filter?:
+    | false
+    | "agTextColumnFilter"
+    | "agNumberColumnFilter"
+    | "agDateColumnFilter"
+    | "agSetColumnFilter";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filterParams?: any;
 }

@@ -35,6 +35,7 @@ export default function ExportQuantityCheck() {
   const params = useParams();
   const { type, id } = params;
   const { exportData, setExportData } = useExport();
+  const isRejected = exportData.status === SheetStatus.REJECTED;
   const [scanningRow, setScanningRow] =
     useState<ExportQuantityCheckParentRow | null>(null);
   const [itemBarCode, setItemBarCode] = useState("");
@@ -62,8 +63,9 @@ export default function ExportQuantityCheck() {
           <Button
             variant="primary"
             size="sm"
-            disabled={isLoading}
+            disabled={isLoading || isRejected}
             onClick={async () => {
+              if (isRejected) return;
               setLoadingBatchId(row.batchId);
               try {
                 console.log(row.batchId);
@@ -100,7 +102,11 @@ export default function ExportQuantityCheck() {
       <Button
         size="sm"
         variant="outline"
-        onClick={() => setScanningRow(row)}
+        disabled={isRejected}
+        onClick={() => {
+          if (isRejected) return;
+          setScanningRow(row);
+        }}
         className="h-[35px] w-full"
         startIcon={<FontAwesomeIcon icon={faBarcode} />}
       >
@@ -112,33 +118,89 @@ export default function ExportQuantityCheck() {
   const mainColumns: Column<ExportQuantityCheckParentRow>[] = [
     { key: "productName", label: "Product Name" },
     { key: "description", label: "Description" },
-    { key: "expectedQuantity", label: "Expected Quantity" },
-    { key: "expectedBaseQuantity", label: "Expected Base Quantity" },
-    { key: "scannedQuantity", label: "Scanned Quantity" },
-    { key: "scannedBaseQuantity", label: "Scanned Base Quantity" },
+    {
+      key: "expectedQuantity",
+      label: "Expected Quantity",
+      render: (value, row) => {
+        return (
+          <div>
+            {row.expectedQuantity} {row.unit.abb}{" "}
+            <span>
+              ({row.expectedBaseQuantity} {row.baseUnit.abb})
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      key: "scannedQuantity",
+      label: "Scanned Quantity",
+      render: (value, row) => {
+        const realScannedQuantity =
+          row.scannedBaseQuantity / row.conversionRate;
+
+        const isValid =
+          realScannedQuantity > 0 && Number.isInteger(realScannedQuantity);
+
+        return (
+          <div>
+            {isValid ? realScannedQuantity : 0} {row.unit.abb}{" "}
+            <span>
+              ({row.scannedBaseQuantity} {row.baseUnit.abb})
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      key: "variance",
+      label: "Variance",
+      render: (_, row) => (
+        <div
+          className={`${row.variance === 0 ? "text-success-500" : row.variance > 0 ? "text-warning-500" : "text-error-500"} font-bold`}
+        >
+          {row.variance}
+        </div>
+      ),
+    },
     ...(exportData.status !== SheetStatus.COMPLETED ? [scanItemColumn] : []),
   ];
 
   const accordionData: ExportQuantityCheckParentRow[] = exportData.details.map(
-    (detail) => ({
-      detailId: detail.id,
-      productName: detail.productVariant.product.name,
-      description: detail.productVariant.description,
-      expectedQuantity: detail.expectedQuantity ?? 0,
-      scannedQuantity: 0,
-      expectedBaseQuantity: detail.expectedBaseQuantity ?? 0,
-      scannedBaseQuantity: detail.batches.reduce(
+    (detail) => {
+      const scannedQuantity = detail.batches.reduce(
         (sum, item) => sum + (item.quantity ?? 0),
         0,
-      ),
-      locations: detail.batches.map((item) => ({
+      );
+
+      return {
         detailId: detail.id,
-        batchId: item.batch.id,
-        batchCode: item.batch.code,
-        quantity: item.quantity,
-        location: `${item.batch.location.code} - ${item.batch.location.name}`,
-      })),
-    }),
+        productName: detail.productVariant.product.name,
+        description: detail.productVariant.description,
+        expectedQuantity: detail.expectedQuantity ?? 0,
+        scannedQuantity: 0,
+        expectedBaseQuantity: detail.expectedBaseQuantity ?? 0,
+        scannedBaseQuantity: scannedQuantity,
+        variance: scannedQuantity - detail.expectedQuantity,
+        unit: detail.unit,
+        baseUnit: detail.productVariant.product.baseUnit,
+        itemUnit: detail.productVariant.product.itemUnit,
+        conversionRate:
+          detail.productVariant.product.unitConversions.find(
+            (unitConversion) =>
+              unitConversion.fromUnit.id === detail.unit.id &&
+              unitConversion.toUnit.id ===
+                detail.productVariant.product.baseUnit.id,
+          )?.conversionRate ?? 1,
+        locations: detail.batches.map((item) => ({
+          detailId: detail.id,
+          batchId: item.batch.id,
+          batchCode: item.batch.code,
+          quantity: item.quantity,
+          location: `${item.batch.location.code} - ${item.batch.location.name}`,
+        })),
+      };
+    },
   );
 
   const totalQuantity = accordionData.reduce(
@@ -152,6 +214,7 @@ export default function ExportQuantityCheck() {
   };
 
   const handleScan = async () => {
+    if (isRejected) return;
     if (!scanningRow) return;
     // scanningRow.detailId = ID dòng phiếu xuất đang scan
     // itemBarCode = mã vạch vừa nhập
@@ -178,10 +241,7 @@ export default function ExportQuantityCheck() {
         }),
       }));
 
-      console.log(res);
-
       toast.success("Scan Item Successfully");
-
       handleCloseScanModal();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -211,9 +271,10 @@ export default function ExportQuantityCheck() {
             onChange={(e) => setItemBarCode(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleScan()}
             className="h-11"
+            disabled={isRejected}
           />
           <div className="flex justify-end gap-2">
-            <Button size="md" onClick={handleScan}>
+            <Button size="md" onClick={handleScan} disabled={isRejected}>
               Scan
             </Button>
           </div>
@@ -264,14 +325,24 @@ export default function ExportQuantityCheck() {
           />
 
           <div className="flex justify-end">
-            <Link href={`/export/process/${type}/${id}/confirm`}>
+            {isRejected ? (
               <Button
                 size="md"
                 endIcon={<FontAwesomeIcon icon={faArrowRight} />}
+                disabled
               >
                 Confirm
               </Button>
-            </Link>
+            ) : (
+              <Link href={`/export/process/${type}/${id}/confirm`}>
+                <Button
+                  size="md"
+                  endIcon={<FontAwesomeIcon icon={faArrowRight} />}
+                >
+                  Confirm
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </InfoBox>

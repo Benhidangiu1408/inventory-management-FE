@@ -40,16 +40,6 @@ export async function loginAction(data: UserLogin) {
   }
 }
 
-// export async function getUserProfileAction(id: string) {
-//   try {
-//     const user = await userManagementService.getById(id);
-//     return { data: user, error: null };
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//   } catch (error: any) {
-//     return { data: null, error: error.message };
-//   }
-// }
-
 export async function logoutAction() {
   const cookieStore = await cookies();
   cookieStore.delete("jwt");
@@ -66,4 +56,16 @@ export async function changePasswordAction(data: ChangePasswordRequest) {
 }
 export async function changePhoneAction(username: string, phoneNumber: string) {
   await userManagementService.updateProfile(username, phoneNumber);
+}
+
+export async function DeactivateAccountAction(username: string) {
+  await userManagementService.deactivateAccount(username);
+}
+
+export async function ActivateAccountAction(username: string) {
+  await userManagementService.activateAccount(username);
+}
+
+export async function DeleteAccountAction(username: string) {
+  await userManagementService.deleteAccount(username);
 }

@@ -98,32 +98,81 @@ export default function ExportConfirm() {
   const mainColumns: Column<ExportQuantityCheckParentRow>[] = [
     { key: "productName", label: "Product Name" },
     { key: "description", label: "Description" },
-    { key: "expectedQuantity", label: "Expected Quantity" },
-    { key: "scannedQuantity", label: "Scanned Quantity" },
+    {
+      key: "expectedQuantity",
+      label: "Expected Quantity",
+      render: (value, row) => {
+        return (
+          <div>
+            {row.expectedQuantity} {row.unit.abb}{" "}
+            <span>
+              ({row.expectedBaseQuantity} {row.baseUnit.abb})
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      key: "scannedQuantity",
+      label: "Scanned Quantity",
+      render: (value, row) => {
+        const realScannedQuantity =
+          row.scannedBaseQuantity / row.conversionRate;
+
+        const isValid =
+          realScannedQuantity > 0 && Number.isInteger(realScannedQuantity);
+
+        return (
+          <div>
+            {isValid ? realScannedQuantity : 0} {row.unit.abb}{" "}
+            <span>
+              ({row.scannedBaseQuantity} {row.baseUnit.abb})
+            </span>
+          </div>
+        );
+      },
+    },
   ];
 
   const accordionData: ExportQuantityCheckParentRow[] = exportData.details.map(
-    (detail) => ({
-      detailId: detail.id,
-      productName: detail.productVariant.product.name,
-      description: detail.productVariant.description,
-      expectedQuantity: detail.expectedQuantity ?? 0,
-      scannedQuantity: detail.batches.reduce(
+    (detail) => {
+      const scannedQuantity = detail.batches.reduce(
         (sum, item) => sum + (item.quantity ?? 0),
         0,
-      ),
-      locations: detail.batches.map((item) => ({
+      );
+
+      return {
         detailId: detail.id,
-        batchId: item.batch.id,
-        batchCode: item.batch.code,
-        quantity: item.quantity,
-        location: `${item.batch.location.code} - ${item.batch.location.name}`,
-      })),
-    }),
+        productName: detail.productVariant.product.name,
+        description: detail.productVariant.description,
+        expectedQuantity: detail.expectedQuantity ?? 0,
+        scannedQuantity: 0,
+        expectedBaseQuantity: detail.expectedBaseQuantity ?? 0,
+        scannedBaseQuantity: scannedQuantity,
+        variance: scannedQuantity - detail.expectedQuantity,
+        unit: detail.unit,
+        baseUnit: detail.productVariant.product.baseUnit,
+        itemUnit: detail.productVariant.product.itemUnit,
+        conversionRate:
+          detail.productVariant.product.unitConversions.find(
+            (unitConversion) =>
+              unitConversion.fromUnit.id === detail.unit.id &&
+              unitConversion.toUnit.id ===
+                detail.productVariant.product.baseUnit.id,
+          )?.conversionRate ?? 1,
+        locations: detail.batches.map((item) => ({
+          detailId: detail.id,
+          batchId: item.batch.id,
+          batchCode: item.batch.code,
+          quantity: item.quantity,
+          location: `${item.batch.location.code} - ${item.batch.location.name}`,
+        })),
+      };
+    },
   );
 
   const totalQuantity = accordionData.reduce(
-    (sum, row) => sum + row.scannedQuantity,
+    (sum, row) => sum + row.scannedBaseQuantity,
     0,
   );
 
@@ -136,7 +185,7 @@ export default function ExportConfirm() {
     }
 
     const res = accordionData.every(
-      (item) => item.scannedQuantity >= item.expectedQuantity,
+      (item) => item.scannedBaseQuantity >= item.expectedBaseQuantity,
     );
 
     const message = res

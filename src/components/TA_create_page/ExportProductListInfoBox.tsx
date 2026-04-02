@@ -21,6 +21,7 @@ import {
   createExportSheetDetail,
   updateExportSheetDetail,
 } from "@/actions/inbound-outbound";
+import { ApiError } from "next/dist/server/api-utils";
 
 export default function ExportProductListInfoBox({
   step = "",
@@ -39,13 +40,14 @@ export default function ExportProductListInfoBox({
       name: detail.productVariant.product.name,
       description: detail.productVariant.description,
       expectedQuantity: detail.expectedQuantity ?? 0,
-      unit: detail.productVariant.product.baseUnit,
+      unit: detail.unit ?? detail.productVariant.product.baseUnit,
     }),
   );
 
-  const [selectedProduct, setSelectedProduct] = useState<ProductTempRow | null>(
-    null,
+  const [selectedProducts, setSelectedProducts] = useState<ProductTempRow[]>(
+    [],
   );
+  const [hasInvalidSelection, setHasInvalidSelection] = useState(false);
 
   const productTempColumn: Column<ProductTempRow>[] = [
     {
@@ -68,63 +70,84 @@ export default function ExportProductListInfoBox({
   ];
 
   const handleSave = async () => {
-    if (selectedProduct) {
-      const existingItem = productTempData.find(
-        (product) => product.id === selectedProduct.id,
-      );
-      const productVariant = productVariants.find(
-        (pv) => pv.id === selectedProduct.id,
-      );
-      if (!productVariant) {
-        toast.error("Product variant not found");
-        return;
-      }
-
-      const data: ExportSheetDetailCreateReq = {
-        productVariantId: selectedProduct.id,
-        expectedQuantity: selectedProduct.expectedQuantity,
-        unitId: selectedProduct.unit.id,
-      };
-
-      if (!existingItem) {
-        const res = await createExportSheetDetail(id as string, data);
-
-        setExportData((prev) => ({
-          ...prev,
-          details: [...prev.details, res],
-        }));
-        toast.success("Added product to export list");
-      } else {
-        const updatedQuantity =
-          existingItem.expectedQuantity + selectedProduct.expectedQuantity;
-        const foundDetail = exportData.details.find(
-          (detail) => detail.productVariant.id === selectedProduct.id,
-        );
-        if (!foundDetail) return;
-
-        const data: ExportSheetDetailUpdateReq = {
-          expectedQuantity: updatedQuantity,
-        };
-
-        const res = await updateExportSheetDetail(
-          id as string,
-          foundDetail.id,
-          data,
-        );
-
-        console.log(res);
-
-        setExportData((prev) => ({
-          ...prev,
-          details: prev.details.map((detail) =>
-            detail.id === res.id ? res : detail,
-          ),
-        }));
-        toast.success("Updated quantity in export list");
-      }
-    } else {
-      toast.error("You have to checkbox and input the pick quantity");
+    if (hasInvalidSelection) {
+      toast.error("Some selected products are missing a valid pick quantity");
+      return;
     }
+
+    if (selectedProducts.length === 0) {
+      toast.error("You have to checkbox and input the pick quantity");
+      return;
+    }
+
+    let results;
+    try {
+      results = await Promise.all(
+        selectedProducts.map(async (selectedProduct) => {
+          const existingItem = productTempData.find(
+            (product) => product.id === selectedProduct.id,
+          );
+
+          if (!existingItem) {
+            const data: ExportSheetDetailCreateReq = {
+              productVariantId: selectedProduct.id,
+              expectedQuantity: selectedProduct.expectedQuantity,
+              unitId: selectedProduct.unit.id,
+            };
+            const res = await createExportSheetDetail(id as string, data);
+            return { type: "create" as const, res };
+          } else {
+            const foundDetail = exportData.details.find(
+              (detail) => detail.productVariant.id === selectedProduct.id,
+            );
+            if (!foundDetail) {
+              console.log("Not found correct Detail for", selectedProduct.id);
+              return null;
+            }
+
+            if (foundDetail.unit?.id !== selectedProduct.unit.id) {
+              throw new Error(
+                `The unit ${selectedProduct.unit.name} is not equal to ${foundDetail.unit?.name} to update Product Variant ${selectedProduct.id}`,
+              );
+            }
+
+            const data: ExportSheetDetailUpdateReq = {
+              expectedQuantity:
+                existingItem.expectedQuantity +
+                selectedProduct.expectedQuantity,
+            };
+            const res = await updateExportSheetDetail(
+              id as string,
+              foundDetail.id,
+              data,
+            );
+            return { type: "update" as const, res };
+          }
+        }),
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error || error instanceof ApiError
+          ? error.message
+          : "Failed to save products. Please try again.";
+      toast.error(message);
+      return;
+    }
+
+    setExportData((prev) => {
+      let updatedDetails = [...prev.details];
+      for (const result of results) {
+        if (!result) continue;
+        if (result.type === "create") {
+          updatedDetails = [...updatedDetails, result.res];
+        } else {
+          updatedDetails = updatedDetails.map((detail) =>
+            detail.id === result.res.id ? result.res : detail,
+          );
+        }
+      }
+      return { ...prev, details: updatedDetails };
+    });
   };
 
   return (
@@ -145,7 +168,8 @@ export default function ExportProductListInfoBox({
           modalContent={
             <CreateModal
               productVariants={productVariants}
-              onSelectedProductsChange={setSelectedProduct}
+              onSelectedProductsChange={setSelectedProducts}
+              onHasInvalidChange={setHasInvalidSelection}
             />
           }
         />

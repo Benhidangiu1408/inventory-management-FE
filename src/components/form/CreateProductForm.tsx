@@ -12,7 +12,7 @@ import {
   UnitResponse,
 } from "@/interfaces/warehouseManagementType";
 import { Plus, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import {
   SubmitHandler,
@@ -31,6 +31,7 @@ export const CreateProductForm = ({
 }) => {
   // Initiate form control
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const categoryOption = category
     .map((cat) =>
@@ -104,7 +105,15 @@ export const CreateProductForm = ({
       await ProductCreateAction(payload);
       reset();
       toast.success("Product created successfully!");
-      router.replace("/catalog/product");
+      const raw = searchParams.get("returnTo");
+      let nextPath = "/catalog/product";
+      if (raw) {
+        const decoded = decodeURIComponent(raw);
+        if (decoded.startsWith("/") && !decoded.startsWith("//")) {
+          nextPath = decoded;
+        }
+      }
+      router.replace(nextPath);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message ?? "An unexpected error occurred");

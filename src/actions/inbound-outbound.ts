@@ -14,10 +14,23 @@ import {
   SetBatchLocationReq,
   SupplierCreateReq,
 } from "@/interfaces/inboundOutboundType";
-import { LocationType } from "@/interfaces/warehouseManagementType";
+import {
+  LocationType,
+  WarehouseType,
+} from "@/interfaces/warehouseManagementType";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
+import { cookies } from "next/headers";
+
+export async function getWarehouses(
+  warehouseType: WarehouseType = WarehouseType.STORAGE,
+) {
+  return await inboundOutboundService.getWarehouses(warehouseType);
+}
 
 export async function createImportSheet(data: ImportSheetCreateReq) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+  data.userId = Number(userId);
   return await inboundOutboundService.createImportSheet(data);
 }
 
@@ -43,10 +56,26 @@ export async function updateImportSheetDetail(
   );
 }
 
+export async function updateImportSheet(
+  importSheetId: string | number,
+  data: ImportSheetUpdateReq,
+) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+  data.userId = Number(userId);
+  return await inboundOutboundService.updateImportSheet(
+    Number(importSheetId),
+    data,
+  );
+}
+
 export async function confirmImportSheet(
   importSheetId: number,
   data: ImportSheetUpdateReq,
 ) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+  data.userId = Number(userId);
   return await inboundOutboundService.confirmImportSheet(importSheetId, data);
 }
 
@@ -75,6 +104,9 @@ export async function getLocationByType(
 }
 
 export async function createExportSheet(data: ExportSheetCreateReq) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+  data.userId = Number(userId);
   return await inboundOutboundService.createExportSheet(data);
 }
 
@@ -86,6 +118,13 @@ export async function createExportSheetDetail(
     exportSheetId,
     data,
   );
+}
+
+export async function updateExportSheet(
+  exportSheetId: string | number,
+  data: ExportSheetUpdateReq,
+) {
+  return await inboundOutboundService.updateExportSheet(exportSheetId, data);
 }
 
 export async function updateExportSheetDetail(

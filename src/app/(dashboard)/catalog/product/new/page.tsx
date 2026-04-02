@@ -1,5 +1,6 @@
 import { CreateProductForm } from "@/components/form/CreateProductForm";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import { Suspense } from "react";
 import { Category, UnitResponse } from "@/interfaces/warehouseManagementType";
 import {
   categoryService,
@@ -22,7 +23,9 @@ export default async function CreateProductPage() {
   return (
     <div>
       <PageBreadcrumb pageTitle="Create Product" filters={["catalog"]} />
-      <CreateProductForm category={categoryData} unit={unitData} />
+      <Suspense fallback={<div className="mt-4 text-sm text-gray-600">Loading…</div>}>
+        <CreateProductForm category={categoryData} unit={unitData} />
+      </Suspense>
     </div>
   );
 }

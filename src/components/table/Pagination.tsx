@@ -153,7 +153,7 @@ const Pagination: React.FC<PaginationProps> = ({
             onChange={(e) => {
               setPageSize(parseInt(e.target.value, 10));
             }}
-            className={"!w-[50px] !pr-0"}
+            className={"!w-[70px] !pr-0"}
           />
           <div className={"text-nowrap"}>Row/page</div>
         </div>

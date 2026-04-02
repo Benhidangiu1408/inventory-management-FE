@@ -8,6 +8,7 @@ import {
   faCube,
   faDollarSign,
   faIndustry,
+  faTruck,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ProgressBar from "@/components/TA_create_page/ProgressBar";
@@ -18,6 +19,9 @@ import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { ImportProvider } from "@/context/ImportContext";
 import Badge from "@/default_components/ui/badge/Badge";
 import { QualityCheckProvider } from "@/context/QualityCheckContext";
+import { ProductVariantProvider } from "@/context/ProductVariantContext";
+import CancelSheetButton from "@/components/InboundOutboundClient/CancelSheetButton";
+import { SheetStatus } from "@/interfaces/inventoryManagementType";
 
 export default async function ImportProcessLayout({
   params,
@@ -27,6 +31,11 @@ export default async function ImportProcessLayout({
   params: { type: string; id: string; step: string };
 }>) {
   const { type, id, step } = await params;
+  const isProductMappingStep = step === "product-mapping";
+  const progressStep =
+    step === "product-mapping"
+      ? "quantity-check"
+      : (step as "quantity-check" | "quality-check" | "storage-location");
 
   const importSheetDetail =
     await inboundOutboundService.getImportSheetDetail(id);
@@ -59,18 +68,25 @@ export default async function ImportProcessLayout({
       ? faDollarSign
       : type === "INTERNAL".toLowerCase()
         ? faCube
-        : faIndustry;
+        : type === "EXTERNAL_SUPPLIER".toLowerCase()
+          ? faTruck
+          : faIndustry;
 
   return (
     <div>
       <PageBreadcrumb
         pageTitle="Import Process"
         filters={["process", type, id]}
-        status={<InfoBoxStatus icon={icon} type={type} />}
+        status={<InfoBoxStatus icon={icon} type={type.replace("_", " ")} />}
       />
 
-      <div className="mb-6">
-        Sheet Status: <Badge>{importSheetDetail.status}</Badge>
+      <div className="mb-6 flex items-center justify-between">
+        <div className="">
+          Sheet Status: <Badge>{importSheetDetail.status}</Badge>
+        </div>
+        <CancelSheetButton
+          disabled={importSheetDetail.status !== SheetStatus.CREATED}
+        />
       </div>
 
       <ImportProvider initialData={importSheetDetail}>
@@ -81,7 +97,8 @@ export default async function ImportProcessLayout({
               title={title}
               description={description}
             >
-              {type === "SUPPLIER".toLowerCase() ? (
+              {type === "SUPPLIER".toLowerCase() ||
+              type === "EXTERNAL_SUPPLIER".toLowerCase() ? (
                 <InfoList>
                   <ul className="flex flex-col gap-3">
                     <li>
@@ -108,15 +125,16 @@ export default async function ImportProcessLayout({
                     <SmallInfoBox
                       title="FROM"
                       data={{
-                        warehouse: importSheetDetail.sourceWarehouse.id,
-                        name: importSheetDetail.sourceWarehouse.name,
+                        warehouse:
+                          importSheetDetail.sourceWarehouse?.id ?? "N/A",
+                        name: importSheetDetail.sourceWarehouse?.name ?? "N/A",
                       }}
                     />
                     <SmallInfoBox
                       title="TO"
                       data={{
-                        warehouse: importSheetDetail.warehouse.id,
-                        name: importSheetDetail.warehouse.name,
+                        warehouse: importSheetDetail.warehouse?.id ?? "N/A",
+                        name: importSheetDetail.warehouse?.name ?? "N/A",
                       }}
                     />
                   </InfoList>
@@ -124,15 +142,24 @@ export default async function ImportProcessLayout({
               )}
             </InfoBox>
 
-            <ProductListInfoBox step={step} productVariants={productVariants} />
+            {!isProductMappingStep && (
+              <>
+                <ProductListInfoBox
+                  step={step}
+                  productVariants={productVariants}
+                />
+              </>
+            )}
 
-            <ProgressBar
-              step={
-                step as "quantity-check" | "quality-check" | "storage-location"
-              }
-            />
+            <ProgressBar step={progressStep} />
 
-            {children}
+            {!isProductMappingStep ? (
+              children
+            ) : (
+              <ProductVariantProvider initialData={productVariants}>
+                {children}
+              </ProductVariantProvider>
+            )}
 
             <InfoPagination paginationType="process" />
           </div>

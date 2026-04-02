@@ -4,23 +4,15 @@ import FilterItem from "@/components/TA_common/FilterItem";
 // import Filter from "@/components/TA_List/Filter";
 import List from "@/components/TA_List/List";
 import Summary from "@/components/TA_List/Summary";
-import {
-  faCalendar,
-  faFilter,
-  faMagnifyingGlass,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
-import {
-  ImportSheetResponse,
-  PageResponse,
-} from "@/interfaces/inboundOutboundType";
+import { ImportSheetResponse } from "@/interfaces/inboundOutboundType";
 import Button from "@/default_components/ui/button/Button";
 import Link from "next/link";
 
 export default async function ImportPage() {
-  const importSheetList: PageResponse<ImportSheetResponse> =
+  const importSheetList: ImportSheetResponse[] =
     await inboundOutboundService.getAll();
 
   return (

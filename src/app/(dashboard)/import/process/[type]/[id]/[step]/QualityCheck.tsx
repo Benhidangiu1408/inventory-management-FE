@@ -2,7 +2,6 @@
 
 import Input from "@/default_components/form/input/InputField";
 import InfoBox from "@/components/TA_create_page/InfoBox";
-// import InfoPagination from "@/default_components/TA_create_page/InfoPagination";
 import Button from "@/default_components/ui/button/Button";
 import { QualityCheckRow } from "@/interfaces/interface.table";
 import CustomizableTable, {
@@ -18,7 +17,6 @@ import {
 } from "@/interfaces/inboundOutboundType";
 import { useCallback, useMemo, useState } from "react";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
-import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Loading } from "@/components/TA_common/Loading";
@@ -28,38 +26,11 @@ import { updateQCSheet } from "@/actions/inbound-outbound";
 export default function QualityCheckPage() {
   const router = useRouter();
   const { type, id } = useParams();
-
   const { qcData, setQCData } = useQualityCheck();
-
   const { confirm, ConfirmationModal } = useConfirmModal();
-
   const [loading, setLoading] = useState(false);
 
   const isCreated = qcData?.status === SheetStatus.CREATED;
-
-  const handleConfirmQCSheet = async () => {
-    if (!qcData) return;
-
-    const data: QCSheetUpdateReq = {
-      status: SheetStatus.APPROVED,
-      details: qcData?.details.map((detail) => ({
-        id: detail.id,
-        status: detail.status,
-        reason: detail.reason,
-        notes: detail.notes,
-      })),
-    };
-
-    setLoading(true);
-
-    const res = await updateQCSheet(qcData?.id, data);
-
-    setLoading(false);
-
-    setQCData(res);
-    router.push(`/import/process/${type}/${id}/storage-location`);
-    toast.success("Quality Check Successfully");
-  };
 
   const handleOpenConfirmModal = async () => {
     const isConfirmed = await confirm({
@@ -131,7 +102,15 @@ export default function QualityCheckPage() {
         label: "Quality Status",
         render: (value, row) => (
           <Select
-            options={options}
+            // If the row is already decided (PASS/FAIL/SKIP),
+            // hide PENDING so user can't switch back to it.
+            options={
+              value === QCSheetDetailStatus.PENDING
+                ? options
+                : options.filter(
+                    (opt) => opt.value !== QCSheetDetailStatus.PENDING,
+                  )
+            }
             value={value}
             className="h-[38px]"
             disabled={!isCreated}
@@ -194,6 +173,45 @@ export default function QualityCheckPage() {
       })) ?? [],
     [qcData],
   );
+
+  const handleConfirmQCSheet = async () => {
+    if (!qcData) return;
+
+    const invalidRows = rows.filter(
+      (row) =>
+        (row.qualityStatus == QCSheetDetailStatus.SKIPPED ||
+          row.qualityStatus == QCSheetDetailStatus.FAILED) &&
+        (!row.reason.trim() || !row.notes.trim()),
+    );
+
+    if (invalidRows.length > 0) {
+      toast.error(
+        `Please provide reason and notes for all FAILED or SKIPPED items (${invalidRows.length} item(s) missing).`,
+      );
+      return;
+    }
+
+    const data: QCSheetUpdateReq = {
+      status: SheetStatus.APPROVED,
+      details: qcData?.details.map((detail) => ({
+        id: detail.id,
+        status: detail.status,
+        reason: detail.reason,
+        notes: detail.notes,
+      })),
+    };
+
+    setLoading(true);
+
+    const res = await updateQCSheet(qcData?.id, data);
+
+    setLoading(false);
+
+    setQCData(res);
+
+    router.push(`/import/process/${type}/${id}/storage-location`);
+    toast.success("Quality Check Successfully");
+  };
 
   return (
     <div>

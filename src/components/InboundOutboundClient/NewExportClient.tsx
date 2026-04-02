@@ -40,12 +40,12 @@ const exportOptions: {
   path: ExportSheetType;
   icon: typeof faIndustry;
 }[] = [
-  {
-    key: "manufacturer",
-    label: "Manufacturer",
-    path: ExportSheetType.FACTORY,
-    icon: faIndustry,
-  },
+  // {
+  //   key: "manufacturer",
+  //   label: "Manufacturer",
+  //   path: ExportSheetType.FACTORY,
+  //   icon: faIndustry,
+  // },
   {
     key: "transfer",
     label: "Transfer",

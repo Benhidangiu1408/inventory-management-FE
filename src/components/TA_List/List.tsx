@@ -6,6 +6,7 @@ import {
   faEye,
   faIndustry,
   faPen,
+  faTruck,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
@@ -14,7 +15,6 @@ import CustomizableTable, { Column } from "../table/CustomizableTable";
 import {
   ExportSheetResponse,
   ImportSheetResponse,
-  PageResponse,
 } from "@/interfaces/inboundOutboundType";
 import { format } from "date-fns";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
@@ -30,21 +30,25 @@ const ActionsButton = ({
   item,
   type,
   processType,
+  status,
 }: {
   item: ExportRow | ImportRow;
   type: "import" | "export";
   processType: string;
+  status: string;
 }) => {
   const getEditLink = () => {
     const identifier =
       type === "import" ? (item as ImportRow).id : (item as ExportRow).id;
     // Cả import và export đều vào bước quantity-check khi bấm Edit
-    return `/${type}/process/${processType.toLowerCase()}/${identifier}/quantity-check`;
+    return status === SheetStatus.WAIT_FOR_MAPPING
+      ? `/${type}/process/${processType.toLowerCase()}/${identifier}/product-mapping`
+      : `/${type}/process/${processType.toLowerCase()}/${identifier}/quantity-check`;
   };
 
   return (
     <div className="flex justify-center gap-3">
-      <Link
+      {/* <Link
         href={`/${type}/details/${
           type === "import" ? (item as ImportRow).id : (item as ExportRow).id
         }`}
@@ -53,7 +57,7 @@ const ActionsButton = ({
           icon={faEye}
           className="cursor-pointer hover:text-blue-500"
         />
-      </Link>
+      </Link> */}
       <Link href={getEditLink()}>
         <FontAwesomeIcon icon={faPen} className="cursor-pointer" />
       </Link>
@@ -66,6 +70,7 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       key: "id",
       label: "Export Sheet ID",
+      sort: true,
     },
     {
       key: "type",
@@ -97,22 +102,6 @@ export default function List({ type, data, exportData }: ListProps) {
       key: "warehouse",
       label: "Warehouse",
     },
-    // {
-    //   key: "receiver",
-    //   label: "Receiver",
-    // },
-    // {
-    //   key: "createdBy",
-    //   label: "Created By",
-    // },
-    // {
-    //   key: "totalQuantity",
-    //   label: "Total Quantity",
-    // },
-    // {
-    //   key: "totalValue",
-    //   label: "Total Value",
-    // },
     {
       key: "status",
       label: "Status",
@@ -122,6 +111,8 @@ export default function List({ type, data, exportData }: ListProps) {
             return <Badge color="light">{value}</Badge>;
           case SheetStatus.IN_PROGRESS:
             return <Badge color="warning">{value}</Badge>;
+          case SheetStatus.REJECTED:
+            return <Badge color="error">{value}</Badge>;
           case SheetStatus.APPROVED:
             return <Badge color="info">{value}</Badge>;
           case SheetStatus.COMPLETED:
@@ -138,8 +129,13 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       key: "actions",
       label: "Actions",
-      render: (value: ExportRow[keyof ExportRow], row: ExportRow) => (
-        <ActionsButton processType={row.type} item={row} type="export" />
+      render: (_, row: ExportRow) => (
+        <ActionsButton
+          status={row.status}
+          processType={row.type}
+          item={row}
+          type="export"
+        />
       ),
     },
   ];
@@ -148,26 +144,30 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       label: "Import Sheet ID",
       key: "id",
+      sort: true,
+      width: 180,
     },
     {
       label: "Type",
       key: "type",
-      render: (value: ImportRow[keyof ImportRow]) => {
+      render: (_, row) => {
         return (
           <Badge
             startIcon={
               <FontAwesomeIcon
                 icon={
-                  value === "SUPPLIER"
+                  row.type === "SUPPLIER"
                     ? faUser
-                    : value === "INTERNAL"
+                    : row.type === "INTERNAL"
                       ? faArrowsLeftRight
-                      : faIndustry
+                      : row.type === "EXTERNAL_SUPPLIER"
+                        ? faTruck
+                        : faIndustry
                 }
               />
             }
           >
-            {value}
+            {row.type.replace("_", " ")}
           </Badge>
         );
       },
@@ -175,18 +175,24 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       label: "Status",
       key: "status",
-      render: (value) => {
-        switch (value) {
+      render: (_, row) => {
+        switch (row.status) {
           case SheetStatus.CREATED:
-            return <Badge color="light">{value}</Badge>;
+            return <Badge color="light">{row.status}</Badge>;
+          case SheetStatus.REJECTED:
+            return <Badge color="error">{row.status}</Badge>;
+          case SheetStatus.WAIT_FOR_MAPPING:
+            return <Badge color="light">{row.status.replace(/_/g, " ")}</Badge>;
           case SheetStatus.IN_PROGRESS:
-            return <Badge color="warning">{value}</Badge>;
+            return (
+              <Badge color="warning">{row.status.replace(/_/g, " ")}</Badge>
+            );
           case SheetStatus.APPROVED:
-            return <Badge color="info">{value}</Badge>;
+            return <Badge color="info">{row.status}</Badge>;
           case SheetStatus.COMPLETED:
-            return <Badge color="success">{value}</Badge>;
+            return <Badge color="success">{row.status}</Badge>;
           default:
-            return value;
+            return row.status;
         }
       },
     },
@@ -198,9 +204,17 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       label: "Actions",
       key: "actions",
-      render: (value: ImportRow[keyof ImportRow], row: ImportRow) => (
-        <ActionsButton processType={row.type} item={row} type="import" />
-      ),
+      width: 100,
+      render: (_, row: ImportRow) => {
+        return (
+          <ActionsButton
+            status={row.status}
+            processType={row.type}
+            item={row}
+            type="import"
+          />
+        );
+      },
     },
   ];
 

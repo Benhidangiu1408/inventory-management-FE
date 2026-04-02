@@ -1,4 +1,11 @@
 export const PROCESS_MAP = {
+  "product-mapping": 0,
+  "quantity-check": 1,
+  "quality-check": 2,
+  "storage-location": 3,
+};
+
+export const PROCESS_MAP_WITHOUT_MAPPING = {
   "quantity-check": 1,
   "quality-check": 2,
   "storage-location": 3,

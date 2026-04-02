@@ -1,5 +1,5 @@
 // userManagementType.ts
-export type UserStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED";
+export type UserStatus = "ACTIVE" | "DISABLED" | "SUSPENDED";
 export type RoleStatus = "ACTIVE" | "DISABLED" | "DELETED";
 
 export interface User {

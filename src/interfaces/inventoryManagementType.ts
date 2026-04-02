@@ -4,6 +4,7 @@ export enum SheetStatus {
   COMPLETED = "COMPLETED",
   REJECTED = "REJECTED",
   APPROVED = "APPROVED",
+  WAIT_FOR_MAPPING = "WAIT_FOR_MAPPING",
 }
 
 // --- CREATE REQUEST ---
@@ -86,7 +87,7 @@ export enum FaultOrderStatus {
 }
 
 export enum FaultProcessOrderStatus {
-  APPROVED= "APPROVED",
+  APPROVED = "APPROVED",
   REJECTED = "REJECTED",
   FAILED = "FAILED",
   CANCELLED = "CANCELLED",

@@ -1,7 +1,11 @@
 "use client";
 
-import { PROCESS_MAP } from "@/constants/constants";
-import { useProcessContext } from "@/context/ProcessContext";
+import {
+  PROCESS_MAP,
+  PROCESS_MAP_WITHOUT_MAPPING,
+} from "@/constants/constants";
+import { useImport } from "@/context/ImportContext";
+import { ImportSheetType } from "@/interfaces/inboundOutboundType";
 
 export const ProgressBarItem = ({
   process,
@@ -26,38 +30,37 @@ export const ProgressBarItem = ({
 export default function ProgressBar({
   step,
 }: {
-  step: "quantity-check" | "quality-check" | "storage-location";
+  step:
+    | "product-mapping"
+    | "quantity-check"
+    | "quality-check"
+    | "storage-location";
 }) {
-  const currentOrder = PROCESS_MAP[step];
-  // console.log(currentOrder);
-  // const { process, processOrder } = useProcessContext();
+  const { importData } = useImport();
 
-  // const processList = [
-  //   {
-  //     label: "Quantity Check",
-  //     value: "quantity-check",
-  //     order: 1,
-  //   },
-  //   {
-  //     label: "Quality Check",
-  //     value: "quality-check",
-  //     order: 2,
-  //   },
-  //   {
-  //     label: "Storage Location",
-  //     value: "storage-location",
-  //     order: 3,
-  //   },
-  // ];
+  const currentOrder =
+    importData.type !== ImportSheetType.EXTERNAL_SUPPLIER
+      ? PROCESS_MAP_WITHOUT_MAPPING[
+          step as "quantity-check" | "quality-check" | "storage-location"
+        ]
+      : PROCESS_MAP[step];
+
+  let PROCESS = {};
+
+  if (importData.type !== ImportSheetType.EXTERNAL_SUPPLIER) {
+    PROCESS = PROCESS_MAP_WITHOUT_MAPPING;
+  } else {
+    PROCESS = PROCESS_MAP;
+  }
 
   return (
     <div className="flex gap-6 rounded-2xl border border-gray-200 bg-white px-6 py-5">
-      {Object.entries(PROCESS_MAP).map(([key, value], index) => (
+      {Object.entries(PROCESS).map(([key, value], index) => (
         <ProgressBarItem
           key={index}
           process={step}
           value={key}
-          order={value}
+          order={value as number}
           currentOrder={currentOrder}
         />
       ))}
