@@ -312,6 +312,7 @@ export interface ExportSheetUpdateReq {
   status?: SheetStatus;
   customerId?: number;
   destinationWarehouseId?: number;
+  userId?: number;
   details?: ExportSheetDetailUpdateReq[];
 }
 

@@ -10,22 +10,24 @@ import Button from "@/default_components/ui/button/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeCompare, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ProductMappingRow } from "@/interfaces/interface.table";
 import { useProductVariant } from "@/context/ProductVariantContext";
 import {
+  getWarehouses,
   updateImportSheet,
   updateImportSheetDetail,
 } from "@/actions/inbound-outbound";
 import { ImportSheetDetailMappingStatus } from "@/interfaces/inboundOutboundType";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import { WarehoseResponse } from "@/interfaces/inboundOutboundType";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
 
 export default function ProductMappingPage() {
   const router = useRouter();
   const pathname = usePathname();
   const { type, id } = useParams();
-  const { importData } = useImport();
+  const { importData, setImportData } = useImport();
   const { productVariants } = useProductVariant();
   const { confirm, ConfirmationModal } = useConfirmModal();
 
@@ -154,7 +156,8 @@ export default function ProductMappingPage() {
     return rows.filter((row) => !mappedDetailIds.has(row.detailId)).length;
   }, [mappedDetailIds, rows]);
 
-  const canContinue = unmappedCount === 0 && rows.length > 0;
+  const canContinue =
+    unmappedCount === 0 && rows.length > 0 && !!importData.warehouse?.id;
 
   const handleMapDetail = useCallback(
     async (row: ProductMappingRow) => {
@@ -185,6 +188,28 @@ export default function ProductMappingPage() {
       );
     },
     [id],
+  );
+
+  const [warehouses, setWarehouses] = useState<WarehoseResponse[]>([]);
+
+  useEffect(() => {
+    getWarehouses().then(setWarehouses).catch(console.error);
+  }, []);
+
+  const warehouseOptions = warehouses.map((w) => ({
+    value: String(w.id),
+    label: w.name,
+  }));
+
+  const handleWarehouseChange = useCallback(
+    async (warehouseId: number) => {
+      const selected = warehouses.find((w) => w.id === warehouseId);
+      if (!selected) return;
+
+      await updateImportSheet(id as string, { warehouseId });
+      setImportData((prev) => ({ ...prev, warehouse: selected }));
+    },
+    [warehouses, id, setImportData],
   );
 
   const handleOpenCreateProduct = useCallback(() => {
@@ -354,6 +379,7 @@ export default function ProductMappingPage() {
   const handleConfirmProductMapping = async () => {
     const data = {
       status: SheetStatus.CREATED,
+      warehouseId: importData.warehouse?.id,
     };
 
     await updateImportSheet(id as string, data);
@@ -382,7 +408,19 @@ export default function ProductMappingPage() {
         description="Map supplier products to system products before proceeding"
       >
         <div className="flex flex-col gap-6 p-6">
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <label className="text-sm font-medium whitespace-nowrap">
+                Warehouse
+              </label>
+              <Select
+                className="h-[38px] w-[250px]"
+                disabled={disableAllButtons}
+                value={String(importData.warehouse?.id ?? "")}
+                options={warehouseOptions}
+                onChange={(e) => handleWarehouseChange(Number(e.target.value))}
+              />
+            </div>
             <div className="bg-warning-50 text-warning-600 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium">
               <span className="bg-warning-600 h-1.5 w-1.5 rounded-full" />
               {unmappedCount} unmapped
