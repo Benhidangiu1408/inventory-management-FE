@@ -169,6 +169,9 @@ export async function confirmExportSheet(
   exportSheetId: number | string,
   data: ExportSheetUpdateReq,
 ) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+  data.userId = Number(userId);
   return await inboundOutboundService.confirmExportSheet(exportSheetId, data);
 }
 

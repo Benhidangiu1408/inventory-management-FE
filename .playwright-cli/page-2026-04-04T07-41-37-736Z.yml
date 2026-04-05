@@ -1,0 +1,429 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e154]:
+    - complementary [ref=e155]:
+      - link "Logo Stockify" [ref=e157] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e159]:
+          - img "Logo" [ref=e160]
+          - generic [ref=e161]: Stockify
+      - navigation [ref=e163]:
+        - generic [ref=e164]:
+          - generic [ref=e165]:
+            - heading "Menu" [level=2] [ref=e166]
+            - list [ref=e167]:
+              - listitem [ref=e168]:
+                - link "Dashboard" [ref=e169] [cursor=pointer]:
+                  - /url: /
+                  - img [ref=e171]
+                  - generic [ref=e173]: Dashboard
+              - listitem [ref=e174]:
+                - button "Inventory" [ref=e175] [cursor=pointer]:
+                  - img [ref=e177]
+                  - generic [ref=e181]: Inventory
+                  - img [ref=e182]
+                - list [ref=e184]:
+                  - listitem [ref=e185]:
+                    - link "Item" [ref=e186] [cursor=pointer]:
+                      - /url: /s
+                      - text: Item
+                  - listitem [ref=e187]:
+                    - link "Batch" [ref=e188] [cursor=pointer]:
+                      - /url: /s
+                      - text: Batch
+              - listitem [ref=e189]:
+                - link "Import" [ref=e190] [cursor=pointer]:
+                  - /url: /import
+                  - img [ref=e192]
+                  - generic [ref=e194]: Import
+              - listitem [ref=e195]:
+                - link "Export" [ref=e196] [cursor=pointer]:
+                  - /url: /export
+                  - img [ref=e198]
+                  - generic [ref=e200]: Export
+              - listitem [ref=e201]:
+                - link "Stocktaking" [ref=e202] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - img [ref=e204]
+                  - generic [ref=e208]: Stocktaking
+              - listitem [ref=e209]:
+                - button "Defective" [ref=e210] [cursor=pointer]:
+                  - img [ref=e212]
+                  - generic [ref=e217]: Defective
+                  - img [ref=e218]
+                - list [ref=e220]:
+                  - listitem [ref=e221]:
+                    - link "Root Cause Analysis" [ref=e222] [cursor=pointer]:
+                      - /url: /s
+                      - text: Root Cause Analysis
+                  - listitem [ref=e223]:
+                    - link "Fault Order" [ref=e224] [cursor=pointer]:
+                      - /url: /s
+                      - text: Fault Order
+              - listitem [ref=e225]:
+                - button "Master Data" [ref=e226] [cursor=pointer]:
+                  - img [ref=e228]
+                  - generic [ref=e233]: Master Data
+                  - img [ref=e234]
+                - list [ref=e236]:
+                  - listitem [ref=e237]:
+                    - link "Warehouse" [ref=e238] [cursor=pointer]:
+                      - /url: /warehouse-management/warehouse
+                      - text: Warehouse
+                  - listitem [ref=e239]:
+                    - link "Category" [ref=e240] [cursor=pointer]:
+                      - /url: /catalog/category
+                      - text: Category
+                  - listitem [ref=e241]:
+                    - link "Product" [ref=e242] [cursor=pointer]:
+                      - /url: /catalog/product
+                      - text: Product
+                  - listitem [ref=e243]:
+                    - link "Product Attributes" [ref=e244] [cursor=pointer]:
+                      - /url: /catalog/variant-attributes
+                      - text: Product Attributes
+                  - listitem [ref=e245]:
+                    - link "UOM (Unit of Measurement)" [ref=e246] [cursor=pointer]:
+                      - /url: /catalog/unit
+                      - text: UOM (Unit of Measurement)
+              - listitem [ref=e247]:
+                - button "Business Partners" [ref=e248] [cursor=pointer]:
+                  - img [ref=e250]
+                  - generic [ref=e254]: Business Partners
+                  - img [ref=e255]
+                - list [ref=e257]:
+                  - listitem [ref=e258]:
+                    - link "Supplier" [ref=e259] [cursor=pointer]:
+                      - /url: /s
+                      - text: Supplier
+                  - listitem [ref=e260]:
+                    - link "Customer" [ref=e261] [cursor=pointer]:
+                      - /url: /s
+                      - text: Customer
+              - listitem [ref=e262]:
+                - button "Users Settings" [ref=e263] [cursor=pointer]:
+                  - img [ref=e265]
+                  - generic [ref=e277]: Users Settings
+                  - img [ref=e278]
+                - list [ref=e280]:
+                  - listitem [ref=e281]:
+                    - link "Users Management" [ref=e282] [cursor=pointer]:
+                      - /url: /admin/user-management
+                      - text: Users Management
+                  - listitem [ref=e283]:
+                    - link "Role & Permission" [ref=e284] [cursor=pointer]:
+                      - /url: /admin/role-management
+                      - text: Role & Permission
+                  - listitem [ref=e285]:
+                    - link "User History" [ref=e286] [cursor=pointer]:
+                      - /url: /s
+                      - text: User History
+              - listitem [ref=e287]:
+                - link "Notification" [ref=e288] [cursor=pointer]:
+                  - /url: /notification
+                  - img [ref=e290]
+                  - generic [ref=e292]: Notification
+              - listitem [ref=e293]:
+                - link "Profile" [ref=e294] [cursor=pointer]:
+                  - /url: /profile
+                  - img [ref=e296]
+                  - generic [ref=e300]: Profile
+          - generic [ref=e301]:
+            - heading "Others" [level=2] [ref=e302]
+            - list [ref=e303]:
+              - listitem [ref=e304]:
+                - link "Calendar" [ref=e305] [cursor=pointer]:
+                  - /url: /calendar
+                  - img [ref=e307]
+                  - generic [ref=e309]: Calendar
+              - listitem [ref=e310]:
+                - button "Forms" [ref=e311] [cursor=pointer]:
+                  - img [ref=e313]
+                  - generic [ref=e315]: Forms
+                  - img [ref=e316]
+                - list [ref=e318]:
+                  - listitem [ref=e319]:
+                    - link "Form Elements" [ref=e320] [cursor=pointer]:
+                      - /url: /form-elements
+                      - text: Form Elements
+              - listitem [ref=e321]:
+                - button "Charts" [ref=e322] [cursor=pointer]:
+                  - img [ref=e324]
+                  - generic [ref=e326]: Charts
+                  - img [ref=e327]
+                - list [ref=e329]:
+                  - listitem [ref=e330]:
+                    - link "Line Chart" [ref=e331] [cursor=pointer]:
+                      - /url: /line-chart
+                      - text: Line Chart
+                  - listitem [ref=e332]:
+                    - link "Bar Chart" [ref=e333] [cursor=pointer]:
+                      - /url: /bar-chart
+                      - text: Bar Chart
+              - listitem [ref=e334]:
+                - button "UI Elements" [ref=e335] [cursor=pointer]:
+                  - img [ref=e337]
+                  - generic [ref=e339]: UI Elements
+                  - img [ref=e340]
+                - list [ref=e342]:
+                  - listitem [ref=e343]:
+                    - link "Alerts" [ref=e344] [cursor=pointer]:
+                      - /url: /alerts
+                      - text: Alerts
+                  - listitem [ref=e345]:
+                    - link "Avatar" [ref=e346] [cursor=pointer]:
+                      - /url: /avatars
+                      - text: Avatar
+                  - listitem [ref=e347]:
+                    - link "Badge" [ref=e348] [cursor=pointer]:
+                      - /url: /badge
+                      - text: Badge
+                  - listitem [ref=e349]:
+                    - link "Buttons" [ref=e350] [cursor=pointer]:
+                      - /url: /buttons
+                      - text: Buttons
+                  - listitem [ref=e351]:
+                    - link "Images" [ref=e352] [cursor=pointer]:
+                      - /url: /images
+                      - text: Images
+                  - listitem [ref=e353]:
+                    - link "Videos" [ref=e354] [cursor=pointer]:
+                      - /url: /videos
+                      - text: Videos
+                  - listitem [ref=e355]:
+                    - link "Modals" [ref=e356] [cursor=pointer]:
+                      - /url: /modals
+                      - text: Modals
+    - generic [ref=e357]:
+      - banner [ref=e358]:
+        - generic [ref=e359]:
+          - generic [ref=e360]:
+            - button "Toggle Sidebar" [ref=e361] [cursor=pointer]:
+              - img [ref=e362]
+            - generic [ref=e366]:
+              - generic:
+                - img
+              - textbox "Search or type command..." [ref=e367]
+              - button "⌘ K" [ref=e368] [cursor=pointer]:
+                - generic [ref=e369]: ⌘
+                - generic [ref=e370]: K
+          - generic [ref=e371]:
+            - generic [ref=e372]:
+              - button [ref=e373] [cursor=pointer]:
+                - img [ref=e374]
+              - button [ref=e377] [cursor=pointer]:
+                - img [ref=e380]
+            - button "User nam3.nguyen" [ref=e383] [cursor=pointer]:
+              - img "User" [ref=e385]
+              - generic [ref=e386]: nam3.nguyen
+              - img [ref=e387]
+      - generic [ref=e390]:
+        - generic [ref=e391]:
+          - generic [ref=e392]:
+            - generic [ref=e393]:
+              - img [ref=e395]
+              - generic [ref=e397]:
+                - generic [ref=e398]:
+                  - text: Customers
+                  - heading "3,782" [level=4] [ref=e399]
+                - generic [ref=e400]:
+                  - img [ref=e401]
+                  - text: 11.01%
+            - generic [ref=e403]:
+              - img [ref=e405]
+              - generic [ref=e407]:
+                - generic [ref=e408]:
+                  - text: Orders
+                  - heading "5,359" [level=4] [ref=e409]
+                - generic [ref=e410]:
+                  - img [ref=e411]
+                  - text: 9.05%
+          - generic [ref=e413]:
+            - generic [ref=e414]:
+              - heading "Monthly Sales" [level=3] [ref=e415]
+              - button [ref=e417] [cursor=pointer]:
+                - img [ref=e418]
+            - generic [ref=e423]:
+              - img [ref=e424]:
+                - generic [ref=e427]:
+                  - generic "400" [ref=e428]
+                  - generic "300" [ref=e429]
+                  - generic "200" [ref=e430]
+                  - generic "100" [ref=e431]
+                  - generic "0" [ref=e432]
+                - generic [ref=e452]:
+                  - generic "Jan" [ref=e453]
+                  - generic "Feb" [ref=e454]
+                  - generic "Mar" [ref=e455]
+                  - generic "Apr" [ref=e456]
+                  - generic "May" [ref=e457]
+                  - generic "Jun" [ref=e458]
+                  - generic "Jul" [ref=e459]
+                  - generic "Aug" [ref=e460]
+                  - generic "Sep" [ref=e461]
+                  - generic "Oct" [ref=e462]
+                  - generic "Nov" [ref=e463]
+                  - generic "Dec" [ref=e464]
+              - generic: ●
+        - generic [ref=e466]:
+          - generic [ref=e467]:
+            - generic [ref=e468]:
+              - generic [ref=e469]:
+                - heading "Monthly Target" [level=3] [ref=e470]
+                - paragraph [ref=e471]: Target you’ve set for each month
+              - button [ref=e473] [cursor=pointer]:
+                - img [ref=e474]
+            - generic [ref=e476]:
+              - img [ref=e480]:
+                - generic [ref=e492]:
+                  - generic: 75.55%
+              - generic [ref=e493]: +10%
+            - paragraph [ref=e494]: You earn $3287 today, it's higher than last month. Keep up your good work!
+          - generic [ref=e495]:
+            - generic [ref=e496]:
+              - paragraph [ref=e497]: Target
+              - paragraph [ref=e498]:
+                - text: $20K
+                - img [ref=e499]
+            - generic [ref=e502]:
+              - paragraph [ref=e503]: Revenue
+              - paragraph [ref=e504]:
+                - text: $20K
+                - img [ref=e505]
+            - generic [ref=e508]:
+              - paragraph [ref=e509]: Today
+              - paragraph [ref=e510]:
+                - text: $20K
+                - img [ref=e511]
+        - generic [ref=e514]:
+          - generic [ref=e515]:
+            - generic [ref=e516]:
+              - heading "Statistics" [level=3] [ref=e517]
+              - paragraph [ref=e518]: Target you’ve set for each month
+            - generic [ref=e520]:
+              - button "Monthly" [ref=e521] [cursor=pointer]
+              - button "Quarterly" [ref=e522] [cursor=pointer]
+              - button "Annually" [ref=e523] [cursor=pointer]
+          - generic [ref=e527]:
+            - img [ref=e528]:
+              - generic [ref=e531]:
+                - generic "250" [ref=e532]
+                - generic "200" [ref=e533]
+                - generic "150" [ref=e534]
+                - generic "100" [ref=e535]
+                - generic "50" [ref=e536]
+                - generic "0" [ref=e537]
+              - generic [ref=e546]:
+                - generic "Jan" [ref=e547]
+                - generic "Feb" [ref=e548]
+                - generic "Mar" [ref=e549]
+                - generic "Apr" [ref=e550]
+                - generic "May" [ref=e551]
+                - generic "Jun" [ref=e552]
+                - generic "Jul" [ref=e553]
+                - generic "Aug" [ref=e554]
+                - generic "Sep" [ref=e555]
+                - generic "Oct" [ref=e556]
+                - generic "Nov" [ref=e557]
+                - generic "Dec" [ref=e558]
+            - generic: ● ●
+        - generic [ref=e560]:
+          - generic [ref=e561]:
+            - generic [ref=e562]:
+              - heading "Customers Demographic" [level=3] [ref=e563]
+              - paragraph [ref=e564]: Number of customer based on country
+            - button [ref=e566] [cursor=pointer]:
+              - img [ref=e567]
+          - img [ref=e573]
+          - generic [ref=e756]:
+            - generic [ref=e757]:
+              - generic [ref=e758]:
+                - img "usa" [ref=e760]
+                - generic [ref=e761]:
+                  - paragraph [ref=e762]: USA
+                  - generic [ref=e763]: 2,379 Customers
+              - paragraph [ref=e767]: 79%
+            - generic [ref=e768]:
+              - generic [ref=e769]:
+                - img "france" [ref=e771]
+                - generic [ref=e772]:
+                  - paragraph [ref=e773]: France
+                  - generic [ref=e774]: 589 Customers
+              - paragraph [ref=e778]: 23%
+        - generic [ref=e780]:
+          - generic [ref=e781]:
+            - heading "Recent Orders" [level=3] [ref=e783]
+            - generic [ref=e784]:
+              - button "Filter" [ref=e785] [cursor=pointer]:
+                - img [ref=e786]
+                - text: Filter
+              - button "See all" [ref=e789] [cursor=pointer]
+          - table [ref=e791]:
+            - rowgroup [ref=e792]:
+              - row "Products Category Price Status" [ref=e793]:
+                - columnheader "Products" [ref=e794]
+                - columnheader "Category" [ref=e795]
+                - columnheader "Price" [ref=e796]
+                - columnheader "Status" [ref=e797]
+            - rowgroup [ref=e798]:
+              - row "MacBook Pro 13” MacBook Pro 13” 2 Variants $2399.00 Laptop Delivered" [ref=e799]:
+                - cell "MacBook Pro 13” MacBook Pro 13” 2 Variants" [ref=e800]:
+                  - generic [ref=e801]:
+                    - img "MacBook Pro 13”" [ref=e803]
+                    - generic [ref=e804]:
+                      - paragraph [ref=e805]: MacBook Pro 13”
+                      - text: 2 Variants
+                - cell "$2399.00" [ref=e806]
+                - cell "Laptop" [ref=e807]
+                - cell "Delivered" [ref=e808]:
+                  - generic [ref=e809]: Delivered
+              - row "Apple Watch Ultra Apple Watch Ultra 1 Variant $879.00 Watch Pending" [ref=e810]:
+                - cell "Apple Watch Ultra Apple Watch Ultra 1 Variant" [ref=e811]:
+                  - generic [ref=e812]:
+                    - img "Apple Watch Ultra" [ref=e814]
+                    - generic [ref=e815]:
+                      - paragraph [ref=e816]: Apple Watch Ultra
+                      - text: 1 Variant
+                - cell "$879.00" [ref=e817]
+                - cell "Watch" [ref=e818]
+                - cell "Pending" [ref=e819]:
+                  - generic [ref=e820]: Pending
+              - row "iPhone 15 Pro Max iPhone 15 Pro Max 2 Variants $1869.00 SmartPhone Delivered" [ref=e821]:
+                - cell "iPhone 15 Pro Max iPhone 15 Pro Max 2 Variants" [ref=e822]:
+                  - generic [ref=e823]:
+                    - img "iPhone 15 Pro Max" [ref=e825]
+                    - generic [ref=e826]:
+                      - paragraph [ref=e827]: iPhone 15 Pro Max
+                      - text: 2 Variants
+                - cell "$1869.00" [ref=e828]
+                - cell "SmartPhone" [ref=e829]
+                - cell "Delivered" [ref=e830]:
+                  - generic [ref=e831]: Delivered
+              - row "iPad Pro 3rd Gen iPad Pro 3rd Gen 2 Variants $1699.00 Electronics Canceled" [ref=e832]:
+                - cell "iPad Pro 3rd Gen iPad Pro 3rd Gen 2 Variants" [ref=e833]:
+                  - generic [ref=e834]:
+                    - img "iPad Pro 3rd Gen" [ref=e836]
+                    - generic [ref=e837]:
+                      - paragraph [ref=e838]: iPad Pro 3rd Gen
+                      - text: 2 Variants
+                - cell "$1699.00" [ref=e839]
+                - cell "Electronics" [ref=e840]
+                - cell "Canceled" [ref=e841]:
+                  - generic [ref=e842]: Canceled
+              - row "AirPods Pro 2nd Gen AirPods Pro 2nd Gen 1 Variant $240.00 Accessories Delivered" [ref=e843]:
+                - cell "AirPods Pro 2nd Gen AirPods Pro 2nd Gen 1 Variant" [ref=e844]:
+                  - generic [ref=e845]:
+                    - img "AirPods Pro 2nd Gen" [ref=e847]
+                    - generic [ref=e848]:
+                      - paragraph [ref=e849]: AirPods Pro 2nd Gen
+                      - text: 1 Variant
+                - cell "$240.00" [ref=e850]
+                - cell "Accessories" [ref=e851]
+                - cell "Delivered" [ref=e852]:
+                  - generic [ref=e853]: Delivered
+  - generic [ref=e55]:
+    - img [ref=e57]
+    - button "Open Tanstack query devtools" [ref=e105] [cursor=pointer]:
+      - img [ref=e106]
+  - button "Open Next.js Dev Tools" [ref=e50] [cursor=pointer]:
+    - img [ref=e51]
+  - alert [ref=e54]
