@@ -15,7 +15,7 @@ import {
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
 
-import { Eye, Pencil } from "lucide-react";
+import { Eye, Pencil, Trash } from "lucide-react";
 import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
 import { Role, User } from "@/interfaces/userManagementType";
 import { AssignRoleAction } from "@/actions/user";
@@ -80,18 +80,19 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
 ];
 
 // --- Location View Header ---
-export const LocationHeaders: Column<LocationResponse>[] = [
+export const getLocationHeaders = (
+  deleteHandle: (id: number) => void,
+  disable: boolean,
+): Column<LocationResponse>[] => [
   {
     label: "Code",
     key: "code",
-    width: 300,
     sort: true,
     filter: "agTextColumnFilter",
   },
   {
     label: "Location Name",
     key: "name",
-    width: 100,
     filter: "agTextColumnFilter",
   },
   {
@@ -116,6 +117,21 @@ export const LocationHeaders: Column<LocationResponse>[] = [
         <Badge variant="solid" color={color}>
           {label}
         </Badge>
+      );
+    },
+  },
+  {
+    label: "Action",
+    key: "id",
+    filter: false,
+    width: 50,
+    render: (val) => {
+      return (
+        <div className="flex h-full items-center justify-center gap-2">
+          <button onClick={() => deleteHandle(Number(val))} disabled={disable}>
+            <Trash size={16} color="red" />
+          </button>
+        </div>
       );
     },
   },

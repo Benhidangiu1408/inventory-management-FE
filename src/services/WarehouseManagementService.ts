@@ -67,6 +67,9 @@ export const warehouseService = {
       data,
     );
   },
+  delete: async (id: number) => {
+    return apiClient.delete<void>(`/info/v1/warehouse/delete/${id}`, {});
+  },
 };
 
 export const locationService = {
@@ -104,6 +107,9 @@ export const locationService = {
         cache: "no-cache",
       },
     );
+  },
+  delete: async (id: number) => {
+    return apiClient.delete<void>(`/info/v1/location/delete/${id}`, {});
   },
 };
 

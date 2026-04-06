@@ -34,6 +34,9 @@ export async function warehouseUpdateAction(
 ) {
   await warehouseService.update(id, data);
 }
+export async function warehouseDeleteAction(id: number) {
+  await warehouseService.delete(id);
+}
 export async function locationGetByTypeAction(
   warehouseId: number,
   type: LocationType,
@@ -51,6 +54,9 @@ export async function locationGetChildrenAction(
 }
 export async function locationCreateAction(data: LocationBulkCreate) {
   await locationService.create(data);
+}
+export async function locationDeleteAction(id: number) {
+  await locationService.delete(id);
 }
 export async function UnitCreateAction(data: UnitRequest) {
   await unitService.create(data);
