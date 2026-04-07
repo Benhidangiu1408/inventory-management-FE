@@ -6,6 +6,7 @@ import InfoBox from "@/components/TA_create_page/InfoBox";
 import CustomizableTable, {
   Column,
 } from "@/components/table/CustomizableTable";
+import { useAuth } from "@/context/AuthContext";
 import { useImport } from "@/context/ImportContext";
 import Input from "@/default_components/form/input/InputField";
 import Button from "@/default_components/ui/button/Button";
@@ -16,6 +17,7 @@ import {
 } from "@/interfaces/inboundOutboundType";
 import { QuantityCheckRow } from "@/interfaces/interface.table";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import { UserPermissions } from "@/interfaces/userManagementType";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams, useRouter } from "next/navigation";
@@ -28,6 +30,11 @@ export default function ImportProcessPage() {
   const { type, id } = useParams();
 
   const { importData, setImportData } = useImport();
+
+  const { user } = useAuth();
+  const hasStockInPermission = user?.permissions.includes(
+    UserPermissions.STOCK_IN,
+  );
 
   const { confirm, ConfirmationModal } = useConfirmModal();
 
@@ -135,7 +142,7 @@ export default function ImportProcessPage() {
             className="h-[35px]"
             defaultValue={value}
             type="number"
-            disabled={!isCreated}
+            disabled={!hasStockInPermission || !isCreated}
             onBlur={(e) =>
               updateRow(row.detailId, {
                 actualQuantity: Number(e.target.value),
@@ -170,7 +177,7 @@ export default function ImportProcessPage() {
           <Input
             defaultValue={value}
             className="h-[35px]"
-            disabled={!isCreated}
+            disabled={!hasStockInPermission || !isCreated}
             onBlur={(e) =>
               updateRow(row.detailId, {
                 reason: e.target.value,
@@ -198,7 +205,10 @@ export default function ImportProcessPage() {
           />
 
           <div className="flex justify-end">
-            <Button onClick={handleOpenConfirmModal} disabled={!isCreated}>
+            <Button
+              onClick={handleOpenConfirmModal}
+              disabled={!hasStockInPermission || !isCreated}
+            >
               Confirm Check Quantity
             </Button>
           </div>

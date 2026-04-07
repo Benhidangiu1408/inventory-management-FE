@@ -2,6 +2,12 @@
 export type UserStatus = "ACTIVE" | "DISABLED" | "SUSPENDED";
 export type RoleStatus = "ACTIVE" | "DISABLED" | "DELETED";
 
+export enum UserPermissions {
+  STOCK_IN = "STOCK_IN",
+  STOCK_OUT = "STOCK_OUT",
+  QC_CHECK = "QC_CHECK",
+}
+
 export interface User {
   id: number;
   firstName: string;

@@ -30,12 +30,18 @@ import {
 } from "@/actions/inbound-outbound";
 import toast from "react-hot-toast";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import { useAuth } from "@/context/AuthContext";
+import { UserPermissions } from "@/interfaces/userManagementType";
 
 export default function ExportQuantityCheck() {
   const params = useParams();
   const { type, id } = params;
   const { exportData, setExportData } = useExport();
   const isRejected = exportData.status === SheetStatus.REJECTED;
+  const { user } = useAuth();
+  const hasStockOutPermission = user?.permissions.includes(
+    UserPermissions.STOCK_OUT,
+  );
   const [scanningRow, setScanningRow] =
     useState<ExportQuantityCheckParentRow | null>(null);
   const [itemBarCode, setItemBarCode] = useState("");
@@ -102,9 +108,9 @@ export default function ExportQuantityCheck() {
       <Button
         size="sm"
         variant="outline"
-        disabled={isRejected}
+        disabled={isRejected || !hasStockOutPermission}
         onClick={() => {
-          if (isRejected) return;
+          if (isRejected || !hasStockOutPermission) return;
           setScanningRow(row);
         }}
         className="h-[35px] w-full"

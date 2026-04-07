@@ -22,6 +22,8 @@ import {
   updateExportSheetDetail,
 } from "@/actions/inbound-outbound";
 import { ApiError } from "next/dist/server/api-utils";
+import { useAuth } from "@/context/AuthContext";
+import { UserPermissions } from "@/interfaces/userManagementType";
 
 export default function ExportProductListInfoBox({
   step = "",
@@ -33,6 +35,12 @@ export default function ExportProductListInfoBox({
   const { id } = useParams();
 
   const { exportData, setExportData } = useExport();
+
+  const { user } = useAuth();
+
+  const hasStockOutPermission = user?.permissions.includes(
+    UserPermissions.STOCK_OUT,
+  );
 
   const productTempData: ProductTempRow[] = exportData.details.map(
     (detail) => ({
@@ -159,7 +167,8 @@ export default function ExportProductListInfoBox({
           step={step}
           showAddButton={
             step === "quantity-check" &&
-            exportData.status === SheetStatus.CREATED
+            exportData.status === SheetStatus.CREATED &&
+            hasStockOutPermission
           }
           startIcon={<FontAwesomeIcon icon={faPlus} />}
           width={"max-w-[1200px]"}

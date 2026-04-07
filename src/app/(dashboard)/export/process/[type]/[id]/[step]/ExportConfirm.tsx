@@ -33,6 +33,8 @@ import { useConfirmModal } from "@/hooks/useConfirmModal";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import { Loading } from "@/components/TA_common/Loading";
 import SmallInfoBox from "@/components/TA_create_page/SmallInfoBox";
+import { useAuth } from "@/context/AuthContext";
+import { UserPermissions } from "@/interfaces/userManagementType";
 
 export default function ExportConfirm() {
   const router = useRouter();
@@ -43,6 +45,11 @@ export default function ExportConfirm() {
   const [items, setItems] = useState<ExportItemModalRow[]>([]);
   const [loadingBatchId, setLoadingBatchId] = useState<number | null>(null);
   const [loadingConfirm, setLoadingConfirm] = useState(false);
+  const { user } = useAuth();
+
+  const hasStockOutPermission = user?.permissions.includes(
+    UserPermissions.STOCK_OUT,
+  );
 
   const { confirm, ConfirmationModal } = useConfirmModal();
 
@@ -305,14 +312,15 @@ export default function ExportConfirm() {
       </div>
       <div className="flex flex-1 flex-col gap-6">
         <OrderSummary products={productQuantity} quantity={totalQuantity} />
-        {exportData.status !== SheetStatus.COMPLETED && (
-          <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <h2 className="mb-4 text-lg">Confirmation</h2>
-            <Button className="w-full" size="md" onClick={handleConfirmation}>
-              <FontAwesomeIcon icon={faArrowRight} /> Confirm
-            </Button>
-          </div>
-        )}
+        {hasStockOutPermission &&
+          exportData.status !== SheetStatus.COMPLETED && (
+            <div className="rounded-2xl border border-gray-200 bg-white p-6">
+              <h2 className="mb-4 text-lg">Confirmation</h2>
+              <Button className="w-full" size="md" onClick={handleConfirmation}>
+                <FontAwesomeIcon icon={faArrowRight} /> Confirm
+              </Button>
+            </div>
+          )}
       </div>
     </div>
   );

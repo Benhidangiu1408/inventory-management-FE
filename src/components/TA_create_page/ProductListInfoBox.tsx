@@ -23,6 +23,8 @@ import {
   updateImportSheetDetail,
 } from "@/actions/inbound-outbound";
 import { ApiError } from "next/dist/server/api-utils";
+import { useAuth } from "@/context/AuthContext";
+import { UserPermissions } from "@/interfaces/userManagementType";
 
 export default function ProductListInfoBox({
   step = "",
@@ -38,6 +40,11 @@ export default function ProductListInfoBox({
   const { importData, setImportData } = useImport();
 
   const details = importData.details;
+
+  const { user } = useAuth();
+  const hasStockInPermission = user?.permissions.includes(
+    UserPermissions.STOCK_IN,
+  );
 
   const productTempData: ProductTempRow[] = importData.details.map(
     (detail) => ({
@@ -168,6 +175,7 @@ export default function ProductListInfoBox({
         <CustomContentModalBox
           step={step}
           showAddButton={
+            hasStockInPermission &&
             step === "quantity-check" &&
             importData.status === SheetStatus.CREATED &&
             importData.type !== ImportSheetType.EXTERNAL_SUPPLIER &&
