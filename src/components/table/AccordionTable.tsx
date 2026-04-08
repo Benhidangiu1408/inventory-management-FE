@@ -9,6 +9,7 @@ import {
   CustomFilterModule,
   DateFilterModule,
   GetDetailRowDataParams,
+  GetRowIdParams,
   ICellRendererParams,
   IDetailCellRendererParams,
   ModuleRegistry,
@@ -23,6 +24,7 @@ import {
   ColumnMenuModule,
   ContextMenuModule,
   MasterDetailModule,
+  SetFilterModule,
 } from "ag-grid-enterprise";
 import { Column, TableProps } from "@/components/table/CustomizableTable";
 import { useTheme } from "@/context/ThemeContext";
@@ -42,6 +44,7 @@ ModuleRegistry.registerModules([
   ColumnMenuModule,
   ContextMenuModule,
   ClipboardModule,
+  SetFilterModule,
   ...(process.env.NODE_ENV !== "production" ? [ValidationModule] : []),
 ]);
 
@@ -51,6 +54,7 @@ interface AccordionTableProps<T extends object, D extends object>
   subTableKey: keyof T;
   // Headers for the sub-table
   subTableHeaders: Column<D>[];
+  subTableGetRowId?: (params: GetRowIdParams<D>) => string;
 }
 
 export default function AccordionTable<T extends object, D extends object>({
@@ -58,9 +62,11 @@ export default function AccordionTable<T extends object, D extends object>({
   data,
   subTableKey,
   subTableHeaders,
+  subTableGetRowId,
   className,
   height = "auto",
   defaultColDef,
+  getRowId,
   ...gridProps
 }: AccordionTableProps<T, D>) {
   // Table Theme
@@ -98,9 +104,13 @@ export default function AccordionTable<T extends object, D extends object>({
           field: header.key as unknown as ColDefField<T>,
           flex: header.width ? 0 : 1,
           width: header.width,
+          minWidth: header.minWidth,
+          sort: header.sort ? "asc" : undefined,
           sortable: header.sortable ?? true,
           cellClass: header.stopCenterData ? "" : "text-center",
           cellRenderer,
+          filter: header.filter,
+          filterParams: header.filterParams,
         } satisfies ColDef<T>;
       }),
     ],
@@ -131,9 +141,13 @@ export default function AccordionTable<T extends object, D extends object>({
         field: header.key as unknown as ColDefField<D>,
         flex: header.width ? 0 : 1,
         width: header.width,
+        minWidth: header.minWidth,
+        sort: header.sort ? "asc" : undefined,
         sortable: header.sortable ?? true,
         cellClass: header.stopCenterData ? "" : "text-center",
         cellRenderer,
+        filter: header.filter,
+        filterParams: header.filterParams,
       } satisfies ColDef<D>;
     });
 
@@ -142,6 +156,7 @@ export default function AccordionTable<T extends object, D extends object>({
       detailGridOptions: {
         suppressCellFocus: true,
         columnDefs: detailColumnDefs,
+        getRowId: subTableGetRowId,
         defaultColDef: {
           filter: true,
           minWidth: 150,
@@ -163,7 +178,7 @@ export default function AccordionTable<T extends object, D extends object>({
         params.successCallback(subData);
       },
     } as IDetailCellRendererParams<T, D>;
-  }, [subTableHeaders, subTableKey, theme]);
+  }, [subTableHeaders, subTableKey, theme, subTableGetRowId]);
 
   // table style
   const wrapperClassName = useMemo(
@@ -230,6 +245,7 @@ export default function AccordionTable<T extends object, D extends object>({
         suppressPaginationPanel={true}
         suppressScrollOnNewData={true}
         onPaginationChanged={onPaginationChange}
+        getRowId={getRowId}
         {...gridProps}
       />
       <Pagination

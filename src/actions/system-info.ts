@@ -25,6 +25,9 @@ export async function categoryUpdateAction(id: number, data: CategoryRequest) {
 export async function categoryCreateAction(data: CategoryRequest) {
   await categoryService.create(data);
 }
+export async function categoryDeleteAction(id: number) {
+  await categoryService.delete(id);
+}
 export async function warehouseCreateAction(data: NewWarehouseRequest) {
   await warehouseService.create(data);
 }

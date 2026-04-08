@@ -23,27 +23,23 @@ export const categoryService = {
       cache: "no-store",
     });
   },
-
   getById: async (id: number) => {
     return apiClient.get<Category>(`/info/v1/category/${id}`, {
       cache: "no-store",
     });
   },
-
   create: async (data: CategoryRequest) => {
     return apiClient.post<CategoryRequest>("/info/v1/category/new", data);
   },
-
   update: async (id: number, data: CategoryRequest) => {
     return apiClient.put<CategoryRequest>(
       `/info/v1/category/update/${id}`,
       data,
     );
   },
-
-  // delete: async (id: number) => {
-  //   return apiClient.delete<void>(`${BASE_URL}/${id}`);
-  // }
+  delete: async (id: number) => {
+    return apiClient.delete<void>(`/info/v1/category/delete/${id}`, null);
+  },
 };
 
 export const warehouseService = {
@@ -68,7 +64,7 @@ export const warehouseService = {
     );
   },
   delete: async (id: number) => {
-    return apiClient.delete<void>(`/info/v1/warehouse/delete/${id}`, {});
+    return apiClient.delete<void>(`/info/v1/warehouse/delete/${id}`, null);
   },
 };
 
@@ -109,7 +105,7 @@ export const locationService = {
     );
   },
   delete: async (id: number) => {
-    return apiClient.delete<void>(`/info/v1/location/delete/${id}`, {});
+    return apiClient.delete<void>(`/info/v1/location/delete/${id}`, null);
   },
 };
 

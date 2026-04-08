@@ -1,5 +1,5 @@
 // -------------Category-----------------------
-export type CategoryStatus = "ACTIVE" | "INACTIVE";
+export type CategoryStatus = "ACTIVE" | "INACTIVE" | "DELETED";
 
 export interface SubCategory {
   id: number;
@@ -23,7 +23,6 @@ export interface Category {
 export interface CategoryRequest {
   name: string;
   description: string | null;
-  status: CategoryStatus;
   parentCategoryId: number | null; // Optional
 }
 

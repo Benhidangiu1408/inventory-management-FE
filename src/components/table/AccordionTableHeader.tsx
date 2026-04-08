@@ -9,7 +9,14 @@ import {
   VariantResponse,
 } from "@/interfaces/warehouseManagementType";
 import Badge from "@/default_components/ui/badge/Badge";
-import { AlertCircle, CheckCircle, Pencil, Plus, Save } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  Pencil,
+  Plus,
+  Save,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import {
   InventoryCheckBatchRow,
@@ -24,29 +31,26 @@ import { inventoryCheckSubmitAction } from "@/actions/inventory-check";
 // Category header
 export const getCategoryHeaders = (
   onEdit: (category: Category) => void,
+  onDelete: (id: number) => void,
+  disable: boolean,
 ): Column<Category>[] => [
   {
     label: "Code",
     key: "code",
+    width: 100,
+    sort: true,
+    filter: "agTextColumnFilter",
   },
   {
     label: "Category Name",
     key: "name",
-    width: 250,
-  },
-  {
-    label: "Status",
-    key: "status",
-    // Custom Render for Status Badge
-    render: (value) => (
-      <Badge variant={"solid"} color={value === "ACTIVE" ? "success" : "error"}>
-        {value as string}
-      </Badge>
-    ),
+    filter: "agTextColumnFilter",
+    width: 300,
   },
   {
     label: "Description",
     key: "description",
+    filter: "agTextColumnFilter",
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -55,10 +59,19 @@ export const getCategoryHeaders = (
   {
     label: "Actions",
     key: "id",
+    width: 50,
+    filter: false,
     render: (_, row) => (
       <div className="flex h-full items-center justify-center gap-2">
-        <button onClick={() => onEdit(row)}>
+        <button onClick={() => onEdit(row)} disabled={disable}>
           <Pencil size={16} />
+        </button>
+        <button
+          onClick={() => onDelete(row.id)}
+          disabled={disable}
+          className="text-red-500 transition-colors hover:text-red-700"
+        >
+          <Trash2 size={16} />
         </button>
       </div>
     ),
@@ -67,22 +80,26 @@ export const getCategoryHeaders = (
 // Child Table Headers (Sub-Category)
 export const getSubCategoryHeaders = (
   onEdit: (category: SubCategory) => void,
+  onDelete: (id: number) => void,
+  disable: boolean,
 ): Column<SubCategory>[] => [
-  { label: "Code", key: "code" },
-  { label: "Subcategory Name", key: "name", width: 250 },
   {
-    label: "Status",
-    key: "status",
-    // Custom Render for Status Badge
-    render: (value) => (
-      <Badge variant={"solid"} color={value === "ACTIVE" ? "success" : "error"}>
-        {value as string}
-      </Badge>
-    ),
+    label: "Code",
+    key: "code",
+    sort: true,
+    width: 190,
+    filter: "agTextColumnFilter",
+  },
+  {
+    label: "Subcategory Name",
+    key: "name",
+    width: 300,
+    filter: "agTextColumnFilter",
   },
   {
     label: "Description",
     key: "description",
+    filter: "agTextColumnFilter",
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -91,11 +108,19 @@ export const getSubCategoryHeaders = (
   {
     label: "Actions",
     key: "id",
-    width: 80,
+    filter: false,
+    width: 50,
     render: (_, row) => (
       <div className="flex h-full items-center justify-center gap-2">
-        <button onClick={() => onEdit(row)}>
+        <button onClick={() => onEdit(row)} disabled={disable}>
           <Pencil size={16} />
+        </button>
+        <button
+          onClick={() => onDelete(row.id)}
+          disabled={disable}
+          className="text-red-500 transition-colors hover:text-red-700"
+        >
+          <Trash2 size={16} />
         </button>
       </div>
     ),
