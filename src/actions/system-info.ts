@@ -6,7 +6,9 @@ import {
   LocationBulkCreate,
   LocationType,
   NewWarehouseRequest,
+  ProductAddConversionRequest,
   ProductCreateRequest,
+  ProductUpdateRequest,
   UnitRequest,
   VariantCreateRequest,
 } from "@/interfaces/warehouseManagementType";
@@ -76,6 +78,27 @@ export async function AttrUpdateAction(id: number, data: AttributeRequest) {
 export async function ProductCreateAction(data: ProductCreateRequest) {
   await productService.create(data);
 }
+export async function ProductUpdateAction(
+  id: number,
+  data: ProductUpdateRequest,
+) {
+  await productService.update(id, data);
+}
+export async function ConversionCreateAction(
+  id: number,
+  data: ProductAddConversionRequest,
+) {
+  await productService.createConversion(id, data);
+}
+export async function ToggleConversionAction(id: number) {
+  await productService.toggleConversion(id);
+}
 export async function ProductCreateVariantAction(data: VariantCreateRequest) {
   await productService.createVariant(data);
+}
+export async function ProductDeleteAction(id: number) {
+  await productService.deleteProduct(id);
+}
+export async function VariantDeleteAction(id: number) {
+  await productService.deleteVariant(id);
 }

@@ -5,18 +5,10 @@ import {
   Category,
   ProductResponse,
   SubCategory,
-  UnitSummary,
+  VariantAttributeResponse,
   VariantResponse,
 } from "@/interfaces/warehouseManagementType";
-import Badge from "@/default_components/ui/badge/Badge";
-import {
-  AlertCircle,
-  CheckCircle,
-  Pencil,
-  Plus,
-  Save,
-  Trash2,
-} from "lucide-react";
+import { AlertCircle, CheckCircle, Pencil, Save, Trash2 } from "lucide-react";
 import Link from "next/link";
 import {
   InventoryCheckBatchRow,
@@ -132,58 +124,69 @@ export const productHeaders: Column<ProductResponse>[] = [
   {
     label: "Code",
     key: "code",
+    sort: true,
+    filter: "agTextColumnFilter",
+    width: 50,
+    render: (value, row) => (
+      <Link
+        href={`/catalog/product/detail/${row.id}`}
+        className="text-brand-500 dark:text-brand-500 text-sm font-normal underline transition-colors"
+      >
+        {value as string}
+      </Link>
+    ),
   },
   {
     label: "Product Name",
     key: "name",
+    filter: "agTextColumnFilter",
+    width: 200,
   },
   {
     label: "Category",
     key: "categoryName",
+    filter: "agTextColumnFilter",
+    width: 200,
   },
   {
     label: "Base Unit",
     key: "baseUnit",
-    render: (unit) => (
-      <span>
-        {(unit as UnitSummary).name}{" "}
-        <span className="text-xs text-gray-400">
-          ({(unit as UnitSummary).abb})
-        </span>
-      </span>
-    ),
-  },
-  {
-    label: "Status",
-    key: "status",
-    render: (value) => (
-      <Badge variant={"solid"} color={value === "ACTIVE" ? "success" : "error"}>
-        {value as string}
-      </Badge>
-    ),
+    width: 100,
+    valueGetter: (row) => `${row.baseUnit.name} (${row.baseUnit.abb})`,
   },
   {
     label: "Description",
     key: "description",
+    filter: "agTextColumnFilter",
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
       ),
   },
-  {
-    label: "Actions",
-    key: "id",
-    render: (_, row) => (
-      <div className="flex h-full items-center justify-center gap-2">
-        <Link
-          href={`/catalog/product/${row.id}/variant/new`}
-          className="text-gray-500 transition-colors hover:text-blue-600"
-        >
-          <Plus size={16} />
-        </Link>
-      </div>
-    ),
-  },
+  // {
+  //   label: "Actions",
+  //   key: "id",
+  //   width: 50,
+  //   filter: false,
+  //   render: (_, row) => (
+  //     <div className="flex h-full items-center justify-center gap-2">
+  //       <Link
+  //         href={`/catalog/product/${row.id}/variant/new`}
+  //         className="text-gray-500 transition-colors hover:text-blue-600"
+  //       >
+  //         <Plus size={16} />
+  //       </Link>
+  //       <button
+  //         disabled={disable}
+  //         onClick={() => onDelete(row.id)}
+  //         className="text-red-500 transition-colors hover:text-red-700"
+  //         title="Delete Product"
+  //       >
+  //         <Trash2 size={18} />
+  //       </button>
+  //     </div>
+  //   ),
+  // },
 ];
 
 // Child Table Headers (Product Variants)
@@ -191,21 +194,37 @@ export const variantHeaders: Column<VariantResponse>[] = [
   {
     label: "Variant Code",
     key: "code",
+    sort: true,
+    filter: "agTextColumnFilter",
+    width: 200,
+  },
+  {
+    label: "Image",
+    key: "image",
+    filter: false,
+    sortable: false,
+    width: 100,
+    render: (val) =>
+      val ? (
+        <Link href={"/"}>View Image</Link>
+      ) : (
+        <span className="text-gray-400 italic">No image</span>
+      ),
   },
   {
     label: "Attributes",
     key: "attributes",
-    // Render List: "Color: Red, Size: XL"
+    filter: false,
     render: (attrs) => {
-      if (!Array.isArray(attrs) || attrs.length === 0)
+      const attributeArray = attrs as VariantAttributeResponse[];
+      if (!Array.isArray(attributeArray) || attributeArray.length === 0)
         return <span className="text-gray-400 italic">Default</span>;
-
       return (
-        <div className="flex-1 flex-wrap justify-center gap-1">
-          {attrs.map((attr) => (
+        <div className="flex h-full w-full flex-wrap items-center justify-center gap-1 py-1">
+          {attributeArray.map((attr) => (
             <span
               key={attr.attributeId}
-              className="inline-flex items-center rounded border border-gray-200 bg-gray-100 px-2 py-1 text-xs text-gray-700"
+              className="inline-flex items-center rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
             >
               <span className="mr-1 font-semibold">{attr.attributeName}:</span>{" "}
               {attr.value}
@@ -216,34 +235,37 @@ export const variantHeaders: Column<VariantResponse>[] = [
     },
   },
   {
-    label: "Min. Stock",
-    key: "minimumQuantity",
-    render: (val) => (
-      <span className="font-mono font-medium">{val as number}</span>
-    ),
-  },
-  {
-    label: "Status",
-    key: "status",
-    render: (value) => (
-      <Badge variant={"solid"} color={value === "ACTIVE" ? "success" : "error"}>
-        {value as string}
-      </Badge>
-    ),
+    label: "Description",
+    key: "description",
+    filter: "agTextColumnFilter",
+    render: (val) =>
+      (val as string) || (
+        <span className="text-gray-400 italic">No description</span>
+      ),
   },
   // {
   //   label: "Actions",
   //   key: "id",
-  // render: (_, row) => (
-  //   <div className="flex h-full items-center justify-center gap-2">
-  //     <button
-  //       onClick={() => onEdit(row)}
-  //       className="text-gray-500 transition-colors hover:text-blue-600"
-  //     >
-  //       <Pencil size={16} />
-  //     </button>
-  //   </div>
-  // ),
+  //   filter: false,
+  //   width: 50,
+  //   render: (_, row) => (
+  //     <div className="flex h-full items-center justify-center gap-2">
+  //       <button
+  //         onClick={() => onEdit(row)}
+  //         disabled={disable}
+  //         className="text-blue-500 transition-colors hover:text-blue-700"
+  //       >
+  //         <Pencil size={18} />
+  //       </button>
+  //       <button
+  //         onClick={() => onDelete(row.id)}
+  //         disabled={disable}
+  //         className="text-red-500 transition-colors hover:text-red-700"
+  //       >
+  //         <Trash2 size={18} />
+  //       </button>
+  //     </div>
+  //   ),
   // },
 ];
 

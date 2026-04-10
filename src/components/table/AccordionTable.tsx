@@ -18,6 +18,7 @@ import {
   TextFilterModule,
   themeQuartz,
   ValidationModule,
+  ValueGetterParams,
 } from "ag-grid-community";
 import {
   ClipboardModule,
@@ -111,6 +112,10 @@ export default function AccordionTable<T extends object, D extends object>({
           cellRenderer,
           filter: header.filter,
           filterParams: header.filterParams,
+          valueGetter: header.valueGetter
+            ? (params: ValueGetterParams<T>) =>
+                params.data ? header.valueGetter?.(params.data) : null
+            : undefined,
         } satisfies ColDef<T>;
       }),
     ],
@@ -148,6 +153,10 @@ export default function AccordionTable<T extends object, D extends object>({
         cellRenderer,
         filter: header.filter,
         filterParams: header.filterParams,
+        valueGetter: header.valueGetter
+          ? (params: ValueGetterParams<D>) =>
+              params.data ? header.valueGetter?.(params.data) : null
+          : undefined,
       } satisfies ColDef<D>;
     });
 

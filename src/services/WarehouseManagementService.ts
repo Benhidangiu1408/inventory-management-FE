@@ -7,8 +7,10 @@ import {
   LocationResponse,
   LocationType,
   NewWarehouseRequest,
+  ProductAddConversionRequest,
   ProductCreateRequest,
   ProductResponse,
+  ProductUpdateRequest,
   UnitRequest,
   UnitResponse,
   VariantCreateRequest,
@@ -150,15 +152,44 @@ export const productService = {
       cache: "no-store",
     });
   },
-
+  getById: async (id: number) => {
+    return apiClient.get<ProductResponse>(`/info/v1/product/${id}`, {
+      cache: "no-store",
+    });
+  },
   create: async (data: ProductCreateRequest) => {
     return apiClient.post<ProductCreateRequest>("/info/v1/product/new", data);
+  },
+  update: async (id: number, data: ProductUpdateRequest) => {
+    return apiClient.put<ProductResponse>(
+      `/info/v1/product/update/${id}`,
+      data,
+    );
+  },
+  createConversion: async (id: number, data: ProductAddConversionRequest) => {
+    return apiClient.post<void>(`/info/v1/product/${id}/conversion/new`, data);
+  },
+  toggleConversion: async (id: number) => {
+    return apiClient.put<void>(
+      `/info/v1/product/conversion/toggle/${id}`,
+      null,
+    );
   },
 
   createVariant: async (data: VariantCreateRequest) => {
     return apiClient.post<VariantCreateRequest>(
       "/info/v1/product/variant/new",
       data,
+    );
+  },
+
+  deleteProduct: async (id: number) => {
+    return apiClient.delete<void>(`/info/v1/product/delete/${id}`, null);
+  },
+  deleteVariant: async (id: number) => {
+    return apiClient.delete<void>(
+      `/info/v1/product/variants/delete/${id}`,
+      null,
     );
   },
 

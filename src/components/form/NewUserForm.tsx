@@ -21,8 +21,6 @@ export default function NewUserForm() {
   const {
     register,
     handleSubmit,
-    reset,
-    watch,
     formState: { errors },
   } = useForm<NewUserFormData>({
     defaultValues: {
@@ -36,7 +34,6 @@ export default function NewUserForm() {
       status: "ACTIVE",
     },
   });
-  const password = watch("passwordHash");
 
   const onSubmit: SubmitHandler<NewUserFormData> = async (data) => {
     setLoading(true);
@@ -51,13 +48,11 @@ export default function NewUserForm() {
         status: data.status,
       };
       await RegisterAction(payload);
-      reset();
       toast.success("User created successfully!");
       router.replace("/admin/user-management");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message ?? "An unexpected error occurred");
-    } finally {
       setLoading(false);
     }
   };
@@ -165,8 +160,8 @@ export default function NewUserForm() {
               placeholder="Confirm Password"
               {...register("confirmPassword", {
                 required: "Please confirm your password",
-                validate: (value) =>
-                  value === password || "Passwords do not match",
+                validate: (value, formValues) =>
+                  value === formValues.passwordHash || "Passwords do not match",
               })}
               error={!!errors.confirmPassword}
               hint={errors.confirmPassword?.message}

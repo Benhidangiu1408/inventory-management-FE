@@ -12,7 +12,7 @@ import {
   UnitResponse,
 } from "@/interfaces/warehouseManagementType";
 import { Plus, Trash2 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   SubmitHandler,
@@ -31,7 +31,6 @@ export const CreateProductForm = ({
 }) => {
   // Initiate form control
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const categoryOption = category
     .map((cat) =>
@@ -48,10 +47,8 @@ export const CreateProductForm = ({
   const {
     register,
     handleSubmit,
-    reset,
     control,
-    setValue,
-    clearErrors,
+    getValues,
     formState: { errors },
   } = useForm<ProductCreateRequest>({
     defaultValues: {
@@ -59,8 +56,6 @@ export const CreateProductForm = ({
       description: null,
       categoryId: null,
       baseUnitId: null,
-      batchUnitId: null,
-      itemUnitId: null,
     },
   });
 
@@ -69,15 +64,7 @@ export const CreateProductForm = ({
     control,
     name: "additionalConversions",
   });
-
   const baseUnitId = useWatch({ control, name: "baseUnitId" });
-  const batchUnitId = useWatch({ control, name: "batchUnitId" });
-  const itemUnitId = useWatch({ control, name: "itemUnitId" });
-
-  const isBatchSameAsBase =
-    baseUnitId !== null && batchUnitId !== null && baseUnitId === batchUnitId;
-  const isItemSameAsBase =
-    baseUnitId !== null && itemUnitId !== null && baseUnitId === itemUnitId;
 
   //Validation Logic
   const onSubmit: SubmitHandler<ProductCreateRequest> = async (data) => {
@@ -88,36 +75,21 @@ export const CreateProductForm = ({
         description: data.description !== "" ? data.description : null,
         categoryId: Number(data.categoryId),
         baseUnitId: Number(data.baseUnitId),
-        batchUnitId: Number(data.batchUnitId),
-        batchConversionRate: Number(data.batchConversionRate),
-        itemUnitId: Number(data.itemUnitId),
-        itemConversionRate: Number(data.itemConversionRate),
       };
       if (data.additionalConversions && data.additionalConversions.length > 0) {
         payload.additionalConversions = data.additionalConversions.map(
           (conv) => ({
             fromUnitId: Number(conv.fromUnitId),
-            toUnitId: Number(data.baseUnitId), // ALWAYS TARGET BASE UNIT
             conversionRate: Number(conv.conversionRate),
           }),
         );
       }
       await ProductCreateAction(payload);
-      reset();
       toast.success("Product created successfully!");
-      const raw = searchParams.get("returnTo");
-      let nextPath = "/catalog/product";
-      if (raw) {
-        const decoded = decodeURIComponent(raw);
-        if (decoded.startsWith("/") && !decoded.startsWith("//")) {
-          nextPath = decoded;
-        }
-      }
-      router.replace(nextPath);
+      router.replace("/catalog/product");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message ?? "An unexpected error occurred");
-    } finally {
       setLoading(false);
     }
   };
@@ -181,117 +153,9 @@ export const CreateProductForm = ({
             hint={errors.baseUnitId?.message}
           />
         </div>
-        {/* Item Unit */}
-        <div>
-          <Label>Item Unit</Label>
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-            <div className="w-full">
-              <Select
-                {...register("itemUnitId", {
-                  required: "Please select unit for item",
-                  onChange: (e) => {
-                    if (e.target.value === itemUnitId) {
-                      setValue("itemConversionRate", 1);
-                      clearErrors("itemConversionRate");
-                    } else {
-                      setValue("itemConversionRate", undefined);
-                    }
-                  },
-                })}
-                placeholder={"Select item unit"}
-                options={unitOption}
-                error={!!errors.itemUnitId}
-                hint={errors.itemUnitId?.message}
-              />
-            </div>
-            <div className="flex w-full">
-              <div className="flex h-11 min-w-fit items-center justify-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-                <span className="whitespace-nowrap">Conversion Rate</span>
-              </div>
-              <div className="w-full">
-                <Input
-                  type="text"
-                  className="rounded-l-none"
-                  {...register("itemConversionRate", {
-                    validate: (value, formValues) => {
-                      // If units match, we don't care (or it is 1)
-                      if (formValues.baseUnitId === formValues.itemUnitId)
-                        return true;
-                      // If units differ, validation is strict
-                      if (!value) return "Conversion rate is required";
-                      if (Number(value) <= 0) return "Must be > 0";
-                      return true;
-                    },
-                  })}
-                  error={!!errors.itemConversionRate}
-                  hint={errors.itemConversionRate?.message}
-                  placeholder={
-                    isItemSameAsBase ? "1" : "1 item equal to ... base unit"
-                  }
-                  disabled={!itemUnitId || isItemSameAsBase}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* Batch Unit */}
-        <div>
-          <Label>Batch Unit</Label>
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-            <div className="w-full">
-              <Select
-                {...register("batchUnitId", {
-                  required: "Please select unit for batch",
-                  onChange: (e) => {
-                    if (e.target.value === baseUnitId) {
-                      setValue("batchConversionRate", 1);
-                      clearErrors("batchConversionRate");
-                    } else {
-                      setValue("batchConversionRate", undefined);
-                    }
-                  },
-                })}
-                placeholder={"Select batch unit"}
-                options={unitOption}
-                error={!!errors.batchUnitId}
-                hint={errors.batchUnitId?.message}
-              />
-            </div>
-            <div className="flex w-full">
-              <div className="flex h-11 min-w-fit items-center justify-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-                <span className="whitespace-nowrap">Conversion Rate</span>
-              </div>
-              <div className="w-full">
-                <Input
-                  type="text"
-                  className="rounded-l-none"
-                  {...register("batchConversionRate", {
-                    validate: (value, formValues) => {
-                      // If units match, we don't care (or it is 1)
-                      if (formValues.baseUnitId === formValues.batchUnitId)
-                        return true;
-                      // If units differ, validation is strict
-                      if (!value) return "Conversion rate is required";
-                      if (Number(value) <= 0) return "Must be > 0";
-                      return true;
-                    },
-                  })}
-                  error={!!errors.batchConversionRate}
-                  hint={errors.batchConversionRate?.message}
-                  placeholder={
-                    isBatchSameAsBase ? "1" : "1 batch equal to ... base unit"
-                  }
-                  disabled={!batchUnitId || isBatchSameAsBase}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
         {/* Additional Conversion */}
         <div className="space-y-4">
           {fields.map((field, index) => {
-            // Note: using useWatch inside map is okay in newer RHF but safer to rely on render cycle or just show generic
-            // For simplicity in this structure, we stick to standard layout
             return (
               <div key={field.id}>
                 <Label>From Unit</Label>
@@ -305,6 +169,13 @@ export const CreateProductForm = ({
                           validate: (val) => {
                             if (Number(val) === Number(baseUnitId))
                               return "Cannot be Base Unit";
+                            const allConversions =
+                              getValues("additionalConversions") || [];
+                            const duplicateCount = allConversions.filter(
+                              (conv) => Number(conv.fromUnitId) === Number(val),
+                            ).length;
+                            if (duplicateCount > 1)
+                              return "Unit already selected";
                             return true;
                           },
                         },
@@ -314,37 +185,42 @@ export const CreateProductForm = ({
                       error={
                         !!errors.additionalConversions?.[index]?.fromUnitId
                       }
-                      hint={errors.additionalConversions?.[index]?.message}
+                      hint={
+                        errors.additionalConversions?.[index]?.fromUnitId
+                          ?.message
+                      }
                     />
                   </div>
-                  <div className="flex w-full">
-                    <div className="flex h-11 min-w-fit items-center justify-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-                      <span className="whitespace-nowrap">Conversion Rate</span>
+                  <div className="flex w-full items-center gap-3">
+                    <div className="flex w-full">
+                      <div className="flex h-11 min-w-fit items-center justify-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+                        <span className="whitespace-nowrap">
+                          Conversion Rate
+                        </span>
+                      </div>
+                      <div className="w-full">
+                        <Input
+                          type="number"
+                          className="rounded-l-none"
+                          placeholder="Quantity"
+                          {...register(
+                            `additionalConversions.${index}.conversionRate`,
+                            {
+                              required: "Conversion rate is required",
+                              min: { value: 1, message: "Must be > 0" },
+                            },
+                          )}
+                          error={
+                            !!errors.additionalConversions?.[index]
+                              ?.conversionRate
+                          }
+                          hint={
+                            errors.additionalConversions?.[index]
+                              ?.conversionRate?.message
+                          }
+                        />
+                      </div>
                     </div>
-                    <div className="w-full">
-                      <Input
-                        type="number"
-                        className="rounded-l-none"
-                        placeholder="Quantity"
-                        {...register(
-                          `additionalConversions.${index}.conversionRate`,
-                          {
-                            required: "Conversion rate is required",
-                            min: { value: 1, message: "Must be > 0" },
-                          },
-                        )}
-                        error={
-                          !!errors.additionalConversions?.[index]
-                            ?.conversionRate
-                        }
-                        hint={
-                          errors.additionalConversions?.[index]?.conversionRate
-                            ?.message
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="flex items-center">
                     <button
                       type="button"
                       onClick={() => remove(index)}
@@ -380,13 +256,13 @@ export const CreateProductForm = ({
         <Button
           size="sm"
           variant="outline"
-          onClick={() => router.replace("/catalog/product")}
+          onClick={() => router.back()}
           type="button"
         >
           Cancel
         </Button>
         <Button size="sm" disabled={loading} type="submit">
-          Save
+          Create
         </Button>
       </div>
     </form>

@@ -14,6 +14,7 @@ import {
   PaginationModule,
   TextFilterModule,
   ValidationModule,
+  ValueGetterParams,
 } from "ag-grid-community";
 import { AgGridReact, type AgGridReactProps } from "ag-grid-react";
 import {
@@ -62,6 +63,7 @@ export interface Column<T extends object> {
     | "agSetColumnFilter";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filterParams?: any;
+  valueGetter?: (row: T) => string | number | null | undefined;
 }
 
 export interface TableProps<T extends object>
@@ -112,6 +114,10 @@ export default function CustomizableTable<T extends object>({
           cellRenderer,
           filter: header.filter,
           filterParams: header.filterParams,
+          valueGetter: header.valueGetter
+            ? (params: ValueGetterParams<T>) =>
+                params.data ? header.valueGetter?.(params.data) : null
+            : undefined,
         } satisfies ColDef<T>;
       }),
     [headers],

@@ -143,14 +143,20 @@ export const getUnitHeaders = (
   {
     label: "Unit Name",
     key: "name",
+    sort: true,
+    width: 250,
+    filter: "agTextColumnFilter",
   },
   {
     label: "Unit Abbreviation",
     key: "abb",
+    width: 250,
+    filter: "agTextColumnFilter",
   },
   {
     label: "Description",
     key: "description",
+    filter: "agTextColumnFilter",
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -159,6 +165,8 @@ export const getUnitHeaders = (
   {
     label: "Actions",
     key: "id",
+    filter: false,
+    width: 50,
     render: (_, row) => (
       <div className="flex h-full items-center justify-center gap-2">
         <button onClick={() => onEdit(row)}>
@@ -175,10 +183,14 @@ export const getAttributeHeaders = (
   {
     label: "Attributes Name",
     key: "name",
+    width: 250,
+    sort: true,
+    filter: "agTextColumnFilter",
   },
   {
     label: "Description",
     key: "description",
+    filter: "agTextColumnFilter",
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -187,6 +199,8 @@ export const getAttributeHeaders = (
   {
     label: "Actions",
     key: "id",
+    width: 50,
+    filter: false,
     render: (_, row) => (
       <div className="flex h-full items-center justify-center gap-2">
         <button onClick={() => onEdit(row)}>
