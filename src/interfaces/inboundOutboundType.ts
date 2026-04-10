@@ -82,7 +82,6 @@ export interface UnitConversionResponse {
   id: number;
   conversionRate: number;
   fromUnit: UnitResponse;
-  toUnit: UnitResponse;
 }
 
 export interface SupplierCreateReq {
@@ -122,7 +121,6 @@ export interface ProductRepsonse {
   name: string;
   code: string;
   baseUnit: UnitResponse;
-  itemUnit: UnitResponse;
   unitConversions: UnitConversionResponse[];
 }
 
@@ -154,6 +152,7 @@ export interface BatchResponse {
   location: LocationResponse;
   productVariant: ProductVariantResponse;
   unit: UnitResponse;
+  unitConversion: UnitConversionResponse;
 }
 
 export interface BatchSummaryResponse {
@@ -173,6 +172,7 @@ export interface ImportSheetDetailResponse {
   rawProductName: string;
   rawUnitName: string;
   rawSku: string;
+  unitConversion: UnitConversionResponse;
   mappingStatus: ImportSheetDetailMappingStatus;
 }
 
@@ -281,6 +281,7 @@ export interface ExportSheetDetailResponse {
   destinationLocationId: number;
   destinationLocationWarehouseId: number;
   unit: UnitResponse;
+  unitConversion: UnitConversionResponse;
 }
 
 export interface ExportSheetDetailCreateReq {

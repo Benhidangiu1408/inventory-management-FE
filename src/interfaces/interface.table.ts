@@ -172,7 +172,6 @@ export interface ExportQuantityCheckParentRow {
   locations: ExportQuantityCheckRow[];
   unit: UnitResponse;
   baseUnit: UnitResponse;
-  itemUnit: UnitResponse;
   conversionRate: number;
   variance: number;
   /** Chỉ dùng cho cột nút Scan Item, không lưu trong data */

@@ -159,14 +159,7 @@ export default function ExportConfirm() {
         variance: scannedQuantity - detail.expectedQuantity,
         unit: detail.unit,
         baseUnit: detail.productVariant.product.baseUnit,
-        itemUnit: detail.productVariant.product.itemUnit,
-        conversionRate:
-          detail.productVariant.product.unitConversions.find(
-            (unitConversion) =>
-              unitConversion.fromUnit.id === detail.unit.id &&
-              unitConversion.toUnit.id ===
-                detail.productVariant.product.baseUnit.id,
-          )?.conversionRate ?? 1,
+        conversionRate: detail.unitConversion.conversionRate,
         locations: detail.batches.map((item) => ({
           detailId: detail.id,
           batchId: item.batch.id,

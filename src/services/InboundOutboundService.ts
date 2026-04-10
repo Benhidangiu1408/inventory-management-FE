@@ -156,7 +156,7 @@ export const inboundOutboundService = {
   },
 
   createExportSheet: async (data: ExportSheetCreateReq) => {
-    return await apiClient.post<ExportSheetResponse[]>(
+    return await apiClient.post<ExportSheetResponse>(
       `/inbound-outbound/v1/export-sheet`,
       data,
     );

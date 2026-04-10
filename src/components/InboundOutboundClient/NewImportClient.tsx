@@ -191,7 +191,7 @@ export const NewImportClient = ({
 
     setLoading(true);
 
-    await createImportSheet({
+    const res = await createImportSheet({
       warehouseId: selectedWarehouseId,
       type: selectedImportType,
       status: SheetStatus.CREATED,
@@ -201,7 +201,9 @@ export const NewImportClient = ({
     setLoading(false);
     toast.success("Import Sheet Created Successfully");
 
-    router.push("/import");
+    router.push(
+      `/import/process/${res.type.toLowerCase()}/${res.id}/quantity-check`,
+    );
   };
 
   return (

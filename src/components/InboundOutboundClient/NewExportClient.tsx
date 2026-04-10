@@ -185,11 +185,13 @@ export const NewExportClient = ({
         }),
     };
 
-    await createExportSheet(data);
+    const res = await createExportSheet(data);
 
     toast.success("Create Export Sheet Successfully");
 
-    router.push(`/export`);
+    router.push(
+      `/export/process/${res.type.toLowerCase()}/${res.id}/quantity-check`,
+    );
   };
 
   return (

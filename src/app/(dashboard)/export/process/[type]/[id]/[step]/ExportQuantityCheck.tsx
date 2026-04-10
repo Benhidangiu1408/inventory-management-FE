@@ -179,13 +179,7 @@ export default function ExportQuantityCheck() {
         0,
       );
 
-      const conversionRate =
-        detail.productVariant.product.unitConversions.find(
-          (unitConversion) =>
-            unitConversion.fromUnit.id === detail.unit.id &&
-            unitConversion.toUnit.id ===
-              detail.productVariant.product.baseUnit.id,
-        )?.conversionRate ?? 1;
+      const conversionRate = detail.unitConversion.conversionRate;
 
       return {
         detailId: detail.id,
@@ -200,7 +194,6 @@ export default function ExportQuantityCheck() {
           detail.expectedQuantity,
         unit: detail.unit,
         baseUnit: detail.productVariant.product.baseUnit,
-        itemUnit: detail.productVariant.product.itemUnit,
         conversionRate: conversionRate,
         locations: detail.batches.map((item) => ({
           detailId: detail.id,
