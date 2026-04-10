@@ -209,17 +209,14 @@ export interface AttributeValue {
 
 export interface VariantCreateRequest {
   productId: number;
-  minimumStockRequire?: number;
   description: string | null;
   image: string | null;
   attributes: AttributeValue[];
 }
 
 export interface VariantUpdateRequest {
-  description?: string;
-  image?: string;
-  minimumStockRequire?: number;
-  status?: ProductStatus;
+  description: string | null;
+  image: string | null;
 }
 
 export interface ProductUpdateRequest {

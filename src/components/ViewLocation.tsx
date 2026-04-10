@@ -18,7 +18,7 @@ import {
 import { ModalCreateLocationForm } from "./form/ModalCreateLocationForm";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
 import Button from "@/default_components/ui/button/Button";
-import { Trash } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 const TableFetch = ({
   warehouseId,
@@ -141,7 +141,7 @@ export function ViewLocation() {
           disabled={disable}
           onClick={handleDeleteWarehouse}
         >
-          <Trash size={16} /> Delete Warehouse
+          <Trash2 size={16} /> Delete Warehouse
         </Button>
       </div>
       <div className="flex flex-col gap-6">

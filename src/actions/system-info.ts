@@ -11,6 +11,7 @@ import {
   ProductUpdateRequest,
   UnitRequest,
   VariantCreateRequest,
+  VariantUpdateRequest,
 } from "@/interfaces/warehouseManagementType";
 import {
   attributesService,
@@ -101,4 +102,10 @@ export async function ProductDeleteAction(id: number) {
 }
 export async function VariantDeleteAction(id: number) {
   await productService.deleteVariant(id);
+}
+export async function VariantUpdateAction(
+  id: number,
+  data: VariantUpdateRequest,
+) {
+  await productService.updateVariant(id, data);
 }

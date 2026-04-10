@@ -160,7 +160,7 @@ export default function UnitConversionManager({
         </div>
 
         {/* Dynamic Rules List */}
-        <div className="max-h-[75vh] space-y-4 overflow-auto">
+        <div className="max-h-[75vh] space-y-4 overflow-auto p-2">
           {fields.map((field, index) => {
             const isActive = watchedRules?.[index]?.isActive ?? true;
             const isExistingRule = !!field.ruleId; // Check if it's already in the DB
@@ -189,101 +189,97 @@ export default function UnitConversionManager({
             return (
               <div
                 key={field.id}
-                className={`rounded-lg border p-4 transition-all duration-200 ${
+                className={`flex flex-col gap-6 rounded-lg border p-4 transition-all duration-200 lg:flex-row lg:items-start${
                   isActive
                     ? "border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
                     : "border-gray-100 bg-gray-50 opacity-60 grayscale-[50%] dark:border-gray-800/50 dark:bg-gray-900/50"
                 } `}
               >
-                <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-                  {/* From Unit */}
+                {/* From Unit */}
+                <div className="w-full">
+                  <Label>From Unit</Label>
+                  <Select
+                    // Disable input if rule exists or is inactive
+                    disabled={!isActive || isExistingRule || loading}
+                    {...unitRegister}
+                    options={unitOptions}
+                    placeholder="Select Unit"
+                    error={!!errors.rules?.[index]?.fromUnitId}
+                    hint={errors.rules?.[index]?.fromUnitId?.message}
+                  />
+                </div>
+                <div className="flex w-full items-start gap-3">
+                  {/* Conversion Rate */}
                   <div className="w-full">
-                    <Label>From Unit</Label>
-                    <Select
-                      // Disable input if rule exists or is inactive
-                      disabled={!isActive || isExistingRule || loading}
-                      {...unitRegister}
-                      options={unitOptions}
-                      placeholder="Select Unit"
-                      error={!!errors.rules?.[index]?.fromUnitId}
-                      hint={errors.rules?.[index]?.fromUnitId?.message}
-                    />
-                  </div>
-                  <div className="flex w-full items-start gap-3">
-                    {/* Conversion Rate */}
-                    <div className="w-full">
-                      <Label>Conversion Rate</Label>
-                      <div className="flex w-full">
-                        <div className="flex h-11 min-w-fit items-center justify-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-4 text-sm font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-                          <span>=</span>
-                        </div>
-                        <div className="w-full">
-                          <Input
-                            type="number"
-                            // Disable input if rule exists or is inactive
-                            disabled={!isActive || isExistingRule || loading}
-                            className="rounded-l-none"
-                            placeholder={`e.g. 10`}
-                            {...register(`rules.${index}.conversionRate`, {
-                              required: isActive ? "Required" : false,
-                              min: { value: 0.01, message: "Must be > 0" },
-                            })}
-                            error={!!errors.rules?.[index]?.conversionRate}
-                            hint={
-                              errors.rules?.[index]?.conversionRate?.message
-                            }
-                          />
-                        </div>
+                    <Label>Conversion Rate</Label>
+                    <div className="flex w-full">
+                      <div className="flex h-11 min-w-fit items-center justify-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-4 text-sm font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+                        <span>=</span>
+                      </div>
+                      <div className="w-full">
+                        <Input
+                          type="number"
+                          // Disable input if rule exists or is inactive
+                          disabled={!isActive || isExistingRule || loading}
+                          className="rounded-l-none"
+                          placeholder={`e.g. 10`}
+                          {...register(`rules.${index}.conversionRate`, {
+                            required: isActive ? "Required" : false,
+                            min: { value: 0.01, message: "Must be > 0" },
+                          })}
+                          error={!!errors.rules?.[index]?.conversionRate}
+                          hint={errors.rules?.[index]?.conversionRate?.message}
+                        />
                       </div>
                     </div>
-                    {/* Actions Column (Status Toggle & Save/Delete) */}
-                    <div className="flex w-fit flex-col items-center">
-                      {/* Status Toggle */}
-                      <Label>Actions</Label>
-                      <div className="flex h-11 items-center gap-2">
-                        {isExistingRule && (
-                          <Switch
-                            color="blue"
+                  </div>
+                  {/* Actions Column (Status Toggle & Save/Delete) */}
+                  <div className="flex w-fit flex-col items-center">
+                    {/* Status Toggle */}
+                    <Label>Actions</Label>
+                    <div className="flex h-11 items-center gap-2">
+                      {isExistingRule && (
+                        <Switch
+                          color="blue"
+                          disabled={loading}
+                          {...toggleRegister}
+                          onChange={(e) => {
+                            // Let React Hook Form update its state
+                            toggleRegister.onChange(e);
+                            // If it's an existing rule, trigger the API immediately!
+                            if (isExistingRule && field.ruleId) {
+                              handleToggleExisting(
+                                index,
+                                field.ruleId,
+                                e.target.checked,
+                              );
+                            }
+                          }}
+                        />
+                      )}
+                      {/* Action Buttons (ONLY FOR NEW RULES) */}
+                      {!isExistingRule && (
+                        <div className="flex items-center gap-2">
+                          {/* Save Button for this specific row */}
+                          <button
+                            type="button"
                             disabled={loading}
-                            {...toggleRegister}
-                            onChange={(e) => {
-                              // Let React Hook Form update its state
-                              toggleRegister.onChange(e);
-                              // If it's an existing rule, trigger the API immediately!
-                              if (isExistingRule && field.ruleId) {
-                                handleToggleExisting(
-                                  index,
-                                  field.ruleId,
-                                  e.target.checked,
-                                );
-                              }
-                            }}
-                          />
-                        )}
-                        {/* Action Buttons (ONLY FOR NEW RULES) */}
-                        {!isExistingRule && (
-                          <div className="flex items-center gap-2">
-                            {/* Save Button for this specific row */}
-                            <button
-                              type="button"
-                              disabled={loading}
-                              onClick={() => handleSaveNew(index)}
-                              className="border-brand-200 text-brand-600 hover:bg-brand-50 hover:text-brand-700 dark:border-brand-900/50 dark:text-brand-400 dark:hover:bg-brand-900/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-colors disabled:opacity-50"
-                            >
-                              <Plus size={18} />
-                            </button>
-                            {/* Only allow deleting if it's a NEW rule that hasn't been saved to the DB */}
-                            <button
-                              type="button"
-                              disabled={loading}
-                              onClick={() => remove(index)}
-                              className="flex h-10 w-10 items-center justify-center rounded-lg border border-red-200 text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:opacity-50 dark:border-red-900/50 dark:hover:bg-red-900/20"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                            onClick={() => handleSaveNew(index)}
+                            className="border-brand-200 text-brand-600 hover:bg-brand-50 hover:text-brand-700 dark:border-brand-900/50 dark:text-brand-400 dark:hover:bg-brand-900/20 flex h-10 w-10 items-center justify-center rounded-lg border transition-colors disabled:opacity-50"
+                          >
+                            <Plus size={18} />
+                          </button>
+                          {/* Only allow deleting if it's a NEW rule that hasn't been saved to the DB */}
+                          <button
+                            type="button"
+                            disabled={loading}
+                            onClick={() => remove(index)}
+                            className="flex h-10 w-10 items-center justify-center rounded-lg border border-red-200 text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:opacity-50 dark:border-red-900/50 dark:hover:bg-red-900/20"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
