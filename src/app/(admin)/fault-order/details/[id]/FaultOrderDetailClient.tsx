@@ -37,6 +37,9 @@ type FaultOrderDetailClientProps = {
   initialFaultBatchRows: FaultBatch[];
   initialAssignedFaultBatchRows: AssignedFaultBatch[];
   initialProcessingOrderRows: ProcessingOrder[];
+  canCreateProcessOrder: boolean;
+  analysisActionLabel: "Analyze" | "View Analysis" | null;
+  taskActionLabel: "Assign Tasks" | "Do Task" | "View Task" | null;
 };
 
 export default function FaultOrderDetailClient({
@@ -46,6 +49,9 @@ export default function FaultOrderDetailClient({
   initialFaultBatchRows,
   initialAssignedFaultBatchRows,
   initialProcessingOrderRows,
+  canCreateProcessOrder,
+  analysisActionLabel,
+  taskActionLabel,
 }: FaultOrderDetailClientProps) {
   const router = useRouter();
   const toFaultBatchStatus = (
@@ -138,36 +144,51 @@ export default function FaultOrderDetailClient({
 
         return {
           ...column,
-          render: (_, row) => (
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                className="rounded bg-blue-500 px-3 text-white"
-                onClick={() =>
-                  router.push(
-                    `/fault-order/details/${routeOrderId}/process-order/${row.orderId}`,
-                  )
-                }
-              >
-                Analyze
-              </Button>
-              <Button
-                className="rounded bg-blue-500 px-3 text-white"
-                onClick={() =>
-                  router.push(
-                    `/fault-order/details/${routeOrderId}/assign-task/${row.orderId}`,
-                  )
-                }
-              >
-                Assign Tasks
-              </Button>
-            </div>
-          ),
+          render: (_, row) => {
+            if (!analysisActionLabel && !taskActionLabel) {
+              return null;
+            }
+
+            return (
+              <div className="flex flex-wrap gap-2">
+                {analysisActionLabel ? (
+                  <Button
+                    className="rounded bg-blue-500 px-3 text-white"
+                    onClick={() =>
+                      router.push(
+                        `/fault-order/details/${routeOrderId}/process-order/${row.orderId}`,
+                      )
+                    }
+                  >
+                    {analysisActionLabel}
+                  </Button>
+                ) : null}
+                {taskActionLabel ? (
+                  <Button
+                    className="rounded bg-blue-500 px-3 text-white"
+                    onClick={() =>
+                      router.push(
+                        `/fault-order/details/${routeOrderId}/assign-task/${row.orderId}`,
+                      )
+                    }
+                  >
+                    {taskActionLabel}
+                  </Button>
+                ) : null}
+              </div>
+            );
+          },
         };
       }),
-    [routeOrderId, router],
+    [analysisActionLabel, routeOrderId, router, taskActionLabel],
   );
 
   const handleCreateProcessOrder = async () => {
+    if (!canCreateProcessOrder) {
+      toast.error("You do not have permission to create process orders.");
+      return;
+    }
+
     const isFirstProcessOrder = processingOrderRows.length === 0;
     const selectedIds = Array.from(selectedBatchIds);
     if (!selectedIds.length) {
@@ -235,6 +256,7 @@ export default function FaultOrderDetailClient({
           code: batch.code ?? `FB-${batch.id}`,
           date: formatDate(batch.createdAt),
           status: toFaultBatchStatus(batch.handlingStatus),
+          taskId: batch.taskId ? String(batch.taskId) : "",
           checked: batch.handlingStatus === "RESOLVED",
         }));
         setFaultBatchRows(updatedFaultBatchRows);
@@ -338,12 +360,14 @@ export default function FaultOrderDetailClient({
           <div className="rounded-2xl border border-gray-200 p-6">
             <div className="my-3 flex items-center justify-between">
               <h2 className="mb-3 font-medium">Fault Batches</h2>
-              <Button
-                onClick={handleCreateProcessOrder}
-                disabled={!pendingBatchRows.length || isSubmitting}
-              >
-                {isSubmitting ? "Handling..." : "Handle"}
-              </Button>
+              {canCreateProcessOrder ? (
+                <Button
+                  onClick={handleCreateProcessOrder}
+                  disabled={!pendingBatchRows.length || isSubmitting}
+                >
+                  {isSubmitting ? "Handling..." : "Handle"}
+                </Button>
+              ) : null}
             </div>
             <CustomizableTable
               headers={faultBatchColumnsWithToggle}

@@ -1,0 +1,13 @@
+export enum FaultOrderPermission {
+  ASSIGN = "ASSIGN_USER",
+  CREATE = "CREATE_PROCESS_ORDER",
+  VIEW_ANALYSIS = "ANALYSIS_VIEW",
+  VIEW_TASK = "TASK_VIEW",
+  ANALYZE = "ANALYZE",
+  ASSIGN_TASK = "ASSIGN_TASK",
+  DO_TASK = "DO_TASK",
+}
+
+export enum Analyze {
+  APPROVE = "APPROVE_PROCESS_ORDER",
+}

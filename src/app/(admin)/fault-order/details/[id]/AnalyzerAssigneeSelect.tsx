@@ -11,6 +11,7 @@ type AnalyzerAssigneeSelectProps = {
   initialAnalyzerId?: number | null;
   initialAssigneeId?: number | null;
   initialQuestionCreatorId?: number | null;
+  canAssignUser: boolean;
 };
 
 export default function AnalyzerAssigneeSelect({
@@ -19,6 +20,7 @@ export default function AnalyzerAssigneeSelect({
   initialAnalyzerId,
   initialAssigneeId,
   initialQuestionCreatorId,
+  canAssignUser,
 }: AnalyzerAssigneeSelectProps) {
   const [analyzerId, setAnalyzerId] = useState<number | null>(
     initialAnalyzerId ?? null,
@@ -36,6 +38,10 @@ export default function AnalyzerAssigneeSelect({
     nextAssigneeId: number | null,
     nextQuestionCreatorId?: number | null,
   ) => {
+    if (!canAssignUser) {
+      return;
+    }
+
     setIsSaving(true);
     const { error } = await assignAnalyzerAndAssigneeAction(faultOrderId, {
       analyzerUserId: nextAnalyzerId,
@@ -52,12 +58,20 @@ export default function AnalyzerAssigneeSelect({
   };
 
   const handleAnalyzerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (!canAssignUser) {
+      return;
+    }
+
     const value = e.target.value ? Number(e.target.value) : null;
     setAnalyzerId(value);
     void handleSave(value, assigneeId, questionCreatorId);
   };
 
   const handleAssigneeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (!canAssignUser) {
+      return;
+    }
+
     const value = e.target.value ? Number(e.target.value) : null;
     setAssigneeId(value);
     void handleSave(analyzerId, value, questionCreatorId);
@@ -66,6 +80,10 @@ export default function AnalyzerAssigneeSelect({
   const handleQuestionCreatorChange = (
     e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
+    if (!canAssignUser) {
+      return;
+    }
+
     const value = e.target.value ? Number(e.target.value) : null;
     setQuestionCreatorId(value);
     void handleSave(analyzerId, assigneeId, value);
@@ -81,7 +99,7 @@ export default function AnalyzerAssigneeSelect({
         className={selectClass}
         value={analyzerId ?? ""}
         onChange={handleAnalyzerChange}
-        disabled={isSaving}
+        disabled={isSaving || !canAssignUser}
       >
         <option value="">-- Select user --</option>
         {users.map((user) => (
@@ -96,7 +114,7 @@ export default function AnalyzerAssigneeSelect({
         className={selectClass}
         value={assigneeId ?? ""}
         onChange={handleAssigneeChange}
-        disabled={isSaving}
+        disabled={isSaving || !canAssignUser}
       >
         <option value="">-- Select user --</option>
         {users.map((user) => (
@@ -111,7 +129,7 @@ export default function AnalyzerAssigneeSelect({
         className={selectClass}
         value={questionCreatorId ?? ""}
         onChange={handleQuestionCreatorChange}
-        disabled={isSaving}
+        disabled={isSaving || !canAssignUser}
       >
         <option value="">-- Select user --</option>
         {users.map((user) => (
