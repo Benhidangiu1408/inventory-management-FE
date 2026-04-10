@@ -17,6 +17,8 @@ import { ExportProvider } from "@/context/ExportContext";
 import Badge from "@/default_components/ui/badge/Badge";
 import CancelSheetButton from "@/components/InboundOutboundClient/CancelSheetButton";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import { UserPermissions } from "@/interfaces/userManagementType";
+import { cookies } from "next/headers";
 
 export default async function ExportProcessLayout({
   params,
@@ -29,6 +31,12 @@ export default async function ExportProcessLayout({
 
   const productVariants = await inboundOutboundService.getProductVariants();
   const exportSheetDetail = await inboundOutboundService.getExportSheetById(id);
+
+  const cookieStore = await cookies();
+  const permissions = cookieStore.get("permissions")?.value;
+  const hasStockOutPermission = permissions?.includes(
+    UserPermissions.STOCK_OUT,
+  );
 
   const title =
     type === "customer"
@@ -77,10 +85,12 @@ export default async function ExportProcessLayout({
         <div>
           Sheet Status: <Badge>{exportSheetDetail.status}</Badge>
         </div>
-        <CancelSheetButton
-          type="export"
-          disabled={exportSheetDetail.status !== SheetStatus.CREATED}
-        />
+        {hasStockOutPermission && (
+          <CancelSheetButton
+            type="export"
+            disabled={exportSheetDetail.status !== SheetStatus.CREATED}
+          />
+        )}
       </div>
 
       <ExportProvider initialData={exportSheetDetail}>
@@ -90,7 +100,7 @@ export default async function ExportProcessLayout({
             title={title}
             description={description}
           >
-            {type === "customer" ? (
+            {type === "customer" || "CUSTOMER" ? (
               <InfoList>
                 <ul className="flex flex-col gap-4">
                   <li>

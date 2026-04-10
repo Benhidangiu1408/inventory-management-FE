@@ -22,6 +22,8 @@ import { QualityCheckProvider } from "@/context/QualityCheckContext";
 import { ProductVariantProvider } from "@/context/ProductVariantContext";
 import CancelSheetButton from "@/components/InboundOutboundClient/CancelSheetButton";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
+import { cookies } from "next/headers";
+import { UserPermissions } from "@/interfaces/userManagementType";
 
 export default async function ImportProcessLayout({
   params,
@@ -31,6 +33,12 @@ export default async function ImportProcessLayout({
   params: { type: string; id: string; step: string };
 }>) {
   const { type, id, step } = await params;
+
+  const cookieStore = await cookies();
+  const hasStockInPermission = cookieStore
+    .get("permissions")
+    ?.value.includes(UserPermissions.STOCK_IN);
+
   const isProductMappingStep = step === "product-mapping";
   const progressStep =
     step === "product-mapping"
@@ -84,9 +92,11 @@ export default async function ImportProcessLayout({
         <div className="">
           Sheet Status: <Badge>{importSheetDetail.status}</Badge>
         </div>
-        <CancelSheetButton
-          disabled={importSheetDetail.status !== SheetStatus.CREATED}
-        />
+        {hasStockInPermission && (
+          <CancelSheetButton
+            disabled={importSheetDetail.status !== SheetStatus.CREATED}
+          />
+        )}
       </div>
 
       <ImportProvider initialData={importSheetDetail}>

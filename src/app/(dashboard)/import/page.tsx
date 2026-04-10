@@ -10,22 +10,33 @@ import { inboundOutboundService } from "@/services/InboundOutboundService";
 import { ImportSheetResponse } from "@/interfaces/inboundOutboundType";
 import Button from "@/default_components/ui/button/Button";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { UserPermissions } from "@/interfaces/userManagementType";
 
 export default async function ImportPage() {
   const importSheetList: ImportSheetResponse[] =
     await inboundOutboundService.getAll();
 
+  const cookieStore = await cookies();
+  const permissions = cookieStore.get("permissions");
+
+  const hasStockInPermission = permissions?.value.includes(
+    UserPermissions.STOCK_IN,
+  );
+
   return (
     <div className="flex flex-col gap-6">
       <PageBreadcrumb pageTitle="Import Page" />
 
-      <div className="flex justify-end">
-        <Link href="/import/new">
-          <Button startIcon={<FontAwesomeIcon icon={faPlus} />}>
-            New Import
-          </Button>
-        </Link>
-      </div>
+      {hasStockInPermission && (
+        <div className="flex justify-end">
+          <Link href="/import/new">
+            <Button startIcon={<FontAwesomeIcon icon={faPlus} />}>
+              New Import
+            </Button>
+          </Link>
+        </div>
+      )}
 
       {/* <div className="rounded-2xl border bg-white">
         <CustomFilter

@@ -22,6 +22,9 @@ import toast from "react-hot-toast";
 import { Loading } from "@/components/TA_common/Loading";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
 import { updateQCSheet } from "@/actions/inbound-outbound";
+import { useAuth } from "@/context/AuthContext";
+import { UserPermissions } from "@/interfaces/userManagementType";
+import { ApiError } from "next/dist/server/api-utils";
 
 export default function QualityCheckPage() {
   const router = useRouter();
@@ -29,19 +32,28 @@ export default function QualityCheckPage() {
   const { qcData, setQCData } = useQualityCheck();
   const { confirm, ConfirmationModal } = useConfirmModal();
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const hasStockInPermission = user?.permissions.includes(
+    UserPermissions.STOCK_IN,
+  );
 
   const isCreated = qcData?.status === SheetStatus.CREATED;
 
   const handleOpenConfirmModal = async () => {
-    const isConfirmed = await confirm({
-      title: "Confirm Quality Check",
-      message:
-        "Are you sure you want to confirm the quality check for all these batches?",
-    });
+    try {
+      const isConfirmed = await confirm({
+        title: "Confirm Quality Check",
+        message:
+          "Are you sure you want to confirm the quality check for all these batches?",
+      });
 
-    if (!isConfirmed) return;
+      if (!isConfirmed) return;
 
-    await handleConfirmQCSheet();
+      await handleConfirmQCSheet();
+    } catch (err) {
+      console.error(err);
+      if (err instanceof ApiError) toast.error(err.message);
+    }
   };
 
   const updateRows = useCallback(
@@ -113,7 +125,7 @@ export default function QualityCheckPage() {
             }
             value={value}
             className="h-[38px]"
-            disabled={!isCreated}
+            disabled={!hasStockInPermission || !isCreated}
             onChange={(e) =>
               updateRows(row.detailId, {
                 qualityStatus: e.target.value as QCSheetDetailStatus,
@@ -129,7 +141,7 @@ export default function QualityCheckPage() {
           <Input
             className="h-[35px]"
             defaultValue={value}
-            disabled={!isCreated}
+            disabled={!hasStockInPermission || !isCreated}
             onBlur={(e) =>
               updateRows(row.detailId, {
                 reason: e.target.value,
@@ -145,7 +157,7 @@ export default function QualityCheckPage() {
           <Input
             className="h-[35px]"
             defaultValue={value}
-            disabled={!isCreated}
+            disabled={!hasStockInPermission || !isCreated}
             onBlur={(e) =>
               updateRows(row.detailId, {
                 notes: e.target.value,
@@ -155,7 +167,7 @@ export default function QualityCheckPage() {
         ),
       },
     ],
-    [options, updateRows, isCreated],
+    [options, updateRows, isCreated, hasStockInPermission],
   );
 
   const rows: QualityCheckRow[] = useMemo(
@@ -229,7 +241,10 @@ export default function QualityCheckPage() {
           />
 
           <div className="flex justify-end">
-            <Button onClick={handleOpenConfirmModal} disabled={!isCreated}>
+            <Button
+              onClick={handleOpenConfirmModal}
+              disabled={!hasStockInPermission || !isCreated}
+            >
               Confirm Check Quality
             </Button>
           </div>

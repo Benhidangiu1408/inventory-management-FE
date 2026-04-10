@@ -13,21 +13,31 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
 import Button from "@/default_components/ui/button/Button";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { UserPermissions } from "@/interfaces/userManagementType";
 
 export default async function ExportPage() {
   const exportSheets = await inboundOutboundService.getAllExportSheets();
+  const cookieStore = await cookies();
+  const permissions = cookieStore.get("permissions")?.value;
+
+  const hasStockOutPermission = permissions?.includes(
+    UserPermissions.STOCK_OUT,
+  );
 
   return (
     <div className="flex flex-col gap-6">
       <PageBreadcrumb pageTitle="Export Page" />
 
-      <div className="flex justify-end">
-        <Link href="/export/new">
-          <Button startIcon={<FontAwesomeIcon icon={faPlus} />}>
-            New Export
-          </Button>
-        </Link>
-      </div>
+      {hasStockOutPermission && (
+        <div className="flex justify-end">
+          <Link href="/export/new">
+            <Button startIcon={<FontAwesomeIcon icon={faPlus} />}>
+              New Export
+            </Button>
+          </Link>
+        </div>
+      )}
 
       {/* <div className="rounded-2xl border bg-white">
         <CustomFilter

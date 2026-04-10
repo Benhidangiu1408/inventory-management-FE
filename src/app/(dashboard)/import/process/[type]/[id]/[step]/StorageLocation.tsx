@@ -38,6 +38,8 @@ import {
   getWarehouses,
   setBatchLocations,
 } from "@/actions/inbound-outbound";
+import { useAuth } from "@/context/AuthContext";
+import { UserPermissions } from "@/interfaces/userManagementType";
 
 const Title = ({
   icon,
@@ -60,6 +62,11 @@ const Title = ({
 export default function StorageLocationPage() {
   const { id } = useParams();
   const router = useRouter();
+
+  const { user } = useAuth();
+  const hasStockInPermission = user?.permissions.includes(
+    UserPermissions.STOCK_IN,
+  );
 
   const { importData, setImportData } = useImport();
   const { qcData } = useQualityCheck();
@@ -160,7 +167,7 @@ export default function StorageLocationPage() {
         return (
           <Select
             className="h-[38px]"
-            disabled={isRejected}
+            disabled={!hasStockInPermission || isRejected}
             value={row.storageLocation}
             options={options}
             onChange={(e) =>
@@ -205,7 +212,7 @@ export default function StorageLocationPage() {
         return (
           <Select
             className="h-[38px]"
-            disabled={isRejected}
+            disabled={!hasStockInPermission || isRejected}
             value={value}
             options={defectLocationOptions}
             onChange={(e) =>
@@ -393,7 +400,7 @@ export default function StorageLocationPage() {
               </label>
               <Select
                 className="h-[38px] w-[300px]"
-                disabled={isCompleted || isRejected}
+                disabled={!hasStockInPermission || isCompleted || isRejected}
                 value={String(selectedDefectWarehouseId ?? "")}
                 options={defectWarehouseOptions}
                 onChange={(e) =>
@@ -410,7 +417,7 @@ export default function StorageLocationPage() {
           <div className="flex justify-end">
             <Button
               onClick={handleOpenConfirmModal}
-              disabled={isCompleted || isRejected}
+              disabled={!hasStockInPermission || isCompleted || isRejected}
             >
               Confirm Storage Location
             </Button>

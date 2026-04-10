@@ -4,9 +4,9 @@ import fs from "fs";
 
 setup("login", async ({ page }, testInfo) => {
   // Lấy browser name từ project name (vd: "setup-chromium" → "chromium")
-  const browser = testInfo.project.name.replace("setup-", "");
-  const authDir = path.join(__dirname, "../../playwright/.auth");
-  const authFile = path.join(authDir, `user-${browser}.json`);
+  // const browser = testInfo.project.name.replace("setup-", "");
+  const authDir = path.join(__dirname, "../playwright/.auth");
+  const authFile = path.join(authDir, `user.json`);
 
   // Tạo thư mục nếu chưa có
   fs.mkdirSync(authDir, { recursive: true });
