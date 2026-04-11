@@ -18,6 +18,8 @@ export async function proxy(request: NextRequest) {
     "/other-profile": "VIEW_OTHER_USER",
     "/warehouse-management/warehouse/new": "EDIT_WAREHOUSE",
     "/warehouse-management/warehouse": "VIEW_WAREHOUSE",
+    "/import/new": "STOCK_IN",
+    "/export/new": "STOCK_OUT",
   };
   // If the user has NO token, and they are NOT on the login page -> send to login
   if (!token && !isLoginPage) {

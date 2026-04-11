@@ -1,0 +1,9 @@
+[    3947ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[    3978ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[    4092ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[    4093ms] [ERROR] ************************************************ AG Grid Enterprise License ************************************************ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[    4093ms] [ERROR] ************************************************** License Key Not Found *************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[    4094ms] [ERROR] * All AG Grid Enterprise features are unlocked for trial.                                                                  * @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[    4095ms] [ERROR] * If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 * @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[    4095ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[    4096ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127

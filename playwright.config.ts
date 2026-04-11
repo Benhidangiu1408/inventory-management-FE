@@ -39,6 +39,10 @@ export default defineConfig({
       name: "setup",
       testMatch: "**/auth.setup.ts",
     },
+    {
+      name: "setup-no-permission",
+      testMatch: "**/auth.no-permission.setup.ts",
+    },
 
     // 2. Test không cần login (trang login, landing...)
     {
@@ -55,7 +59,18 @@ export default defineConfig({
         storageState: "playwright/.auth/user.json",
       },
       dependencies: ["setup"], // chờ setup xong mới chạy
-      testIgnore: "**/login.spec.ts", // bỏ qua test login
+      testIgnore: ["**/login.spec.ts", "**/*.no-permission.spec.ts"],
+    },
+
+    // 4. Test với tài khoản không có quyền
+    {
+      name: "no-permission",
+      testMatch: "**/*.no-permission.spec.ts",
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/no-permission-user.json",
+      },
+      dependencies: ["setup-no-permission"],
     },
     // {
     //   name: 'chromium',
