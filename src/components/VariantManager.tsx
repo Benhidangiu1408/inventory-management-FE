@@ -24,6 +24,7 @@ import {
 } from "@/actions/system-info";
 import { getVariantHeaders } from "./table/CustomizableTableHeader";
 import Button from "@/default_components/ui/button/Button";
+import { useAuth } from "@/context/AuthContext";
 
 // ----------------------------------------------------------------------
 // 1. THE UNIFIED FORM COMPONENT
@@ -229,6 +230,9 @@ export function VariantManager({
   data: VariantResponse[];
   availableAttributes: AttributeResponse[];
 }) {
+  const { user } = useAuth();
+  const hasEditProductPerm =
+    user?.permissions.includes("EDIT_PRODUCT") ?? false;
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(false);
@@ -299,8 +303,14 @@ export function VariantManager({
 
   // Memorize headers so the table doesn't over-render
   const headers = useMemo(
-    () => getVariantHeaders(handleEdit, handleDelete, disableDelete),
-    [handleEdit, handleDelete, disableDelete],
+    () =>
+      getVariantHeaders(
+        handleEdit,
+        handleDelete,
+        disableDelete,
+        hasEditProductPerm,
+      ),
+    [handleEdit, handleDelete, disableDelete, hasEditProductPerm],
   );
 
   return (
@@ -313,40 +323,42 @@ export function VariantManager({
           Product Variants
         </h3>
 
-        <div className="flex gap-3">
-          <NoControlModalBox
-            startIcon={<Plus size={16} />}
-            openBtnTitle="New Variant"
-            formId="variantForm"
-            isLoading={loading}
-            isOpen={isOpen}
-            disableSaveBtn={disable}
-            onOpen={() => {
-              setSelectedVariant(undefined);
-              openModal();
-            }}
-            onClose={closeModal}
-            modalContent={
-              <VariantForm
-                productId={productId}
-                setDisable={setDisable}
-                setLoading={setLoading}
-                onSuccess={closeModal}
-                initialData={selectedVariant}
-                availableAttributes={availableAttributes}
-              />
-            }
-          />
-          <Button
-            size="sm"
-            variant="danger"
-            disabled={disable}
-            onClick={() => handleDeleteProduct(productId)}
-          >
-            <Trash2 size={16} />
-            Delete Product
-          </Button>
-        </div>
+        {hasEditProductPerm && (
+          <div className="flex gap-3">
+            <NoControlModalBox
+              startIcon={<Plus size={16} />}
+              openBtnTitle="New Variant"
+              formId="variantForm"
+              isLoading={loading}
+              isOpen={isOpen}
+              disableSaveBtn={disable}
+              onOpen={() => {
+                setSelectedVariant(undefined);
+                openModal();
+              }}
+              onClose={closeModal}
+              modalContent={
+                <VariantForm
+                  productId={productId}
+                  setDisable={setDisable}
+                  setLoading={setLoading}
+                  onSuccess={closeModal}
+                  initialData={selectedVariant}
+                  availableAttributes={availableAttributes}
+                />
+              }
+            />
+            <Button
+              size="sm"
+              variant="danger"
+              disabled={disable}
+              onClick={() => handleDeleteProduct(productId)}
+            >
+              <Trash2 size={16} />
+              Delete Product
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Table Content */}

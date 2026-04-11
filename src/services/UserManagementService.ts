@@ -28,11 +28,6 @@ export const userManagementService = {
       cache: "no-store",
     });
   },
-  //   update: async (id: number, data: UserRequest) => {
-  //     return apiClient.put<UserRequest>(`users/update/${id}`, data, {
-  //       headers: { Authorization: authToken },
-  //     });
-  //   },
   updateProfile: async (username: string, phoneNumber: string) => {
     return apiClient.put<User>(`users/${username}/profile`, { phoneNumber });
   },
@@ -70,12 +65,6 @@ export const userManagementService = {
       payload,
     );
   },
-  //   // delete: async (id: number) => {
-  //   //   return apiClient.delete<void>(`/api/users/${id}`, {
-  //   //     headers: { Authorization: authToken },
-  //   //   });
-  //   // },
-  // };
 };
 
 export const roleManagementService = {

@@ -18,6 +18,7 @@ import {
 import { ModalProductUpdateForm } from "@/components/form/ModalProductUpdateForm";
 import UnitConversionManager from "@/components/UnitConversionManager";
 import { VariantManager } from "@/components/VariantManager";
+import { cookies } from "next/headers";
 
 export default async function ProductDetailPage({
   params,
@@ -30,6 +31,8 @@ export default async function ProductDetailPage({
   let unitData: UnitResponse[] = [];
   let attributeData: AttributeResponse[] = [];
   let errorMsg = null;
+  const cookieStore = await cookies();
+  const permissions = cookieStore.get("permissions")?.value.split(",");
 
   try {
     data = await productService.getById(Number(id));
@@ -58,10 +61,14 @@ export default async function ProductDetailPage({
           title="General Information"
           items={generalInfoItems}
           editBtn={
-            <ModalProductUpdateForm
-              categoryData={categoryData}
-              initialData={data as ProductResponse}
-            />
+            permissions?.includes("EDIT_PRODUCT") ? (
+              <ModalProductUpdateForm
+                categoryData={categoryData}
+                initialData={data as ProductResponse}
+              />
+            ) : (
+              <div></div>
+            )
           }
         />
         <GeneralInfoSection
