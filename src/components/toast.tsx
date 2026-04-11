@@ -1,7 +1,7 @@
 "use client";
 
 import { resolveValue, Toaster, ToastType } from "react-hot-toast";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, Info, XCircle } from "lucide-react";
 
 export default function MyToast() {
   const getToastStyles = (type: ToastType) => {
@@ -18,7 +18,7 @@ export default function MyToast() {
         };
       default: // blank or custom
         return {
-          icon: <CheckCircle size={24} className="text-brand-500" />, // Default brand color
+          icon: <Info size={24} className="text-brand-500" />, // Default brand color
           borderColor: "border-brand-500",
         };
     }

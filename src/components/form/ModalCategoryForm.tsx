@@ -20,11 +20,12 @@ import {
   getSubCategoryHeaders,
 } from "@/components/table/AccordionTableHeader";
 import { useForm, SubmitHandler } from "react-hook-form";
-import Radio from "@/default_components/form/input/Radio";
 import {
   categoryCreateAction,
+  categoryDeleteAction,
   categoryUpdateAction,
 } from "@/actions/system-info";
+import { useConfirmModal } from "@/hooks/useConfirmModal";
 
 interface CategoryFormProps {
   setLoading: (loading: boolean) => void;
@@ -53,7 +54,6 @@ const CategoryForm = ({
     defaultValues: {
       name: initialData?.name || "",
       description: initialData?.description || null,
-      status: initialData?.status || "ACTIVE",
       parentCategoryId: initialData?.parentCategoryId || null,
     },
   });
@@ -74,7 +74,6 @@ const CategoryForm = ({
       const payload: CategoryRequest = {
         name: data.name,
         description: data.description !== "" ? data.description : null,
-        status: data.status,
         parentCategoryId: data.parentCategoryId
           ? Number(data.parentCategoryId)
           : null,
@@ -131,21 +130,6 @@ const CategoryForm = ({
           hint={errors.description?.message}
         />
       </div>
-      {/* Status Radio */}
-      <div className="flex items-center gap-3">
-        <Radio
-          id="status-active"
-          label="Active"
-          value={"ACTIVE"}
-          {...register("status")}
-        />
-        <Radio
-          id="status-inactive"
-          label="Inactive"
-          value={"INACTIVE"}
-          {...register("status")}
-        />
-      </div>
       {/* Select */}
       <div>
         <Label className={`${isRoot ? "opacity-50" : ""}`}>
@@ -165,9 +149,12 @@ const CategoryForm = ({
 };
 
 export function ModalCategoryForm({ data }: { data: Category[] }) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(false);
+  const [disableDelete, setDisableDelete] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
+  const { confirm, ConfirmationModal } = useConfirmModal();
   const [selectedCategory, setSelectedCategory] = useState<
     SubCategory | undefined
   >(undefined);
@@ -184,14 +171,40 @@ export function ModalCategoryForm({ data }: { data: Category[] }) {
     },
     [openModal],
   );
-  const headers = useMemo(() => getCategoryHeaders(handleEdit), [handleEdit]);
+  const handleDelete = useCallback(
+    async (id: number) => {
+      const isConfirmed = await confirm({
+        title: "Delete Category",
+        message: "Are you sure you want to delete this category?",
+      });
+      if (!isConfirmed) return;
+      try {
+        setDisableDelete(true);
+        await categoryDeleteAction(id);
+        toast.success("Category deleted successfully!");
+        router.refresh();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        toast.error(error.message ?? "An unexpected error occurred");
+      } finally {
+        setDisableDelete(false);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [router],
+  );
+  const headers = useMemo(
+    () => getCategoryHeaders(handleEdit, handleDelete, disableDelete),
+    [handleEdit, handleDelete, disableDelete],
+  );
   const subheaders = useMemo(
-    () => getSubCategoryHeaders(handleEdit),
-    [handleEdit],
+    () => getSubCategoryHeaders(handleEdit, handleDelete, disableDelete),
+    [handleEdit, handleDelete, disableDelete],
   );
 
   return (
     <div>
+      {ConfirmationModal}
       <div className={"flex justify-end px-6 pt-6"}>
         <NoControlModalBox
           startIcon={<Plus size={16} />}
@@ -222,6 +235,8 @@ export function ModalCategoryForm({ data }: { data: Category[] }) {
           subTableHeaders={subheaders}
           subTableKey={"subcategories"}
           data={data}
+          getRowId={(params) => String(params.data.id)}
+          subTableGetRowId={(params) => String(params.data.id)}
         />
       </div>
     </div>

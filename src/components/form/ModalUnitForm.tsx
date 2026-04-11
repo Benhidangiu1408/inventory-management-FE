@@ -168,7 +168,11 @@ export function ModalUnitForm({ data }: { data: UnitResponse[] }) {
         />
       </div>
       <div className="p-6">
-        <CustomizableTable headers={headers} data={data} />
+        <CustomizableTable
+          headers={headers}
+          data={data}
+          getRowId={(params) => String(params.data.id)}
+        />
       </div>
     </div>
   );

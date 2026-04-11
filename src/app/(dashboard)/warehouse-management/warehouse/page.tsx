@@ -6,11 +6,14 @@ import { warehouseHeaders } from "@/components/table/CustomizableTableHeader";
 import Link from "next/link";
 import Button from "@/default_components/ui/button/Button";
 import { Plus } from "lucide-react";
+import { cookies } from "next/headers";
 
 export default async function WarehousePage() {
   // Handle initial page data
   let data: WarehouseGeneral[] = [];
   let errorMsg = null;
+  const cookieStore = await cookies();
+  const permissions = cookieStore.get("permissions")?.value.split(",");
 
   try {
     data = await warehouseService.getAll();
@@ -28,15 +31,17 @@ export default async function WarehousePage() {
       <div>
         <div className="default-card p-6">
           <div className="mb-6 flex justify-end px-1 pt-2">
-            <Link href={`/warehouse-management/warehouse/new`}>
-              <Button
-                size="sm"
-                variant="primary"
-                startIcon={<Plus size={16} />}
-              >
-                New Warehouse
-              </Button>
-            </Link>
+            {permissions?.includes("EDIT_WAREHOUSE") && (
+              <Link href={`/warehouse-management/warehouse/new`}>
+                <Button
+                  size="sm"
+                  variant="primary"
+                  startIcon={<Plus size={16} />}
+                >
+                  New Warehouse
+                </Button>
+              </Link>
+            )}
           </div>
           <CustomizableTable headers={warehouseHeaders} data={data} />
         </div>

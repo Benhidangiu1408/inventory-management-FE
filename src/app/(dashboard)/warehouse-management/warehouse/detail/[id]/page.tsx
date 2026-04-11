@@ -4,6 +4,7 @@ import { warehouseService } from "@/services/WarehouseManagementService";
 import { WarehouseDetail } from "@/interfaces/warehouseManagementType";
 import { ModalUpdateWarehouseForm } from "@/components/form/ModalUpdateWarehouseForm";
 import { ViewLocation } from "@/components/ViewLocation";
+import { cookies } from "next/headers";
 
 export default async function WarehouseDetailPage({
   params,
@@ -13,6 +14,8 @@ export default async function WarehouseDetailPage({
   const { id } = await params;
   let data: WarehouseDetail | null = null;
   let errorMsg = null;
+  const cookieStore = await cookies();
+  const permissions = cookieStore.get("permissions")?.value.split(",");
 
   try {
     data = await warehouseService.getDetail(Number(id));
@@ -41,7 +44,11 @@ export default async function WarehouseDetailPage({
           title="General Information"
           items={generalInfoItems}
           editBtn={
-            <ModalUpdateWarehouseForm initialData={data as WarehouseDetail} />
+            permissions?.includes("EDIT_WAREHOUSE") ? (
+              <ModalUpdateWarehouseForm initialData={data as WarehouseDetail} />
+            ) : (
+              <div></div>
+            )
           }
         />
         <GeneralInfoSection

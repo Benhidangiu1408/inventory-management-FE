@@ -27,7 +27,6 @@ export const CreateWarehouseForm = ({ userData }: { userData: User[] }) => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<NewWarehouseRequest>({
     defaultValues: {
@@ -61,13 +60,11 @@ export const CreateWarehouseForm = ({ userData }: { userData: User[] }) => {
       };
       console.log(payload);
       await warehouseCreateAction(payload);
-      reset();
       toast.success("Warehouse created successfully!");
       router.replace("/warehouse-management/warehouse");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message ?? "An unexpected error occurred");
-    } finally {
       setLoading(false);
     }
   };
@@ -144,7 +141,7 @@ export const CreateWarehouseForm = ({ userData }: { userData: User[] }) => {
         <Button
           size="sm"
           variant="outline"
-          onClick={() => router.replace("/warehouse-management/warehouse")}
+          onClick={() => router.back()}
           type="button"
         >
           Cancel

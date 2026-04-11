@@ -1,5 +1,5 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-// import { cookies } from "next/headers";
+import { cookies } from "next/headers";
 
 // import UtilityBar from "@/components/TA_common/UtilityBar";
 import {
@@ -15,6 +15,7 @@ import {
   type FaultBatch as FaultBatchResponse,
   type FaultBatchProcessOrderSummary,
 } from "@/interfaces/inventoryManagementType";
+import { FaultOrderPermission } from "@/constants/permissions/fault-order";
 import { getFaultOrderAction } from "@/actions/faultHandling";
 import { getAllUsersByRoleAction } from "@/actions/user";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -84,6 +85,7 @@ const buildFaultBatchRows = (
       code: batch.code ?? `FB-${batch.id}`,
       date: formatDisplayDate(batch.createdAt),
       status: mapBatchStatusToLabel(batch.handlingStatus),
+      taskId: batch.taskId ? String(batch.taskId) : "",
       checked: batch.handlingStatus === FaultBatchStatus.RESOLVED,
     }));
 };
@@ -144,14 +146,56 @@ const buildProcessOrderRows = (
   }));
 };
 
+const parsePermissionCookie = (rawValue?: string): string[] => {
+  if (!rawValue) {
+    return [];
+  }
+
+  const trimmed = rawValue.trim();
+  if (!trimmed) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(trimmed);
+    if (Array.isArray(parsed)) {
+      return parsed
+        .filter(
+          (permission): permission is string => typeof permission === "string",
+        )
+        .map((permission) => permission.trim())
+        .filter(Boolean);
+    }
+
+    if (typeof parsed === "string") {
+      const normalized = parsed.trim();
+      return normalized ? [normalized] : [];
+    }
+  } catch {
+    // Cookie may be persisted as a comma-separated string.
+  }
+
+  return trimmed
+    .split(",")
+    .map((permission) => permission.trim())
+    .filter(Boolean);
+};
+
 export default async function FaultOrderDetailPage({
   params,
 }: FaultOrderDetailPageProps) {
-  // const cookieStore = await cookies();
+  const cookieStore = await cookies();
   const { id } = await params;
   const faultOrderId = Number(id);
-  // const currentUserId = Number(cookieStore.get("userId")?.value);
-  const currentUserId = 1;
+  const currentUserIdValue = Number(cookieStore.get("userId")?.value);
+  const currentUserId = Number.isNaN(currentUserIdValue)
+    ? null
+    : currentUserIdValue;
+  const permissionSet = new Set(
+    parsePermissionCookie(cookieStore.get("permissions")?.value),
+  );
+  const canAssignUser = permissionSet.has(FaultOrderPermission.ASSIGN);
+  const canCreateProcessOrder = permissionSet.has(FaultOrderPermission.CREATE);
   console.log("Received fault order id:", { faultOrderId });
   if (Number.isNaN(faultOrderId)) {
     return (
@@ -177,6 +221,19 @@ export default async function FaultOrderDetailPage({
       </div>
     );
   }
+
+  const analysisActionLabel = (permissionSet.has(FaultOrderPermission.ANALYZE) || currentUserId === data.analyzerId || currentUserId === data.questionCreatorId)
+    ? "Analyze"
+    : (permissionSet.has(FaultOrderPermission.VIEW_ANALYSIS) || currentUserId === data.taskAssigneeId)
+      ? "View Analysis"
+      : null;
+  const taskActionLabel = (permissionSet.has(FaultOrderPermission.ASSIGN_TASK) || currentUserId === data.taskAssigneeId)
+    ? "Assign Tasks"
+    : permissionSet.has(FaultOrderPermission.DO_TASK)
+      ? "Do Task"
+      : permissionSet.has(FaultOrderPermission.VIEW_TASK)
+        ? "View Task"
+        : null;
 
   const faultBatchRows = buildFaultBatchRows(data.faultBatches);
   const assignedFaultBatchRows = buildAssignedFaultBatchRow(data.faultBatches);
@@ -210,6 +267,7 @@ export default async function FaultOrderDetailPage({
             initialAnalyzerId={data.analyzerId}
             initialAssigneeId={data.taskAssigneeId}
             initialQuestionCreatorId={data.questionCreatorId}
+            canAssignUser={canAssignUser}
           />
         </div>
         <FaultOrderDetailClient
@@ -219,6 +277,9 @@ export default async function FaultOrderDetailPage({
           initialFaultBatchRows={faultBatchRows}
           initialAssignedFaultBatchRows={assignedFaultBatchRows}
           initialProcessingOrderRows={processingOrderRows}
+          canCreateProcessOrder={canCreateProcessOrder}
+          analysisActionLabel={analysisActionLabel}
+          taskActionLabel={taskActionLabel}
         />
       </div>
     </div>

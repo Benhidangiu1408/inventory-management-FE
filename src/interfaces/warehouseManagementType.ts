@@ -1,5 +1,5 @@
 // -------------Category-----------------------
-export type CategoryStatus = "ACTIVE" | "INACTIVE";
+export type CategoryStatus = "ACTIVE" | "INACTIVE" | "DELETED";
 
 export interface SubCategory {
   id: number;
@@ -23,7 +23,6 @@ export interface Category {
 export interface CategoryRequest {
   name: string;
   description: string | null;
-  status: CategoryStatus;
   parentCategoryId: number | null; // Optional
 }
 
@@ -144,20 +143,18 @@ export interface AttributeRequest {
 export enum ProductStatus {
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
+  DELETED = "DELETED",
+}
+export enum ConversionStatus {
+  ACTIVE = "ACTIVE",
+  DELETED = "DELETED",
 }
 
 export interface ProductCreateRequest {
   name: string;
   description: string | null;
   categoryId: number | null;
-  // Base Unit Config
   baseUnitId: number | null;
-  // Batch Unit Config
-  batchUnitId: number | null;
-  batchConversionRate?: number; // Required if batchUnitId != baseUnitId
-  // Item Unit Config
-  itemUnitId: number | null;
-  itemConversionRate?: number; // Required if itemUnitId != baseUnitId
   additionalConversions?: {
     fromUnitId: number | null;
     conversionRate: number | null;
@@ -181,7 +178,6 @@ export interface VariantResponse {
   code: string;
   description: string | null;
   image: string | null;
-  minimumQuantity: number;
   status: ProductStatus;
   attributes: VariantAttributeResponse[];
 }
@@ -192,15 +188,19 @@ export interface ProductResponse {
   name: string;
   description: string | null;
   status: ProductStatus;
+  categoryId: number;
   categoryName: string;
-  // Unit Config
   baseUnit: UnitSummary;
-  batchUnit: UnitSummary | null;
-  itemUnit: UnitSummary | null;
-  // Variants list
   variants: VariantResponse[];
+  unitConversions: UnitConversionResponse[];
 }
-// Uncheck
+
+export interface UnitConversionResponse {
+  id: number;
+  fromUnit: UnitSummary;
+  conversionRate: number;
+  status: ConversionStatus;
+}
 
 export interface AttributeValue {
   attributeId: number;
@@ -209,27 +209,23 @@ export interface AttributeValue {
 
 export interface VariantCreateRequest {
   productId: number;
-  minimumStockRequire?: number;
   description: string | null;
   image: string | null;
   attributes: AttributeValue[];
 }
 
 export interface VariantUpdateRequest {
-  description?: string;
-  image?: string;
-  minimumStockRequire?: number;
-  status?: ProductStatus;
+  description: string | null;
+  image: string | null;
 }
 
 export interface ProductUpdateRequest {
-  name?: string;
-  description?: string;
-  status?: ProductStatus;
+  name: string;
+  description: string | null;
+  categoryId: number | string;
 }
 
 export interface ProductAddConversionRequest {
   fromUnitId: number;
-  toUnitId: number;
   conversionRate: number;
 }

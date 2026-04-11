@@ -7,11 +7,15 @@ import {
   LocationResponse,
   LocationType,
   NewWarehouseRequest,
+  ProductAddConversionRequest,
   ProductCreateRequest,
   ProductResponse,
+  ProductUpdateRequest,
   UnitRequest,
   UnitResponse,
   VariantCreateRequest,
+  VariantResponse,
+  VariantUpdateRequest,
   WarehouseDetail,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
@@ -23,27 +27,23 @@ export const categoryService = {
       cache: "no-store",
     });
   },
-
   getById: async (id: number) => {
     return apiClient.get<Category>(`/info/v1/category/${id}`, {
       cache: "no-store",
     });
   },
-
   create: async (data: CategoryRequest) => {
     return apiClient.post<CategoryRequest>("/info/v1/category/new", data);
   },
-
   update: async (id: number, data: CategoryRequest) => {
     return apiClient.put<CategoryRequest>(
       `/info/v1/category/update/${id}`,
       data,
     );
   },
-
-  // delete: async (id: number) => {
-  //   return apiClient.delete<void>(`${BASE_URL}/${id}`);
-  // }
+  delete: async (id: number) => {
+    return apiClient.delete<void>(`/info/v1/category/delete/${id}`, null);
+  },
 };
 
 export const warehouseService = {
@@ -66,6 +66,9 @@ export const warehouseService = {
       `/info/v1/warehouse/update/${id}`,
       data,
     );
+  },
+  delete: async (id: number) => {
+    return apiClient.delete<void>(`/info/v1/warehouse/delete/${id}`, null);
   },
 };
 
@@ -104,6 +107,9 @@ export const locationService = {
         cache: "no-cache",
       },
     );
+  },
+  delete: async (id: number) => {
+    return apiClient.delete<void>(`/info/v1/location/delete/${id}`, null);
   },
 };
 
@@ -148,9 +154,28 @@ export const productService = {
       cache: "no-store",
     });
   },
-
+  getById: async (id: number) => {
+    return apiClient.get<ProductResponse>(`/info/v1/product/${id}`, {
+      cache: "no-store",
+    });
+  },
   create: async (data: ProductCreateRequest) => {
     return apiClient.post<ProductCreateRequest>("/info/v1/product/new", data);
+  },
+  update: async (id: number, data: ProductUpdateRequest) => {
+    return apiClient.put<ProductResponse>(
+      `/info/v1/product/update/${id}`,
+      data,
+    );
+  },
+  createConversion: async (id: number, data: ProductAddConversionRequest) => {
+    return apiClient.post<void>(`/info/v1/product/${id}/conversion/new`, data);
+  },
+  toggleConversion: async (id: number) => {
+    return apiClient.put<void>(
+      `/info/v1/product/conversion/toggle/${id}`,
+      null,
+    );
   },
 
   createVariant: async (data: VariantCreateRequest) => {
@@ -160,10 +185,19 @@ export const productService = {
     );
   },
 
-  // update: async (id: number, data: AttributeRequest) => {
-  //   return apiClient.put<AttributeRequest>(
-  //     `/info/v1/attributes/update/${id}`,
-  //     data,
-  //   );
-  // },
+  deleteProduct: async (id: number) => {
+    return apiClient.delete<void>(`/info/v1/product/delete/${id}`, null);
+  },
+  deleteVariant: async (id: number) => {
+    return apiClient.delete<void>(
+      `/info/v1/product/variants/delete/${id}`,
+      null,
+    );
+  },
+  updateVariant: async (id: number, data: VariantUpdateRequest) => {
+    return apiClient.put<VariantResponse>(
+      `/info/v1/product/variants/update/${id}`,
+      data,
+    );
+  },
 };
