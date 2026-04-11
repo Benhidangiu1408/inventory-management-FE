@@ -4,6 +4,7 @@ import {
   DeactivateAccountAction,
   DeleteAccountAction,
 } from "@/actions/auth";
+import { useAuth } from "@/context/AuthContext";
 import Button from "@/default_components/ui/button/Button";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
 import { User } from "@/interfaces/userManagementType";
@@ -16,6 +17,7 @@ export default function AdminProfileViewPageContent({
 }: {
   userInfo: User;
 }) {
+  const { user } = useAuth();
   const router = useRouter();
   const { confirm, ConfirmationModal } = useConfirmModal();
   return (
@@ -49,51 +51,59 @@ export default function AdminProfileViewPageContent({
                 </div>
               </div>
             </div>
-            <Button
-              variant="danger"
-              className="w-full !rounded-full xl:w-60"
-              onClick={async () => {
-                try {
-                  const isConfirmed = await confirm({
-                    title: "Delete this user?",
-                    message:
-                      "Are you sure you want to delete this user? This action cannot be undone!",
-                  });
-                  if (!isConfirmed) return;
-                  await DeleteAccountAction(userInfo.username);
+            {user?.permissions.includes("DELETE_USER") && (
+              <Button
+                variant="danger"
+                className="w-full !rounded-full xl:w-60"
+                onClick={async () => {
+                  try {
+                    const isConfirmed = await confirm({
+                      title: "Delete this user?",
+                      message:
+                        "Are you sure you want to delete this user? This action cannot be undone!",
+                    });
+                    if (!isConfirmed) return;
+                    await DeleteAccountAction(userInfo.username);
 
-                  toast.success("Delete user account successfully!");
-                  router.replace("/admin/user-management");
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                } catch (error: any) {
-                  toast.error(error.message ?? "An unexpected error occurred");
-                }
-              }}
-            >
-              Delete User
-            </Button>
-            <Button
-              variant={userInfo.status === "ACTIVE" ? "warning" : "success"}
-              className="w-full !rounded-full xl:w-60"
-              onClick={async () => {
-                try {
-                  if (userInfo.status === "ACTIVE") {
-                    await DeactivateAccountAction(userInfo.username);
-                  } else if (userInfo.status === "DISABLED") {
-                    await ActivateAccountAction(userInfo.username);
+                    toast.success("Delete user account successfully!");
+                    router.replace("/admin/user-management");
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  } catch (error: any) {
+                    toast.error(
+                      error.message ?? "An unexpected error occurred",
+                    );
                   }
-                  toast.success("Change user account status successfully!");
-                  router.replace("/admin/user-management");
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                } catch (error: any) {
-                  toast.error(error.message ?? "An unexpected error occurred");
-                }
-              }}
-            >
-              {userInfo.status === "ACTIVE"
-                ? "Deactivate User"
-                : "Activate User"}
-            </Button>
+                }}
+              >
+                Delete User
+              </Button>
+            )}
+            {user?.permissions.includes("TOGGLE_USER_STATUS") && (
+              <Button
+                variant={userInfo.status === "ACTIVE" ? "warning" : "success"}
+                className="w-full !rounded-full xl:w-60"
+                onClick={async () => {
+                  try {
+                    if (userInfo.status === "ACTIVE") {
+                      await DeactivateAccountAction(userInfo.username);
+                    } else if (userInfo.status === "DISABLED") {
+                      await ActivateAccountAction(userInfo.username);
+                    }
+                    toast.success("Change user account status successfully!");
+                    router.replace("/admin/user-management");
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  } catch (error: any) {
+                    toast.error(
+                      error.message ?? "An unexpected error occurred",
+                    );
+                  }
+                }}
+              >
+                {userInfo.status === "ACTIVE"
+                  ? "Deactivate User"
+                  : "Activate User"}
+              </Button>
+            )}
           </div>
         </div>
       </div>

@@ -1,19 +1,24 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import GeneralInfoSection from "@/components/GeneralInformation";
 import {
+  attributesService,
   categoryService,
   productService,
   unitService,
 } from "@/services/WarehouseManagementService";
 import {
+  AttributeResponse,
   Category,
   ProductResponse,
   UnitConversionResponse,
   UnitResponse,
   UnitSummary,
+  VariantResponse,
 } from "@/interfaces/warehouseManagementType";
 import { ModalProductUpdateForm } from "@/components/form/ModalProductUpdateForm";
 import UnitConversionManager from "@/components/UnitConversionManager";
+import { VariantManager } from "@/components/VariantManager";
+import { cookies } from "next/headers";
 
 export default async function ProductDetailPage({
   params,
@@ -24,19 +29,21 @@ export default async function ProductDetailPage({
   let data: ProductResponse | null = null;
   let categoryData: Category[] = [];
   let unitData: UnitResponse[] = [];
+  let attributeData: AttributeResponse[] = [];
   let errorMsg = null;
+  const cookieStore = await cookies();
+  const permissions = cookieStore.get("permissions")?.value.split(",");
 
   try {
     data = await productService.getById(Number(id));
     categoryData = await categoryService.getAll();
     unitData = await unitService.getAll();
+    attributeData = await attributesService.getAll();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     errorMsg = `Could not load data from server. ${error.message}`;
   }
   if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
-
-  console.log(data);
 
   const generalInfoItems = [
     { label: "Code", value: data?.code },
@@ -54,10 +61,14 @@ export default async function ProductDetailPage({
           title="General Information"
           items={generalInfoItems}
           editBtn={
-            <ModalProductUpdateForm
-              categoryData={categoryData}
-              initialData={data as ProductResponse}
-            />
+            permissions?.includes("EDIT_PRODUCT") ? (
+              <ModalProductUpdateForm
+                categoryData={categoryData}
+                initialData={data as ProductResponse}
+              />
+            ) : (
+              <div></div>
+            )
           }
         />
         <GeneralInfoSection
@@ -70,6 +81,11 @@ export default async function ProductDetailPage({
               ),
             },
           ]}
+        />
+        <VariantManager
+          availableAttributes={attributeData}
+          productId={id}
+          data={data?.variants as VariantResponse[]}
         />
         <UnitConversionManager
           productId={id}

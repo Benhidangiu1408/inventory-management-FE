@@ -12,6 +12,7 @@ import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import ModalRoleForm from "./form/ModalRoleForm";
 import GeneralInfoSection from "./GeneralInformation";
+import Input from "@/default_components/form/input/InputField";
 
 export function RoleAssignmentList({
   initialRolesData,
@@ -22,6 +23,9 @@ export function RoleAssignmentList({
 }) {
   const [loading, setLoading] = useState(false);
   const [rolesData, setRolesData] = useState<Role[]>(initialRolesData);
+  // --- SEARCH STATES ---
+  const [ungrantedSearch, setUngrantedSearch] = useState("");
+  const [grantedSearch, setGrantedSearch] = useState("");
   // Role Select Options
   const selectOpts = useMemo<Option[]>(() => {
     return rolesData.map((role) => ({
@@ -36,13 +40,33 @@ export function RoleAssignmentList({
   // Initial permissions data
   const grantedPerms = useMemo(() => {
     const role = rolesData.find((r) => r.id === selectedRoleId);
-    return role?.permissions.map((p) => p.name) || [];
+    return role?.permissions || [];
   }, [rolesData, selectedRoleId]);
   const ungrantedPerms = useMemo(() => {
-    return initialPermissionsData
-      .filter((perm) => !grantedPerms.includes(perm.name))
-      .map((p) => p.name);
+    const grantedNames = grantedPerms.map((p) => p.name);
+    return initialPermissionsData.filter(
+      (perm) => !grantedNames.includes(perm.name),
+    );
   }, [initialPermissionsData, grantedPerms]);
+  // --- FILTERED LISTS ---
+  const filteredUngrantedPerms = useMemo(() => {
+    return ungrantedPerms.filter((perm) => {
+      const term = ungrantedSearch.toLowerCase();
+      return (
+        perm.name.toLowerCase().includes(term) ||
+        (perm.description && perm.description.toLowerCase().includes(term))
+      );
+    });
+  }, [ungrantedPerms, ungrantedSearch]);
+  const filteredGrantedPerms = useMemo(() => {
+    return grantedPerms.filter((perm) => {
+      const term = grantedSearch.toLowerCase();
+      return (
+        perm.name.toLowerCase().includes(term) ||
+        (perm.description && perm.description.toLowerCase().includes(term))
+      );
+    });
+  }, [grantedPerms, grantedSearch]);
   // Selected permissions data
   const [selectedUngranted, setSelectedUngranted] = useState<string[]>([]);
   const [selectedGranted, setSelectedGranted] = useState<string[]>([]);
@@ -52,6 +76,8 @@ export function RoleAssignmentList({
     setSelectedRoleId(Number(e.target.value));
     setSelectedUngranted([]);
     setSelectedGranted([]);
+    setUngrantedSearch("");
+    setGrantedSearch("");
   };
   const hasSelection =
     selectedGranted.length > 0 || selectedUngranted.length > 0;
@@ -130,7 +156,7 @@ export function RoleAssignmentList({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="default-card flex justify-between p-6">
+      <div className="default-card flex justify-between gap-2 p-6">
         <div className="w-3/5">
           <Select
             options={selectOpts}
@@ -151,28 +177,43 @@ export function RoleAssignmentList({
           { label: "Description", value: currentRole?.description },
         ]}
       />
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         <ComponentCard title="Ungranted" className="h-full w-full">
+          <div className="px-5">
+            <Input
+              type="text"
+              placeholder="Search ungranted permissions..."
+              value={ungrantedSearch}
+              onChange={(e) => setUngrantedSearch(e.target.value)}
+            />
+          </div>
           <div className="m-5 max-h-96 overflow-y-auto pr-2">
-            <div className="grid grid-cols-2 gap-2">
-              {ungrantedPerms.map((val) => (
-                <Label
-                  key={val}
-                  className={`rounded-xl border p-4 text-gray-700 hover:bg-blue-50 dark:text-gray-400 dark:hover:bg-white/[0.07] ${
-                    selectedUngranted.includes(val)
-                      ? "border-blue-500 bg-blue-50 dark:border-blue-900 dark:bg-white/[0.07]"
-                      : ""
-                  }`}
-                >
-                  <Checkbox
-                    labelSize="text-base"
-                    checked={selectedUngranted.includes(val)}
-                    onChange={() => toggleSelection(val, "ungranted")}
-                    label={val}
-                  />
-                </Label>
-              ))}
-            </div>
+            {filteredUngrantedPerms.length === 0 ? (
+              <p className="text-sm text-gray-500 italic">
+                No permissions found.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                {filteredUngrantedPerms.map((perm) => (
+                  <Label
+                    title={perm.description}
+                    key={perm.name}
+                    className={`rounded-xl border p-4 text-gray-700 hover:bg-blue-50 dark:text-gray-400 dark:hover:bg-white/[0.07] ${
+                      selectedUngranted.includes(perm.name)
+                        ? "border-blue-500 bg-blue-50 dark:border-blue-900 dark:bg-white/[0.07]"
+                        : ""
+                    }`}
+                  >
+                    <Checkbox
+                      labelSize="text-base"
+                      checked={selectedUngranted.includes(perm.name)}
+                      onChange={() => toggleSelection(perm.name, "ungranted")}
+                      label={perm.name}
+                    />
+                  </Label>
+                ))}
+              </div>
+            )}
           </div>
         </ComponentCard>
         <Button
@@ -185,26 +226,41 @@ export function RoleAssignmentList({
           <ArrowRightLeft size={30} />
         </Button>
         <ComponentCard title="Granted" className="h-full w-full">
+          <div className="px-5">
+            <Input
+              type="text"
+              placeholder="Search granted permissions..."
+              value={grantedSearch}
+              onChange={(e) => setGrantedSearch(e.target.value)}
+            />
+          </div>
           <div className="m-5 max-h-96 overflow-y-auto pr-2">
-            <div className="grid grid-cols-2 gap-2">
-              {grantedPerms.map((val) => (
-                <Label
-                  key={val}
-                  className={`rounded-xl border p-4 text-gray-700 hover:bg-blue-50 dark:text-gray-400 dark:hover:bg-white/[0.07] ${
-                    selectedGranted.includes(val)
-                      ? "border-blue-500 bg-blue-50 dark:border-blue-900 dark:bg-white/[0.07]"
-                      : ""
-                  }`}
-                >
-                  <Checkbox
-                    labelSize="text-base"
-                    checked={selectedGranted.includes(val)}
-                    onChange={() => toggleSelection(val, "granted")}
-                    label={val}
-                  />
-                </Label>
-              ))}
-            </div>
+            {filteredGrantedPerms.length === 0 ? (
+              <p className="text-sm text-gray-500 italic">
+                No permissions found.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                {filteredGrantedPerms.map((perm) => (
+                  <Label
+                    title={perm.description}
+                    key={perm.name}
+                    className={`rounded-xl border p-4 text-gray-700 hover:bg-blue-50 dark:text-gray-400 dark:hover:bg-white/[0.07] ${
+                      selectedGranted.includes(perm.name)
+                        ? "border-blue-500 bg-blue-50 dark:border-blue-900 dark:bg-white/[0.07]"
+                        : ""
+                    }`}
+                  >
+                    <Checkbox
+                      labelSize="text-base"
+                      checked={selectedGranted.includes(perm.name)}
+                      onChange={() => toggleSelection(perm.name, "granted")}
+                      label={perm.name}
+                    />
+                  </Label>
+                ))}
+              </div>
+            )}
           </div>
         </ComponentCard>
       </div>

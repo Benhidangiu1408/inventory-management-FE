@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthUser {
   userId: string;
@@ -22,6 +22,10 @@ export function AuthProvider({
   initialUser: AuthUser | null;
 }) {
   const [user, setUser] = useState<AuthUser | null>(initialUser);
+  useEffect(() => {
+    setUser(initialUser);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialUser?.userId, initialUser?.permissions?.join(",")]);
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>

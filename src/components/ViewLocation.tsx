@@ -18,7 +18,8 @@ import {
 import { ModalCreateLocationForm } from "./form/ModalCreateLocationForm";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
 import Button from "@/default_components/ui/button/Button";
-import { Trash } from "lucide-react";
+import { Trash2 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const TableFetch = ({
   warehouseId,
@@ -62,6 +63,9 @@ const TableFetch = ({
 };
 
 export function ViewLocation() {
+  const { user } = useAuth();
+  const hasEditLocationPerm =
+    user?.permissions.includes("EDIT_LOCATION") ?? false;
   const id = Number(useParams().id);
   const router = useRouter();
   const locationTypes = [
@@ -93,29 +97,32 @@ export function ViewLocation() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message ?? "An unexpected error occurred");
-    } finally {
       setDisable(false);
     }
   };
-  const locationHeaders = getLocationHeaders(async (id) => {
-    setDisable(true);
-    try {
-      const isConfirmed = await confirm({
-        title: "Delete this location?",
-        message:
-          "Are you sure you want to delete this location? All child locations will also be delete!",
-      });
-      if (!isConfirmed) return;
-      await locationDeleteAction(id);
-      toast.success("Delete Successfully!");
-      setRefreshKey((prev) => prev + 1);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      toast.error(error.message ?? "An unexpected error occurred");
-    } finally {
-      setDisable(false);
-    }
-  }, disable);
+  const locationHeaders = getLocationHeaders(
+    async (id) => {
+      setDisable(true);
+      try {
+        const isConfirmed = await confirm({
+          title: "Delete this location?",
+          message:
+            "Are you sure you want to delete this location? All child locations will also be delete!",
+        });
+        if (!isConfirmed) return;
+        await locationDeleteAction(id);
+        toast.success("Delete Successfully!");
+        setRefreshKey((prev) => prev + 1);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        toast.error(error.message ?? "An unexpected error occurred");
+      } finally {
+        setDisable(false);
+      }
+    },
+    disable,
+    hasEditLocationPerm,
+  );
   const headers = locationTypes.map((type) => ({
     title: type.charAt(0) + type.slice(1).toLowerCase(),
   }));
@@ -129,24 +136,31 @@ export function ViewLocation() {
       LocationHeaders={locationHeaders}
     />
   ));
-
+  if (!hasEditLocationPerm && !user?.permissions.includes("EDIT_WAREHOUSE"))
+    return <div></div>;
   return (
     <div className="default-card flex flex-col gap-6 p-6">
       {ConfirmationModal}
       <div className="flex gap-4">
-        <ModalCreateLocationForm onSuccess={handleLocationCreated} />
-        <Button
-          size="sm"
-          variant="danger"
-          disabled={disable}
-          onClick={handleDeleteWarehouse}
-        >
-          <Trash size={16} /> Delete Warehouse
-        </Button>
+        {user?.permissions.includes("EDIT_LOCATION") && (
+          <ModalCreateLocationForm onSuccess={handleLocationCreated} />
+        )}
+        {user?.permissions.includes("EDIT_WAREHOUSE") && (
+          <Button
+            size="sm"
+            variant="danger"
+            disabled={disable}
+            onClick={handleDeleteWarehouse}
+          >
+            <Trash2 size={16} /> Delete Warehouse
+          </Button>
+        )}
       </div>
-      <div className="flex flex-col gap-6">
-        <DefaultTab tabHeaders={headers} tabContents={contents} />
-      </div>
+      {user?.permissions.includes("VIEW_LOCATION") && (
+        <div className="flex flex-col gap-6">
+          <DefaultTab tabHeaders={headers} tabContents={contents} />
+        </div>
+      )}
     </div>
   );
 }

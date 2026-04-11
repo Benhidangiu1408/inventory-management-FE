@@ -12,10 +12,12 @@ import {
   AttributeResponse,
   LocationResponse,
   UnitResponse,
+  VariantAttributeResponse,
+  VariantResponse,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
 
-import { Eye, Pencil, Trash } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
 import { Role, User } from "@/interfaces/userManagementType";
 import { AssignRoleAction } from "@/actions/user";
@@ -83,6 +85,7 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
 export const getLocationHeaders = (
   deleteHandle: (id: number) => void,
   disable: boolean,
+  hasEditPerm: boolean,
 ): Column<LocationResponse>[] => [
   {
     label: "Code",
@@ -120,21 +123,28 @@ export const getLocationHeaders = (
       );
     },
   },
-  {
-    label: "Action",
-    key: "id",
-    filter: false,
-    width: 50,
-    render: (val) => {
-      return (
-        <div className="flex h-full items-center justify-center gap-2">
-          <button onClick={() => deleteHandle(Number(val))} disabled={disable}>
-            <Trash size={16} color="red" />
-          </button>
-        </div>
-      );
-    },
-  },
+  ...(hasEditPerm
+    ? [
+        {
+          label: "Action",
+          key: "id",
+          filter: false,
+          width: 50,
+          render: (val) => {
+            return (
+              <div className="flex h-full items-center justify-center gap-2">
+                <button
+                  onClick={() => deleteHandle(Number(val))}
+                  disabled={disable}
+                >
+                  <Trash2 size={16} color="red" />
+                </button>
+              </div>
+            );
+          },
+        } as Column<LocationResponse>,
+      ]
+    : []),
 ];
 
 export const getUnitHeaders = (
@@ -209,6 +219,94 @@ export const getAttributeHeaders = (
       </div>
     ),
   },
+];
+
+export const getVariantHeaders = (
+  onEdit: (variant: VariantResponse) => void,
+  onDelete: (id: number) => void,
+  disable: boolean,
+  hasEditPerm: boolean,
+): Column<VariantResponse>[] => [
+  {
+    label: "Variant Code",
+    key: "code",
+    sort: true,
+    filter: "agTextColumnFilter",
+    width: 200,
+  },
+  {
+    label: "Image",
+    key: "image",
+    filter: false,
+    sortable: false,
+    width: 100,
+    render: (val) =>
+      val ? (
+        <Link href={"/"}>View Image</Link>
+      ) : (
+        <span className="text-gray-400 italic">No image</span>
+      ),
+  },
+  {
+    label: "Attributes",
+    key: "attributes",
+    filter: false,
+    render: (attrs) => {
+      const attributeArray = attrs as VariantAttributeResponse[];
+      if (!Array.isArray(attributeArray) || attributeArray.length === 0)
+        return <span className="text-gray-400 italic">Default</span>;
+      return (
+        <div className="flex h-full w-full flex-wrap items-center justify-center gap-1 py-1">
+          {attributeArray.map((attr) => (
+            <span
+              key={attr.attributeId}
+              className="inline-flex items-center rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+            >
+              <span className="mr-1 font-semibold">{attr.attributeName}:</span>{" "}
+              {attr.value}
+            </span>
+          ))}
+        </div>
+      );
+    },
+  },
+  {
+    label: "Description",
+    key: "description",
+    filter: "agTextColumnFilter",
+    render: (val) =>
+      (val as string) || (
+        <span className="text-gray-400 italic">No description</span>
+      ),
+  },
+  ...(hasEditPerm
+    ? [
+        {
+          label: "Actions",
+          key: "id",
+          filter: false,
+          width: 50,
+          render: (_, row) => (
+            <div className="flex h-full items-center justify-center gap-2">
+              <button
+                onClick={() => onEdit(row)}
+                disabled={disable}
+                className="text-blue-500 transition-colors hover:text-blue-700"
+              >
+                <Pencil size={18} />
+              </button>
+              <button
+                onClick={() => onDelete(row.id)}
+                disabled={disable}
+                className="text-red-500 transition-colors hover:text-red-700"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          ),
+        } as Column<VariantResponse>,
+      ]
+    : []),
 ];
 
 export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
@@ -302,7 +400,7 @@ export const userHeaders = (
     render(_, row) {
       return (
         <Link
-          href={`/profile/${row.id}`}
+          href={`/other-profile/${row.id}`}
           className="text-brand-500 text-sm font-normal underline transition-colors"
         >
           {row.username}

@@ -14,6 +14,8 @@ import {
   UnitRequest,
   UnitResponse,
   VariantCreateRequest,
+  VariantResponse,
+  VariantUpdateRequest,
   WarehouseDetail,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
@@ -192,11 +194,10 @@ export const productService = {
       null,
     );
   },
-
-  // update: async (id: number, data: AttributeRequest) => {
-  //   return apiClient.put<AttributeRequest>(
-  //     `/info/v1/attributes/update/${id}`,
-  //     data,
-  //   );
-  // },
+  updateVariant: async (id: number, data: VariantUpdateRequest) => {
+    return apiClient.put<VariantResponse>(
+      `/info/v1/product/variants/update/${id}`,
+      data,
+    );
+  },
 };

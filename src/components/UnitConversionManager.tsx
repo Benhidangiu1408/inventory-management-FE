@@ -21,6 +21,7 @@ import {
   ConversionCreateAction,
   ToggleConversionAction,
 } from "@/actions/system-info";
+import { useAuth } from "@/context/AuthContext";
 
 interface UIConversionRule {
   ruleId?: number;
@@ -56,6 +57,9 @@ export default function UnitConversionManager({
   existingConversions,
   availableUnits,
 }: UnitConversionFormProps) {
+  const { user } = useAuth();
+  const hasEditProductPerm =
+    user?.permissions.includes("EDIT_PRODUCT") ?? false;
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -160,7 +164,7 @@ export default function UnitConversionManager({
         </div>
 
         {/* Dynamic Rules List */}
-        <div className="max-h-[75vh] space-y-4 overflow-auto">
+        <div className="max-h-[75vh] space-y-4 overflow-auto p-2">
           {fields.map((field, index) => {
             const isActive = watchedRules?.[index]?.isActive ?? true;
             const isExistingRule = !!field.ruleId; // Check if it's already in the DB
@@ -189,54 +193,52 @@ export default function UnitConversionManager({
             return (
               <div
                 key={field.id}
-                className={`rounded-lg border p-4 transition-all duration-200 ${
+                className={`flex flex-col gap-6 rounded-lg border p-4 transition-all duration-200 lg:flex-row lg:items-start${
                   isActive
                     ? "border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
                     : "border-gray-100 bg-gray-50 opacity-60 grayscale-[50%] dark:border-gray-800/50 dark:bg-gray-900/50"
                 } `}
               >
-                <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-                  {/* From Unit */}
+                {/* From Unit */}
+                <div className="w-full">
+                  <Label>From Unit</Label>
+                  <Select
+                    // Disable input if rule exists or is inactive
+                    disabled={!isActive || isExistingRule || loading}
+                    {...unitRegister}
+                    options={unitOptions}
+                    placeholder="Select Unit"
+                    error={!!errors.rules?.[index]?.fromUnitId}
+                    hint={errors.rules?.[index]?.fromUnitId?.message}
+                  />
+                </div>
+                <div className="flex w-full items-start gap-3">
+                  {/* Conversion Rate */}
                   <div className="w-full">
-                    <Label>From Unit</Label>
-                    <Select
-                      // Disable input if rule exists or is inactive
-                      disabled={!isActive || isExistingRule || loading}
-                      {...unitRegister}
-                      options={unitOptions}
-                      placeholder="Select Unit"
-                      error={!!errors.rules?.[index]?.fromUnitId}
-                      hint={errors.rules?.[index]?.fromUnitId?.message}
-                    />
-                  </div>
-                  <div className="flex w-full items-start gap-3">
-                    {/* Conversion Rate */}
-                    <div className="w-full">
-                      <Label>Conversion Rate</Label>
-                      <div className="flex w-full">
-                        <div className="flex h-11 min-w-fit items-center justify-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-4 text-sm font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-                          <span>=</span>
-                        </div>
-                        <div className="w-full">
-                          <Input
-                            type="number"
-                            // Disable input if rule exists or is inactive
-                            disabled={!isActive || isExistingRule || loading}
-                            className="rounded-l-none"
-                            placeholder={`e.g. 10`}
-                            {...register(`rules.${index}.conversionRate`, {
-                              required: isActive ? "Required" : false,
-                              min: { value: 0.01, message: "Must be > 0" },
-                            })}
-                            error={!!errors.rules?.[index]?.conversionRate}
-                            hint={
-                              errors.rules?.[index]?.conversionRate?.message
-                            }
-                          />
-                        </div>
+                    <Label>Conversion Rate</Label>
+                    <div className="flex w-full">
+                      <div className="flex h-11 min-w-fit items-center justify-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-4 text-sm font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+                        <span>=</span>
+                      </div>
+                      <div className="w-full">
+                        <Input
+                          type="number"
+                          // Disable input if rule exists or is inactive
+                          disabled={!isActive || isExistingRule || loading}
+                          className="rounded-l-none"
+                          placeholder={`e.g. 10`}
+                          {...register(`rules.${index}.conversionRate`, {
+                            required: isActive ? "Required" : false,
+                            min: { value: 0.01, message: "Must be > 0" },
+                          })}
+                          error={!!errors.rules?.[index]?.conversionRate}
+                          hint={errors.rules?.[index]?.conversionRate?.message}
+                        />
                       </div>
                     </div>
-                    {/* Actions Column (Status Toggle & Save/Delete) */}
+                  </div>
+                  {/* Actions Column (Status Toggle & Save/Delete) */}
+                  {hasEditProductPerm && (
                     <div className="flex w-fit flex-col items-center">
                       {/* Status Toggle */}
                       <Label>Actions</Label>
@@ -285,7 +287,7 @@ export default function UnitConversionManager({
                         )}
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             );
@@ -297,18 +299,20 @@ export default function UnitConversionManager({
             </div>
           )}
 
-          <Button
-            type="button"
-            variant="outline"
-            startIcon={<Plus size={16} />}
-            disabled={loading}
-            onClick={() =>
-              append({ fromUnitId: "", conversionRate: "", isActive: true })
-            }
-            className="w-full border-dashed border-gray-300 hover:border-gray-400"
-          >
-            Add New Rule
-          </Button>
+          {hasEditProductPerm && (
+            <Button
+              type="button"
+              variant="outline"
+              startIcon={<Plus size={16} />}
+              disabled={loading}
+              onClick={() =>
+                append({ fromUnitId: "", conversionRate: "", isActive: true })
+              }
+              className="w-full border-dashed border-gray-300 hover:border-gray-400"
+            >
+              Add New Rule
+            </Button>
+          )}
         </div>
       </div>
     </ComponentCard>
