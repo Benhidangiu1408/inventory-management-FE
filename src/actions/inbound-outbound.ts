@@ -44,6 +44,16 @@ export async function createImportSheetDetail(
   );
 }
 
+export async function deleteImportSheetDetail(
+  importSheetId: string | number,
+  importSheetDetailId: string | number,
+) {
+  return await inboundOutboundService.deleteImportSheetDetail(
+    importSheetId,
+    importSheetDetailId,
+  );
+}
+
 export async function updateImportSheetDetail(
   importSheetId: string | number,
   importSheetDetailId: string | number,
@@ -125,6 +135,16 @@ export async function updateExportSheet(
   data: ExportSheetUpdateReq,
 ) {
   return await inboundOutboundService.updateExportSheet(exportSheetId, data);
+}
+
+export async function deleteExportSheetDetail(
+  exportSheetId: string | number,
+  exportSheetDetailId: string | number,
+) {
+  return await inboundOutboundService.deleteExportSheetDetail(
+    exportSheetId,
+    exportSheetDetailId,
+  );
 }
 
 export async function updateExportSheetDetail(

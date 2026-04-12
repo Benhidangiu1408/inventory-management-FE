@@ -1,0 +1,30 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - heading "Sign In" [level=1] [ref=e8]
+        - paragraph [ref=e9]: Enter your username and password to sign in!
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]: Username *
+          - textbox "Enter username" [ref=e17]
+        - generic [ref=e18]:
+          - generic [ref=e19]: Password *
+          - generic [ref=e22]:
+            - textbox "Enter your password" [ref=e23]
+            - img [ref=e25] [cursor=pointer]
+        - button "Sign in" [ref=e28] [cursor=pointer]
+    - generic [ref=e30]:
+      - img "grid" [ref=e32]
+      - img "grid" [ref=e34]
+      - generic [ref=e35]:
+        - link "Logo Stockify" [ref=e36] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e37]:
+            - img "Logo" [ref=e38]
+            - heading "Stockify" [level=3] [ref=e39]
+        - paragraph [ref=e40]: Efficiency at Every Aisle
+    - button [ref=e42] [cursor=pointer]:
+      - img [ref=e43]
+  - button "Open Next.js Dev Tools" [ref=e50] [cursor=pointer]:
+    - img [ref=e51]

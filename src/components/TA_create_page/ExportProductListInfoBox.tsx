@@ -19,11 +19,15 @@ import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import { useParams } from "next/navigation";
 import {
   createExportSheetDetail,
+  deleteExportSheetDetail,
   updateExportSheetDetail,
 } from "@/actions/inbound-outbound";
 import { ApiError } from "next/dist/server/api-utils";
 import { useAuth } from "@/context/AuthContext";
 import { UserPermissions } from "@/interfaces/userManagementType";
+import Button from "@/default_components/ui/button/Button";
+import { Trash } from "lucide-react";
+import { useConfirmModal } from "@/hooks/useConfirmModal";
 
 export default function ExportProductListInfoBox({
   step = "",
@@ -35,6 +39,8 @@ export default function ExportProductListInfoBox({
   const { id } = useParams();
 
   const { exportData, setExportData } = useExport();
+
+  const { confirm, ConfirmationModal } = useConfirmModal();
 
   const { user } = useAuth();
 
@@ -57,6 +63,11 @@ export default function ExportProductListInfoBox({
   );
   const [hasInvalidSelection, setHasInvalidSelection] = useState(false);
 
+  const canDelete =
+    hasStockOutPermission &&
+    step === "quantity-check" &&
+    exportData.status === SheetStatus.CREATED;
+
   const productTempColumn: Column<ProductTempRow>[] = [
     {
       key: "name",
@@ -75,7 +86,52 @@ export default function ExportProductListInfoBox({
       label: "Unit",
       render: (_, row) => row.unit.name,
     },
+    ...(canDelete
+      ? [
+          {
+            key: "id" as keyof ProductTempRow,
+            label: "Action",
+            render: (
+              _: ProductTempRow[keyof ProductTempRow],
+              row: ProductTempRow,
+            ) => {
+              const detail = exportData.details.find(
+                (d) => d.productVariant.id === row.id,
+              );
+              if (!detail) return null;
+              return (
+                <Button
+                  onClick={() => handleDelete(detail.id)}
+                  size="sm"
+                  variant="outline"
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash size={15} />
+                </Button>
+              );
+            },
+          },
+        ]
+      : []),
   ];
+
+  const handleDelete = async (detailId: number) => {
+    const ok = await confirm({
+      title: "Delete product",
+      message: "Are you sure you want to remove this product from the export sheet?",
+    });
+    if (!ok) return;
+    try {
+      await deleteExportSheetDetail(id as string, detailId);
+      setExportData((prev) => ({
+        ...prev,
+        details: prev.details.filter((d) => d.id !== detailId),
+      }));
+      toast.success("Deleted successfully");
+    } catch {
+      toast.error("Failed to delete product");
+    }
+  };
 
   const handleSave = async () => {
     if (hasInvalidSelection) {
@@ -159,7 +215,9 @@ export default function ExportProductListInfoBox({
   };
 
   return (
-    <InfoBox
+    <>
+      {ConfirmationModal}
+      <InfoBox
       icon={<FontAwesomeIcon icon={faCube} />}
       title="Product List"
       modal={
@@ -191,6 +249,7 @@ export default function ExportProductListInfoBox({
           getRowId={(params) => String(params.data.id)}
         />
       </div>
-    </InfoBox>
+      </InfoBox>
+    </>
   );
 }

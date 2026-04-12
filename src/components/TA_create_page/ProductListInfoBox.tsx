@@ -20,11 +20,15 @@ import toast from "react-hot-toast";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import {
   createImportSheetDetail,
+  deleteImportSheetDetail,
   updateImportSheetDetail,
 } from "@/actions/inbound-outbound";
 import { ApiError } from "next/dist/server/api-utils";
 import { useAuth } from "@/context/AuthContext";
 import { UserPermissions } from "@/interfaces/userManagementType";
+import Button from "@/default_components/ui/button/Button";
+import { Trash } from "lucide-react";
+import { useConfirmModal } from "@/hooks/useConfirmModal";
 
 export default function ProductListInfoBox({
   step = "",
@@ -40,6 +44,8 @@ export default function ProductListInfoBox({
   const { importData, setImportData } = useImport();
 
   const details = importData.details;
+
+  const { confirm, ConfirmationModal } = useConfirmModal();
 
   const { user } = useAuth();
   const hasStockInPermission = user?.permissions.includes(
@@ -61,6 +67,11 @@ export default function ProductListInfoBox({
   );
   const [hasInvalidSelection, setHasInvalidSelection] = useState(false);
 
+  const canDelete =
+    hasStockInPermission &&
+    step === "quantity-check" &&
+    importData.status === SheetStatus.CREATED;
+
   const productTempColumn: Column<ProductTempRow>[] = [
     {
       key: "name",
@@ -79,7 +90,53 @@ export default function ProductListInfoBox({
       label: "Unit",
       render: (_, row) => row.unit.name,
     },
+    ...(canDelete
+      ? [
+          {
+            key: "id" as keyof ProductTempRow,
+            label: "Action",
+            render: (
+              _: ProductTempRow[keyof ProductTempRow],
+              row: ProductTempRow,
+            ) => {
+              const detail = details.find(
+                (d) => d.productVariant.id === row.id,
+              );
+              if (!detail) return null;
+              return (
+                <Button
+                  onClick={() => handleDelete(detail.id)}
+                  size="sm"
+                  variant="outline"
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash size={15} />
+                </Button>
+              );
+            },
+          },
+        ]
+      : []),
   ];
+
+  const handleDelete = async (detailId: number) => {
+    const ok = await confirm({
+      title: "Delete product",
+      message:
+        "Are you sure you want to remove this product from the import sheet?",
+    });
+    if (!ok) return;
+    try {
+      await deleteImportSheetDetail(id as string, detailId);
+      setImportData((prev) => ({
+        ...prev,
+        details: prev.details.filter((d) => d.id !== detailId),
+      }));
+      toast.success("Deleted successfully");
+    } catch {
+      toast.error("Failed to delete product");
+    }
+  };
 
   const handleSave = async () => {
     if (hasInvalidSelection) {
@@ -168,40 +225,43 @@ export default function ProductListInfoBox({
   };
 
   return (
-    <InfoBox
-      icon={<FontAwesomeIcon icon={faCube} />}
-      title="Product List"
-      modal={
-        <CustomContentModalBox
-          step={step}
-          showAddButton={
-            hasStockInPermission &&
-            step === "quantity-check" &&
-            importData.status === SheetStatus.CREATED &&
-            importData.type !== ImportSheetType.EXTERNAL_SUPPLIER &&
-            importData.type !== ImportSheetType.INTERNAL
-          }
-          startIcon={<FontAwesomeIcon icon={faPlus} />}
-          width={"max-w-[1200px]"}
-          btnName="Add"
-          onSave={handleSave}
-          modalContent={
-            <CreateModal
-              productVariants={productVariants}
-              onSelectedProductsChange={setSelectedProducts}
-              onHasInvalidChange={setHasInvalidSelection}
-            />
-          }
-        />
-      }
-    >
-      <div className="p-6">
-        <CustomizableTable<ProductTempRow>
-          headers={productTempColumn}
-          data={productTempData}
-          getRowId={(params) => String(params.data.id)}
-        />
-      </div>
-    </InfoBox>
+    <>
+      {ConfirmationModal}
+      <InfoBox
+        icon={<FontAwesomeIcon icon={faCube} />}
+        title="Product List"
+        modal={
+          <CustomContentModalBox
+            step={step}
+            showAddButton={
+              hasStockInPermission &&
+              step === "quantity-check" &&
+              importData.status === SheetStatus.CREATED &&
+              importData.type !== ImportSheetType.EXTERNAL_SUPPLIER &&
+              importData.type !== ImportSheetType.INTERNAL
+            }
+            startIcon={<FontAwesomeIcon icon={faPlus} />}
+            width={"max-w-[1200px]"}
+            btnName="Add"
+            onSave={handleSave}
+            modalContent={
+              <CreateModal
+                productVariants={productVariants}
+                onSelectedProductsChange={setSelectedProducts}
+                onHasInvalidChange={setHasInvalidSelection}
+              />
+            }
+          />
+        }
+      >
+        <div className="p-6">
+          <CustomizableTable<ProductTempRow>
+            headers={productTempColumn}
+            data={productTempData}
+            getRowId={(params) => String(params.data.id)}
+          />
+        </div>
+      </InfoBox>
+    </>
   );
 }

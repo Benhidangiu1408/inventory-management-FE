@@ -1,0 +1,277 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - link "Logo Stockify" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]:
+          - img "Logo" [ref=e8]
+          - generic [ref=e9]: Stockify
+      - navigation [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - heading "Menu" [level=2] [ref=e14]
+            - list [ref=e15]:
+              - listitem [ref=e16]:
+                - link "Dashboard" [ref=e17] [cursor=pointer]:
+                  - /url: /
+                  - img [ref=e19]
+                  - generic [ref=e21]: Dashboard
+              - listitem [ref=e22]:
+                - button "Inventory" [ref=e23] [cursor=pointer]:
+                  - img [ref=e25]
+                  - generic [ref=e29]: Inventory
+                  - img [ref=e30]
+                - list [ref=e32]:
+                  - listitem [ref=e33]:
+                    - link "Item" [ref=e34] [cursor=pointer]:
+                      - /url: /s
+                      - text: Item
+                  - listitem [ref=e35]:
+                    - link "Batch" [ref=e36] [cursor=pointer]:
+                      - /url: /s
+                      - text: Batch
+              - listitem [ref=e37]:
+                - link "Import" [ref=e38] [cursor=pointer]:
+                  - /url: /import
+                  - img [ref=e40]
+                  - generic [ref=e42]: Import
+              - listitem [ref=e43]:
+                - link "Export" [ref=e44] [cursor=pointer]:
+                  - /url: /export
+                  - img [ref=e46]
+                  - generic [ref=e48]: Export
+              - listitem [ref=e49]:
+                - link "Stocktaking" [ref=e50] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - img [ref=e52]
+                  - generic [ref=e56]: Stocktaking
+              - listitem [ref=e57]:
+                - button "Defective" [ref=e58] [cursor=pointer]:
+                  - img [ref=e60]
+                  - generic [ref=e65]: Defective
+                  - img [ref=e66]
+                - list [ref=e68]:
+                  - listitem [ref=e69]:
+                    - link "Root Cause Analysis" [ref=e70] [cursor=pointer]:
+                      - /url: /s
+                      - text: Root Cause Analysis
+                  - listitem [ref=e71]:
+                    - link "Fault Order" [ref=e72] [cursor=pointer]:
+                      - /url: /s
+                      - text: Fault Order
+              - listitem [ref=e73]:
+                - button "Master Data" [ref=e74] [cursor=pointer]:
+                  - img [ref=e76]
+                  - generic [ref=e81]: Master Data
+                  - img [ref=e82]
+                - list [ref=e84]:
+                  - listitem [ref=e85]:
+                    - link "Warehouse" [ref=e86] [cursor=pointer]:
+                      - /url: /warehouse-management/warehouse
+                      - text: Warehouse
+                  - listitem [ref=e87]:
+                    - link "Category" [ref=e88] [cursor=pointer]:
+                      - /url: /catalog/category
+                      - text: Category
+                  - listitem [ref=e89]:
+                    - link "Product" [ref=e90] [cursor=pointer]:
+                      - /url: /catalog/product
+                      - text: Product
+                  - listitem [ref=e91]:
+                    - link "Product Attributes" [ref=e92] [cursor=pointer]:
+                      - /url: /catalog/variant-attributes
+                      - text: Product Attributes
+                  - listitem [ref=e93]:
+                    - link "UOM (Unit of Measurement)" [ref=e94] [cursor=pointer]:
+                      - /url: /catalog/unit
+                      - text: UOM (Unit of Measurement)
+              - listitem [ref=e95]:
+                - button "Business Partners" [ref=e96] [cursor=pointer]:
+                  - img [ref=e98]
+                  - generic [ref=e102]: Business Partners
+                  - img [ref=e103]
+                - list [ref=e105]:
+                  - listitem [ref=e106]:
+                    - link "Supplier" [ref=e107] [cursor=pointer]:
+                      - /url: /s
+                      - text: Supplier
+                  - listitem [ref=e108]:
+                    - link "Customer" [ref=e109] [cursor=pointer]:
+                      - /url: /s
+                      - text: Customer
+              - listitem [ref=e110]:
+                - button "Users Settings" [ref=e111] [cursor=pointer]:
+                  - img [ref=e113]
+                  - generic [ref=e125]: Users Settings
+                  - img [ref=e126]
+                - list [ref=e128]:
+                  - listitem [ref=e129]:
+                    - link "Users Management" [ref=e130] [cursor=pointer]:
+                      - /url: /admin/user-management
+                      - text: Users Management
+                  - listitem [ref=e131]:
+                    - link "Role & Permission" [ref=e132] [cursor=pointer]:
+                      - /url: /admin/role-management
+                      - text: Role & Permission
+                  - listitem [ref=e133]:
+                    - link "User History" [ref=e134] [cursor=pointer]:
+                      - /url: /s
+                      - text: User History
+              - listitem [ref=e135]:
+                - link "Notification" [ref=e136] [cursor=pointer]:
+                  - /url: /notification
+                  - img [ref=e138]
+                  - generic [ref=e140]: Notification
+              - listitem [ref=e141]:
+                - link "Profile" [ref=e142] [cursor=pointer]:
+                  - /url: /profile
+                  - img [ref=e144]
+                  - generic [ref=e148]: Profile
+          - generic [ref=e149]:
+            - heading "Others" [level=2] [ref=e150]
+            - list [ref=e151]:
+              - listitem [ref=e152]:
+                - link "Calendar" [ref=e153] [cursor=pointer]:
+                  - /url: /calendar
+                  - img [ref=e155]
+                  - generic [ref=e157]: Calendar
+              - listitem [ref=e158]:
+                - button "Forms" [ref=e159] [cursor=pointer]:
+                  - img [ref=e161]
+                  - generic [ref=e163]: Forms
+                  - img [ref=e164]
+                - list [ref=e166]:
+                  - listitem [ref=e167]:
+                    - link "Form Elements" [ref=e168] [cursor=pointer]:
+                      - /url: /form-elements
+                      - text: Form Elements
+              - listitem [ref=e169]:
+                - button "Charts" [ref=e170] [cursor=pointer]:
+                  - img [ref=e172]
+                  - generic [ref=e174]: Charts
+                  - img [ref=e175]
+                - list [ref=e177]:
+                  - listitem [ref=e178]:
+                    - link "Line Chart" [ref=e179] [cursor=pointer]:
+                      - /url: /line-chart
+                      - text: Line Chart
+                  - listitem [ref=e180]:
+                    - link "Bar Chart" [ref=e181] [cursor=pointer]:
+                      - /url: /bar-chart
+                      - text: Bar Chart
+              - listitem [ref=e182]:
+                - button "UI Elements" [ref=e183] [cursor=pointer]:
+                  - img [ref=e185]
+                  - generic [ref=e187]: UI Elements
+                  - img [ref=e188]
+                - list [ref=e190]:
+                  - listitem [ref=e191]:
+                    - link "Alerts" [ref=e192] [cursor=pointer]:
+                      - /url: /alerts
+                      - text: Alerts
+                  - listitem [ref=e193]:
+                    - link "Avatar" [ref=e194] [cursor=pointer]:
+                      - /url: /avatars
+                      - text: Avatar
+                  - listitem [ref=e195]:
+                    - link "Badge" [ref=e196] [cursor=pointer]:
+                      - /url: /badge
+                      - text: Badge
+                  - listitem [ref=e197]:
+                    - link "Buttons" [ref=e198] [cursor=pointer]:
+                      - /url: /buttons
+                      - text: Buttons
+                  - listitem [ref=e199]:
+                    - link "Images" [ref=e200] [cursor=pointer]:
+                      - /url: /images
+                      - text: Images
+                  - listitem [ref=e201]:
+                    - link "Videos" [ref=e202] [cursor=pointer]:
+                      - /url: /videos
+                      - text: Videos
+                  - listitem [ref=e203]:
+                    - link "Modals" [ref=e204] [cursor=pointer]:
+                      - /url: /modals
+                      - text: Modals
+    - generic [ref=e205]:
+      - banner [ref=e206]:
+        - generic [ref=e207]:
+          - generic [ref=e208]:
+            - button "Toggle Sidebar" [ref=e209] [cursor=pointer]:
+              - img [ref=e210]
+            - generic [ref=e214]:
+              - generic:
+                - img
+              - textbox "Search or type command..." [ref=e215]
+              - button "⌘ K" [ref=e216] [cursor=pointer]:
+                - generic [ref=e217]: ⌘
+                - generic [ref=e218]: K
+          - generic [ref=e219]:
+            - generic [ref=e220]:
+              - button [ref=e221] [cursor=pointer]:
+                - img [ref=e222]
+              - button [ref=e225] [cursor=pointer]:
+                - img [ref=e228]
+            - button "User huylam" [ref=e231] [cursor=pointer]:
+              - img "User" [ref=e233]
+              - generic [ref=e234]: huylam
+              - img [ref=e235]
+      - generic [ref=e238]:
+        - generic [ref=e239]:
+          - heading "New Export" [level=2] [ref=e241]
+          - navigation [ref=e242]:
+            - list [ref=e243]:
+              - listitem [ref=e244]:
+                - link "Home" [ref=e245] [cursor=pointer]:
+                  - /url: /
+                  - text: Home
+                  - img [ref=e246]
+              - listitem [ref=e248]:
+                - link "export" [ref=e249] [cursor=pointer]:
+                  - /url: /export
+                  - text: export
+                  - img [ref=e250]
+              - listitem [ref=e252]: New Export
+        - generic [ref=e253]:
+          - generic [ref=e255]:
+            - generic [ref=e256]: "Warehouse:"
+            - combobox [ref=e258] [cursor=pointer]:
+              - option "Select an option" [disabled]
+              - option "Backup Warehouse" [selected]
+              - option "Test Warehouse"
+              - option "Main Warehouse"
+          - generic [ref=e259]:
+            - heading "Selected warehouse information" [level=3] [ref=e260]
+            - generic [ref=e261]:
+              - generic [ref=e262]:
+                - text: Warehouse ID
+                - paragraph [ref=e263]: "#3"
+              - generic [ref=e264]:
+                - text: Warehouse name
+                - paragraph [ref=e265]: Backup Warehouse
+        - generic [ref=e266]:
+          - generic [ref=e267]:
+            - img [ref=e268]
+            - heading "Please Choose Your Type Of Export" [level=2] [ref=e270]
+          - generic [ref=e271]:
+            - button "Transfer" [active] [ref=e272] [cursor=pointer]:
+              - img [ref=e273]
+              - heading "Transfer" [level=3] [ref=e275]
+            - button "Customer" [ref=e276] [cursor=pointer]:
+              - img [ref=e277]
+              - heading "Customer" [level=3] [ref=e279]
+        - generic [ref=e294]:
+          - generic [ref=e295]: "Destination warehouse:"
+          - combobox [ref=e297] [cursor=pointer]:
+            - option "Select an option" [disabled] [selected]
+            - option "Select destination warehouse..."
+            - option "Test Warehouse"
+            - option "Main Warehouse"
+        - button "Create" [disabled] [ref=e282]
+  - generic [ref=e298]:
+    - img [ref=e300]
+    - button "Open Tanstack query devtools" [ref=e348] [cursor=pointer]:
+      - img [ref=e349]
+  - button "Open Next.js Dev Tools" [ref=e288] [cursor=pointer]:
+    - img [ref=e289]
+  - alert [ref=e397]

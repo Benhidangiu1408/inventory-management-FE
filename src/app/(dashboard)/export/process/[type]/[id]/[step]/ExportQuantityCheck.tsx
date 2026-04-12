@@ -179,7 +179,7 @@ export default function ExportQuantityCheck() {
         0,
       );
 
-      const conversionRate = detail.unitConversion.conversionRate;
+      const conversionRate = detail.unitConversion?.conversionRate ?? 1;
 
       return {
         detailId: detail.id,

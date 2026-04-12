@@ -86,6 +86,16 @@ export const inboundOutboundService = {
     );
   },
 
+  deleteImportSheetDetail: async (
+    importSheetId: string | number,
+    importSheetDetailId: string | number,
+  ) => {
+    return await apiClient.delete<{ message: string }>(
+      `/inbound-outbound/v1/import-sheet/${importSheetId}/detail/${importSheetDetailId}`,
+      {},
+    );
+  },
+
   updateImportSheetDetail: async (
     importSheetId: string | number,
     importSheetDetailId: string | number,
@@ -196,6 +206,16 @@ export const inboundOutboundService = {
     return await apiClient.patch<ExportSheetDetailResponse>(
       `/inbound-outbound/v1/export-sheet/${exportSheetId}/detail/${exportSheetDetailId}`,
       data,
+    );
+  },
+
+  deleteExportSheetDetail: async (
+    exportSheetId: string | number,
+    exportSheetDetailId: string | number,
+  ) => {
+    return await apiClient.delete<{ message: string }>(
+      `/inbound-outbound/v1/export-sheet/${exportSheetId}/detail/${exportSheetDetailId}`,
+      {},
     );
   },
 
