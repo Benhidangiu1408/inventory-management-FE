@@ -2,7 +2,17 @@
   "permissions": {
     "allow": [
       "Skill(playwright-cli)",
-      "Bash(npx playwright-cli:*)"
+      "Bash(npx playwright-cli:*)",
+      "Bash(playwright-cli open:*)",
+      "Bash(playwright-cli fill:*)",
+      "Bash(playwright-cli click:*)",
+      "Bash(playwright-cli goto:*)",
+      "Bash(playwright-cli screenshot:*)",
+      "Bash(playwright-cli scroll:*)",
+      "Bash(playwright-cli mousewheel:*)",
+      "Bash(playwright-cli snapshot:*)",
+      "Bash(playwright-cli select:*)",
+      "Bash(playwright-cli close:*)"
     ]
   }
 }

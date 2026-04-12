@@ -100,7 +100,7 @@ export default async function ExportProcessLayout({
             title={title}
             description={description}
           >
-            {type === "customer" || "CUSTOMER" ? (
+            {type === "customer" || type === "CUSTOMER" ? (
               <InfoList>
                 <ul className="flex flex-col gap-4">
                   <li>

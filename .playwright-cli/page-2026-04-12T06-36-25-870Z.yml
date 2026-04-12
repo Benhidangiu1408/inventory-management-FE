@@ -1,0 +1,27 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e405]:
+    - img "grid" [ref=e407]
+    - img "grid" [ref=e409]
+    - generic [ref=e410]:
+      - heading "ERROR" [level=1] [ref=e411]
+      - img "500" [ref=e412]
+      - paragraph [ref=e413]: Cannot read properties of null (reading 'status')
+      - link "Back to Home Page" [ref=e414] [cursor=pointer]:
+        - /url: /
+    - paragraph [ref=e415]: © 2026 - WMS
+  - generic [ref=e298]:
+    - img [ref=e300]
+    - button "Open Tanstack query devtools" [ref=e348] [cursor=pointer]:
+      - img [ref=e349]
+  - generic [ref=e287] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e288]:
+      - img [ref=e289]
+    - generic [ref=e416]:
+      - button "Open issues overlay" [ref=e417]:
+        - generic [ref=e418]:
+          - generic [ref=e419]: "0"
+          - generic [ref=e420]: "1"
+        - generic [ref=e421]: Issue
+      - button "Collapse issues badge" [ref=e422]:
+        - img [ref=e423]
+  - alert [ref=e397]
