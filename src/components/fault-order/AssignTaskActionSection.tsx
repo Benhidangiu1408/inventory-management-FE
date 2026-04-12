@@ -18,7 +18,7 @@ type NewTaskDraft = {
   assignedUserId: string;
 };
 
-type TaskTableRow = TaskItem & { id: number };
+type TaskTableRow = TaskItem & { id: number; assignedUserId: number | null };
 
 const TASK_STATUS_OPTIONS = [
   { value: TaskStatus.CREATED, label: "Not Started" },
@@ -38,6 +38,7 @@ const openDateTimePicker = (target: EventTarget | null) => {
 };
 
 type AssignTaskActionSectionProps = {
+  canAssignTasks: boolean;
   isAddingTask: boolean;
   isSavingTask: boolean;
   isLoadingOwners: boolean;
@@ -52,6 +53,7 @@ type AssignTaskActionSectionProps = {
 };
 
 export default function AssignTaskActionSection({
+  canAssignTasks,
   isAddingTask,
   isSavingTask,
   isLoadingOwners,
@@ -72,15 +74,17 @@ export default function AssignTaskActionSection({
   return (
     <div>
       <h2 className="text-xl font-semibold">Action</h2>
-      <Button
-        className="my-4 w-full text-xl"
-        onClick={onStartNewTask}
-        disabled={isAddingTask}
-      >
-        + New Task
-      </Button>
+      {canAssignTasks ? (
+        <Button
+          className="my-4 w-full text-xl"
+          onClick={onStartNewTask}
+          disabled={isAddingTask}
+        >
+          + New Task
+        </Button>
+      ) : null}
 
-      {isAddingTask && (
+      {isAddingTask && canAssignTasks && (
         <div className="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
           <div className="mb-2 text-sm font-medium text-blue-700">New Task</div>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">

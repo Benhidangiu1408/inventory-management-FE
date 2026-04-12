@@ -11,7 +11,7 @@ import {
   type FaultTask,
 } from "@/interfaces/inventoryManagementType";
 
-export type TaskTableRow = TaskItem & { id: number };
+export type TaskTableRow = TaskItem & { id: number; assignedUserId: number | null };
 
 export type NewTaskDraft = {
   task: string;
@@ -201,6 +201,7 @@ export const buildTaskRows = (tasks?: FaultTask[]): TaskTableRow[] => {
     id: task.id ?? -1,
     task: task.task ?? "-",
     owner: task.assignedUsername ?? "-",
+    assignedUserId: task.assignedUserId ?? null,
     dueDate: formatDisplayDateTime(task.dueDate),
     status: mapTaskStatusToLabel(task.status),
   }));

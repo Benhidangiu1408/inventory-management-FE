@@ -14,6 +14,7 @@ import Input from "@/default_components/form/input/InputField";
 import TextArea from "@/default_components/form/input/TextArea";
 import Button from "@/default_components/ui/button/Button";
 import {
+  Analyze,
   FaultBatchStatus,
   FaultProcessOrderStatus,
   FaultProcessOrderType,
@@ -22,12 +23,16 @@ import {
   type FaultBatch,
   type FaultBatchProcessOrder,
 } from "@/interfaces/inventoryManagementType";
+import { useAuth } from "@/context/AuthContext";
 
 type FaultBatchRowStatus = "Pending" | "In progress" | "Completed";
 type TaskRowStatus = "Not Started" | "In Progress" | "Completed" | "Blocked";
 
 type ProcessOrderDetailFormProps = {
   processOrder: FaultBatchProcessOrder;
+  currentUserId: number | null;
+  questionCreatorId: number | null;
+  analyzerId: number | null;
 };
 
 type WhyQuestionFormItem = {
@@ -153,17 +158,11 @@ const buildInitialWhyQuestions = (
     };
   });
 
-const parseValidUserId = (rawValue: string | null) => {
-  const parsed = Number(rawValue);
-  if (!Number.isInteger(parsed) || parsed <= 0) {
-    return null;
-  }
-
-  return parsed;
-};
-
 export default function ProcessOrderDetailForm({
   processOrder,
+  currentUserId,
+  questionCreatorId,
+  analyzerId,
 }: ProcessOrderDetailFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -185,6 +184,24 @@ export default function ProcessOrderDetailForm({
       : "approve",
   );
   const [comment, setComment] = useState(processOrder.note ?? "");
+  const {user}= useAuth();
+  const canApproveProcessOrder = user?.permissions.includes(Analyze.APPROVE);
+  const canEditQuestions =
+    currentUserId !== null &&
+    questionCreatorId !== null &&
+    currentUserId === questionCreatorId;
+  const canAnswerQuestions =
+    currentUserId !== null &&
+    analyzerId !== null &&
+    currentUserId === analyzerId;
+  const approveDisplayUser = canApproveProcessOrder
+    ? currentUserId
+      ? String(currentUserId)
+      : ""
+    : (processOrder.approvedByUsername ?? "");
+  const approveDisplayDate = canApproveProcessOrder
+    ? formatDateInputValue(new Date().toISOString())
+    : formatDateInputValue(processOrder.approveAt);
 
   const summaryInfoItems = [
     { label: "Fault Type", value: mapProcessTypeToLabel(processOrder.type) },
@@ -247,27 +264,53 @@ export default function ProcessOrderDetailForm({
 
   const handleSave = () => {
     const normalizedComment = comment.trim();
+    const normalizedRootCause = (
+      canAnswerQuestions ? rootCause : (processOrder.rootCause ?? "")
+    ).trim();
+    const normalizedWhatHappened = (
+      canAnswerQuestions ? whatHappened : (processOrder.whatHappened ?? "")
+    ).trim();
+    const normalizedImpact = (
+      canAnswerQuestions ? impact : (processOrder.impact ?? "")
+    ).trim();
+    const nextFaultType = canAnswerQuestions ? faultType : processOrder.type;
 
     const questions: CreateFaultQuestionRequest[] = whyQuestions
-      .map((item) => ({
-        question: item.question.trim(),
-        answer: item.answer.trim() || null,
-      }))
+      .map((item, index) => {
+        const originalQuestion = processOrder.questions?.[index];
+        const normalizedQuestion = (
+          canEditQuestions
+            ? item.question
+            : (originalQuestion?.question ?? item.question)
+        ).trim();
+        const normalizedAnswer = (
+          canAnswerQuestions
+            ? item.answer
+            : (originalQuestion?.answer ?? item.answer)
+        ).trim();
+
+        return {
+          question: normalizedQuestion,
+          answer: normalizedAnswer || null,
+        };
+      })
       .filter((item) => item.question.length > 0);
 
-    const approverUserId =
-      parseValidUserId(sessionStorage.getItem("userId")) ??
-      parseValidUserId(localStorage.getItem("userId")) ??
-      processOrder.approvedById ??
-      5;
+    const approverUserId = canApproveProcessOrder ? currentUserId : null;
 
-    const nextStatus =
-      decision === "approve"
+    const nextStatus = canApproveProcessOrder
+      ? decision === "approve"
         ? FaultProcessOrderStatus.APPROVED
-        : FaultProcessOrderStatus.REJECTED;
+        : FaultProcessOrderStatus.REJECTED
+      : processOrder.status;
 
     startTransition(async () => {
-      if (approverUserId) {
+      if (canApproveProcessOrder && !approverUserId) {
+        toast.error("Cannot determine current approver user id.");
+        return;
+      }
+
+      if (canApproveProcessOrder && approverUserId) {
         const { error: approvalError } = await updateProcessOrderApprovalAction(
           processOrder.id,
           approverUserId,
@@ -282,16 +325,17 @@ export default function ProcessOrderDetailForm({
       const { error: processOrderError } =
         await updateFaultBatchProcessOrderAction(processOrder.id, {
           status: nextStatus,
-          type: faultType,
+          type: nextFaultType,
           note: normalizedComment,
-          rootCause: rootCause.trim() || null,
-          whatHappened: whatHappened.trim() || null,
-          impact: impact.trim() || null,
+          rootCause: normalizedRootCause || null,
+          whatHappened: normalizedWhatHappened || null,
+          impact: normalizedImpact || null,
           questions,
         });
 
       if (processOrderError) {
         const shouldFallbackToCancelled =
+          canApproveProcessOrder &&
           decision === "reject" &&
           processOrderError.includes("fault_batch_process_order_status_check");
 
@@ -304,11 +348,11 @@ export default function ProcessOrderDetailForm({
           processOrder.id,
           {
             status: FaultProcessOrderStatus.CANCELLED,
-            type: faultType,
+            type: nextFaultType,
             note: normalizedComment,
-            rootCause: rootCause.trim() || null,
-            whatHappened: whatHappened.trim() || null,
-            impact: impact.trim() || null,
+            rootCause: normalizedRootCause || null,
+            whatHappened: normalizedWhatHappened || null,
+            impact: normalizedImpact || null,
             questions,
           },
         );
@@ -335,6 +379,7 @@ export default function ProcessOrderDetailForm({
           <div className="min-w-0 flex-1">
             <Input
               value={whatHappened}
+              disabled={!canAnswerQuestions}
               onChange={(event) => setWhatHappened(event.target.value)}
             />
           </div>
@@ -344,6 +389,7 @@ export default function ProcessOrderDetailForm({
           <div className="min-w-0 flex-1">
             <Input
               value={impact}
+              disabled={!canAnswerQuestions}
               onChange={(event) => setImpact(event.target.value)}
             />
           </div>
@@ -361,6 +407,7 @@ export default function ProcessOrderDetailForm({
                   rows={2}
                   className="resize-none !text-gray-800 dark:!text-white/90"
                   value={item.question}
+                  disabled={!canEditQuestions}
                   onChange={(event) =>
                     updateWhyQuestion(index, "question", event.target.value)
                   }
@@ -370,6 +417,7 @@ export default function ProcessOrderDetailForm({
                 <Input
                   placeholder="Answer"
                   value={item.answer}
+                  disabled={!canAnswerQuestions}
                   onChange={(event) =>
                     updateWhyQuestion(index, "answer", event.target.value)
                   }
@@ -382,6 +430,7 @@ export default function ProcessOrderDetailForm({
         <h2 className="text-xl font-semibold">Root Causes</h2>
         <Input
           value={rootCause}
+          disabled={!canAnswerQuestions}
           onChange={(event) => setRootCause(event.target.value)}
         />
 
@@ -395,6 +444,7 @@ export default function ProcessOrderDetailForm({
                 name="faultType"
                 value={FaultProcessOrderType.RETURNED}
                 checked={faultType === FaultProcessOrderType.RETURNED}
+                disabled={!canAnswerQuestions}
                 onChange={() => setFaultType(FaultProcessOrderType.RETURNED)}
               />
               Return to supplier
@@ -406,6 +456,7 @@ export default function ProcessOrderDetailForm({
                 name="faultType"
                 value={FaultProcessOrderType.CANCELLED}
                 checked={faultType === FaultProcessOrderType.CANCELLED}
+                disabled={!canAnswerQuestions}
                 onChange={() => setFaultType(FaultProcessOrderType.CANCELLED)}
               />
               Cancel batch
@@ -417,7 +468,10 @@ export default function ProcessOrderDetailForm({
                 name="faultType"
                 value={FaultProcessOrderType.WAREHOUSE_TRANSFER}
                 checked={faultType === FaultProcessOrderType.WAREHOUSE_TRANSFER}
-                onChange={() => setFaultType(FaultProcessOrderType.WAREHOUSE_TRANSFER)}
+                disabled={!canAnswerQuestions}
+                onChange={() =>
+                  setFaultType(FaultProcessOrderType.WAREHOUSE_TRANSFER)
+                }
               />
               Warehouse Transfer
             </label>
@@ -431,6 +485,7 @@ export default function ProcessOrderDetailForm({
                   faultType === FaultProcessOrderType.OTHER ||
                   faultType === FaultProcessOrderType.SHORTAGE
                 }
+                disabled={!canAnswerQuestions}
                 onChange={() => setFaultType(FaultProcessOrderType.OTHER)}
               />
               Other
@@ -451,7 +506,7 @@ export default function ProcessOrderDetailForm({
               </label>
               <Input
                 type="text"
-                defaultValue={processOrder.approvedByUsername ?? ""}
+                defaultValue={approveDisplayUser}
                 disabled
                 className="bg-gray-100"
               />
@@ -461,7 +516,7 @@ export default function ProcessOrderDetailForm({
               <label className="text-sm font-medium text-gray-600">Date</label>
               <Input
                 type="date"
-                defaultValue={formatDateInputValue(processOrder.approveAt)}
+                defaultValue={approveDisplayDate}
                 disabled
                 className="bg-gray-100"
               />
@@ -476,6 +531,7 @@ export default function ProcessOrderDetailForm({
                   type="radio"
                   value="approve"
                   checked={decision === "approve"}
+                  disabled={!canApproveProcessOrder}
                   onChange={() => setDecision("approve")}
                 />
                 <span className="font-medium text-green-600">Approve</span>
@@ -486,6 +542,7 @@ export default function ProcessOrderDetailForm({
                   type="radio"
                   value="reject"
                   checked={decision === "reject"}
+                  disabled={!canApproveProcessOrder}
                   onChange={() => setDecision("reject")}
                 />
                 <span className="font-medium text-red-600">Reject</span>
@@ -501,6 +558,7 @@ export default function ProcessOrderDetailForm({
               rows={4}
               placeholder="Write your comment..."
               value={comment}
+              disabled={!canApproveProcessOrder}
               onChange={(e) => setComment(e.target.value)}
             />
           </div>
