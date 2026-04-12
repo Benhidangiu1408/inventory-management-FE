@@ -184,7 +184,7 @@ export default function ProcessOrderDetailForm({
       : "approve",
   );
   const [comment, setComment] = useState(processOrder.note ?? "");
-  const {user}= useAuth();
+  const { user } = useAuth();
   const canApproveProcessOrder = user?.permissions.includes(Analyze.APPROVE);
   const canEditQuestions =
     currentUserId !== null &&
@@ -194,14 +194,16 @@ export default function ProcessOrderDetailForm({
     currentUserId !== null &&
     analyzerId !== null &&
     currentUserId === analyzerId;
-  const approveDisplayUser = canApproveProcessOrder
-    ? currentUserId
-      ? String(currentUserId)
-      : ""
-    : (processOrder.approvedByUsername ?? "");
-  const approveDisplayDate = canApproveProcessOrder
-    ? formatDateInputValue(new Date().toISOString())
-    : formatDateInputValue(processOrder.approveAt);
+  const approveDisplayUser = processOrder.approvedByUsername;
+  const approveDisplayDate = formatDateInputValue(processOrder.approveAt);
+  // canApproveProcessOrder
+  //   ? currentUserId
+  //     ? String(currentUserId)
+  //     : ""
+  //   : (processOrder.approvedByUsername ?? "");
+  // const approveDisplayDate = canApproveProcessOrder
+  //   ? formatDateInputValue(new Date().toISOString())
+  //   : formatDateInputValue(processOrder.approveAt);
 
   const summaryInfoItems = [
     { label: "Fault Type", value: mapProcessTypeToLabel(processOrder.type) },
@@ -506,7 +508,7 @@ export default function ProcessOrderDetailForm({
               </label>
               <Input
                 type="text"
-                defaultValue={approveDisplayUser}
+                defaultValue={approveDisplayUser ?? ""}
                 disabled
                 className="bg-gray-100"
               />
@@ -571,7 +573,11 @@ export default function ProcessOrderDetailForm({
             onClick={handleSave}
             disabled={isPending}
           >
-            {isPending ? "Saving..." : "Confirm"}
+            {isPending
+              ? "Saving..."
+              : canApproveProcessOrder
+                ? "Approve"
+                : "Confirm"}
           </Button>
         </div>
 
