@@ -74,6 +74,7 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
+    autoHeight: true,
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -166,6 +167,7 @@ export const getUnitHeaders = (
   {
     label: "Description",
     key: "description",
+    autoHeight: true,
     filter: "agTextColumnFilter",
     render: (val) =>
       (val as string) || (
@@ -201,6 +203,7 @@ export const getAttributeHeaders = (
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
+    autoHeight: true,
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -274,6 +277,7 @@ export const getVariantHeaders = (
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
+    autoHeight: true,
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -595,6 +599,7 @@ export const processingOrderColumns: Column<ProcessingOrder>[] = [
   {
     label: "Action",
     key: "action",
+    autoHeight: true,
     render: () => (
       <div className="grid grid-cols-2 gap-2">
         <Button className="rounded bg-blue-500 px-3 text-white">Analyze</Button>

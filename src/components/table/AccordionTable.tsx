@@ -19,6 +19,7 @@ import {
   themeQuartz,
   ValidationModule,
   ValueGetterParams,
+  RowAutoHeightModule,
 } from "ag-grid-community";
 import {
   ClipboardModule,
@@ -46,6 +47,7 @@ ModuleRegistry.registerModules([
   ContextMenuModule,
   ClipboardModule,
   SetFilterModule,
+  RowAutoHeightModule,
   ...(process.env.NODE_ENV !== "production" ? [ValidationModule] : []),
 ]);
 
@@ -109,6 +111,8 @@ export default function AccordionTable<T extends object, D extends object>({
           sort: header.sort ? "asc" : undefined,
           sortable: header.sortable ?? true,
           cellClass: header.stopCenterData ? "" : "text-center",
+          autoHeight: header.autoHeight,
+          wrapText: header.autoHeight,
           cellRenderer,
           filter: header.filter,
           filterParams: header.filterParams,
@@ -150,6 +154,8 @@ export default function AccordionTable<T extends object, D extends object>({
         sort: header.sort ? "asc" : undefined,
         sortable: header.sortable ?? true,
         cellClass: header.stopCenterData ? "" : "text-center",
+        autoHeight: header.autoHeight,
+        wrapText: header.autoHeight,
         cellRenderer,
         filter: header.filter,
         filterParams: header.filterParams,

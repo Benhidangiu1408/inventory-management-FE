@@ -43,6 +43,7 @@ export const getCategoryHeaders = (
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
+    autoHeight: true,
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -92,6 +93,7 @@ export const getSubCategoryHeaders = (
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
+    autoHeight: true,
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -158,6 +160,7 @@ export const productHeaders: Column<ProductResponse>[] = [
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
+    autoHeight: true,
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -238,6 +241,7 @@ export const variantHeaders: Column<VariantResponse>[] = [
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
+    autoHeight: true,
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>

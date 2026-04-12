@@ -15,6 +15,7 @@ import {
   TextFilterModule,
   ValidationModule,
   ValueGetterParams,
+  RowAutoHeightModule,
 } from "ag-grid-community";
 import { AgGridReact, type AgGridReactProps } from "ag-grid-react";
 import {
@@ -43,6 +44,7 @@ ModuleRegistry.registerModules([
   ClipboardModule,
   ContextMenuModule,
   SetFilterModule,
+  RowAutoHeightModule,
   ...(process.env.NODE_ENV !== "production" ? [ValidationModule] : []),
 ]);
 
@@ -64,6 +66,7 @@ export interface Column<T extends object> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filterParams?: any;
   valueGetter?: (row: T) => string | number | null | undefined;
+  autoHeight?: boolean;
 }
 
 export interface TableProps<T extends object>
@@ -114,6 +117,8 @@ export default function CustomizableTable<T extends object>({
           cellRenderer,
           filter: header.filter,
           filterParams: header.filterParams,
+          autoHeight: header.autoHeight,
+          wrapText: header.autoHeight,
           valueGetter: header.valueGetter
             ? (params: ValueGetterParams<T>) =>
                 params.data ? header.valueGetter?.(params.data) : null
