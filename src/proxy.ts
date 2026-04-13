@@ -16,6 +16,7 @@ export async function proxy(request: NextRequest) {
     "/admin/user-management/new": "CREATE_USER",
     "/admin/user-management": "VIEW_OTHER_USER",
     "/other-profile": "VIEW_OTHER_USER",
+    "/warehouse-management/inventory-check/new": "SCHEDULE_STOCKTAKING",
     "/warehouse-management/warehouse/new": "EDIT_WAREHOUSE",
     "/warehouse-management/warehouse": "VIEW_WAREHOUSE",
     "/import/new": "STOCK_IN",

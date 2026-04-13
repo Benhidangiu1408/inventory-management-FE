@@ -44,6 +44,7 @@ export interface InventoryCheckResponse {
   note?: string;
   // Warehouse Info
   warehouseId: number;
+  warehouseCode: string;
   warehouseName: string;
   // Assignee Info
   assigneeId: number;
@@ -67,6 +68,7 @@ export interface InventoryCheckSheetData {
 export interface InventoryCheckProductGroup {
   productSku: string;
   productName: string; // e.g. "T-Shirt (Red, XL)"
+  description: string;
   unitName: string; // e.g. "Piece" (Base Unit)
   batches: InventoryCheckBatchRow[]; // List of specific batches for this product
 }
@@ -79,6 +81,9 @@ export interface InventoryCheckBatchRow {
   storedQuantity: number; // System Snapshot
   scannedQuantity: number | null; // User Input (starts as null)
   hasFaults: boolean; // <--- Added flag (default false in Java mapper)
+
+  draftQuantity?: number | null;
+  draftFaults?: boolean;
 }
 
 // --- ACTION REQUESTS ---
@@ -114,7 +119,7 @@ export enum FaultProcessOrderType {
   CANCELLED = "CANCELLED",
   OTHER = "OTHER",
   SHORTAGE = "SHORTAGE",
-  WAREHOUSE_TRANSFER = "WAREHOUSE_TRANSFER",  
+  WAREHOUSE_TRANSFER = "WAREHOUSE_TRANSFER",
 }
 
 export enum TaskStatus {
@@ -189,7 +194,7 @@ export interface FaultOrderSummary {
   taskAssigneeUsername?: string | null;
   questionCreatorId?: number | null;
   questionCreatorUsername?: string | null;
-  
+
   faultBatches?: FaultBatch[];
   processOrders?: FaultBatchProcessOrderSummary[];
 }

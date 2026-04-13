@@ -3,6 +3,7 @@ import GeneralInfoSection from "@/components/GeneralInformation";
 import { InventoryCheckSheetData } from "@/interfaces/inventoryManagementType";
 import { inventoryCheckService } from "@/services/InventoryManagementService";
 import { InventoryCheckWorkSheet } from "@/components/InventoryCheckWorkSheet";
+import { cookies } from "next/headers";
 
 export default async function InventoryCheckDetailPage({
   params,
@@ -11,6 +12,8 @@ export default async function InventoryCheckDetailPage({
 }) {
   const { id } = await params;
   let data: InventoryCheckSheetData | null = null;
+  const cookieStore = await cookies();
+  const userId = Number(cookieStore.get("userId")?.value);
   let errorMsg = null;
 
   try {
@@ -60,7 +63,7 @@ export default async function InventoryCheckDetailPage({
       <div className="flex flex-col gap-6">
         <GeneralInfoSection items={generalInfoItems} />
         <div className="default-card flex flex-col gap-6 p-6">
-          <InventoryCheckWorkSheet initialData={data} />
+          <InventoryCheckWorkSheet currentUser={userId} initialData={data} />
         </div>
       </div>
     </div>
