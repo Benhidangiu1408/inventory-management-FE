@@ -1,3 +1,17 @@
+export enum FaultOrderPermission {
+  ASSIGN = "ASSIGN_USER",
+  CREATE = "CREATE_PROCESS_ORDER",
+  VIEW_ANALYSIS = "ANALYSIS_VIEW",
+  VIEW_TASK = "TASK_VIEW",
+  ANALYZE = "ANALYZE",
+  ASSIGN_TASK = "ASSIGN_TASK",
+  DO_TASK = "DO_TASK",
+}
+
+export enum Analyze {
+  APPROVE = "APPROVE_PROCESS_ORDER",
+}
+
 export enum SheetStatus {
   CREATED = "CREATED",
   IN_PROGRESS = "IN_PROGRESS",
@@ -30,6 +44,7 @@ export interface InventoryCheckResponse {
   note?: string;
   // Warehouse Info
   warehouseId: number;
+  warehouseCode: string;
   warehouseName: string;
   // Assignee Info
   assigneeId: number;
@@ -53,6 +68,7 @@ export interface InventoryCheckSheetData {
 export interface InventoryCheckProductGroup {
   productSku: string;
   productName: string; // e.g. "T-Shirt (Red, XL)"
+  description: string;
   unitName: string; // e.g. "Piece" (Base Unit)
   batches: InventoryCheckBatchRow[]; // List of specific batches for this product
 }
@@ -65,6 +81,9 @@ export interface InventoryCheckBatchRow {
   storedQuantity: number; // System Snapshot
   scannedQuantity: number | null; // User Input (starts as null)
   hasFaults: boolean; // <--- Added flag (default false in Java mapper)
+
+  draftQuantity?: number | null;
+  draftFaults?: boolean;
 }
 
 // --- ACTION REQUESTS ---
@@ -100,7 +119,7 @@ export enum FaultProcessOrderType {
   CANCELLED = "CANCELLED",
   OTHER = "OTHER",
   SHORTAGE = "SHORTAGE",
-  WAREHOUSE_TRANSFER = "WAREHOUSE_TRANSFER",  
+  WAREHOUSE_TRANSFER = "WAREHOUSE_TRANSFER",
 }
 
 export enum TaskStatus {
@@ -175,7 +194,7 @@ export interface FaultOrderSummary {
   taskAssigneeUsername?: string | null;
   questionCreatorId?: number | null;
   questionCreatorUsername?: string | null;
-  
+
   faultBatches?: FaultBatch[];
   processOrders?: FaultBatchProcessOrderSummary[];
 }

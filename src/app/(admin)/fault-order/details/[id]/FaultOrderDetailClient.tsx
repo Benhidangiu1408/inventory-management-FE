@@ -150,7 +150,7 @@ export default function FaultOrderDetailClient({
             }
 
             return (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-5 justify-center items-center">
                 {analysisActionLabel ? (
                   <Button
                     className="rounded bg-blue-500 px-3 text-white"

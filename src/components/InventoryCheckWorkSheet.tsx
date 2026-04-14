@@ -21,12 +21,15 @@ import {
   inventoryCheckCompleteAction,
   inventoryCheckRejectAction,
   inventoryCheckStartAction,
+  inventoryCheckSubmitAction,
 } from "@/actions/inventory-check";
 
 export function InventoryCheckWorkSheet({
   initialData,
+  currentUser,
 }: {
   initialData: InventoryCheckSheetData | null;
+  currentUser: number;
 }) {
   const { id } = useParams();
   const sheetId = Number(id);
@@ -34,57 +37,101 @@ export function InventoryCheckWorkSheet({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { confirm, ConfirmationModal } = useConfirmModal();
-  const currentUser = sessionStorage.getItem("userId");
 
   useEffect(() => {
     setData(initialData);
   }, [initialData]);
 
-  const handleBatchSave = useCallback(
-    (detailId: number, scannedQty: number, hasFaults: boolean) => {
-      setData((prevData) => {
-        if (!prevData) return null;
-        // Deep clone the products array to immutably update state
-        const updatedProducts = prevData.products.map((group) => ({
-          ...group,
-          batches: group.batches.map((batch) => {
-            if (batch.detailId === detailId) {
-              return {
-                ...batch,
-                scannedQuantity: scannedQty,
-                hasFaults: hasFaults,
-              };
-            }
-            return batch;
-          }),
-        }));
-        return { ...prevData, products: updatedProducts };
+  // Updates on every keystroke (Drafting)
+  const handleLocalChange = useCallback(
+    (
+      detailId: number,
+      field: "draftQuantity" | "draftFaults",
+      value: number | boolean,
+    ) => {
+      setData((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          products: prev.products.map((group) => ({
+            ...group,
+            batches: group.batches.map((batch) =>
+              batch.detailId === detailId
+                ? { ...batch, [field]: value }
+                : batch,
+            ),
+          })),
+        };
       });
     },
     [],
   );
 
+  // Updates when API succeeds (Confirming)
+  const handleBatchSave = useCallback(
+    async (detailId: number, scannedQuantity: number, hasFaults: boolean) => {
+      if (currentUser !== data?.header.assigneeId) {
+        toast.error("You're not the assigned employee!");
+        return;
+      }
+      try {
+        setLoading(true);
+        await inventoryCheckSubmitAction({
+          detailId,
+          scannedQuantity,
+          hasFaults,
+        });
+        // If the API succeeds, update the local React state
+        setData((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            products: prev.products.map((group) => ({
+              ...group,
+              batches: group.batches.map((batch) => {
+                if (batch.detailId === detailId) {
+                  return {
+                    ...batch,
+                    scannedQuantity: scannedQuantity,
+                    hasFaults: hasFaults,
+                    draftQuantity: undefined, // Clear drafts upon save
+                    draftFaults: undefined,
+                  };
+                }
+                return batch;
+              }),
+            })),
+          };
+        });
+        toast.success("Inventory Check Detail Submitted");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        toast.error(error.message ?? "An unexpected error occurred");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [currentUser, data?.header.assigneeId],
+  );
+
   // Generate Headers with the callback closure
   const editableHeaders = useMemo(
     () =>
-      getIcSheetBatchSubheaders(
-        handleBatchSave,
-        Number(initialData?.header.assigneeId),
-      ),
-    [handleBatchSave, initialData?.header.assigneeId],
+      getIcSheetBatchSubheaders(loading, handleBatchSave, handleLocalChange),
+    [loading, handleBatchSave, handleLocalChange],
   );
   const { header, products } = data as InventoryCheckSheetData;
 
   // Action
   const handleStart = useCallback(async () => {
-    if (Number(currentUser) !== initialData?.header.assigneeId) {
+    if (currentUser !== initialData?.header.assigneeId) {
       toast.error("You're not the assigned employee!");
       return;
     }
     try {
       setLoading(true);
       await inventoryCheckStartAction(sheetId);
-      toast.success("Inventory Check Started! Snapshot taken.");
+      toast.success("Inventory Check Started!");
       router.refresh();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -109,13 +156,12 @@ export function InventoryCheckWorkSheet({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message ?? "An unexpected error occurred");
-    } finally {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sheetId]);
   const handleApprove = useCallback(async () => {
-    if (Number(currentUser) !== initialData?.header.creatorId) {
+    if (currentUser !== initialData?.header.creatorId) {
       toast.error("Only the manager can approve!");
       return;
     }
@@ -133,13 +179,12 @@ export function InventoryCheckWorkSheet({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message ?? "An unexpected error occurred");
-    } finally {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sheetId]);
   const handleReject = useCallback(async () => {
-    if (Number(currentUser) !== initialData?.header.creatorId) {
+    if (currentUser !== initialData?.header.creatorId) {
       toast.error("Only the manager can reject!");
       return;
     }
@@ -151,13 +196,12 @@ export function InventoryCheckWorkSheet({
     if (!ok) return;
     try {
       setLoading(true);
-      await inventoryCheckRejectAction(sheetId, Number(currentUser));
+      await inventoryCheckRejectAction(sheetId, currentUser);
       toast.success("Sheet Rejected");
       router.replace("/warehouse-management/inventory-check");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message ?? "An unexpected error occurred");
-    } finally {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -180,6 +224,7 @@ export function InventoryCheckWorkSheet({
           <Button
             size="md"
             onClick={handleStart}
+            disabled={loading}
             startIcon={<Play size={18} />}
           >
             Start Inventory Check
@@ -286,6 +331,7 @@ export function InventoryCheckWorkSheet({
           </span>
           <Button
             size="sm"
+            disabled={loading}
             onClick={handleComplete}
             startIcon={<Save size={18} />}
           >
@@ -302,6 +348,7 @@ export function InventoryCheckWorkSheet({
         subTableKey={"batches"}
         data={products}
         getRowId={(params) => params.data.productSku}
+        subTableGetRowId={(params) => String(params.data.detailId)}
       />
     </div>
   );

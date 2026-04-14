@@ -9,21 +9,26 @@ import MultiSelect from "@/default_components/form/MultiSelect";
 import Select from "@/default_components/form/Select";
 import Button from "@/default_components/ui/button/Button";
 import { CreateInventoryCheckRequest } from "@/interfaces/inventoryManagementType";
+import { User } from "@/interfaces/userManagementType";
 import {
   ProductResponse,
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export const CreateICSheetForm = ({
   warehouse,
   product,
+  user,
+  creator,
 }: {
   warehouse: WarehouseGeneral[];
   product: ProductResponse[];
+  user: User[];
+  creator: number;
 }) => {
   // Initiate form control
   const router = useRouter();
@@ -32,10 +37,13 @@ export const CreateICSheetForm = ({
     value: val.id.toString(),
     label: `${val.name} (${val.code})`,
   }));
+  const userOption = user.map((val) => ({
+    value: val.id.toString(),
+    label: `${val.username} (${val.lastName} ${val.firstName})`,
+  }));
   const productOption = product.map((val) => ({
     value: val.id.toString(),
     text: `${val.name} (${val.code})`,
-    selected: false,
   }));
   const {
     register,
@@ -63,30 +71,6 @@ export const CreateICSheetForm = ({
   const isCycleCheck = useWatch({ control, name: "isCycleCheck" });
   const cycleValue = useWatch({ control, name: "cycleValue" });
   const cycleUnit = useWatch({ control, name: "cycleUnit" });
-  const creator = sessionStorage.getItem("userId");
-
-  const [users, setUsers] = useState<{ value: string; label: string }[]>([]);
-  useEffect(() => {
-    const fetchManagers = async () => {
-      try {
-        const users = await userManagementService.getAll(1);
-        if (users) {
-          const options = users
-            .filter((val) => String(val.id) !== creator)
-            .map((u) => ({
-              value: u.id.toString(),
-              label: `${u.username}`,
-            }));
-          setUsers(options);
-        }
-      } catch (error) {
-        console.error("Failed to load user:", error);
-        toast.error("Could not load user list");
-      }
-    };
-    fetchManagers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   //Validation Logic
   const onSubmit: SubmitHandler<
@@ -132,7 +116,6 @@ export const CreateICSheetForm = ({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message ?? "An unexpected error occurred");
-    } finally {
       setLoading(false);
     }
   };
@@ -161,7 +144,7 @@ export const CreateICSheetForm = ({
               {...register("assignedUserId", {
                 required: "Please assign an employee",
               })}
-              options={users}
+              options={userOption}
               placeholder="Select Employee"
               error={!!errors.assignedUserId}
               hint={errors.assignedUserId?.message}
@@ -189,7 +172,7 @@ export const CreateICSheetForm = ({
                   label="Target Products (Optional)"
                   options={productOption}
                   // We map the numeric IDs (if any) to strings for the component
-                  defaultSelected={value ? value.map(String) : []}
+                  selected={value ? value.map(String) : []}
                   onChange={(selected) => {
                     onChange(selected); // Pass array of ID strings to form state
                   }}
@@ -272,9 +255,7 @@ export const CreateICSheetForm = ({
         <Button
           size="sm"
           variant="outline"
-          onClick={() =>
-            router.replace("/warehouse-management/inventory-check")
-          }
+          onClick={() => router.back()}
           type="button"
         >
           Cancel

@@ -1,7 +1,12 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
+import { cookies } from "next/headers";
 
 import Button from "@/default_components/ui/button/Button";
-import { getFaultBatchProcessOrderWithDetailsAction } from "@/actions/faultHandling";
+import {
+  getFaultBatchProcessOrderWithDetailsAction,
+  getFaultOrderAction,
+} from "@/actions/faultHandling";
+import { Analyze } from "@/interfaces/inventoryManagementType";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileExport } from "@fortawesome/free-solid-svg-icons";
 import ProcessOrderDetailForm from "./ProcessOrderDetailForm";
@@ -13,11 +18,22 @@ type ProcessOrderDetailPageProps = {
   }>;
 };
 
+const parseValidUserId = (rawValue?: string) => {
+  const parsed = Number(rawValue);
+  if (!Number.isInteger(parsed) || parsed <= 0) {
+    return null;
+  }
+
+  return parsed;
+};
+
 export default async function FaultOrderDetailPage({
   params,
 }: ProcessOrderDetailPageProps) {
-  const { procOrdId } = await params;
+  const cookieStore = await cookies();
+  const { id, procOrdId } = await params;
   const processOrderId = Number(procOrdId);
+  const currentUserId = parseValidUserId(cookieStore.get("userId")?.value);
 
   if (Number.isNaN(processOrderId)) {
     return (
@@ -38,6 +54,20 @@ export default async function FaultOrderDetailPage({
     );
   }
 
+  const routeFaultOrderId = Number(id);
+  const faultOrderId = Number.isNaN(routeFaultOrderId)
+    ? data.faultOrderId
+    : routeFaultOrderId;
+
+  let questionCreatorId: number | null = null;
+  let analyzerId: number | null = null;
+
+  if (!Number.isNaN(faultOrderId)) {
+    const { data: faultOrder } = await getFaultOrderAction(faultOrderId);
+    questionCreatorId = faultOrder?.questionCreatorId ?? null;
+    analyzerId = faultOrder?.analyzerId ?? null;
+  }
+
   return (
     <div>
       <PageBreadcrumb
@@ -55,7 +85,12 @@ export default async function FaultOrderDetailPage({
             Export
           </Button>
         </div>
-        <ProcessOrderDetailForm processOrder={data} />
+        <ProcessOrderDetailForm
+          processOrder={data}
+          currentUserId={currentUserId}
+          questionCreatorId={questionCreatorId}
+          analyzerId={analyzerId}
+        />
       </div>
     </div>
   );

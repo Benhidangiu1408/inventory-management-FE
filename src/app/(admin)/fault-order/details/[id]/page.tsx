@@ -15,7 +15,7 @@ import {
   type FaultBatch as FaultBatchResponse,
   type FaultBatchProcessOrderSummary,
 } from "@/interfaces/inventoryManagementType";
-import { FaultOrderPermission } from "@/constants/permissions/fault-order";
+import { FaultOrderPermission } from "@/interfaces/inventoryManagementType";
 import { getFaultOrderAction } from "@/actions/faultHandling";
 import { getAllUsersByRoleAction } from "@/actions/user";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

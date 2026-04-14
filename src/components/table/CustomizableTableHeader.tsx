@@ -17,7 +17,7 @@ import {
   WarehouseGeneral,
 } from "@/interfaces/warehouseManagementType";
 
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
 import { Role, User } from "@/interfaces/userManagementType";
 import { AssignRoleAction } from "@/actions/user";
@@ -74,6 +74,7 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
+    autoHeight: true,
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -166,6 +167,7 @@ export const getUnitHeaders = (
   {
     label: "Description",
     key: "description",
+    autoHeight: true,
     filter: "agTextColumnFilter",
     render: (val) =>
       (val as string) || (
@@ -201,6 +203,7 @@ export const getAttributeHeaders = (
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
+    autoHeight: true,
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -274,6 +277,7 @@ export const getVariantHeaders = (
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
+    autoHeight: true,
     render: (val) =>
       (val as string) || (
         <span className="text-gray-400 italic">No description</span>
@@ -313,17 +317,32 @@ export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
   {
     label: "Code",
     key: "code",
-    filter: false,
-    minWidth: 120,
+    filter: "agTextColumnFilter",
+    sort: true,
+    width: 120,
+    render: (_, row) => (
+      <Link
+        href={`/warehouse-management/inventory-check/detail/${row.id}`}
+        className="text-brand-500 dark:text-brand-500 text-sm font-normal underline transition-colors"
+      >
+        {row.code}
+      </Link>
+    ),
   },
   {
     label: "Warehouse",
     key: "warehouseName",
+    width: 300,
+    render: (_, row) => {
+      return <div>{`${row.warehouseName} (${row.warehouseCode})`}</div>;
+    },
   },
-  // {
-  //   label: "Assignee",
-  //   key: "assigneeName",
-  // },
+  {
+    label: "Assignee",
+    key: "assigneeName",
+    width: 100,
+    filter: "agTextColumnFilter",
+  },
   {
     label: "Planned Date",
     key: "plannedDate",
@@ -343,6 +362,7 @@ export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
   {
     label: "Status",
     key: "status",
+    width: 50,
     render: (value) => {
       const statusColors: Record<
         string,
@@ -362,22 +382,6 @@ export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
         </Badge>
       );
     },
-  },
-  {
-    label: "Actions",
-    key: "id",
-    filter: false,
-    render: (_, row) => (
-      <div className="flex h-full items-center justify-center gap-2">
-        <Link
-          href={`/warehouse-management/inventory-check/detail/${row.id}`}
-          className="hover:text-brand-600 rounded-md p-1 text-gray-500 transition-colors hover:bg-gray-100"
-          title="View Worksheet"
-        >
-          <Eye size={18} />
-        </Link>
-      </div>
-    ),
   },
 ];
 
@@ -595,6 +599,7 @@ export const processingOrderColumns: Column<ProcessingOrder>[] = [
   {
     label: "Action",
     key: "action",
+    autoHeight: true,
     render: () => (
       <div className="grid grid-cols-2 gap-2">
         <Button className="rounded bg-blue-500 px-3 text-white">Analyze</Button>

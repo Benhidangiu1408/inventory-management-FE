@@ -48,6 +48,8 @@ import {
 type AssignTaskClientPageProps = {
   faultOrderId: number;
   processOrderId: number;
+  currentUserId: number | null;
+  taskAssignerUserId: number | null;
   initialProcessOrderData: FaultBatchProcessOrder | null;
   initialProcessOrderError: string | null;
   initialOwners: User[];
@@ -57,6 +59,8 @@ type AssignTaskClientPageProps = {
 export default function AssignTaskClientPage({
   faultOrderId,
   processOrderId,
+  currentUserId,
+  taskAssignerUserId,
   initialProcessOrderData,
   initialProcessOrderError,
   initialOwners,
@@ -85,6 +89,61 @@ export default function AssignTaskClientPage({
       toast.error(initialOwnersError);
     }
   }, [initialOwnersError]);
+
+  const canAssignTasks = useMemo(() => {
+    if (!currentUserId || currentUserId <= 0) {
+      return false;
+    }
+
+    if (!taskAssignerUserId || taskAssignerUserId <= 0) {
+      return false;
+    }
+
+    return currentUserId === taskAssignerUserId;
+  }, [currentUserId, taskAssignerUserId]);
+
+  const taskOwnerByTaskId = useMemo(() => {
+    const ownerMap = new Map<number, number>();
+
+    taskRows.forEach((task) => {
+      if (
+        task.id > 0 &&
+        task.assignedUserId !== null &&
+        task.assignedUserId > 0
+      ) {
+        ownerMap.set(task.id, task.assignedUserId);
+      }
+    });
+
+    return ownerMap;
+  }, [taskRows]);
+
+  const canCurrentUserUpdateTask = useCallback(
+    (taskId: number) => {
+      if (!currentUserId || currentUserId <= 0 || taskId <= 0) {
+        return false;
+      }
+
+      return taskOwnerByTaskId.get(taskId) === currentUserId;
+    },
+    [currentUserId, taskOwnerByTaskId],
+  );
+
+  const canCurrentUserUpdateBatch = useCallback(
+    (batch: FaultBatchRow) => {
+      if (!currentUserId || currentUserId <= 0) {
+        return false;
+      }
+
+      const mappedTaskId = Number(batch.taskId);
+      if (!Number.isInteger(mappedTaskId) || mappedTaskId <= 0) {
+        return false;
+      }
+
+      return taskOwnerByTaskId.get(mappedTaskId) === currentUserId;
+    },
+    [currentUserId, taskOwnerByTaskId],
+  );
 
   const syncFaultOrderStatusFromProcessOrders = useCallback(async () => {
     const { data: faultOrder, error: faultOrderError } =
@@ -169,9 +228,16 @@ export default function AssignTaskClientPage({
   );
 
   const handleStartNewTask = useCallback(() => {
+    if (!canAssignTasks) {
+      toast.error(
+        "Only the assigned task assigner can create tasks for this process order.",
+      );
+      return;
+    }
+
     setIsAddingTask(true);
     setNewTaskDraft(getDefaultNewTaskDraft());
-  }, []);
+  }, [canAssignTasks]);
 
   const handleCancelNewTask = useCallback(() => {
     setIsAddingTask(false);
@@ -179,6 +245,13 @@ export default function AssignTaskClientPage({
   }, []);
 
   const handleConfirmNewTask = useCallback(async () => {
+    if (!canAssignTasks) {
+      toast.error(
+        "Only the assigned task assigner can create tasks for this process order.",
+      );
+      return;
+    }
+
     if (!newTaskDraft.task.trim()) {
       toast.error("Task description is required.");
       return;
@@ -214,6 +287,8 @@ export default function AssignTaskClientPage({
         id: task.id ?? -1,
         task: task.task ?? "-",
         owner: task.assignedUsername ?? selectedOwnerName,
+        assignedUserId:
+          task.assignedUserId ?? Number(newTaskDraft.assignedUserId),
         dueDate: formatDisplayDateTime(task.dueDate),
         status: mapTaskStatusToLabel(task.status),
       }));
@@ -239,6 +314,7 @@ export default function AssignTaskClientPage({
       setIsSavingTask(false);
     }
   }, [
+    canAssignTasks,
     initialOwners,
     newTaskDraft,
     processOrderId,
@@ -253,6 +329,14 @@ export default function AssignTaskClientPage({
       previousStatus: FaultBatchRow["status"],
     ) => {
       if (nextStatus === previousStatus) {
+        return;
+      }
+
+      const targetBatch = faultBatchRows.find((row) => row.id === batchId);
+      if (!targetBatch || !canCurrentUserUpdateBatch(targetBatch)) {
+        toast.error(
+          "Only the selected task owner can update this batch status.",
+        );
         return;
       }
 
@@ -305,11 +389,18 @@ export default function AssignTaskClientPage({
         setUpdatingBatchIds((prev) => prev.filter((id) => id !== batchId));
       }
     },
-    [],
+    [canCurrentUserUpdateBatch, faultBatchRows],
   );
 
   const handleBatchTaskChange = useCallback(
     async (batchId: number, nextTaskId: string, previousTaskId: string) => {
+      if (!canAssignTasks) {
+        toast.error(
+          "Only the assigned task assigner can assign tasks to batches.",
+        );
+        return;
+      }
+
       if (nextTaskId === previousTaskId) {
         return;
       }
@@ -386,7 +477,7 @@ export default function AssignTaskClientPage({
         setUpdatingBatchIds((prev) => prev.filter((id) => id !== batchId));
       }
     },
-    [taskRows],
+    [canAssignTasks, taskRows],
   );
 
   const handleTaskStatusChange = useCallback(
@@ -401,6 +492,11 @@ export default function AssignTaskClientPage({
 
       if (taskId <= 0) {
         toast.error("This task cannot be updated because it has no valid id.");
+        return;
+      }
+
+      if (!canCurrentUserUpdateTask(taskId)) {
+        toast.error("Only the task owner can update task status.");
         return;
       }
 
@@ -470,7 +566,7 @@ export default function AssignTaskClientPage({
         setUpdatingTaskIds((prev) => prev.filter((id) => id !== taskId));
       }
     },
-    [taskRows, updateProcessOrderStatus],
+    [canCurrentUserUpdateTask, taskRows, updateProcessOrderStatus],
   );
 
   const faultBatchColumnsWithStatusSelect = useMemo<
@@ -501,7 +597,10 @@ export default function AssignTaskClientPage({
                   row.status,
                 )
               }
-              disabled={updatingBatchIds.includes(row.id)}
+              disabled={
+                updatingBatchIds.includes(row.id) ||
+                !canCurrentUserUpdateBatch(row)
+              }
               className="h-9 py-1.5"
             />
           ),
@@ -514,26 +613,29 @@ export default function AssignTaskClientPage({
           filterParams: {
             values: taskOptions.map((option) => option.label),
           },
-          render: (_, row) => (
-            <Select
-              options={taskOptions.map((option) => ({
-                value: option.value,
-                label: option.label,
-              }))}
-              disablePlaceholderOpt={false}
-              placeholder="Select task"
-              value={row.taskId ?? ""}
-              onChange={(event) =>
-                handleBatchTaskChange(
-                  row.id,
-                  event.target.value,
-                  row.taskId ?? "",
-                )
-              }
-              disabled={updatingBatchIds.includes(row.id)}
-              className="h-9 py-1.5"
-            />
-          ),
+          render: (_, row) =>
+            canAssignTasks ? (
+              <Select
+                options={taskOptions.map((option) => ({
+                  value: option.value,
+                  label: option.label,
+                }))}
+                disablePlaceholderOpt={false}
+                placeholder="Select task"
+                value={row.taskId ?? ""}
+                onChange={(event) =>
+                  handleBatchTaskChange(
+                    row.id,
+                    event.target.value,
+                    row.taskId ?? "",
+                  )
+                }
+                disabled={updatingBatchIds.includes(row.id)}
+                className="h-9 py-1.5"
+              />
+            ) : (
+              <span>{row.taskName || "-"}</span>
+            ),
         });
 
         return acc;
@@ -543,6 +645,8 @@ export default function AssignTaskClientPage({
       return acc;
     }, []);
   }, [
+    canAssignTasks,
+    canCurrentUserUpdateBatch,
     handleBatchStatusChange,
     handleBatchTaskChange,
     taskRows,
@@ -573,13 +677,17 @@ export default function AssignTaskClientPage({
                 row.status,
               )
             }
-            disabled={row.id <= 0 || updatingTaskIds.includes(row.id)}
+            disabled={
+              row.id <= 0 ||
+              updatingTaskIds.includes(row.id) ||
+              !canCurrentUserUpdateTask(row.id)
+            }
             className="h-9 py-1.5"
           />
         ),
       },
     ],
-    [handleTaskStatusChange, updatingTaskIds],
+    [canCurrentUserUpdateTask, handleTaskStatusChange, updatingTaskIds],
   );
 
   if (!processOrderData) {
@@ -619,6 +727,7 @@ export default function AssignTaskClientPage({
           <GeneralInfoSection title="Summary" items={summaryInfoItems} />
 
           <AssignTaskActionSection
+            canAssignTasks={canAssignTasks}
             isAddingTask={isAddingTask}
             isSavingTask={isSavingTask}
             isLoadingOwners={false}
