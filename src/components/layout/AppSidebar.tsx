@@ -69,11 +69,12 @@ export const navItems: NavItem[] = [
   },
   {
     icon: <ArchiveX />,
-    name: "Defective",
-    subItems: [
-      { name: "Root Cause Analysis", path: "/s" },
-      { name: "Fault Order", path: "/s" },
-    ],
+    name: "Fault Handle",
+    path: "/fault-order"
+    // subItems: [
+    //   { name: "Root Cause Analysis", path: "/s" },
+    //   { name: "Fault Order", path: "/s" },
+    // ],
   },
   {
     icon: <FileBox />,

@@ -13,8 +13,12 @@ import {
   FaultOrderStatus,
   FaultOrderSummary,
   FaultTask,
+  InboundOutboundMonthlyPoint,
+  InboundOutboundMonthlyRequest,
+  InboundOutboundOrderCountResponse,
   InventoryCheckResponse,
   InventoryCheckSheetData,
+  OverviewSummaryResponse,
   SubmitCheckResultRequest,
   UpdateFaultBatchHandlingStatusRequest,
   UpdateFaultBatchProcessOrderRequest,
@@ -79,6 +83,35 @@ export const inventoryCheckService = {
     return apiClient.post<void>(
       `/inventory/v1/inventory-check/${id}/reject`,
       null,
+    );
+  },
+};
+
+export const inventoryDashboardService = {
+  getOverviewSummary: async () => {
+    return apiClient.get<OverviewSummaryResponse>(
+      "/inventory/v1/dashboard/overview",
+      {
+        cache: "no-store",
+      },
+    );
+  },
+
+  getInboundOutboundMonthlySummary: async (
+    request?: InboundOutboundMonthlyRequest | null,
+  ) => {
+    return apiClient.post<InboundOutboundMonthlyPoint[]>(
+      "/inventory/v1/dashboard/inbound-outbound/monthly",
+      request ?? null,
+    );
+  },
+
+  getInboundOutboundTotalSummary: async (
+    request?: InboundOutboundMonthlyRequest | null,
+  ) => {
+    return apiClient.post<InboundOutboundOrderCountResponse>(
+      "/inventory/v1/dashboard/inbound-outbound/total",
+      request ?? null,
     );
   },
 };
