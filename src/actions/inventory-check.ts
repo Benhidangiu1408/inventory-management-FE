@@ -17,14 +17,17 @@ export async function inventoryCheckStartAction(id: number) {
 export async function inventoryCheckCompleteAction(id: number) {
   await inventoryCheckService.complete(id);
 }
-export async function inventoryCheckApproveAction(id: number, userId: number) {
-  await inventoryCheckService.approve(id, userId);
+export async function inventoryCheckApproveAction(id: number) {
+  await inventoryCheckService.approve(id);
 }
-export async function inventoryCheckRejectAction(id: number, userId: number) {
-  await inventoryCheckService.reject(id, userId);
+export async function inventoryCheckRejectAction(id: number) {
+  await inventoryCheckService.reject(id);
 }
 export async function inventoryCheckCreateAction(
   data: CreateInventoryCheckRequest,
 ) {
   await inventoryCheckService.create(data);
+}
+export async function inventoryCheckDeleteAction(id: number) {
+  await inventoryCheckService.delete(id);
 }

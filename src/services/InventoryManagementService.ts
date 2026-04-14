@@ -51,6 +51,12 @@ export const inventoryCheckService = {
       null,
     );
   },
+  delete: async (id: number) => {
+    return apiClient.delete<void>(
+      `/inventory/v1/inventory-check/${id}/cancel`,
+      null,
+    );
+  },
   submit: async (data: SubmitCheckResultRequest) => {
     return apiClient.post<SubmitCheckResultRequest>(
       `/inventory/v1/inventory-check/submit-results`,
@@ -63,15 +69,15 @@ export const inventoryCheckService = {
       null,
     );
   },
-  approve: async (id: number, userId: number) => {
+  approve: async (id: number) => {
     return apiClient.post<void>(
-      `/inventory/v1/inventory-check/${id}/approve?userId=${userId}`,
+      `/inventory/v1/inventory-check/${id}/approve`,
       null,
     );
   },
-  reject: async (id: number, userId: number) => {
+  reject: async (id: number) => {
     return apiClient.post<void>(
-      `/inventory/v1/inventory-check/${id}/reject?userId=${userId}`,
+      `/inventory/v1/inventory-check/${id}/reject`,
       null,
     );
   },
@@ -181,7 +187,9 @@ export const faultOrderService = {
     );
   },
 
-  createFaultBatchProcessOrder: async (data: CreateFaultBatchProcessOrderRequest) => {
+  createFaultBatchProcessOrder: async (
+    data: CreateFaultBatchProcessOrderRequest,
+  ) => {
     return apiClient.post<FaultBatchProcessOrder>(
       "/inventory/v1/process-orders",
       data,
@@ -229,10 +237,7 @@ export const faultOrderService = {
   },
 
   updateTasksStatus: async (data: UpdateTasksStatusRequest) => {
-    return apiClient.put<FaultTask[]>(
-      "/inventory/v1/tasks/status",
-      data,
-    );
+    return apiClient.put<FaultTask[]>("/inventory/v1/tasks/status", data);
   },
 
   markFaultBatchesFixed: async (
@@ -243,8 +248,15 @@ export const faultOrderService = {
       data,
     );
   },
-  assignTaskToFaultBatch: async (faultBatchId: number, taskId?: number | null) => {
-    const query = taskId === null || taskId === undefined ? "" : `?taskId=${taskId}`;
-    return apiClient.put<FaultBatch>(`/inventory/v1/fault-batches/${faultBatchId}/task${query}`, null);
+  assignTaskToFaultBatch: async (
+    faultBatchId: number,
+    taskId?: number | null,
+  ) => {
+    const query =
+      taskId === null || taskId === undefined ? "" : `?taskId=${taskId}`;
+    return apiClient.put<FaultBatch>(
+      `/inventory/v1/fault-batches/${faultBatchId}/task${query}`,
+      null,
+    );
   },
 };
