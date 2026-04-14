@@ -88,6 +88,57 @@ export interface SubmitCheckResultRequest {
   hasFaults: boolean;
 }
 
+export interface MonthYearFilter {
+  month: number;
+  year: number;
+}
+
+export interface InboundOutboundMonthlyRequest {
+  months: MonthYearFilter[];
+}
+
+export interface FaultStatusCount {
+  handlingStatus: string;
+  total: number;
+}
+
+export interface ProductQuantitySummary {
+  productId: number | null;
+  productCode: string;
+  productName: string;
+  totalQuantity: number;
+}
+
+export interface OverviewSummaryResponse {
+  totalCategories: number;
+  totalProducts: number;
+  totalWarehouses: number;
+  todayInboundOrders: number;
+  todayOutboundOrders: number;
+  faultCounts: FaultStatusCount[];
+  productQuantities: ProductQuantitySummary[];
+}
+
+export interface InboundOutboundMonthlyPoint {
+  month: string;
+  inboundQuantity: number;
+  outboundQuantity: number;
+}
+
+export interface InboundOutboundOrderCountPoint {
+  month: string;
+  inboundOrders: number;
+  outboundOrders: number;
+  totalOrders: number;
+}
+
+export interface InboundOutboundOrderCountResponse {
+  totalInboundOrders: number;
+  totalOutboundOrders: number;
+  totalOrders: number;
+  monthlyOrderCounts: InboundOutboundOrderCountPoint[];
+}
+
 export enum FaultBatchStatus {
   REPORTED = "REPORTED",
   PROCESSING = "PROCESSING",
