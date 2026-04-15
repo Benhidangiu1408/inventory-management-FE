@@ -10,19 +10,21 @@ import {
   WarehouseType,
 } from "@/interfaces/warehouseManagementType";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import NoControlModalBox from "../modal/NoControlModalBox";
 import { useModal } from "@/hooks/useModal";
 import { Pencil } from "lucide-react";
 import { warehouseUpdateAction } from "@/actions/system-info";
+import { User } from "@/interfaces/userManagementType";
 
 interface WarehouseFormProps {
   setLoading: (loading: boolean) => void;
   setDisable: (loading: boolean) => void;
   onSuccess: () => void;
   initialData: WarehouseDetail;
+  userData: User[];
 }
 
 const UpdateWarehouseForm = ({
@@ -30,6 +32,7 @@ const UpdateWarehouseForm = ({
   setDisable,
   onSuccess,
   initialData,
+  userData,
 }: WarehouseFormProps) => {
   // Initiate form control
   const router = useRouter();
@@ -42,6 +45,13 @@ const UpdateWarehouseForm = ({
     value: status,
     label: status.replace("_", " "),
   }));
+
+  const managerOptions = useMemo(() => {
+    return userData.map((u) => ({
+      value: u.id.toString(),
+      label: u.username,
+    }));
+  }, [userData]);
   const {
     register,
     handleSubmit,
@@ -148,15 +158,27 @@ const UpdateWarehouseForm = ({
           />
         </div>
       </div>
-      {/* Manager? */}
+      {/* NEW MANAGER FIELD */}
+      <div>
+        <Label>Manager</Label>
+        <Select
+          {...register("managerId")}
+          placeholder={"Assign a manager"}
+          options={managerOptions}
+          error={!!errors.managerId}
+          hint={errors.managerId?.message}
+        />
+      </div>
     </form>
   );
 };
 
 export function ModalUpdateWarehouseForm({
   initialData,
+  userData,
 }: {
   initialData: WarehouseDetail;
+  userData: User[];
 }) {
   const [loading, setLoading] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
@@ -179,6 +201,7 @@ export function ModalUpdateWarehouseForm({
           setDisable={setDisable}
           onSuccess={closeModal}
           initialData={initialData}
+          userData={userData}
         />
       }
     />

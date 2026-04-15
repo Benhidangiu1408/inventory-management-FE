@@ -10,6 +10,7 @@ import Badge from "@/default_components/ui/badge/Badge";
 import Button from "@/default_components/ui/button/Button";
 import {
   AttributeResponse,
+  LocationBatch,
   LocationResponse,
   UnitResponse,
   VariantAttributeResponse,
@@ -122,6 +123,39 @@ export const getLocationHeaders = (
         <Badge variant="solid" color={color}>
           {label}
         </Badge>
+      );
+    },
+  },
+  {
+    label: "Inventory",
+    key: "batch",
+    filter: false, // Filtering on nested objects requires a custom AG Grid filter, so we disable standard text filter here
+    sortable: false,
+    width: 250,
+    render: (val) => {
+      const batch = val as LocationBatch | null | undefined;
+
+      // If the location is empty, show a soft placeholder
+      if (!batch) {
+        return (
+          <span className="text-sm text-gray-400 italic">No inventory</span>
+        );
+      }
+
+      // If occupied, stack the Product Name and the Quantity/Code details
+      return (
+        <div className="flex h-full flex-col justify-center leading-tight">
+          <span className="truncate font-medium text-gray-900 dark:text-white">
+            {batch.productName}
+          </span>
+          <span className="truncate text-xs text-gray-500 dark:text-gray-400">
+            Qty:{" "}
+            <span className="text-brand-600 dark:text-brand-400 font-semibold">
+              {batch.currentQty}
+            </span>{" "}
+            {batch.unitName} &bull; {batch.code}
+          </span>
+        </div>
       );
     },
   },
@@ -249,13 +283,12 @@ export const getVariantHeaders = (
       val ? (
         <button
           type="button"
-          className="h-full overflow-hidden rounded border border-gray-200 transition-opacity hover:opacity-80 dark:border-gray-700"
+          className="relative aspect-square h-full overflow-hidden rounded border border-gray-200 transition-opacity hover:opacity-80 dark:border-gray-700"
           onClick={() => onImageClick(val as string)}
         >
           <Image
             src={val as string}
-            width={32}
-            height={32}
+            fill
             alt="Variant thumbnail"
             className="object-cover"
           />

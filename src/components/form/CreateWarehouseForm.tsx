@@ -58,7 +58,6 @@ export const CreateWarehouseForm = ({ userData }: { userData: User[] }) => {
         status: data.status,
         managerId: Number(data.managerId),
       };
-      console.log(payload);
       await warehouseCreateAction(payload);
       toast.success("Warehouse created successfully!");
       router.replace("/warehouse-management/warehouse");

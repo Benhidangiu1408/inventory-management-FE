@@ -5,6 +5,8 @@ import { WarehouseDetail } from "@/interfaces/warehouseManagementType";
 import { ModalUpdateWarehouseForm } from "@/components/form/ModalUpdateWarehouseForm";
 import { ViewLocation } from "@/components/ViewLocation";
 import { cookies } from "next/headers";
+import { User } from "@/interfaces/userManagementType";
+import { userManagementService } from "@/services/UserManagementService";
 
 export default async function WarehouseDetailPage({
   params,
@@ -13,12 +15,14 @@ export default async function WarehouseDetailPage({
 }) {
   const { id } = await params;
   let data: WarehouseDetail | null = null;
+  let userData: User[] | null = null;
   let errorMsg = null;
   const cookieStore = await cookies();
   const permissions = cookieStore.get("permissions")?.value.split(",");
 
   try {
     data = await warehouseService.getDetail(Number(id));
+    userData = await userManagementService.getAll();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     errorMsg = `Could not load data from server. ${error.message}`;
@@ -45,7 +49,10 @@ export default async function WarehouseDetailPage({
           items={generalInfoItems}
           editBtn={
             permissions?.includes("EDIT_WAREHOUSE") ? (
-              <ModalUpdateWarehouseForm initialData={data as WarehouseDetail} />
+              <ModalUpdateWarehouseForm
+                initialData={data as WarehouseDetail}
+                userData={userData as User[]}
+              />
             ) : (
               <div></div>
             )

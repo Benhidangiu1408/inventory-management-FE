@@ -187,13 +187,12 @@ export const getSubVariantHeaders = (
       val ? (
         <button
           type="button"
-          className="h-full overflow-hidden rounded border border-gray-200 transition-opacity hover:opacity-80 dark:border-gray-700"
+          className="relative aspect-square h-full overflow-hidden rounded border border-gray-200 transition-opacity hover:opacity-80 dark:border-gray-700"
           onClick={() => onImageClick(val as string)}
         >
           <Image
             src={val as string}
-            width={32}
-            height={32}
+            fill
             alt="Variant thumbnail"
             className="object-cover"
           />
