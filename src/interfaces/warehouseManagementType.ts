@@ -155,6 +155,7 @@ export interface ProductCreateRequest {
   description: string | null;
   categoryId: number | null;
   baseUnitId: number | null;
+  image: string | null;
   additionalConversions?: {
     fromUnitId: number | null;
     conversionRate: number | null;

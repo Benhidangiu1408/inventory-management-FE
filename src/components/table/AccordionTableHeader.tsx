@@ -16,6 +16,7 @@ import {
 } from "@/interfaces/inventoryManagementType";
 import Input from "@/default_components/form/input/InputField";
 import Checkbox from "@/default_components/form/input/Checkbox";
+import Image from "next/image";
 
 // Category header
 export const getCategoryHeaders = (
@@ -166,7 +167,9 @@ export const productHeaders: Column<ProductResponse>[] = [
 ];
 
 // Child Table Headers (Product Variants)
-export const variantHeaders: Column<VariantResponse>[] = [
+export const getSubVariantHeaders = (
+  onImageClick: (imageUrl: string) => void,
+): Column<VariantResponse>[] => [
   {
     label: "Variant Code",
     key: "code",
@@ -182,9 +185,21 @@ export const variantHeaders: Column<VariantResponse>[] = [
     width: 100,
     render: (val) =>
       val ? (
-        <Link href={"/"}>View Image</Link>
+        <button
+          type="button"
+          className="h-full overflow-hidden rounded border border-gray-200 transition-opacity hover:opacity-80 dark:border-gray-700"
+          onClick={() => onImageClick(val as string)}
+        >
+          <Image
+            src={val as string}
+            width={32}
+            height={32}
+            alt="Variant thumbnail"
+            className="object-cover"
+          />
+        </button>
       ) : (
-        <span className="text-gray-400 italic">No image</span>
+        <span className="text-xs text-gray-400 italic">No image</span>
       ),
   },
   {

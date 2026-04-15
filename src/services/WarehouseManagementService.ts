@@ -200,4 +200,9 @@ export const productService = {
       data,
     );
   },
+  uploadImage: async (name: string, type: string) => {
+    return apiClient.get<{ uploadUrl: string; finalImageUrl: string }>(
+      `/info/v1/presigned-url?fileName=${name}&contentType=${type}`,
+    );
+  },
 };

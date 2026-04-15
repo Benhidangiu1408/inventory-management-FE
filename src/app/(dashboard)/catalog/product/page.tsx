@@ -1,8 +1,4 @@
-import AccordionTable from "@/components/table/AccordionTable";
-import {
-  productHeaders,
-  variantHeaders,
-} from "@/components/table/AccordionTableHeader";
+import { ClientProductTable } from "@/components/table/ClientProductTable";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import Button from "@/default_components/ui/button/Button";
 import { ProductResponse } from "@/interfaces/warehouseManagementType";
@@ -42,12 +38,7 @@ export default async function ProductPage() {
               </Link>
             </div>
           )}
-          <AccordionTable
-            headers={productHeaders}
-            subTableKey={"variants"}
-            subTableHeaders={variantHeaders}
-            data={data}
-          />
+          <ClientProductTable initialData={data} />
         </div>
       </div>
     </div>

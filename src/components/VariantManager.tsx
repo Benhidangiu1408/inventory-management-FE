@@ -19,12 +19,15 @@ import {
 import {
   ProductCreateVariantAction,
   ProductDeleteAction,
+  uploadImageAction,
   VariantDeleteAction,
   VariantUpdateAction,
 } from "@/actions/system-info";
 import { getVariantHeaders } from "./table/CustomizableTableHeader";
 import Button from "@/default_components/ui/button/Button";
 import { useAuth } from "@/context/AuthContext";
+import ImagePicker from "./ImagePicker";
+import ViewFullImage from "./ViewFullImage";
 
 // ----------------------------------------------------------------------
 // 1. THE UNIFIED FORM COMPONENT
@@ -40,6 +43,8 @@ interface VariantFormProps {
 
 interface CombinedVariantFormData {
   description: string;
+  image: string | null;
+  rawFile?: File | null;
   attributes: { attributeId: string | number; value: string }[];
 }
 
@@ -64,10 +69,13 @@ const VariantForm = ({
     control,
     handleSubmit,
     getValues,
+    setValue,
     formState: { errors, isDirty },
   } = useForm<CombinedVariantFormData>({
     defaultValues: {
       description: initialData?.description || "",
+      image: initialData?.image || null,
+      rawFile: null,
       attributes: [],
     },
   });
@@ -83,12 +91,32 @@ const VariantForm = ({
 
   const onSubmit: SubmitHandler<CombinedVariantFormData> = async (data) => {
     setLoading(true);
+    const toastId = toast.loading("Saving variant...");
     try {
+      let finalImageUrl = data.image;
+      if (data.rawFile) {
+        toast.loading("Uploading image to storage...", { id: toastId });
+        const { uploadUrl, finalImageUrl: s3Url } = await uploadImageAction(
+          data.rawFile.name,
+          data.rawFile.type,
+        );
+        const s3Response = await fetch(uploadUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": data.rawFile.type,
+          },
+          body: data.rawFile,
+        });
+        if (!s3Response.ok) throw new Error("Failed to upload image to S3");
+
+        finalImageUrl = s3Url;
+        toast.loading("Updating database...", { id: toastId });
+      }
       if (isEditMode) {
         // --- EDIT MODE PAYLOAD ---
         const updatePayload = {
           description: data.description !== "" ? data.description : null,
-          image: null,
+          image: finalImageUrl,
         };
         await VariantUpdateAction(initialData.id, updatePayload);
         toast.success("Variant updated successfully!");
@@ -97,7 +125,7 @@ const VariantForm = ({
         const createPayload = {
           productId: Number(productId),
           description: data.description !== "" ? data.description : null,
-          image: null,
+          image: finalImageUrl,
           attributes: data.attributes.map((attr) => ({
             attributeId: Number(attr.attributeId),
             value: attr.value,
@@ -127,6 +155,17 @@ const VariantForm = ({
       onSubmit={handleSubmit(onSubmit)}
       className="mt-7 max-h-[60vh] space-y-6 overflow-auto px-3"
     >
+      {/* --- IMAGE UPLOAD --- */}
+      <div className="w-full">
+        <Label>Variant Image</Label>
+        {/* If an image exists, show a tiny preview link or thumbnail */}
+        <ImagePicker
+          existingImageUrl={initialData?.image}
+          onFileSelected={(file) => {
+            setValue("rawFile", file, { shouldDirty: true });
+          }}
+        />
+      </div>
       {/* --- GENERAL INFO (Shown in both modes) --- */}
       <div className="w-full">
         <Label>Description</Label>
@@ -244,6 +283,7 @@ export function VariantManager({
   const [selectedVariant, setSelectedVariant] = useState<
     VariantResponse | undefined
   >(undefined);
+  const [inspectImageUrl, setInspectImageUrl] = useState<string | null>(null);
 
   // --- HANDLERS ---
   const handleEdit = useCallback(
@@ -309,6 +349,7 @@ export function VariantManager({
         handleDelete,
         disableDelete,
         hasEditProductPerm,
+        (url) => setInspectImageUrl(url),
       ),
     [handleEdit, handleDelete, disableDelete, hasEditProductPerm],
   );
@@ -316,6 +357,11 @@ export function VariantManager({
   return (
     <div className="default-card flex flex-col gap-6">
       {ConfirmationModal}
+      <ViewFullImage
+        imageUrl={inspectImageUrl}
+        onClose={() => setInspectImageUrl(null)}
+        altText="Product Variant"
+      />
 
       {/* Header and Modal Trigger */}
       <div className="flex items-center justify-between border-b border-gray-200 p-6 pb-4 dark:border-gray-800">
@@ -351,7 +397,7 @@ export function VariantManager({
             <Button
               size="sm"
               variant="danger"
-              disabled={disable}
+              disabled={disableDelete}
               onClick={() => handleDeleteProduct(productId)}
             >
               <Trash2 size={16} />

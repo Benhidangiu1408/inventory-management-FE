@@ -109,3 +109,6 @@ export async function VariantUpdateAction(
 ) {
   await productService.updateVariant(id, data);
 }
+export async function uploadImageAction(name: string, type: string) {
+  return await productService.uploadImage(name, type);
+}
