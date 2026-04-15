@@ -42,6 +42,7 @@ export interface StorageLocationRow {
 }
 
 export interface ProductTempRow {
+  detailId: number;
   id: number;
   name: string;
   description: string;
