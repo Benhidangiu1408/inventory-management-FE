@@ -13,8 +13,12 @@ import {
   FaultOrderStatus,
   FaultOrderSummary,
   FaultTask,
+  InboundOutboundMonthlyPoint,
+  InboundOutboundMonthlyRequest,
+  InboundOutboundOrderCountResponse,
   InventoryCheckResponse,
   InventoryCheckSheetData,
+  OverviewSummaryResponse,
   SubmitCheckResultRequest,
   UpdateFaultBatchHandlingStatusRequest,
   UpdateFaultBatchProcessOrderRequest,
@@ -51,6 +55,12 @@ export const inventoryCheckService = {
       null,
     );
   },
+  delete: async (id: number) => {
+    return apiClient.delete<void>(
+      `/inventory/v1/inventory-check/${id}/cancel`,
+      null,
+    );
+  },
   submit: async (data: SubmitCheckResultRequest) => {
     return apiClient.post<SubmitCheckResultRequest>(
       `/inventory/v1/inventory-check/submit-results`,
@@ -63,16 +73,45 @@ export const inventoryCheckService = {
       null,
     );
   },
-  approve: async (id: number, userId: number) => {
+  approve: async (id: number) => {
     return apiClient.post<void>(
-      `/inventory/v1/inventory-check/${id}/approve?userId=${userId}`,
+      `/inventory/v1/inventory-check/${id}/approve`,
       null,
     );
   },
-  reject: async (id: number, userId: number) => {
+  reject: async (id: number) => {
     return apiClient.post<void>(
-      `/inventory/v1/inventory-check/${id}/reject?userId=${userId}`,
+      `/inventory/v1/inventory-check/${id}/reject`,
       null,
+    );
+  },
+};
+
+export const inventoryDashboardService = {
+  getOverviewSummary: async () => {
+    return apiClient.get<OverviewSummaryResponse>(
+      "/inventory/v1/dashboard/overview",
+      {
+        cache: "no-store",
+      },
+    );
+  },
+
+  getInboundOutboundMonthlySummary: async (
+    request?: InboundOutboundMonthlyRequest | null,
+  ) => {
+    return apiClient.post<InboundOutboundMonthlyPoint[]>(
+      "/inventory/v1/dashboard/inbound-outbound/monthly",
+      request ?? null,
+    );
+  },
+
+  getInboundOutboundTotalSummary: async (
+    request?: InboundOutboundMonthlyRequest | null,
+  ) => {
+    return apiClient.post<InboundOutboundOrderCountResponse>(
+      "/inventory/v1/dashboard/inbound-outbound/total",
+      request ?? null,
     );
   },
 };
@@ -181,7 +220,9 @@ export const faultOrderService = {
     );
   },
 
-  createFaultBatchProcessOrder: async (data: CreateFaultBatchProcessOrderRequest) => {
+  createFaultBatchProcessOrder: async (
+    data: CreateFaultBatchProcessOrderRequest,
+  ) => {
     return apiClient.post<FaultBatchProcessOrder>(
       "/inventory/v1/process-orders",
       data,
@@ -229,10 +270,7 @@ export const faultOrderService = {
   },
 
   updateTasksStatus: async (data: UpdateTasksStatusRequest) => {
-    return apiClient.put<FaultTask[]>(
-      "/inventory/v1/tasks/status",
-      data,
-    );
+    return apiClient.put<FaultTask[]>("/inventory/v1/tasks/status", data);
   },
 
   markFaultBatchesFixed: async (
@@ -243,8 +281,15 @@ export const faultOrderService = {
       data,
     );
   },
-  assignTaskToFaultBatch: async (faultBatchId: number, taskId?: number | null) => {
-    const query = taskId === null || taskId === undefined ? "" : `?taskId=${taskId}`;
-    return apiClient.put<FaultBatch>(`/inventory/v1/fault-batches/${faultBatchId}/task${query}`, null);
+  assignTaskToFaultBatch: async (
+    faultBatchId: number,
+    taskId?: number | null,
+  ) => {
+    const query =
+      taskId === null || taskId === undefined ? "" : `?taskId=${taskId}`;
+    return apiClient.put<FaultBatch>(
+      `/inventory/v1/fault-batches/${faultBatchId}/task${query}`,
+      null,
+    );
   },
 };

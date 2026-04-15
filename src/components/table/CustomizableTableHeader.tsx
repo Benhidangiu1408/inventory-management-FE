@@ -22,6 +22,7 @@ import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
 import { Role, User } from "@/interfaces/userManagementType";
 import { AssignRoleAction } from "@/actions/user";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 // --- Warehouse General Header ---
 export const warehouseHeaders: Column<WarehouseGeneral>[] = [
@@ -229,6 +230,7 @@ export const getVariantHeaders = (
   onDelete: (id: number) => void,
   disable: boolean,
   hasEditPerm: boolean,
+  onImageClick: (imageUrl: string) => void,
 ): Column<VariantResponse>[] => [
   {
     label: "Variant Code",
@@ -245,9 +247,21 @@ export const getVariantHeaders = (
     width: 100,
     render: (val) =>
       val ? (
-        <Link href={"/"}>View Image</Link>
+        <button
+          type="button"
+          className="h-full overflow-hidden rounded border border-gray-200 transition-opacity hover:opacity-80 dark:border-gray-700"
+          onClick={() => onImageClick(val as string)}
+        >
+          <Image
+            src={val as string}
+            width={32}
+            height={32}
+            alt="Variant thumbnail"
+            className="object-cover"
+          />
+        </button>
       ) : (
-        <span className="text-gray-400 italic">No image</span>
+        <span className="text-xs text-gray-400 italic">No image</span>
       ),
   },
   {

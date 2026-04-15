@@ -1,6 +1,6 @@
 "use client";
 
-import { ProductCreateAction } from "@/actions/system-info";
+import { ProductCreateAction, uploadImageAction } from "@/actions/system-info";
 import ComponentCard from "@/default_components/common/ComponentCard";
 import Input from "@/default_components/form/input/InputField";
 import Label from "@/default_components/form/Label";
@@ -21,6 +21,11 @@ import {
   useWatch,
 } from "react-hook-form";
 import toast from "react-hot-toast";
+import ImagePicker from "../ImagePicker";
+
+interface CombinedProductFormData extends ProductCreateRequest {
+  rawFile?: File | null;
+}
 
 export const CreateProductForm = ({
   category,
@@ -49,13 +54,16 @@ export const CreateProductForm = ({
     handleSubmit,
     control,
     getValues,
+    setValue,
     formState: { errors },
-  } = useForm<ProductCreateRequest>({
+  } = useForm<CombinedProductFormData>({
     defaultValues: {
       name: "",
       description: null,
       categoryId: null,
       baseUnitId: null,
+      image: null,
+      rawFile: null,
     },
   });
 
@@ -67,14 +75,35 @@ export const CreateProductForm = ({
   const baseUnitId = useWatch({ control, name: "baseUnitId" });
 
   //Validation Logic
-  const onSubmit: SubmitHandler<ProductCreateRequest> = async (data) => {
+  const onSubmit: SubmitHandler<CombinedProductFormData> = async (data) => {
     setLoading(true);
+    const toastId = toast.loading("Creating product...");
     try {
+      let finalImageUrl = data.image || null;
+      if (data.rawFile) {
+        toast.loading("Uploading image to storage...", { id: toastId });
+        const { uploadUrl, finalImageUrl: s3Url } = await uploadImageAction(
+          data.rawFile.name,
+          data.rawFile.type,
+        );
+        const s3Response = await fetch(uploadUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": data.rawFile.type,
+          },
+          body: data.rawFile,
+        });
+        if (!s3Response.ok) throw new Error("Failed to upload image to S3");
+
+        finalImageUrl = s3Url;
+        toast.loading("Saving to database...", { id: toastId });
+      }
       const payload: ProductCreateRequest = {
         name: data.name,
         description: data.description !== "" ? data.description : null,
         categoryId: Number(data.categoryId),
         baseUnitId: Number(data.baseUnitId),
+        image: finalImageUrl,
       };
       if (data.additionalConversions && data.additionalConversions.length > 0) {
         payload.additionalConversions = data.additionalConversions.map(
@@ -136,6 +165,15 @@ export const CreateProductForm = ({
             options={categoryOption}
             error={!!errors.categoryId}
             hint={errors.categoryId?.message}
+          />
+        </div>
+        {/* --- ADDED IMAGE PICKER HERE --- */}
+        <div className="mb-4 w-full">
+          <Label>Product Image (Default Variant)</Label>
+          <ImagePicker
+            onFileSelected={(file) => {
+              setValue("rawFile", file, { shouldDirty: true });
+            }}
           />
         </div>
       </ComponentCard>
