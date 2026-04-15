@@ -150,6 +150,7 @@ export default function ExportConfirm() {
 
       return {
         detailId: detail.id,
+        productVariantId: detail.productVariant.id,
         productName: detail.productVariant.product.name,
         description: detail.productVariant.description,
         expectedQuantity: detail.expectedQuantity ?? 0,
@@ -159,7 +160,7 @@ export default function ExportConfirm() {
         variance: scannedQuantity - detail.expectedQuantity,
         unit: detail.unit,
         baseUnit: detail.productVariant.product.baseUnit,
-        conversionRate: detail.unitConversion.conversionRate,
+        conversionRate: detail?.unitConversion?.conversionRate ?? 1,
         locations: detail.batches.map((item) => ({
           detailId: detail.id,
           batchId: item.batch.id,
