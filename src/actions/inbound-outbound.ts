@@ -204,3 +204,11 @@ export async function getItemsByProductVariantInExportSheet(
     exportSheetId,
   );
 }
+
+export async function getBarcodeFromActiveBatchWithLocation(
+  productVariantId: number,
+) {
+  return await inboundOutboundService.getBarcodeFromActiveBatchWithLocation(
+    productVariantId,
+  );
+}

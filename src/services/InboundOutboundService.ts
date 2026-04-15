@@ -271,4 +271,12 @@ export const inboundOutboundService = {
       `/inbound-outbound/v1/items/${exportSheetId}/${productVariantId}`,
     );
   },
+
+  getBarcodeFromActiveBatchWithLocation: async (productVariantId: number) => {
+    const res = await apiClient.get<{ message: string; data: string }>(
+      `/inbound-outbound/v1/items/active-batch/barcode?productVariantId=${productVariantId}`,
+      { cache: "no-cache" },
+    );
+    return res.data;
+  },
 };

@@ -19,12 +19,14 @@ import {
   faBarcode,
   faEye,
   faSpinner,
+  faRobot,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams } from "next/navigation";
 import { useExport } from "@/context/ExportContext";
 import { useState } from "react";
 import {
+  getBarcodeFromActiveBatchWithLocation,
   getExportedItemsByBatchId,
   updateExportSheetDetail,
 } from "@/actions/inbound-outbound";
@@ -49,6 +51,7 @@ export default function ExportQuantityCheck() {
     useState<ExportQuantityCheckRow | null>(null);
   const [items, setItems] = useState<ExportItemModalRow[]>([]);
   const [loadingBatchId, setLoadingBatchId] = useState<number | null>(null);
+  const [autoScanLoading, setAutoScanLoading] = useState(false);
 
   const itemModalColumns: Column<ExportItemModalRow>[] = [
     { key: "itemId", label: "Item ID" },
@@ -183,6 +186,7 @@ export default function ExportQuantityCheck() {
 
       return {
         detailId: detail.id,
+        productVariantId: detail.productVariant.id,
         productName: detail.productVariant.product.name,
         description: detail.productVariant.description,
         expectedQuantity: detail.expectedQuantity ?? 0,
@@ -214,6 +218,23 @@ export default function ExportQuantityCheck() {
   const handleCloseScanModal = () => {
     setScanningRow(null);
     setItemBarCode("");
+  };
+
+  const handleAutoScan = async () => {
+    if (isRejected || !scanningRow) return;
+    setAutoScanLoading(true);
+    try {
+      const barcode = await getBarcodeFromActiveBatchWithLocation(
+        scanningRow.productVariantId,
+      );
+      setItemBarCode(barcode);
+    } catch (err: unknown) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to get barcode",
+      );
+    } finally {
+      setAutoScanLoading(false);
+    }
   };
 
   const handleScan = async () => {
@@ -277,6 +298,20 @@ export default function ExportQuantityCheck() {
             disabled={isRejected}
           />
           <div className="flex justify-end gap-2">
+            <Button
+              size="md"
+              variant="outline"
+              onClick={handleAutoScan}
+              disabled={isRejected || autoScanLoading}
+              startIcon={
+                <FontAwesomeIcon
+                  icon={autoScanLoading ? faSpinner : faRobot}
+                  className={autoScanLoading ? "animate-spin" : ""}
+                />
+              }
+            >
+              Auto Scan
+            </Button>
             <Button size="md" onClick={handleScan} disabled={isRejected}>
               Scan
             </Button>

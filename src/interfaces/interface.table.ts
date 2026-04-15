@@ -163,6 +163,7 @@ export interface QuantityCheckParentRow extends QuantityCheckRow {
 /** Parent row: one per product, with expandable location/quantity sub-table */
 export interface ExportQuantityCheckParentRow {
   detailId: number;
+  productVariantId: number;
   productName: string;
   description: string;
   expectedQuantity: number;
