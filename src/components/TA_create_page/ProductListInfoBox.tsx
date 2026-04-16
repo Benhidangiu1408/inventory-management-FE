@@ -27,6 +27,7 @@ import { ApiError } from "next/dist/server/api-utils";
 import { useAuth } from "@/context/AuthContext";
 import { UserPermissions } from "@/interfaces/userManagementType";
 import Button from "@/default_components/ui/button/Button";
+import EditableQuantity from "./EditableQuantity";
 import { Trash } from "lucide-react";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
 
@@ -54,6 +55,7 @@ export default function ProductListInfoBox({
 
   const productTempData: ProductTempRow[] = importData.details.map(
     (detail) => ({
+      detailId: detail.id,
       id: detail.productVariant.id,
       name: detail.productVariant.product.name,
       description: detail.productVariant.description,
@@ -84,6 +86,32 @@ export default function ProductListInfoBox({
     {
       key: "expectedQuantity",
       label: "Expected Quantity",
+      render: (_, row) => {
+        if (!canDelete) return row.expectedQuantity;
+        return (
+          <EditableQuantity
+            initialValue={row.expectedQuantity}
+            onSave={async (value) => {
+              const data: ImportSheetDetailUpdateReq = {
+                productVariantId: row.id,
+                expectedQuantity: value,
+                unitId: row.unit.id,
+              };
+              const updated = await updateImportSheetDetail(
+                id as string,
+                row.detailId,
+                data,
+              );
+              setImportData((prev) => ({
+                ...prev,
+                details: prev.details.map((d) =>
+                  d.id === updated.id ? updated : d,
+                ),
+              }));
+            }}
+          />
+        );
+      },
     },
     {
       key: "unit",
@@ -99,13 +127,9 @@ export default function ProductListInfoBox({
               _: ProductTempRow[keyof ProductTempRow],
               row: ProductTempRow,
             ) => {
-              const detail = details.find(
-                (d) => d.productVariant.id === row.id,
-              );
-              if (!detail) return null;
               return (
                 <Button
-                  onClick={() => handleDelete(detail.id)}
+                  onClick={() => handleDelete(row.detailId)}
                   size="sm"
                   variant="outline"
                   className="text-red-500 hover:text-red-700"
@@ -153,50 +177,13 @@ export default function ProductListInfoBox({
     try {
       results = await Promise.all(
         selectedProducts.map(async (selectedProduct) => {
-          const item = productTempData.find(
-            (product) => product.id === selectedProduct.id,
-          );
-
-          if (!item) {
-            const data: ImportSheetDetailCreateReq = {
-              productVariantId: selectedProduct.id,
-              expectedQuantity: selectedProduct.expectedQuantity,
-              unitId: selectedProduct.unit.id,
-            };
-            const res = await createImportSheetDetail(id as string, data);
-            return { type: "create" as const, res };
-          } else {
-            const foundedDetail = details.find(
-              (detail) => detail.productVariant.id === selectedProduct.id,
-            );
-
-            if (!foundedDetail) {
-              toast.error(
-                "Not found correct Detail for + " + selectedProduct.id,
-              );
-              return null;
-            }
-
-            if (foundedDetail.unit?.id !== selectedProduct.unit.id) {
-              throw new Error(
-                `The unit ${selectedProduct.unit.name} is not equal to ${foundedDetail.unit?.name} to update Product Variant ${selectedProduct.id}`,
-              );
-            }
-
-            const data: ImportSheetDetailUpdateReq = {
-              productVariantId: selectedProduct.id,
-              expectedQuantity:
-                item.expectedQuantity + selectedProduct.expectedQuantity,
-              unitId: selectedProduct.unit.id,
-            };
-
-            const res = await updateImportSheetDetail(
-              id as string,
-              foundedDetail.id,
-              data,
-            );
-            return { type: "update" as const, res };
-          }
+          const data: ImportSheetDetailCreateReq = {
+            productVariantId: selectedProduct.id,
+            expectedQuantity: selectedProduct.expectedQuantity,
+            unitId: selectedProduct.unit.id,
+          };
+          const res = await createImportSheetDetail(id as string, data);
+          return { type: "create" as const, res };
         }),
       );
     } catch (error) {
@@ -208,20 +195,10 @@ export default function ProductListInfoBox({
       return;
     }
 
-    setImportData((prev) => {
-      let updatedDetails = [...prev.details];
-      for (const result of results) {
-        if (!result) continue;
-        if (result.type === "create") {
-          updatedDetails = [...updatedDetails, result.res];
-        } else {
-          updatedDetails = updatedDetails.map((detail) =>
-            detail.id === result.res.id ? result.res : detail,
-          );
-        }
-      }
-      return { ...prev, details: updatedDetails };
-    });
+    setImportData((prev) => ({
+      ...prev,
+      details: [...prev.details, ...results.map((r) => r.res)],
+    }));
   };
 
   return (
@@ -258,7 +235,7 @@ export default function ProductListInfoBox({
           <CustomizableTable<ProductTempRow>
             headers={productTempColumn}
             data={productTempData}
-            getRowId={(params) => String(params.data.id)}
+            getRowId={(params) => String(params.data.detailId)}
           />
         </div>
       </InfoBox>
