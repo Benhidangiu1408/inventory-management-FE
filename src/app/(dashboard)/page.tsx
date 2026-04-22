@@ -5,6 +5,7 @@ import {
 } from "@/actions/dashboard";
 import InventoryDashboardRealtime from "../../components/dashboard/InventoryDashboardRealtime";
 import type { InboundOutboundMonthlyRequest } from "@/interfaces/inventoryManagementType";
+import { predictionService } from "@/services/PredictionService";
 
 type DashboardQueryParams = Record<string, string | string[] | undefined>;
 
@@ -156,6 +157,24 @@ function getErrorMessage(error: unknown): string {
 }
 
 export default async function Dashboard({ searchParams }: DashboardPageProps) {
+  const response = await predictionService.predict({
+    product_id: "P0001",
+    horizon: 7,
+    Price: 25.5,
+    Discount: 0.05,
+    "Competitor Pricing": 26.0,
+    "Units Sold": 120,
+    Seasonality: "Autumn",
+    Category: "Groceries",
+    Region: "North",
+    "Weather Condition": "Rainy",
+    "Holiday/Promotion": 0,
+    // Optional cross-sales data
+    Sales_Today_P0001: 120,
+    Sales_Today_P0002: 45,
+  });
+
+  console.log(`Predicted Units: ${response.predicted_units}`);
   const resolvedSearchParams = await resolveSearchParams(searchParams);
   const now = new Date();
   const defaultTo: YearMonth = {
