@@ -79,6 +79,13 @@ export enum LocationType {
   BIN = "BIN",
 }
 
+export enum BatchStatus {
+  ACTIVE = "ACTIVE",
+  DEPLETED = "DEPLETED",
+  FAULT = "FAULT",
+  ARCHIVED = "ARCHIVED",
+}
+
 export enum LocationStatus {
   INACTIVE = "INACTIVE",
   OCCUPIED = "OCCUPIED",
@@ -88,12 +95,23 @@ export enum LocationStatus {
   UNDER_MAINTENANCE = "UNDER_MAINTENANCE",
 }
 
+export interface LocationBatch {
+  id: number;
+  code: string;
+  status: BatchStatus;
+  initialQty: number;
+  currentQty: number;
+  productName: string;
+  unitName: string;
+}
+
 export interface LocationResponse {
   id: number;
   name: string;
   code: string;
   type: LocationType;
   status: LocationStatus;
+  batch: LocationBatch;
 }
 
 export interface LocationUpdate {

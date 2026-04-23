@@ -222,7 +222,8 @@ export default function InventoryDashboardRealtime({
     colors: ["#DC2626", "#F59E0B", "#16A34A", "#0EA5E9", "#7C3AED"],
     legend: {
       position: "bottom",
-      fontFamily: "Outfit",
+      fontFamily: "Outfit, sans-serif",
+      fontWeight: 400,
     },
     dataLabels: {
       enabled: true,
@@ -235,9 +236,14 @@ export default function InventoryDashboardRealtime({
       style: {
         colors: ["#ffffff"],
         fontSize: "18px",
+        fontFamily: "Outfit, sans-serif",
+        fontWeight: "400",
       },
     },
     tooltip: {
+      style: {
+        fontFamily: "Outfit, sans-serif",
+      },
       y: {
         formatter: (value) => formatMetric(Math.round(value)),
       },
@@ -486,7 +492,7 @@ export default function InventoryDashboardRealtime({
             Fault Type Distribution
           </h3>
 
-          <div className="mt-4">
+          <div className="mt-4 font-outfit">
             {faultPieSeries.length > 0 ? (
               <ReactApexChart
                 options={faultPieOptions}
@@ -495,7 +501,7 @@ export default function InventoryDashboardRealtime({
                 height={300}
               />
             ) : (
-              <p className="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-500 dark:bg-gray-800/60 dark:text-gray-400">
+              <p className="font-outfit font-normal rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-500 dark:bg-gray-800/60 dark:text-gray-400">
                 No fault status data available.
               </p>
             )}
