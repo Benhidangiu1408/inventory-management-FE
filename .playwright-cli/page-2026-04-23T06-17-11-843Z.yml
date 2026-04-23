@@ -1,0 +1,296 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e154]:
+    - complementary [ref=e155]:
+      - link "Logo Stockify" [ref=e157] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e159]:
+          - img "Logo" [ref=e160]
+          - generic [ref=e161]: Stockify
+      - navigation [ref=e163]:
+        - generic [ref=e164]:
+          - generic [ref=e165]:
+            - heading "Menu" [level=2] [ref=e166]
+            - list [ref=e167]:
+              - listitem [ref=e168]:
+                - link "Dashboard" [ref=e169] [cursor=pointer]:
+                  - /url: /
+                  - img [ref=e171]
+                  - generic [ref=e173]: Dashboard
+              - listitem [ref=e174]:
+                - button "Inventory" [ref=e175] [cursor=pointer]:
+                  - img [ref=e177]
+                  - generic [ref=e181]: Inventory
+                  - img [ref=e182]
+                - list [ref=e184]:
+                  - listitem [ref=e185]:
+                    - link "Item" [ref=e186] [cursor=pointer]:
+                      - /url: /s
+                      - text: Item
+                  - listitem [ref=e187]:
+                    - link "Batch" [ref=e188] [cursor=pointer]:
+                      - /url: /s
+                      - text: Batch
+              - listitem [ref=e189]:
+                - link "Import" [ref=e190] [cursor=pointer]:
+                  - /url: /import
+                  - img [ref=e192]
+                  - generic [ref=e194]: Import
+              - listitem [ref=e195]:
+                - link "Export" [ref=e196] [cursor=pointer]:
+                  - /url: /export
+                  - img [ref=e198]
+                  - generic [ref=e200]: Export
+              - listitem [ref=e201]:
+                - link "Stocktaking" [ref=e202] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - img [ref=e204]
+                  - generic [ref=e208]: Stocktaking
+              - listitem [ref=e209]:
+                - link "Fault Handle" [ref=e210] [cursor=pointer]:
+                  - /url: /fault-order
+                  - img [ref=e212]
+                  - generic [ref=e217]: Fault Handle
+              - listitem [ref=e218]:
+                - button "Master Data" [ref=e219] [cursor=pointer]:
+                  - img [ref=e221]
+                  - generic [ref=e226]: Master Data
+                  - img [ref=e227]
+                - list [ref=e229]:
+                  - listitem [ref=e230]:
+                    - link "Warehouse" [ref=e231] [cursor=pointer]:
+                      - /url: /warehouse-management/warehouse
+                      - text: Warehouse
+                  - listitem [ref=e232]:
+                    - link "Category" [ref=e233] [cursor=pointer]:
+                      - /url: /catalog/category
+                      - text: Category
+                  - listitem [ref=e234]:
+                    - link "Product" [ref=e235] [cursor=pointer]:
+                      - /url: /catalog/product
+                      - text: Product
+                  - listitem [ref=e236]:
+                    - link "Product Attributes" [ref=e237] [cursor=pointer]:
+                      - /url: /catalog/variant-attributes
+                      - text: Product Attributes
+                  - listitem [ref=e238]:
+                    - link "UOM (Unit of Measurement)" [ref=e239] [cursor=pointer]:
+                      - /url: /catalog/unit
+                      - text: UOM (Unit of Measurement)
+              - listitem [ref=e240]:
+                - button "Business Partners" [ref=e241] [cursor=pointer]:
+                  - img [ref=e243]
+                  - generic [ref=e247]: Business Partners
+                  - img [ref=e248]
+                - list [ref=e250]:
+                  - listitem [ref=e251]:
+                    - link "Supplier" [ref=e252] [cursor=pointer]:
+                      - /url: /s
+                      - text: Supplier
+                  - listitem [ref=e253]:
+                    - link "Customer" [ref=e254] [cursor=pointer]:
+                      - /url: /s
+                      - text: Customer
+              - listitem [ref=e255]:
+                - button "Users Settings" [ref=e256] [cursor=pointer]:
+                  - img [ref=e258]
+                  - generic [ref=e270]: Users Settings
+                  - img [ref=e271]
+                - list [ref=e273]:
+                  - listitem [ref=e274]:
+                    - link "Users Management" [ref=e275] [cursor=pointer]:
+                      - /url: /admin/user-management
+                      - text: Users Management
+                  - listitem [ref=e276]:
+                    - link "Role & Permission" [ref=e277] [cursor=pointer]:
+                      - /url: /admin/role-management
+                      - text: Role & Permission
+                  - listitem [ref=e278]:
+                    - link "User History" [ref=e279] [cursor=pointer]:
+                      - /url: /s
+                      - text: User History
+              - listitem [ref=e280]:
+                - link "Notification" [ref=e281] [cursor=pointer]:
+                  - /url: /notification
+                  - img [ref=e283]
+                  - generic [ref=e285]: Notification
+              - listitem [ref=e286]:
+                - link "Profile" [ref=e287] [cursor=pointer]:
+                  - /url: /profile
+                  - img [ref=e289]
+                  - generic [ref=e293]: Profile
+          - generic [ref=e294]:
+            - heading "Others" [level=2] [ref=e295]
+            - list [ref=e296]:
+              - listitem [ref=e297]:
+                - link "Calendar" [ref=e298] [cursor=pointer]:
+                  - /url: /calendar
+                  - img [ref=e300]
+                  - generic [ref=e302]: Calendar
+              - listitem [ref=e303]:
+                - button "Forms" [ref=e304] [cursor=pointer]:
+                  - img [ref=e306]
+                  - generic [ref=e308]: Forms
+                  - img [ref=e309]
+                - list [ref=e311]:
+                  - listitem [ref=e312]:
+                    - link "Form Elements" [ref=e313] [cursor=pointer]:
+                      - /url: /form-elements
+                      - text: Form Elements
+              - listitem [ref=e314]:
+                - button "Charts" [ref=e315] [cursor=pointer]:
+                  - img [ref=e317]
+                  - generic [ref=e319]: Charts
+                  - img [ref=e320]
+                - list [ref=e322]:
+                  - listitem [ref=e323]:
+                    - link "Line Chart" [ref=e324] [cursor=pointer]:
+                      - /url: /line-chart
+                      - text: Line Chart
+                  - listitem [ref=e325]:
+                    - link "Bar Chart" [ref=e326] [cursor=pointer]:
+                      - /url: /bar-chart
+                      - text: Bar Chart
+              - listitem [ref=e327]:
+                - button "UI Elements" [ref=e328] [cursor=pointer]:
+                  - img [ref=e330]
+                  - generic [ref=e332]: UI Elements
+                  - img [ref=e333]
+                - list [ref=e335]:
+                  - listitem [ref=e336]:
+                    - link "Alerts" [ref=e337] [cursor=pointer]:
+                      - /url: /alerts
+                      - text: Alerts
+                  - listitem [ref=e338]:
+                    - link "Avatar" [ref=e339] [cursor=pointer]:
+                      - /url: /avatars
+                      - text: Avatar
+                  - listitem [ref=e340]:
+                    - link "Badge" [ref=e341] [cursor=pointer]:
+                      - /url: /badge
+                      - text: Badge
+                  - listitem [ref=e342]:
+                    - link "Buttons" [ref=e343] [cursor=pointer]:
+                      - /url: /buttons
+                      - text: Buttons
+                  - listitem [ref=e344]:
+                    - link "Images" [ref=e345] [cursor=pointer]:
+                      - /url: /images
+                      - text: Images
+                  - listitem [ref=e346]:
+                    - link "Videos" [ref=e347] [cursor=pointer]:
+                      - /url: /videos
+                      - text: Videos
+                  - listitem [ref=e348]:
+                    - link "Modals" [ref=e349] [cursor=pointer]:
+                      - /url: /modals
+                      - text: Modals
+    - generic [ref=e350]:
+      - banner [ref=e351]:
+        - generic [ref=e352]:
+          - generic [ref=e353]:
+            - button "Toggle Sidebar" [ref=e354] [cursor=pointer]:
+              - img [ref=e355]
+            - generic [ref=e359]:
+              - generic:
+                - img
+              - textbox "Search or type command..." [ref=e360]
+              - button "⌘ K" [ref=e361] [cursor=pointer]:
+                - generic [ref=e362]: ⌘
+                - generic [ref=e363]: K
+          - generic [ref=e364]:
+            - generic [ref=e365]:
+              - button [ref=e366] [cursor=pointer]:
+                - img [ref=e367]
+              - button [ref=e370] [cursor=pointer]:
+                - img [ref=e373]
+            - button "User huylam" [ref=e376] [cursor=pointer]:
+              - img "User" [ref=e378]
+              - generic [ref=e379]: huylam
+              - img [ref=e380]
+      - generic [ref=e383]:
+        - generic [ref=e384]: Unable to find instance for INVENTORY-MANAGEMENT-SERVICE | Unable to find instance for INVENTORY-MANAGEMENT-SERVICE | Unable to find instance for INVENTORY-MANAGEMENT-SERVICE
+        - generic [ref=e385]:
+          - generic [ref=e386]:
+            - paragraph [ref=e387]: Total
+            - generic [ref=e388]:
+              - generic [ref=e389]:
+                - generic [ref=e390]: Total Categories
+                - generic [ref=e391]: "0"
+              - generic [ref=e392]:
+                - generic [ref=e393]: Total Products
+                - generic [ref=e394]: "0"
+              - generic [ref=e395]:
+                - generic [ref=e396]: Total Warehouses
+                - generic [ref=e397]: "0"
+          - generic [ref=e398]:
+            - paragraph [ref=e399]: Today
+            - generic [ref=e400]:
+              - generic [ref=e401]:
+                - generic [ref=e402]: Today Inbound Orders
+                - generic [ref=e403]: "0"
+              - generic [ref=e404]:
+                - generic [ref=e405]: Today Outbound Orders
+                - generic [ref=e406]: "0"
+              - generic [ref=e407]:
+                - generic [ref=e408]: Today Total Orders
+                - generic [ref=e409]: "0"
+          - generic [ref=e410]:
+            - paragraph [ref=e411]: Total Orders (Selected Range)
+            - generic [ref=e412]:
+              - generic [ref=e413]:
+                - generic [ref=e414]: Inbound Orders
+                - generic [ref=e415]: "0"
+              - generic [ref=e416]:
+                - generic [ref=e417]: Outbound Orders
+                - generic [ref=e418]: "0"
+              - generic [ref=e419]:
+                - generic [ref=e420]: Total Orders
+                - generic [ref=e421]: "0"
+        - generic [ref=e422]:
+          - generic [ref=e423]:
+            - generic [ref=e424]:
+              - generic [ref=e425]:
+                - heading "Inbound/Outbound Quantity by Month" [level=3] [ref=e426]
+                - paragraph [ref=e427]: "Current range: 11/2025 - 04/2026"
+              - generic [ref=e428]:
+                - generic [ref=e429]:
+                  - generic [ref=e430]: From
+                  - textbox "From" [ref=e431]: 2025-11
+                - generic [ref=e432]:
+                  - generic [ref=e433]: To
+                  - textbox "To" [ref=e434]: 2026-04
+                - button "Apply" [ref=e435] [cursor=pointer]
+                - link "Reset" [ref=e436] [cursor=pointer]:
+                  - /url: /
+                  - button "Reset" [ref=e437]
+            - paragraph [ref=e438]: No monthly quantity data available for this range.
+          - generic [ref=e439]:
+            - heading "Fault Type Distribution" [level=3] [ref=e440]
+            - paragraph [ref=e442]: No fault status data available.
+        - generic [ref=e443]:
+          - generic [ref=e444]:
+            - generic [ref=e445]:
+              - heading "Inbound/Outbound Order Number by Month" [level=3] [ref=e446]
+              - paragraph [ref=e447]: "Current range: 11/2025 - 04/2026"
+            - generic [ref=e448]:
+              - generic [ref=e449]:
+                - generic [ref=e450]: From
+                - textbox "From" [ref=e451]: 2025-11
+              - generic [ref=e452]:
+                - generic [ref=e453]: To
+                - textbox "To" [ref=e454]: 2026-04
+              - button "Apply" [ref=e455] [cursor=pointer]
+              - link "Reset" [ref=e456] [cursor=pointer]:
+                - /url: /
+                - button "Reset" [ref=e457]
+          - paragraph [ref=e458]: No order count data available for this range.
+        - generic [ref=e459]:
+          - heading "Top Product Quantities" [level=3] [ref=e460]
+          - paragraph [ref=e462]: No product quantity summary available.
+  - generic [ref=e55]:
+    - img [ref=e57]
+    - button "Open Tanstack query devtools" [ref=e105] [cursor=pointer]:
+      - img [ref=e106]
+  - button "Open Next.js Dev Tools" [ref=e50] [cursor=pointer]:
+    - img [ref=e51]
+  - alert [ref=e54]
