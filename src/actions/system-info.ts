@@ -21,7 +21,6 @@ import {
   unitService,
   warehouseService,
 } from "@/services/WarehouseManagementService";
-import { revalidatePath } from "next/cache";
 
 export async function categoryUpdateAction(id: number, data: CategoryRequest) {
   await categoryService.update(id, data);
@@ -100,7 +99,6 @@ export async function ProductCreateVariantAction(data: VariantCreateRequest) {
 }
 export async function ProductDeleteAction(id: number) {
   await productService.deleteProduct(id);
-  revalidatePath("/catalog/product");
 }
 export async function VariantDeleteAction(id: number) {
   await productService.deleteVariant(id);

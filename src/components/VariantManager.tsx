@@ -330,7 +330,7 @@ export function VariantManager({
         setDisable(true);
         await ProductDeleteAction(id);
         toast.success("Product deleted successfully!");
-        router.back();
+        router.replace("/catalog/product");
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         toast.error(error.message ?? "An unexpected error occurred");
