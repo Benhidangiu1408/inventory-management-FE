@@ -15,8 +15,8 @@ setup("login", async ({ page }, testInfo) => {
   const usernameInput = page.getByPlaceholder("Enter username");
   const passwordInput = page.getByPlaceholder("Enter your password");
 
-  await usernameInput.fill("huylam");
-  await passwordInput.fill("Anh2004@nh");
+  await usernameInput.fill("nam3.nguyen");
+  await passwordInput.fill("PlaintextForDemoOnly2");
 
   const signInButton = page.getByRole("button", { name: "Sign in" });
   await signInButton.click();

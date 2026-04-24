@@ -12,7 +12,18 @@
       "Bash(playwright-cli mousewheel:*)",
       "Bash(playwright-cli snapshot:*)",
       "Bash(playwright-cli select:*)",
-      "Bash(playwright-cli close:*)"
+      "Bash(playwright-cli close:*)",
+      "Bash(playwright-cli eval:*)",
+      "Bash(playwright-cli state-load:*)",
+      "Bash(grep -n \"Auto Scan\\\\|autoScan\\\\|getBarcodeFromActiveBatch\\\\|handleAutoScan\\\\|handleScan\" /Users/tuanemtramtinh/Desktop/DACN/inventory-management-FE/src/app/\\\\\\(dashboard\\\\\\)/export/process/[type]/[id]/[step]/ExportQuantityCheck.tsx)",
+      "Bash(playwright-cli console:*)",
+      "Bash(grep -n \"col-id\\\\|colId\\\\|field.*variance\\\\|field.*scan\\\\|field.*scanned\\\\|field.*pickQty\\\\|checkBox\" /Users/tuanemtramtinh/Desktop/DACN/inventory-management-FE/src/app/\\\\\\(dashboard\\\\\\)/export/process/[type]/[id]/[step]/ExportQuantityCheck.tsx)",
+      "Bash(grep -rn \"field.*variance\\\\|field.*scan\\\\|field.*pickQty\\\\|checkBox\\\\|colDef\\\\|columnDef\" /Users/tuanemtramtinh/Desktop/DACN/inventory-management-FE/src/app/\\\\\\(dashboard\\\\\\)/export/process/[type]/[id]/[step]/ --include=\"*.tsx\")",
+      "Bash(grep -rn \"field:\" /Users/tuanemtramtinh/Desktop/DACN/inventory-management-FE/src/app/\\\\\\(dashboard\\\\\\)/export/process/[type]/[id]/[step]/ --include=\"*.tsx\")",
+      "Bash(ls:*)",
+      "Bash(grep -n \"field:\" /Users/tuanemtramtinh/Desktop/DACN/inventory-management-FE/src/app/\\\\\\(dashboard\\\\\\)/export/process/[type]/[id]/[step]/ExportQuantityCheck.tsx)",
+      "Bash(grep -n \"picker\\\\|Picker\\\\|modal\\\\|Modal\\\\|Add\\\\|CreateModal\\\\|ExportProductPicker\\\\|ProductPicker\" /Users/tuanemtramtinh/Desktop/DACN/inventory-management-FE/src/app/\\\\\\(dashboard\\\\\\)/export/process/[type]/[id]/[step]/ExportQuantityCheck.tsx)",
+      "Bash(grep -n \"Success\\\\|success\\\\|toast\\\\|confirmed\\\\|COMPLETED\\\\|Confirm\" /Users/tuanemtramtinh/Desktop/DACN/inventory-management-FE/src/app/\\\\\\(dashboard\\\\\\)/export/process/[type]/[id]/[step]/ExportConfirm.tsx)"
     ]
   }
 }

@@ -13,8 +13,8 @@ setup("login as restricted user", async ({ page }) => {
   const passwordInput = page.getByPlaceholder("Enter your password");
 
   // Replace with an account that has no/limited permissions
-  await usernameInput.fill("nam3.nguyen");
-  await passwordInput.fill("PlaintextForDemoOnly2");
+  await usernameInput.fill("tuanemtramtinh");
+  await passwordInput.fill("Anh2004@nh");
 
   const signInButton = page.getByRole("button", { name: "Sign in" });
   await signInButton.click();

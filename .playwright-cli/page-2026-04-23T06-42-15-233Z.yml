@@ -1,0 +1,346 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - link "Logo Stockify" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]:
+          - img "Logo" [ref=e8]
+          - generic [ref=e9]: Stockify
+      - navigation [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - heading "Menu" [level=2] [ref=e14]
+            - list [ref=e15]:
+              - listitem [ref=e16]:
+                - link "Dashboard" [ref=e17] [cursor=pointer]:
+                  - /url: /
+                  - img [ref=e19]
+                  - generic [ref=e21]: Dashboard
+              - listitem [ref=e22]:
+                - button "Inventory" [ref=e23] [cursor=pointer]:
+                  - img [ref=e25]
+                  - generic [ref=e29]: Inventory
+                  - img [ref=e30]
+                - list [ref=e32]:
+                  - listitem [ref=e33]:
+                    - link "Item" [ref=e34] [cursor=pointer]:
+                      - /url: /s
+                      - text: Item
+                  - listitem [ref=e35]:
+                    - link "Batch" [ref=e36] [cursor=pointer]:
+                      - /url: /s
+                      - text: Batch
+              - listitem [ref=e37]:
+                - link "Import" [ref=e38] [cursor=pointer]:
+                  - /url: /import
+                  - img [ref=e40]
+                  - generic [ref=e42]: Import
+              - listitem [ref=e43]:
+                - link "Export" [ref=e44] [cursor=pointer]:
+                  - /url: /export
+                  - img [ref=e46]
+                  - generic [ref=e48]: Export
+              - listitem [ref=e49]:
+                - link "Stocktaking" [ref=e50] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - img [ref=e52]
+                  - generic [ref=e56]: Stocktaking
+              - listitem [ref=e57]:
+                - link "Fault Handle" [ref=e58] [cursor=pointer]:
+                  - /url: /fault-order
+                  - img [ref=e60]
+                  - generic [ref=e65]: Fault Handle
+              - listitem [ref=e66]:
+                - button "Master Data" [ref=e67] [cursor=pointer]:
+                  - img [ref=e69]
+                  - generic [ref=e74]: Master Data
+                  - img [ref=e75]
+                - list [ref=e77]:
+                  - listitem [ref=e78]:
+                    - link "Warehouse" [ref=e79] [cursor=pointer]:
+                      - /url: /warehouse-management/warehouse
+                      - text: Warehouse
+                  - listitem [ref=e80]:
+                    - link "Category" [ref=e81] [cursor=pointer]:
+                      - /url: /catalog/category
+                      - text: Category
+                  - listitem [ref=e82]:
+                    - link "Product" [ref=e83] [cursor=pointer]:
+                      - /url: /catalog/product
+                      - text: Product
+                  - listitem [ref=e84]:
+                    - link "Product Attributes" [ref=e85] [cursor=pointer]:
+                      - /url: /catalog/variant-attributes
+                      - text: Product Attributes
+                  - listitem [ref=e86]:
+                    - link "UOM (Unit of Measurement)" [ref=e87] [cursor=pointer]:
+                      - /url: /catalog/unit
+                      - text: UOM (Unit of Measurement)
+              - listitem [ref=e88]:
+                - button "Business Partners" [ref=e89] [cursor=pointer]:
+                  - img [ref=e91]
+                  - generic [ref=e95]: Business Partners
+                  - img [ref=e96]
+                - list [ref=e98]:
+                  - listitem [ref=e99]:
+                    - link "Supplier" [ref=e100] [cursor=pointer]:
+                      - /url: /s
+                      - text: Supplier
+                  - listitem [ref=e101]:
+                    - link "Customer" [ref=e102] [cursor=pointer]:
+                      - /url: /s
+                      - text: Customer
+              - listitem [ref=e103]:
+                - button "Users Settings" [ref=e104] [cursor=pointer]:
+                  - img [ref=e106]
+                  - generic [ref=e118]: Users Settings
+                  - img [ref=e119]
+                - list [ref=e121]:
+                  - listitem [ref=e122]:
+                    - link "Users Management" [ref=e123] [cursor=pointer]:
+                      - /url: /admin/user-management
+                      - text: Users Management
+                  - listitem [ref=e124]:
+                    - link "Role & Permission" [ref=e125] [cursor=pointer]:
+                      - /url: /admin/role-management
+                      - text: Role & Permission
+                  - listitem [ref=e126]:
+                    - link "User History" [ref=e127] [cursor=pointer]:
+                      - /url: /s
+                      - text: User History
+              - listitem [ref=e128]:
+                - link "Notification" [ref=e129] [cursor=pointer]:
+                  - /url: /notification
+                  - img [ref=e131]
+                  - generic [ref=e133]: Notification
+              - listitem [ref=e134]:
+                - link "Profile" [ref=e135] [cursor=pointer]:
+                  - /url: /profile
+                  - img [ref=e137]
+                  - generic [ref=e141]: Profile
+          - generic [ref=e142]:
+            - heading "Others" [level=2] [ref=e143]
+            - list [ref=e144]:
+              - listitem [ref=e145]:
+                - link "Calendar" [ref=e146] [cursor=pointer]:
+                  - /url: /calendar
+                  - img [ref=e148]
+                  - generic [ref=e150]: Calendar
+              - listitem [ref=e151]:
+                - button "Forms" [ref=e152] [cursor=pointer]:
+                  - img [ref=e154]
+                  - generic [ref=e156]: Forms
+                  - img [ref=e157]
+                - list [ref=e159]:
+                  - listitem [ref=e160]:
+                    - link "Form Elements" [ref=e161] [cursor=pointer]:
+                      - /url: /form-elements
+                      - text: Form Elements
+              - listitem [ref=e162]:
+                - button "Charts" [ref=e163] [cursor=pointer]:
+                  - img [ref=e165]
+                  - generic [ref=e167]: Charts
+                  - img [ref=e168]
+                - list [ref=e170]:
+                  - listitem [ref=e171]:
+                    - link "Line Chart" [ref=e172] [cursor=pointer]:
+                      - /url: /line-chart
+                      - text: Line Chart
+                  - listitem [ref=e173]:
+                    - link "Bar Chart" [ref=e174] [cursor=pointer]:
+                      - /url: /bar-chart
+                      - text: Bar Chart
+              - listitem [ref=e175]:
+                - button "UI Elements" [ref=e176] [cursor=pointer]:
+                  - img [ref=e178]
+                  - generic [ref=e180]: UI Elements
+                  - img [ref=e181]
+                - list [ref=e183]:
+                  - listitem [ref=e184]:
+                    - link "Alerts" [ref=e185] [cursor=pointer]:
+                      - /url: /alerts
+                      - text: Alerts
+                  - listitem [ref=e186]:
+                    - link "Avatar" [ref=e187] [cursor=pointer]:
+                      - /url: /avatars
+                      - text: Avatar
+                  - listitem [ref=e188]:
+                    - link "Badge" [ref=e189] [cursor=pointer]:
+                      - /url: /badge
+                      - text: Badge
+                  - listitem [ref=e190]:
+                    - link "Buttons" [ref=e191] [cursor=pointer]:
+                      - /url: /buttons
+                      - text: Buttons
+                  - listitem [ref=e192]:
+                    - link "Images" [ref=e193] [cursor=pointer]:
+                      - /url: /images
+                      - text: Images
+                  - listitem [ref=e194]:
+                    - link "Videos" [ref=e195] [cursor=pointer]:
+                      - /url: /videos
+                      - text: Videos
+                  - listitem [ref=e196]:
+                    - link "Modals" [ref=e197] [cursor=pointer]:
+                      - /url: /modals
+                      - text: Modals
+    - generic [ref=e198]:
+      - banner [ref=e199]:
+        - generic [ref=e200]:
+          - generic [ref=e201]:
+            - button "Toggle Sidebar" [ref=e202] [cursor=pointer]:
+              - img [ref=e203]
+            - generic [ref=e207]:
+              - generic:
+                - img
+              - textbox "Search or type command..." [ref=e208]
+              - button "⌘ K" [ref=e209] [cursor=pointer]:
+                - generic [ref=e210]: ⌘
+                - generic [ref=e211]: K
+          - generic [ref=e212]:
+            - generic [ref=e213]:
+              - button [ref=e214] [cursor=pointer]:
+                - img [ref=e215]
+              - button [ref=e218] [cursor=pointer]:
+                - img [ref=e221]
+            - button "User huylam" [ref=e224] [cursor=pointer]:
+              - img "User" [ref=e226]
+              - generic [ref=e227]: huylam
+              - img [ref=e228]
+      - generic [ref=e230]:
+        - generic [ref=e974]:
+          - generic [ref=e975]:
+            - heading "Export Process" [level=2] [ref=e976]
+            - generic [ref=e978]:
+              - img [ref=e979]
+              - heading "customer" [level=3] [ref=e981]
+          - navigation [ref=e982]:
+            - list [ref=e983]:
+              - listitem [ref=e984]:
+                - link "Home" [ref=e985] [cursor=pointer]:
+                  - /url: /
+                  - text: Home
+                  - img [ref=e986]
+              - listitem [ref=e988]:
+                - link "export" [ref=e989] [cursor=pointer]:
+                  - /url: /export
+                  - text: export
+                  - img [ref=e990]
+              - listitem [ref=e992]: Export Process
+        - generic [ref=e993]:
+          - text: "Sheet Status:"
+          - generic [ref=e994]: CREATED
+        - generic [ref=e995]:
+          - generic [ref=e1129]:
+            - paragraph [ref=e1131]: Loading, please wait...
+            - paragraph [ref=e1132]: The system is processing your request.
+          - generic [ref=e996]:
+            - generic [ref=e997]:
+              - generic [ref=e1000]:
+                - img [ref=e1001]
+                - heading "General Information" [level=2] [ref=e1003]
+              - list [ref=e1005]:
+                - listitem [ref=e1006]:
+                  - text: "Status:"
+                  - generic [ref=e1007]: ACTIVE
+                - listitem [ref=e1008]: "Name: Nguyen Van A"
+                - listitem [ref=e1009]: "Address: 65, duong 15, phuong Tan Kieng, Quan 7, TP . HCM"
+                - listitem [ref=e1010]: "Email: nguyenvana@gmail.com"
+                - listitem [ref=e1011]: "Phone Number: 0783962619"
+            - generic [ref=e1012]:
+              - heading "Export Confirm" [level=2] [ref=e1013]
+              - generic [ref=e1014]:
+                - generic [ref=e1015]:
+                  - generic [ref=e1016]: No Rows To Show
+                  - grid [ref=e1017]:
+                    - rowgroup [ref=e1018]:
+                      - row "Product Name Description Expected Quantity Scanned Quantity" [ref=e1019]:
+                        - columnheader "Product Name" [ref=e1021]:
+                          - generic [ref=e1024] [cursor=pointer]: Product Name
+                        - columnheader "Description" [ref=e1025]:
+                          - generic [ref=e1028] [cursor=pointer]: Description
+                        - columnheader "Expected Quantity" [ref=e1029]:
+                          - generic [ref=e1032] [cursor=pointer]: Expected Quantity
+                        - columnheader "Scanned Quantity" [ref=e1033]:
+                          - generic [ref=e1036] [cursor=pointer]: Scanned Quantity
+                        - columnheader [ref=e1133]
+                    - rowgroup [ref=e1037]:
+                      - row "Full-face Helmet Default Variant 1 Pcs (1 Pcs) 1 Pcs (1 Pcs)" [ref=e1134]:
+                        - gridcell [ref=e1135]
+                        - gridcell "Full-face Helmet" [ref=e1138]
+                        - gridcell "Default Variant" [ref=e1139]
+                        - gridcell "1 Pcs (1 Pcs)" [ref=e1140]:
+                          - generic [ref=e1141]:
+                            - text: 1 Pcs
+                            - generic [ref=e1142]: (1 Pcs)
+                        - gridcell "1 Pcs (1 Pcs)" [ref=e1143]:
+                          - generic [ref=e1144]:
+                            - text: 1 Pcs
+                            - generic [ref=e1145]: (1 Pcs)
+                    - rowgroup
+                    - rowgroup
+                    - rowgroup
+                - generic [ref=e1050]:
+                  - generic [ref=e1051]:
+                    - generic [ref=e1052]:
+                      - button [disabled] [ref=e1053]:
+                        - img [ref=e1054]
+                      - button [disabled] [ref=e1057]:
+                        - img [ref=e1058]
+                    - button "1" [ref=e1061] [cursor=pointer]
+                    - generic [ref=e1062]:
+                      - button [disabled] [ref=e1063]:
+                        - img [ref=e1064]
+                      - button [disabled] [ref=e1066]:
+                        - img [ref=e1067]
+                  - generic [ref=e1070]:
+                    - generic [ref=e1071]:
+                      - combobox [ref=e1073] [cursor=pointer]:
+                        - option "Select an option" [disabled]
+                        - option "10" [selected]
+                        - option "20"
+                        - option "50"
+                        - option "100"
+                      - generic [ref=e1074]: Row/page
+                    - generic [ref=e1075]:
+                      - generic [ref=e1076]: Page
+                      - textbox [ref=e1079]: "1"
+                      - button "Go" [ref=e1080] [cursor=pointer]
+          - generic [ref=e1081]:
+            - generic [ref=e1082]:
+              - heading "Order Summary" [level=2] [ref=e1083]
+              - table [ref=e1084]:
+                - rowgroup [ref=e1085]:
+                  - row "Total Products 1 items" [ref=e1086]:
+                    - cell "Total Products" [ref=e1087]
+                    - cell "1 items" [ref=e1088]
+                  - row "Total Quantity 1 units" [ref=e1089]:
+                    - cell "Total Quantity" [ref=e1090]
+                    - cell "1 units" [ref=e1091]
+            - generic [ref=e1092]:
+              - heading "Confirmation" [level=2] [ref=e1093]
+              - button "Confirm" [ref=e1094] [cursor=pointer]:
+                - img [ref=e1095]
+                - text: Confirm
+        - generic [ref=e1098]:
+          - link "Quantity Check" [ref=e1099] [cursor=pointer]:
+            - /url: /export/process/customer/849/quantity-check
+          - generic: Confirm
+  - generic [ref=e294]:
+    - img [ref=e296]
+    - button "Open Tanstack query devtools" [ref=e344] [cursor=pointer]:
+      - img [ref=e345]
+  - generic [ref=e280] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e281]:
+      - img [ref=e282]
+    - generic [ref=e591]:
+      - button "Open issues overlay" [ref=e592]:
+        - generic [ref=e1146]:
+          - generic [ref=e1147]: "56"
+          - generic [ref=e1148]: "57"
+        - generic [ref=e596]:
+          - text: Issue
+          - generic [ref=e597]: s
+      - button "Collapse issues badge" [ref=e598]:
+        - img [ref=e599]
+  - alert [ref=e393]
