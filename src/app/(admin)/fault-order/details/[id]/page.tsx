@@ -1,212 +1,69 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import { cookies } from "next/headers";
-
-// import UtilityBar from "@/components/TA_common/UtilityBar";
-import {
-  type FaultBatch as FaultBatchRow,
-  type ProcessingOrder,
-  type AssignedFaultBatch,
-} from "@/components/table/CustomizableTableHeader";
 import StatusBox from "@/components/TA_common/StatusBox";
-import Button from "@/default_components/ui/button/Button";
+import ComponentCard from "@/default_components/common/ComponentCard";
 import {
-  FaultBatchStatus,
-  FaultProcessOrderType,
-  type FaultBatch as FaultBatchResponse,
-  type FaultBatchProcessOrderSummary,
+  FaultOrderSummary,
+  FaultOrderPermission,
 } from "@/interfaces/inventoryManagementType";
-import { FaultOrderPermission } from "@/interfaces/inventoryManagementType";
-import { getFaultOrderAction } from "@/actions/faultHandling";
-import { getAllUsersByRoleAction } from "@/actions/user";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileExport } from "@fortawesome/free-solid-svg-icons";
 import FaultOrderDetailClient from "./FaultOrderDetailClient";
 import AnalyzerAssigneeSelect from "./AnalyzerAssigneeSelect";
-
-type FaultOrderDetailPageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-};
-
-const DATE_FORMATTER = new Intl.DateTimeFormat("en-GB", {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-});
-
-const formatDisplayDate = (value?: string | null) => {
-  if (!value) return "-";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return "-";
-  }
-  return DATE_FORMATTER.format(date);
-};
-
-const mapBatchStatusToLabel = (
-  status?: FaultBatchStatus,
-): FaultBatchRow["status"] => {
-  switch (status) {
-    case FaultBatchStatus.RESOLVED:
-      return "Completed";
-    case FaultBatchStatus.PROCESSING:
-      return "In progress";
-    default:
-      return "Pending";
-  }
-};
-
-// const mapPriorityToLabel = (
-//   faultOrder?: FaultOrderDetail | null,
-// ): FaultBatchRow["priority"] => {
-//   const normalized = faultOrder?.priorityName?.toLowerCase();
-//   if (normalized === "high") return "High";
-//   if (normalized === "low") return "Low";
-//   return "Medium";
-// };
-
-const buildFaultBatchRows = (
-  batches?: FaultBatchResponse[],
-): FaultBatchRow[] => {
-  if (!batches?.length) {
-    return [];
-  }
-
-  const getProcessOrderId = (batch: FaultBatchResponse) =>
-    batch.faultBatchProcessOrder?.id ?? batch.faultBatchProcessOrderId;
-
-  // const priorityLabel = mapPriorityToLabel(faultOrder);
-
-  return batches
-    .filter((batch) => !getProcessOrderId(batch))
-    .map((batch) => ({
-      id: batch.id,
-      code: batch.code ?? `FB-${batch.id}`,
-      date: formatDisplayDate(batch.createdAt),
-      status: mapBatchStatusToLabel(batch.handlingStatus),
-      taskId: batch.taskId ? String(batch.taskId) : "",
-      checked: batch.handlingStatus === FaultBatchStatus.RESOLVED,
-    }));
-};
-
-const buildAssignedFaultBatchRow = (
-  batches?: FaultBatchResponse[],
-): AssignedFaultBatch[] => {
-  if (!batches?.length) {
-    return [];
-  }
-
-  const getProcessOrderId = (batch: FaultBatchResponse) =>
-    batch.faultBatchProcessOrder?.id ?? batch.faultBatchProcessOrderId;
-
-  return batches
-    .map((batch) => {
-      const processOrderId = getProcessOrderId(batch);
-      if (!processOrderId) {
-        return null;
-      }
-
-      return {
-        id: batch.id,
-        code: batch.code ?? `FB-${batch.id}`,
-        orderId: processOrderId,
-        date: formatDisplayDate(batch.createdAt),
-        status: mapBatchStatusToLabel(batch.handlingStatus),
-        checked: batch.handlingStatus === FaultBatchStatus.RESOLVED,
-      };
-    })
-    .filter((row): row is AssignedFaultBatch => row !== null);
-};
-
-const mapProcessOrderTypeToLabel = (
-  type: FaultProcessOrderType,
-): ProcessingOrder["orderType"] => {
-  switch (type) {
-    case FaultProcessOrderType.RETURNED:
-      return "Returned";
-    case FaultProcessOrderType.CANCELLED:
-      return "Canceled";
-    default:
-      return "Other";
-  }
-};
-
-const buildProcessOrderRows = (
-  orders?: FaultBatchProcessOrderSummary[],
-): ProcessingOrder[] => {
-  if (!orders?.length) {
-    return [];
-  }
-
-  return orders.map((order) => ({
-    orderId: order.id,
-    orderType: mapProcessOrderTypeToLabel(order.type),
-    action: "",
-  }));
-};
+import { faultOrderService } from "@/services/InventoryManagementService";
+import { userManagementService } from "@/services/UserManagementService";
+import { User } from "@/interfaces/userManagementType";
 
 const parsePermissionCookie = (rawValue?: string): string[] => {
-  if (!rawValue) {
-    return [];
-  }
-
+  if (!rawValue) return [];
   const trimmed = rawValue.trim();
-  if (!trimmed) {
-    return [];
-  }
-
+  if (!trimmed) return [];
   try {
     const parsed = JSON.parse(trimmed);
     if (Array.isArray(parsed)) {
       return parsed
-        .filter(
-          (permission): permission is string => typeof permission === "string",
-        )
-        .map((permission) => permission.trim())
+        .filter((p): p is string => typeof p === "string")
+        .map((p) => p.trim())
         .filter(Boolean);
     }
-
-    if (typeof parsed === "string") {
-      const normalized = parsed.trim();
-      return normalized ? [normalized] : [];
-    }
+    if (typeof parsed === "string") return parsed.trim() ? [parsed.trim()] : [];
   } catch {
-    // Cookie may be persisted as a comma-separated string.
+    /* ignore */
   }
-
   return trimmed
     .split(",")
-    .map((permission) => permission.trim())
+    .map((p) => p.trim())
     .filter(Boolean);
 };
 
 export default async function FaultOrderDetailPage({
   params,
-}: FaultOrderDetailPageProps) {
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const cookieStore = await cookies();
   const { id } = await params;
   const faultOrderId = Number(id);
-  const currentUserIdValue = Number(cookieStore.get("userId")?.value);
-  const currentUserId = Number.isNaN(currentUserIdValue)
-    ? null
-    : currentUserIdValue;
+  const currentUserId = Number(cookieStore.get("userId")?.value);
   const permissionSet = new Set(
     parsePermissionCookie(cookieStore.get("permissions")?.value),
   );
+
   const canAssignUser = permissionSet.has(FaultOrderPermission.ASSIGN);
   const canCreateProcessOrder = permissionSet.has(FaultOrderPermission.CREATE);
-  console.log("Received fault order id:", { faultOrderId });
-  if (Number.isNaN(faultOrderId)) {
-    return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700">
-        Invalid fault order id.
-      </div>
+
+  let error: string | null = null;
+  let data: FaultOrderSummary | null = null;
+  let userData: User[] = [];
+
+  try {
+    data = await faultOrderService.getFaultOrder(faultOrderId);
+    userData = await userManagementService.getAllByPermissionCode(
+      FaultOrderPermission.FAULT_HANDLER,
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any) {
+    error = `Could not load data from server. ${e.message}`;
   }
 
-  const { data, error } = await getFaultOrderAction(faultOrderId);
-  console.log("Fetched fault order detail:", { data, error });
   if (error || !data) {
     return (
       <div>
@@ -215,31 +72,32 @@ export default async function FaultOrderDetailPage({
           filters={["details"]}
           status={<StatusBox />}
         />
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700">
+        <div className="default-card border-red-200 p-6 text-red-700 dark:border-red-700 dark:text-red-800">
           {error ?? "Unable to load fault order details."}
         </div>
       </div>
     );
   }
 
-  const analysisActionLabel = (permissionSet.has(FaultOrderPermission.ANALYZE) || currentUserId === data.analyzerId || currentUserId === data.questionCreatorId)
-    ? "Analyze"
-    : (permissionSet.has(FaultOrderPermission.VIEW_ANALYSIS) || currentUserId === data.taskAssigneeId)
-      ? "View Analysis"
-      : null;
-  const taskActionLabel = (permissionSet.has(FaultOrderPermission.ASSIGN_TASK) || currentUserId === data.taskAssigneeId)
-    ? "Assign Tasks"
-    : permissionSet.has(FaultOrderPermission.DO_TASK)
-      ? "Do Task"
-      : permissionSet.has(FaultOrderPermission.VIEW_TASK)
-        ? "View Task"
+  const analysisActionLabel =
+    permissionSet.has(FaultOrderPermission.ANALYZE) ||
+    currentUserId === data.analyzerId ||
+    currentUserId === data.questionCreatorId
+      ? "Analyze"
+      : permissionSet.has(FaultOrderPermission.VIEW_ANALYSIS) ||
+          currentUserId === data.taskAssigneeId
+        ? "View Analysis"
         : null;
 
-  const faultBatchRows = buildFaultBatchRows(data.faultBatches);
-  const assignedFaultBatchRows = buildAssignedFaultBatchRow(data.faultBatches);
-  const processingOrderRows = buildProcessOrderRows(data.processOrders);
-
-  const { data: users } = await getAllUsersByRoleAction(1);
+  const taskActionLabel =
+    permissionSet.has(FaultOrderPermission.ASSIGN_TASK) ||
+    currentUserId === data.taskAssigneeId
+      ? "Assign Tasks"
+      : permissionSet.has(FaultOrderPermission.DO_TASK)
+        ? "Do Task"
+        : permissionSet.has(FaultOrderPermission.VIEW_TASK)
+          ? "View Task"
+          : null;
 
   return (
     <div>
@@ -251,32 +109,25 @@ export default async function FaultOrderDetailPage({
         status={<StatusBox status={data.status} />}
       />
       <div className="flex flex-col gap-6">
-        <div className="flex justify-end rounded-2xl border border-gray-200 p-3">
-          <Button
-            size="sm"
-            variant="primary"
-            startIcon={<FontAwesomeIcon icon={faFileExport} />}
-          >
-            Export
-          </Button>
-        </div>
-        <div className="grid grid-cols-[auto_1fr_auto_1fr] items-center gap-2">
+        <ComponentCard title="Personnel Assignment">
           <AnalyzerAssigneeSelect
             faultOrderId={faultOrderId}
-            users={users ?? []}
+            users={userData ?? []}
             initialAnalyzerId={data.analyzerId}
+            initialAnalyzerName={data.analyzerUsername}
             initialAssigneeId={data.taskAssigneeId}
+            initialAssigneeName={data.taskAssigneeUsername}
             initialQuestionCreatorId={data.questionCreatorId}
+            initialQuestionCreatorName={data.questionCreatorUsername}
             canAssignUser={canAssignUser}
           />
-        </div>
+        </ComponentCard>
+
         <FaultOrderDetailClient
           currentUserId={currentUserId}
           faultOrderId={faultOrderId}
-          routeOrderId={id}
-          initialFaultBatchRows={faultBatchRows}
-          initialAssignedFaultBatchRows={assignedFaultBatchRows}
-          initialProcessingOrderRows={processingOrderRows}
+          initialFaultBatches={data.faultBatches ?? []}
+          initialProcessingOrders={data.processOrders ?? []}
           canCreateProcessOrder={canCreateProcessOrder}
           analysisActionLabel={analysisActionLabel}
           taskActionLabel={taskActionLabel}

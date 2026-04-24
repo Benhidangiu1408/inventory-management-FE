@@ -2,12 +2,9 @@
 
 import { Column } from "@/components/table/CustomizableTable";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { format, parseISO } from "date-fns";
-import { faPen, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import Select from "@/default_components/form/Select";
 import Badge from "@/default_components/ui/badge/Badge";
-import Button from "@/default_components/ui/button/Button";
 import {
   AttributeResponse,
   LocationBatch,
@@ -19,7 +16,12 @@ import {
 } from "@/interfaces/warehouseManagementType";
 
 import { Pencil, Trash2 } from "lucide-react";
-import { InventoryCheckResponse } from "@/interfaces/inventoryManagementType";
+import {
+  FaultBatch,
+  FaultBatchProcessOrderSummary,
+  FaultOrderSummary,
+  InventoryCheckResponse,
+} from "@/interfaces/inventoryManagementType";
 import { Role, User } from "@/interfaces/userManagementType";
 import { AssignRoleAction } from "@/actions/user";
 import toast from "react-hot-toast";
@@ -467,7 +469,7 @@ export const userHeaders = (
     render(value, row) {
       return (
         <Select
-          className="border-none !bg-transparent"
+          className="border-none !bg-transparent !ring-0"
           defaultValue={roles.find((r) => r.name === value)?.id ?? ""}
           onChange={async (e) => {
             try {
@@ -508,155 +510,289 @@ export const userHeaders = (
     filter: "agDateColumnFilter",
     render(value) {
       if (!value) return "";
-      return new Date(value as string).toLocaleDateString();
+      return new Date(value as string).toLocaleDateString("en-GB");
     },
   },
 ];
 
-export interface OrderRow {
-  id: number;
-  orderId: string;
-  date: string; // formatted as DD-MM-YYYY
-  warehouse: string;
-  handle: "Pending" | "Completed" | "In progress";
-  actions: string[]; // e.g. ["edit","check"]
-}
-
-export const orderColumns: Column<OrderRow>[] = [
-  { label: "ID", key: "id" },
-  { label: "Order Code", key: "orderId" },
-  { label: "Date", key: "date" },
-  { label: "Warehouse", key: "warehouse" },
+export const faultOrderHeader: Column<FaultOrderSummary>[] = [
   {
-    label: "Handle",
-    key: "handle",
-    render: (value) => (
-      <Badge
-        color={
-          value === "Completed"
-            ? "success"
-            : value === "Pending"
-              ? "warning"
-              : "error"
-        }
-        size="sm"
-        variant="solid"
-      >
-        {value}
-      </Badge>
-    ),
-  },
-  {
-    label: "Actions",
-    key: "actions",
+    label: "Order Code",
+    key: "code",
+    sort: true,
+    filter: "agTextColumnFilter",
+    width: 80,
     render: (value, row) => (
-      <div className="flex justify-center gap-3">
-        {Array.isArray(value) && value.includes("edit") && (
-          <Link href={`/fault-order/details/${row.id}`}>
-            <FontAwesomeIcon
-              icon={faPen}
-              className="cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-        )}
-        {/* {Array.isArray(value) && value.includes("check") && (
-          <FontAwesomeIcon
-            icon={faCheck}
-            className="cursor-pointer hover:text-blue-500"
-          />
-        )} */}
-      </div>
+      <Link
+        href={`/fault-order/details/${row.id}`}
+        className="text-brand-500 text-sm font-normal underline transition-colors"
+      >
+        {value as string}
+      </Link>
     ),
   },
-];
-
-// ---------- Types ----------
-export type FaultBatch = {
-  id: number;
-  code: string;
-  date: string; // DD-MM-YYYY
-  status: "Pending" | "Completed" | "In progress" | "Approve";
-  taskId: string;
-  taskName?: string;
-  checked: boolean; // represents the checkbox in Actions
-};
-
-export type AssignedFaultBatch = {
-  id: number;
-  code: string;
-  orderId: number;
-  date: string; // DD-MM-YYYY
-  status: "Pending" | "Completed" | "In progress" | "Approve";
-  checked: boolean; // represents the checkbox in Actions
-};
-
-export type ProcessingOrder = {
-  orderId: number;
-  orderType: "Returned" | "Canceled" | "Other";
-  action: "";
-};
-
-// ---------- Column Definitions ----------
-export const faultBatchColumns: Column<FaultBatch>[] = [
-  { label: "ID", key: "id" },
-  { label: "Fault Batch Code", key: "code" },
-  { label: "Date", key: "date" },
-  { label: "Status", key: "status" },
   {
-    label: "Actions",
-    key: "checked",
-    render: (value) => {
-      return !!value ? (
-        <input defaultChecked={!!value} type="checkbox" />
+    label: "Date",
+    key: "createdAt",
+    filter: "agDateColumnFilter",
+    width: 100,
+    render(value) {
+      if (!value) return "";
+      return new Date(value as string).toLocaleDateString("en-GB");
+    },
+  },
+  {
+    label: "Analyzer",
+    key: "analyzerUsername",
+    filter: "agTextColumnFilter",
+    render: (value) =>
+      value ? (
+        <span className="text-gray-800 dark:text-white/90">
+          {value as string}
+        </span>
       ) : (
-        <FontAwesomeIcon
-          icon={faTrashCan}
-          className="cursor-pointer hover:text-blue-500"
-        />
+        <span className="text-xs text-gray-400 italic">Unassigned</span>
+      ),
+  },
+  {
+    label: "Assignee",
+    key: "taskAssigneeUsername",
+    filter: "agTextColumnFilter",
+    render: (value) =>
+      value ? (
+        <span className="text-gray-800 dark:text-white/90">
+          {value as string}
+        </span>
+      ) : (
+        <span className="text-xs text-gray-400 italic">Unassigned</span>
+      ),
+  },
+  {
+    label: "Questioner",
+    key: "questionCreatorUsername",
+    filter: "agTextColumnFilter",
+    render: (value) =>
+      value ? (
+        <span className="text-gray-800 dark:text-white/90">
+          {value as string}
+        </span>
+      ) : (
+        <span className="text-xs text-gray-400 italic">Unassigned</span>
+      ),
+  },
+  {
+    label: "Status",
+    key: "status",
+    filter: "agSetColumnFilter",
+    width: 50,
+    render: (value) => {
+      if (!value) return null;
+
+      const statusStr = value as string;
+      // const formattedLabel = statusStr
+      //   .toLowerCase()
+      //   .replace(/_/g, " ")
+      //   .replace(/^\w/, (c) => c.toUpperCase());
+
+      return (
+        <Badge
+          color={
+            statusStr === "COMPLETED"
+              ? "success"
+              : statusStr === "PENDING"
+                ? "warning"
+                : "error"
+          }
+          variant="solid"
+        >
+          {statusStr}
+        </Badge>
+      );
+    },
+  },
+  {
+    label: "Priority",
+    key: "priorityLevel",
+    filter: "agSetColumnFilter",
+    width: 120,
+    render: (value) => {
+      const priorityStr = (value as string) || "Unassigned";
+
+      let badgeColor: "error" | "warning" | "success" | "light" = "light";
+      if (priorityStr.toUpperCase() === "HIGH") badgeColor = "error";
+      if (priorityStr.toUpperCase() === "MEDIUM") badgeColor = "warning";
+      if (priorityStr.toUpperCase() === "LOW") badgeColor = "success";
+
+      return (
+        <Badge variant="solid" color={badgeColor}>
+          {priorityStr}
+        </Badge>
       );
     },
   },
 ];
 
-export const assignedFaultBatchColumns: Column<AssignedFaultBatch>[] = [
-  { label: "ID", key: "id" },
-  { label: "Fault Batch Code", key: "code" },
-  { label: "Related Order ID", key: "orderId" },
-  { label: "Date", key: "date" },
-  { label: "Status", key: "status" },
+// ------------------------------------------------------
+// 1. Pending Fault Batches
+// ------------------------------------------------------
+export const detailFaultBatchColumns: Column<FaultBatch>[] = [
   {
-    label: "Actions",
-    key: "checked",
+    label: "Fault Batch Code",
+    key: "code",
+    sort: true,
+    width: 250,
+    filter: "agTextColumnFilter",
+  },
+  {
+    label: "Date",
+    key: "createdAt",
+    filter: "agDateColumnFilter",
+    render: (value) =>
+      value ? new Date(value as string).toLocaleDateString("en-GB") : "-",
+  },
+  {
+    label: "Status",
+    key: "handlingStatus",
+    filter: "agSetColumnFilter",
     render: (value) => {
-      return !!value ? (
-        <input defaultChecked={!!value} type="checkbox" />
-      ) : (
-        <FontAwesomeIcon
-          icon={faTrashCan}
-          className="cursor-pointer hover:text-blue-500"
-        />
+      const label =
+        value === "RESOLVED"
+          ? "Completed"
+          : value === "PROCESSING"
+            ? "In progress"
+            : "Pending";
+      const badgeColor =
+        value === "RESOLVED"
+          ? "success"
+          : value === "PROCESSING"
+            ? "warning"
+            : "light";
+
+      return (
+        <Badge variant="solid" color={badgeColor}>
+          {label}
+        </Badge>
       );
     },
   },
 ];
 
-export const processingOrderColumns: Column<ProcessingOrder>[] = [
-  { label: "Order Code", key: "orderId" },
-  { label: "Order Type", key: "orderType" },
+// ------------------------------------------------------
+// 2. Assigned Fault Batches
+// ------------------------------------------------------
+export const detailAssignedFaultBatchColumns: Column<FaultBatch>[] = [
   {
-    label: "Action",
-    key: "action",
-    autoHeight: true,
-    render: () => (
-      <div className="grid grid-cols-2 gap-2">
-        <Button className="rounded bg-blue-500 px-3 text-white">Analyze</Button>
-        <Button className="rounded bg-blue-500 px-3 text-white">
-          Assign Tasks
-        </Button>
-      </div>
-    ),
+    label: "Fault Batch Code",
+    key: "code",
+    filter: "agTextColumnFilter",
+    sort: true,
+    width: 300,
+  },
+  {
+    label: "Process Order ID",
+    key: "faultBatchProcessOrderId",
+    filter: "agTextColumnFilter",
+    render: (_, row) => {
+      const processId =
+        row.faultBatchProcessOrderId || row.faultBatchProcessOrder?.id;
+      return processId ? String(processId) : "-";
+    },
+  },
+  {
+    label: "Date",
+    key: "createdAt",
+    filter: "agDateColumnFilter",
+    render: (value) =>
+      value ? new Date(value as string).toLocaleDateString("en-GB") : "-",
+  },
+  {
+    label: "Status",
+    key: "handlingStatus",
+    filter: "agSetColumnFilter",
+    render: (value) => {
+      const label =
+        value === "RESOLVED"
+          ? "Completed"
+          : value === "PROCESSING"
+            ? "In progress"
+            : "Pending";
+
+      return (
+        <Badge
+          variant="solid"
+          color={label === "Completed" ? "success" : "warning"}
+        >
+          {label}
+        </Badge>
+      );
+    },
   },
 ];
+
+// ------------------------------------------------------
+// 3. Processing Orders
+// ------------------------------------------------------
+export const detailProcessingOrderColumns: Column<FaultBatchProcessOrderSummary>[] =
+  [
+    {
+      label: "Order ID",
+      key: "id",
+      width: 120,
+      sort: true,
+      filter: "agTextColumnFilter",
+    },
+    {
+      label: "Type",
+      key: "type",
+      filter: "agSetColumnFilter",
+      render: (value) => {
+        const label =
+          value === "RETURNED"
+            ? "Returned"
+            : value === "CANCELLED"
+              ? "Canceled"
+              : "Other";
+
+        return (
+          <span className="font-medium text-gray-800 dark:text-white/90">
+            {label}
+          </span>
+        );
+      },
+    },
+    {
+      label: "Date",
+      key: "createdAt",
+      filter: "agDateColumnFilter",
+      render: (value) =>
+        value ? new Date(value as string).toLocaleDateString("en-GB") : "-",
+    },
+    {
+      label: "Status",
+      key: "status",
+      filter: "agSetColumnFilter",
+      render: (value) => {
+        const statusStr = String(value || "PENDING");
+        let badgeColor: "error" | "warning" | "success" | "light" = "light";
+
+        if (statusStr === "COMPLETED" || statusStr === "APPROVED")
+          badgeColor = "success";
+        if (statusStr === "IN_PROGRESS") badgeColor = "warning";
+        if (
+          statusStr === "FAILED" ||
+          statusStr === "REJECTED" ||
+          statusStr === "CANCELLED"
+        )
+          badgeColor = "error";
+
+        return (
+          <Badge variant="solid" color={badgeColor} size="sm">
+            {statusStr.replace(/_/g, " ")}
+          </Badge>
+        );
+      },
+    },
+  ];
 
 export type TaskItem = {
   task: string;

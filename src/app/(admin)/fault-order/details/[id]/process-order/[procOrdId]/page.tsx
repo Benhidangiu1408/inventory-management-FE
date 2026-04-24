@@ -1,15 +1,12 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import { cookies } from "next/headers";
-
-import Button from "@/default_components/ui/button/Button";
-import {
-  getFaultBatchProcessOrderWithDetailsAction,
-  getFaultOrderAction,
-} from "@/actions/faultHandling";
-import { Analyze } from "@/interfaces/inventoryManagementType";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileExport } from "@fortawesome/free-solid-svg-icons";
 import ProcessOrderDetailForm from "./ProcessOrderDetailForm";
+import {
+  FaultBatchProcessOrder,
+  FaultOrderSummary,
+} from "@/interfaces/inventoryManagementType";
+import { faultOrderService } from "@/services/InventoryManagementService";
+import GeneralInfoSection from "@/components/GeneralInformation";
 
 type ProcessOrderDetailPageProps = {
   params: Promise<{
@@ -27,46 +24,69 @@ const parseValidUserId = (rawValue?: string) => {
   return parsed;
 };
 
-export default async function FaultOrderDetailPage({
+export default async function ProcessOrderDetailPage({
   params,
 }: ProcessOrderDetailPageProps) {
   const cookieStore = await cookies();
   const { id, procOrdId } = await params;
+  const faultOrderId = Number(id);
   const processOrderId = Number(procOrdId);
   const currentUserId = parseValidUserId(cookieStore.get("userId")?.value);
 
-  if (Number.isNaN(processOrderId)) {
-    return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700">
-        Invalid process order id.
-      </div>
-    );
+  let error: string | null = null;
+  let data: FaultBatchProcessOrder | null = null;
+  let faultOrderData: FaultOrderSummary | null = null;
+  let questionCreatorId: number | null = null;
+  let analyzerId: number | null = null;
+
+  try {
+    data =
+      await faultOrderService.getFaultBatchProcessOrderWithDetails(
+        processOrderId,
+      );
+    faultOrderData = await faultOrderService.getFaultOrder(faultOrderId);
+    questionCreatorId = faultOrderData?.questionCreatorId ?? null;
+    analyzerId = faultOrderData?.analyzerId ?? null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any) {
+    error = `Could not load data from server. ${e.message}`;
   }
-
-  const { data, error } =
-    await getFaultBatchProcessOrderWithDetailsAction(processOrderId);
-
   if (error || !data) {
     return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700">
+      <div className="default-card border-red-200 p-6 text-red-700 dark:border-red-700 dark:text-red-800">
         {error ?? "Unable to load process order details."}
       </div>
     );
   }
 
-  const routeFaultOrderId = Number(id);
-  const faultOrderId = Number.isNaN(routeFaultOrderId)
-    ? data.faultOrderId
-    : routeFaultOrderId;
-
-  let questionCreatorId: number | null = null;
-  let analyzerId: number | null = null;
-
-  if (!Number.isNaN(faultOrderId)) {
-    const { data: faultOrder } = await getFaultOrderAction(faultOrderId);
-    questionCreatorId = faultOrder?.questionCreatorId ?? null;
-    analyzerId = faultOrder?.analyzerId ?? null;
-  }
+  const summaryInfoItems = [
+    {
+      label: "Fault Type",
+      value: data.type.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()),
+    },
+    { label: "Root Cause", value: data.rootCause ?? "-" },
+    {
+      label: "Status",
+      value: data.status
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/\b\w/g, (c) => c.toUpperCase()),
+    },
+    {
+      label: "Created Date",
+      value: data.createdAt
+        ? new Date(data.createdAt as string).toLocaleDateString("en-GB")
+        : "-",
+    },
+    {
+      label: "Process Date",
+      value: data.processedAt
+        ? new Date(data.processedAt as string).toLocaleDateString("en-GB")
+        : "-",
+    },
+    { label: "Analyzed By", value: faultOrderData?.analyzerUsername ?? "-" },
+    { label: "Approved By", value: data.approvedByUsername ?? "-" },
+  ];
 
   return (
     <div>
@@ -75,16 +95,7 @@ export default async function FaultOrderDetailPage({
         filters={["details", "process-order"]}
       />
       <div className="flex flex-col gap-6">
-        {/* <UtilityBar /> */}
-        <div className="flex justify-end rounded-2xl border border-gray-200 p-3">
-          <Button
-            size="sm"
-            variant="primary"
-            startIcon={<FontAwesomeIcon icon={faFileExport} />}
-          >
-            Export
-          </Button>
-        </div>
+        <GeneralInfoSection title="Summary" items={summaryInfoItems} />
         <ProcessOrderDetailForm
           processOrder={data}
           currentUserId={currentUserId}

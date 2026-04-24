@@ -8,7 +8,6 @@ import {
   CreateInventoryCheckRequest,
   FaultBatch,
   FaultBatchProcessOrder,
-  FaultOrderDetail,
   FaultQuestion,
   FaultOrderStatus,
   FaultOrderSummary,
@@ -135,7 +134,7 @@ export const faultOrderService = {
       referenceSheetId: String(data.referenceSheetId),
     }).toString();
 
-    return apiClient.post<FaultOrderDetail>(
+    return apiClient.post<FaultOrderSummary>(
       `/inventory/v1/fault-orders?${query}`,
       null,
     );
@@ -145,7 +144,7 @@ export const faultOrderService = {
     faultOrderId: number,
     data: AssignFaultOrderUsersRequest,
   ) => {
-    return apiClient.post<FaultOrderDetail>(
+    return apiClient.post<FaultOrderSummary>(
       `/inventory/v1/fault-orders/${faultOrderId}/assign-users`,
       data,
     );
@@ -159,7 +158,7 @@ export const faultOrderService = {
       status,
     }).toString();
 
-    return apiClient.put<FaultOrderDetail>(
+    return apiClient.put<FaultOrderSummary>(
       `/inventory/v1/fault-orders/${faultOrderId}/status?${query}`,
       null,
     );
@@ -174,14 +173,14 @@ export const faultOrderService = {
         ? ""
         : `?${new URLSearchParams({ priorityId: String(priorityId) }).toString()}`;
 
-    return apiClient.put<FaultOrderDetail>(
+    return apiClient.put<FaultOrderSummary>(
       `/inventory/v1/fault-orders/${faultOrderId}/priority${query}`,
       null,
     );
   },
 
   getFaultOrder: async (faultOrderId: number) => {
-    return apiClient.get<FaultOrderDetail>(
+    return apiClient.get<FaultOrderSummary>(
       `/inventory/v1/fault-orders/${faultOrderId}`,
       {
         cache: "no-cache",
@@ -239,13 +238,10 @@ export const faultOrderService = {
     );
   },
 
-  updateProcessOrderApproval: async (
-    faultBatchProcessOrderId: number,
-    approverUserId: number | null,
-  ) => {
+  updateProcessOrderApproval: async (faultBatchProcessOrderId: number) => {
     return apiClient.put<FaultBatchProcessOrder>(
       `/inventory/v1/process-orders/${faultBatchProcessOrderId}/approval`,
-      approverUserId,
+      null,
     );
   },
 
