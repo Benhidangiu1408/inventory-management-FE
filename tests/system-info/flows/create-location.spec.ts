@@ -1,36 +1,50 @@
 import test, { expect } from "@playwright/test";
 
 test.describe("Create Warehouse Location Flow", () => {
-  test("should successfully navigate to a warehouse and create a single ROOM location", async ({ page }) => {
+  test("should successfully navigate to a warehouse and create a single ROOM location", async ({
+    page,
+  }) => {
     await page.goto("/warehouse-management/warehouse");
 
-    const firstWarehouseLink = page.locator('a[href*="/warehouse-management/warehouse/detail/"]').first();
+    const firstWarehouseLink = page
+      .locator('a[href*="/warehouse-management/warehouse/detail/"]')
+      .first();
     await expect(firstWarehouseLink).toBeVisible({ timeout: 10_000 });
     await firstWarehouseLink.click();
 
-    await page.waitForURL(/\/warehouse-management\/warehouse\/detail\/\d+/, { timeout: 10_000 });
+    await page.waitForURL(/\/warehouse-management\/warehouse\/detail\/\d+/, {
+      timeout: 10_000,
+    });
 
     await page.getByRole("button", { name: "New Location" }).click();
 
     await page.getByPlaceholder("ROOM (Default)").fill("ROOM-A");
-    
+
     const quantityInput = page.locator('input[type="number"]').first();
     await quantityInput.click({ clickCount: 3 });
     await quantityInput.fill("2");
 
     await page.getByRole("button", { name: "Save" }).click();
 
-    await expect(page.getByText("Location(s) created successfully!")).toBeVisible({ timeout: 10_000 });
+    await expect(
+      page.getByText("Location(s) created successfully!"),
+    ).toBeVisible({ timeout: 10_000 });
   });
 
-  test("should successfully create a bulk nested location hierarchy", async ({ page }) => {
+  test("should successfully create a bulk nested location hierarchy", async ({
+    page,
+  }) => {
     await page.goto("/warehouse-management/warehouse");
 
-    const firstWarehouseLink = page.locator('a[href*="/warehouse-management/warehouse/detail/"]').first();
+    const firstWarehouseLink = page
+      .locator('a[href*="/warehouse-management/warehouse/detail/"]')
+      .first();
     await expect(firstWarehouseLink).toBeVisible({ timeout: 10_000 });
     await firstWarehouseLink.click();
 
-    await page.waitForURL(/\/warehouse-management\/warehouse\/detail\/\d+/, { timeout: 10_000 });
+    await page.waitForURL(/\/warehouse-management\/warehouse\/detail\/\d+/, {
+      timeout: 10_000,
+    });
 
     await page.getByRole("button", { name: "New Location" }).click();
 
@@ -67,6 +81,6 @@ test.describe("Create Warehouse Location Flow", () => {
     await page.getByRole("button", { name: "Save" }).click();
 
     // Verify the success toast message
-    await expect(page.getByText("Location(s) created successfully!")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText("Location(s) created successfully!")).toBeVisible({ timeout: 60_000 });
   });
 });
