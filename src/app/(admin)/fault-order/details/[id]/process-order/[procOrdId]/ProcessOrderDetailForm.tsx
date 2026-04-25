@@ -131,8 +131,8 @@ export default function ProcessOrderDetailForm({
     register,
     control,
     getValues,
-    reset,
-    formState: { dirtyFields, defaultValues },
+    resetField,
+    formState: { dirtyFields },
   } = useForm<ProcessOrderFormValues>({
     defaultValues: {
       whatHappened: processOrder.whatHappened ?? "",
@@ -194,7 +194,7 @@ export default function ProcessOrderDetailForm({
 
         if (canAnswerQuestions) {
           const analyzerPayload = {
-            type: data.faultType,
+            type: data.faultType, // mapped from custom form name
             rootCause: data.rootCause.trim() || null,
             whatHappened: data.whatHappened.trim() || null,
             impact: data.impact.trim() || null,
@@ -207,18 +207,25 @@ export default function ProcessOrderDetailForm({
           updatedOrderFromServer = res;
         }
 
-        reset(
-          {
-            ...defaultValues, // Protects the Approver fields
-            whatHappened: updatedOrderFromServer?.whatHappened ?? "",
-            impact: updatedOrderFromServer?.impact ?? "",
-            rootCause: updatedOrderFromServer?.rootCause ?? "",
-            questions: updatedOrderFromServer?.questions ?? [],
-            faultType:
-              updatedOrderFromServer?.type ?? FaultProcessOrderType.OTHER,
-          },
-          { keepValues: true },
-        );
+        if (updatedOrderFromServer) {
+          resetField("whatHappened", {
+            defaultValue: updatedOrderFromServer.whatHappened ?? "",
+          });
+          resetField("impact", {
+            defaultValue: updatedOrderFromServer.impact ?? "",
+          });
+          resetField("rootCause", {
+            defaultValue: updatedOrderFromServer.rootCause ?? "",
+          });
+          resetField("faultType", {
+            defaultValue:
+              updatedOrderFromServer.type ?? FaultProcessOrderType.OTHER,
+          });
+          resetField("questions", {
+            defaultValue: updatedOrderFromServer.questions ?? [],
+          });
+        }
+
         toast.success("Analysis saved successfully.");
         router.refresh();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -235,17 +242,17 @@ export default function ProcessOrderDetailForm({
     startTransition(async () => {
       try {
         const res = await updateProcessOrderDecisionAction(processOrder.id, {
-          status: data.decision,
-          note: data.comment.trim(),
+          status: data.decision, // mapped from custom form name
+          note: data.comment.trim(), // mapped from custom form name
         });
-        reset(
-          {
-            ...defaultValues, // Protects the Approver fields
-            comment: res.note ?? "",
-            decision: res.status,
-          },
-          { keepValues: true },
-        );
+
+        if (res) {
+          resetField("decision", {
+            defaultValue: res.status ?? FaultProcessOrderStatus.APPROVED,
+          });
+          resetField("comment", { defaultValue: res.note ?? "" });
+        }
+
         toast.success("Decision submitted successfully.");
         router.refresh();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -436,7 +443,7 @@ export default function ProcessOrderDetailForm({
           {/* Approver info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <Label>Approver</Label>
+              <Label>Decision Maker</Label>
               <Input
                 type="text"
                 defaultValue={processOrder.approvedByUsername ?? ""}
@@ -461,34 +468,32 @@ export default function ProcessOrderDetailForm({
             </div>
           </div>
           {/* Decision */}
-          {processOrder.status == FaultProcessOrderStatus.IN_PROGRESS && (
-            <div className="flex gap-6">
-              <div
-                className={`cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 ${canApproveProcessOrder ? "hover:bg-gray-50" : ""}`}
-              >
-                <Radio
-                  label="Approve"
-                  id="approveBtn"
-                  value={FaultProcessOrderStatus.APPROVED}
-                  disabled={!canApproveProcessOrder || isPending}
-                  className={`font-medium ${canApproveProcessOrder ? "text-green-600" : ""}`}
-                  {...register("decision")}
-                />
-              </div>
-              <div
-                className={`cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 ${canApproveProcessOrder ? "hover:bg-gray-50" : ""}`}
-              >
-                <Radio
-                  label="Reject"
-                  id="rejectBtn"
-                  value={FaultProcessOrderStatus.REJECTED}
-                  disabled={!canApproveProcessOrder || isPending}
-                  className={`font-medium ${canApproveProcessOrder ? "text-red-600" : ""}`}
-                  {...register("decision")}
-                />
-              </div>
+          <div className="flex gap-6">
+            <div
+              className={`cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 ${canApproveProcessOrder ? "hover:bg-gray-50" : ""}`}
+            >
+              <Radio
+                label="Approve"
+                id="approveBtn"
+                value={FaultProcessOrderStatus.APPROVED}
+                disabled={!canApproveProcessOrder || isPending}
+                className={`font-medium ${canApproveProcessOrder ? "text-green-600" : ""}`}
+                {...register("decision")}
+              />
             </div>
-          )}
+            <div
+              className={`cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 ${canApproveProcessOrder ? "hover:bg-gray-50" : ""}`}
+            >
+              <Radio
+                label="Reject"
+                id="rejectBtn"
+                value={FaultProcessOrderStatus.REJECTED}
+                disabled={!canApproveProcessOrder || isPending}
+                className={`font-medium ${canApproveProcessOrder ? "text-red-600" : ""}`}
+                {...register("decision")}
+              />
+            </div>
+          </div>
           {/* Comment */}
           <div className="space-y-2">
             <Label>Comment</Label>
