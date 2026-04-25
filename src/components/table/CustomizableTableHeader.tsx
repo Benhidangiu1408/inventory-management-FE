@@ -600,8 +600,8 @@ export const faultOrderHeader: Column<FaultOrderSummary>[] = [
             statusStr === "COMPLETED"
               ? "success"
               : statusStr === "PENDING"
-                ? "warning"
-                : "error"
+                ? "light"
+                : "warning"
           }
           variant="solid"
         >
@@ -693,8 +693,7 @@ export const detailAssignedFaultBatchColumns: Column<FaultBatch>[] = [
     key: "faultBatchProcessOrderId",
     filter: "agTextColumnFilter",
     render: (_, row) => {
-      const processId =
-        row.faultBatchProcessOrderId || row.faultBatchProcessOrder?.id;
+      const processId = row.faultBatchProcessOrderId;
       return processId ? String(processId) : "-";
     },
   },

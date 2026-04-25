@@ -15,15 +15,6 @@ type ProcessOrderDetailPageProps = {
   }>;
 };
 
-const parseValidUserId = (rawValue?: string) => {
-  const parsed = Number(rawValue);
-  if (!Number.isInteger(parsed) || parsed <= 0) {
-    return null;
-  }
-
-  return parsed;
-};
-
 export default async function ProcessOrderDetailPage({
   params,
 }: ProcessOrderDetailPageProps) {
@@ -31,7 +22,7 @@ export default async function ProcessOrderDetailPage({
   const { id, procOrdId } = await params;
   const faultOrderId = Number(id);
   const processOrderId = Number(procOrdId);
-  const currentUserId = parseValidUserId(cookieStore.get("userId")?.value);
+  const currentUserId = Number(cookieStore.get("userId")?.value);
 
   let error: string | null = null;
   let data: FaultBatchProcessOrder | null = null;
@@ -64,7 +55,6 @@ export default async function ProcessOrderDetailPage({
       label: "Fault Type",
       value: data.type.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()),
     },
-    { label: "Root Cause", value: data.rootCause ?? "-" },
     {
       label: "Status",
       value: data.status
@@ -78,13 +68,18 @@ export default async function ProcessOrderDetailPage({
         ? new Date(data.createdAt as string).toLocaleDateString("en-GB")
         : "-",
     },
-    {
-      label: "Process Date",
-      value: data.processedAt
-        ? new Date(data.processedAt as string).toLocaleDateString("en-GB")
-        : "-",
-    },
+    // {
+    //   label: "Process Date",
+    //   value: data.processedAt
+    //     ? new Date(data.processedAt as string).toLocaleDateString("en-GB")
+    //     : "-",
+    // },
     { label: "Analyzed By", value: faultOrderData?.analyzerUsername ?? "-" },
+    {
+      label: "Questioned By",
+      value: faultOrderData?.questionCreatorUsername ?? "-",
+    },
+
     { label: "Approved By", value: data.approvedByUsername ?? "-" },
   ];
 
@@ -96,6 +91,17 @@ export default async function ProcessOrderDetailPage({
       />
       <div className="flex flex-col gap-6">
         <GeneralInfoSection title="Summary" items={summaryInfoItems} />
+        <GeneralInfoSection
+          title="Root Cause"
+          items={[
+            {
+              label: "",
+              value: (data?.rootCause as string) || (
+                <div className="text-gray-400 italic">No root cause</div>
+              ),
+            },
+          ]}
+        />
         <ProcessOrderDetailForm
           processOrder={data}
           currentUserId={currentUserId}

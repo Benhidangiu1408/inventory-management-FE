@@ -102,23 +102,21 @@ export default function AnalyzerAssigneeSelect({
         type === "questionCreator" ? nextId : questionCreatorId,
     };
 
-    setIsSaving(true);
-    const { error } = await assignAnalyzerAndAssigneeAction(
-      faultOrderId,
-      payload,
-    );
-    setIsSaving(false);
-
-    // Handle the server response
-    if (error) {
-      toast.error(`Failed to assign user: ${error}`);
-
+    try {
+      setIsSaving(true);
+      await assignAnalyzerAndAssigneeAction(faultOrderId, payload);
+      toast.success("Assignment saved successfully");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       // ROLLBACK: The server failed, so revert the UI to the previous ID
       if (type === "analyzer") setAnalyzerId(prevId);
       if (type === "assignee") setAssigneeId(prevId);
       if (type === "questionCreator") setQuestionCreatorId(prevId);
-    } else {
-      toast.success("Assignment saved successfully");
+      toast.error(
+        `Failed to assign user: ${error.message ?? "An unexpected error occurred"}`,
+      );
+    } finally {
+      setIsSaving(false);
     }
   };
 

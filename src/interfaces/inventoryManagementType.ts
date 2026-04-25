@@ -88,6 +88,135 @@ export interface InventoryCheckBatchRow {
 }
 
 // --- ACTION REQUESTS ---
+export enum FaultOrderStatus {
+  PENDING = "PENDING",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+}
+export enum FaultProcessOrderStatus {
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+  FAILED = "FAILED",
+  CANCELLED = "CANCELLED",
+  COMPLETED = "COMPLETED",
+  IN_PROGRESS = "IN_PROGRESS",
+}
+export enum FaultProcessOrderType {
+  RETURNED = "RETURNED",
+  CANCELLED = "CANCELLED",
+  OTHER = "OTHER",
+  SHORTAGE = "SHORTAGE",
+  WAREHOUSE_TRANSFER = "WAREHOUSE_TRANSFER",
+}
+export enum FaultBatchStatus {
+  REPORTED = "REPORTED",
+  PROCESSING = "PROCESSING",
+  RESOLVED = "RESOLVED",
+}
+
+export interface FaultOrderSummary {
+  id: number;
+  code: string;
+  status: FaultOrderStatus;
+  createdAt: string;
+  priorityId?: number | null;
+  priorityName?: string | null;
+  referenceSheetId?: number | null;
+  analyzerId?: number | null;
+  analyzerUsername?: string | null;
+  taskAssigneeId?: number | null;
+  taskAssigneeUsername?: string | null;
+  questionCreatorId?: number | null;
+  questionCreatorUsername?: string | null;
+  priorityLevel?: string | null;
+  faultBatches?: FaultBatch[];
+  processOrders?: FaultBatchProcessOrderSummary[];
+}
+
+export interface Batch {
+  id: number;
+  code: string;
+  status?: string;
+  initialQuantity?: number;
+  productionDate?: string | null;
+  productVariantId?: number | null;
+  supplierId?: number | null;
+  locationId?: number | null;
+}
+
+export interface FaultBatch extends Batch {
+  handlingStatus?: FaultBatchStatus;
+  createdAt?: string | null;
+  faultOrderId?: string | null;
+  faultBatchProcessOrderId?: number | null;
+  taskId?: number | null;
+}
+
+export interface FaultBatchProcessOrderSummary {
+  id: number;
+  status: FaultProcessOrderStatus;
+  type: FaultProcessOrderType;
+  createdAt: string;
+}
+
+export interface CreateFaultBatchProcessOrderRequest {
+  faultOrderId: number;
+  creatorUserId: number;
+  status: FaultProcessOrderStatus;
+  type: FaultProcessOrderType;
+  faultBatchIds?: number[];
+}
+
+export interface FaultBatchProcessOrder {
+  id: number;
+  faultOrderId: number;
+  status: FaultProcessOrderStatus;
+  type: FaultProcessOrderType;
+  note?: string | null;
+  rootCause?: string | null;
+  whatHappened?: string | null;
+  impact?: string | null;
+  createdAt: string;
+  approveAt?: string | null;
+  processedAt?: string | null;
+  creatorId?: number | null;
+  creatorUsername?: string | null;
+  approvedById?: number | null;
+  approvedByUsername?: string | null;
+  faultBatches?: FaultBatch[];
+  questions?: FaultQuestion[];
+  tasks?: FaultTask[];
+}
+
+export interface FaultQuestion {
+  id?: number;
+  question: string;
+  answer?: string | null;
+}
+
+export interface FaultTask {
+  id?: number;
+  task?: string;
+  result?: string | null;
+  dueDate?: string | null;
+  status?: TaskStatus;
+  assignedUserId?: number | null;
+  assignedUsername?: string | null;
+}
+
+export interface AnalyzeFaultBatchProcessOrderRequest {
+  type: FaultProcessOrderType;
+  rootCause?: string | null;
+  whatHappened?: string | null;
+  impact?: string | null;
+  questions?: FaultQuestion[];
+}
+export interface ProcessOrderDecisionRequest {
+  status: FaultProcessOrderStatus;
+  note?: string;
+}
+// Checked
+
 export interface SubmitCheckResultRequest {
   detailId: number;
   scannedQuantity: number;
@@ -145,35 +274,6 @@ export interface InboundOutboundOrderCountResponse {
   monthlyOrderCounts: InboundOutboundOrderCountPoint[];
 }
 
-export enum FaultBatchStatus {
-  REPORTED = "REPORTED",
-  PROCESSING = "PROCESSING",
-  RESOLVED = "RESOLVED",
-}
-
-export enum FaultOrderStatus {
-  PENDING = "PENDING",
-  IN_PROGRESS = "IN_PROGRESS",
-  COMPLETED = "COMPLETED",
-}
-
-export enum FaultProcessOrderStatus {
-  APPROVED = "APPROVED",
-  REJECTED = "REJECTED",
-  FAILED = "FAILED",
-  CANCELLED = "CANCELLED",
-  COMPLETED = "COMPLETED",
-  IN_PROGRESS = "IN_PROGRESS",
-}
-
-export enum FaultProcessOrderType {
-  RETURNED = "RETURNED",
-  CANCELLED = "CANCELLED",
-  OTHER = "OTHER",
-  SHORTAGE = "SHORTAGE",
-  WAREHOUSE_TRANSFER = "WAREHOUSE_TRANSFER",
-}
-
 export enum TaskStatus {
   COMPLETED = "COMPLETED",
   IN_PROGRESS = "IN_PROGRESS",
@@ -225,89 +325,6 @@ export interface BasicLocationReference {
   name?: string;
 }
 
-export interface FaultBatchProcessOrderSummary {
-  id: number;
-  status: FaultProcessOrderStatus;
-  type: FaultProcessOrderType;
-  createdAt: string;
-}
-
-export interface FaultOrderSummary {
-  id: number;
-  code: string;
-  status: FaultOrderStatus;
-  createdAt: string;
-  priorityId?: number | null;
-  priorityName?: string | null;
-  referenceSheetId?: number | null;
-  analyzerId?: number | null;
-  analyzerUsername?: string | null;
-  taskAssigneeId?: number | null;
-  taskAssigneeUsername?: string | null;
-  questionCreatorId?: number | null;
-  questionCreatorUsername?: string | null;
-  priorityLevel?: string | null;
-  faultBatches?: FaultBatch[];
-  processOrders?: FaultBatchProcessOrderSummary[];
-}
-
-export interface Batch {
-  id: number;
-  code: string;
-  status?: string;
-  initialQuantity?: number;
-  productionDate?: string | null;
-  productVariantId?: number | null;
-  supplierId?: number | null;
-  locationId?: number | null;
-}
-
-export interface FaultBatch extends Batch {
-  handlingStatus?: FaultBatchStatus;
-  createdAt?: string | null;
-  faultOrder?: FaultOrderSummary | null;
-  faultBatchProcessOrder?: FaultBatchProcessOrderSummary | null;
-  faultBatchProcessOrderId?: number | null;
-  taskId?: number | null;
-}
-
-export interface FaultQuestion {
-  id?: number;
-  question: string;
-  answer?: string | null;
-}
-
-export interface FaultTask {
-  id?: number;
-  task?: string;
-  result?: string | null;
-  dueDate?: string | null;
-  status?: TaskStatus;
-  assignedUserId?: number | null;
-  assignedUsername?: string | null;
-}
-
-export interface FaultBatchProcessOrder {
-  id: number;
-  faultOrderId: number;
-  status: FaultProcessOrderStatus;
-  type: FaultProcessOrderType;
-  note?: string | null;
-  rootCause?: string | null;
-  whatHappened?: string | null;
-  impact?: string | null;
-  createdAt: string;
-  approveAt?: string | null;
-  processedAt?: string | null;
-  creatorId?: number | null;
-  creatorUsername?: string | null;
-  approvedById?: number | null;
-  approvedByUsername?: string | null;
-  faultBatches?: FaultBatch[];
-  questions?: FaultQuestion[];
-  tasks?: FaultTask[];
-}
-
 export interface CreateFaultBatchRequest {
   batchId: number;
   handlingStatus: FaultBatchStatus;
@@ -332,40 +349,12 @@ export interface UpdateFaultOrderPriorityRequest {
   priorityId: number | null;
 }
 
-export interface CreateFaultQuestionRequest {
-  question: string;
-  answer?: string | null;
-}
-
 export interface CreateFaultTaskRequest {
   task?: string;
   result?: string | null;
   due_date?: string | null;
   status?: TaskStatus;
   assignedUser?: { id: number } | null;
-}
-
-export interface CreateFaultBatchProcessOrderRequest {
-  faultOrderId: number;
-  creatorUserId: number;
-  status: FaultProcessOrderStatus;
-  type: FaultProcessOrderType;
-  note?: string | null;
-  rootCause?: string | null;
-  whatHappened?: string | null;
-  impact?: string | null;
-  faultBatchIds?: number[];
-  questions?: CreateFaultQuestionRequest[];
-}
-
-export interface UpdateFaultBatchProcessOrderRequest {
-  status: FaultProcessOrderStatus;
-  type: FaultProcessOrderType;
-  note?: string;
-  rootCause?: string | null;
-  whatHappened?: string | null;
-  impact?: string | null;
-  questions?: CreateFaultQuestionRequest[];
 }
 
 export interface UpdateTasksStatusRequest {

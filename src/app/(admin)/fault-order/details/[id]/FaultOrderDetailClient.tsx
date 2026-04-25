@@ -13,12 +13,8 @@ import {
   detailProcessingOrderColumns,
 } from "@/components/table/CustomizableTableHeader";
 import Button from "@/default_components/ui/button/Button";
+import { createFaultBatchProcessOrderAction } from "@/actions/faultHandling";
 import {
-  createFaultBatchProcessOrderAction,
-  updateFaultOrderStatusAction,
-} from "@/actions/faultHandling";
-import {
-  FaultOrderStatus,
   FaultProcessOrderStatus,
   FaultProcessOrderType,
   type FaultBatch,
@@ -54,17 +50,11 @@ export default function FaultOrderDetailClient({
 
   // 1. Filter the raw data directly from the server props
   const unassignedBatches = useMemo(
-    () =>
-      initialFaultBatches.filter(
-        (b) => !b.faultBatchProcessOrderId && !b.faultBatchProcessOrder,
-      ),
+    () => initialFaultBatches.filter((b) => !b.faultBatchProcessOrderId),
     [initialFaultBatches],
   );
   const assignedBatches = useMemo(
-    () =>
-      initialFaultBatches.filter(
-        (b) => b.faultBatchProcessOrderId || b.faultBatchProcessOrder,
-      ),
+    () => initialFaultBatches.filter((b) => b.faultBatchProcessOrderId),
     [initialFaultBatches],
   );
   const toggleBatch = (batchId: number) => {
@@ -171,51 +161,28 @@ export default function FaultOrderDetailClient({
       toast.error("Session error: Cannot determine user.");
       return;
     }
-
-    setIsSubmitting(true);
-    const { data, error } = await createFaultBatchProcessOrderAction({
-      faultOrderId,
-      creatorUserId: currentUserId,
-      status: FaultProcessOrderStatus.IN_PROGRESS,
-      type: FaultProcessOrderType.OTHER,
-      faultBatchIds: selectedIds,
-    });
-
-    if (error || !data?.id) {
-      setIsSubmitting(false);
-      toast.error(error ?? "Failed to create process order.");
-      return;
-    }
-
-    if (initialProcessingOrders.length === 0) {
-      const { error: updateError } = await updateFaultOrderStatusAction(
+    try {
+      setIsSubmitting(true);
+      const data = await createFaultBatchProcessOrderAction({
         faultOrderId,
-        FaultOrderStatus.IN_PROGRESS,
+        creatorUserId: currentUserId,
+        status: FaultProcessOrderStatus.IN_PROGRESS,
+        type: FaultProcessOrderType.OTHER,
+        faultBatchIds: selectedIds,
+      });
+
+      toast.success("Investigation created successfully.");
+      setSelectedBatchIds(new Set());
+      router.refresh();
+      router.push(
+        `/fault-order/details/${faultOrderId}/process-order/${data.id}`,
       );
-      if (updateError) {
-        setIsSubmitting(false);
-        toast.error(
-          `Process order created, but failed to update parent status: ${updateError}`,
-        );
-
-        // We still refresh and push because the actual process order exists now!
-        router.refresh();
-        router.push(
-          `/fault-order/details/${faultOrderId}/process-order/${data.id}`,
-        );
-        return;
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "Failed to create process order.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    toast.success("Investigation created successfully.");
-    setSelectedBatchIds(new Set());
-
-    // Refresh Server State!
-    router.refresh();
-    router.push(
-      `/fault-order/details/${faultOrderId}/process-order/${data.id}`,
-    );
-    setIsSubmitting(false);
   };
 
   return (
