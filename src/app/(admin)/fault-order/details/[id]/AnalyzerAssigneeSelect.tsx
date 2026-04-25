@@ -1,16 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import toast from "react-hot-toast";
 import { assignAnalyzerAndAssigneeAction } from "@/actions/faultHandling";
 import type { User } from "@/interfaces/userManagementType";
+import Select from "@/default_components/form/Select";
+import Label from "@/default_components/form/Label";
 
 type AnalyzerAssigneeSelectProps = {
   faultOrderId: number;
   users: User[];
   initialAnalyzerId?: number | null;
+  initialAnalyzerName?: string | null;
   initialAssigneeId?: number | null;
+  initialAssigneeName?: string | null;
   initialQuestionCreatorId?: number | null;
+  initialQuestionCreatorName?: string | null;
   canAssignUser: boolean;
 };
 
@@ -18,8 +23,11 @@ export default function AnalyzerAssigneeSelect({
   faultOrderId,
   users,
   initialAnalyzerId,
+  initialAnalyzerName,
   initialAssigneeId,
+  initialAssigneeName,
   initialQuestionCreatorId,
+  initialQuestionCreatorName,
   canAssignUser,
 }: AnalyzerAssigneeSelectProps) {
   const [analyzerId, setAnalyzerId] = useState<number | null>(
@@ -33,111 +41,124 @@ export default function AnalyzerAssigneeSelect({
   );
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = async (
-    nextAnalyzerId: number | null,
-    nextAssigneeId: number | null,
-    nextQuestionCreatorId?: number | null,
+  // Safely map users AND inject ghosts
+  const userOptions = useMemo(() => {
+    const options = users.map((user) => ({
+      value: String(user.id),
+      label: `${user.firstName} ${user.lastName}`.trim() || user.username,
+    }));
+
+    // Helper to add a user if they are missing from the current active staff list
+    const ensureOptionExists = (id?: number | null, name?: string | null) => {
+      if (id && !options.some((opt) => opt.value === String(id))) {
+        options.push({
+          value: String(id),
+          label: `${name || `User ID ${id}`} (Permission Changed)`,
+        });
+      }
+    };
+
+    ensureOptionExists(initialAnalyzerId, initialAnalyzerName);
+    ensureOptionExists(initialAssigneeId, initialAssigneeName);
+    ensureOptionExists(initialQuestionCreatorId, initialQuestionCreatorName);
+
+    return options;
+  }, [
+    users,
+    initialAnalyzerId,
+    initialAnalyzerName,
+    initialAssigneeId,
+    initialAssigneeName,
+    initialQuestionCreatorId,
+    initialQuestionCreatorName,
+  ]);
+
+  const onSelectChange = async (
+    type: "analyzer" | "assignee" | "questionCreator",
+    val: string,
   ) => {
-    if (!canAssignUser) {
-      return;
-    }
+    if (!canAssignUser) return;
+    const nextId = val ? Number(val) : null;
+
+    // Capture the previous state in case we need to roll back
+    const prevId =
+      type === "analyzer"
+        ? analyzerId
+        : type === "assignee"
+          ? assigneeId
+          : questionCreatorId;
+
+    // Optimistically update the UI instantly
+    if (type === "analyzer") setAnalyzerId(nextId);
+    if (type === "assignee") setAssigneeId(nextId);
+    if (type === "questionCreator") setQuestionCreatorId(nextId);
+
+    // Build the payload using the NEW value for the changed field,
+    // and the CURRENT state for the others
+    const payload = {
+      analyzerUserId: type === "analyzer" ? nextId : analyzerId,
+      assigneeUserId: type === "assignee" ? nextId : assigneeId,
+      questionCreatorUserId:
+        type === "questionCreator" ? nextId : questionCreatorId,
+    };
 
     setIsSaving(true);
-    const { error } = await assignAnalyzerAndAssigneeAction(faultOrderId, {
-      analyzerUserId: nextAnalyzerId,
-      assigneeUserId: nextAssigneeId,
-      questionCreatorUserId: nextQuestionCreatorId ?? null,
-    });
+    const { error } = await assignAnalyzerAndAssigneeAction(
+      faultOrderId,
+      payload,
+    );
     setIsSaving(false);
 
+    // Handle the server response
     if (error) {
-      toast.error(`Failed to save: ${error}`);
+      toast.error(`Failed to assign user: ${error}`);
+
+      // ROLLBACK: The server failed, so revert the UI to the previous ID
+      if (type === "analyzer") setAnalyzerId(prevId);
+      if (type === "assignee") setAssigneeId(prevId);
+      if (type === "questionCreator") setQuestionCreatorId(prevId);
     } else {
-      toast.success("Saved successfully");
+      toast.success("Assignment saved successfully");
     }
   };
-
-  const handleAnalyzerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (!canAssignUser) {
-      return;
-    }
-
-    const value = e.target.value ? Number(e.target.value) : null;
-    setAnalyzerId(value);
-    void handleSave(value, assigneeId, questionCreatorId);
-  };
-
-  const handleAssigneeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (!canAssignUser) {
-      return;
-    }
-
-    const value = e.target.value ? Number(e.target.value) : null;
-    setAssigneeId(value);
-    void handleSave(analyzerId, value, questionCreatorId);
-  };
-
-  const handleQuestionCreatorChange = (
-    e: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    if (!canAssignUser) {
-      return;
-    }
-
-    const value = e.target.value ? Number(e.target.value) : null;
-    setQuestionCreatorId(value);
-    void handleSave(analyzerId, assigneeId, value);
-  };
-
-  const selectClass =
-    "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:opacity-50";
 
   return (
-    <>
-      <label className="font-semibold text-black">Root Cause Analyzer:</label>
-      <select
-        className={selectClass}
-        value={analyzerId ?? ""}
-        onChange={handleAnalyzerChange}
-        disabled={isSaving || !canAssignUser}
-      >
-        <option value="">-- Select user --</option>
-        {users.map((user) => (
-          <option key={user.id} value={user.id}>
-            {user.firstName} {user.lastName}
-          </option>
-        ))}
-      </select>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div>
+        <Label className="font-semibold">Root Cause Analyzer:</Label>
+        <Select
+          value={analyzerId ? String(analyzerId) : ""}
+          onChange={(e) => onSelectChange("analyzer", e.target.value)}
+          disabled={isSaving || !canAssignUser}
+          options={userOptions}
+          placeholder="-- Select user --"
+          disablePlaceholderOpt={false}
+        />
+      </div>
 
-      <label className="font-semibold text-black">Task Assigner:</label>
-      <select
-        className={selectClass}
-        value={assigneeId ?? ""}
-        onChange={handleAssigneeChange}
-        disabled={isSaving || !canAssignUser}
-      >
-        <option value="">-- Select user --</option>
-        {users.map((user) => (
-          <option key={user.id} value={user.id}>
-            {user.firstName} {user.lastName}
-          </option>
-        ))}
-      </select>
+      <div>
+        <Label className="font-semibold">Task Assigner:</Label>
+        <Select
+          value={assigneeId ? String(assigneeId) : ""}
+          onChange={(e) => onSelectChange("assignee", e.target.value)}
+          disabled={isSaving || !canAssignUser}
+          options={userOptions}
+          placeholder="-- Select user --"
+          disablePlaceholderOpt={false}
+        />
+      </div>
 
-      <label className="font-semibold text-black">Question Creator:</label>
-      <select
-        className={selectClass}
-        value={questionCreatorId ?? ""}
-        onChange={handleQuestionCreatorChange}
-        disabled={isSaving || !canAssignUser}
-      >
-        <option value="">-- Select user --</option>
-        {users.map((user) => (
-          <option key={user.id} value={user.id}>
-            {user.firstName} {user.lastName}
-          </option>
-        ))}
-      </select>
-    </>
+      <div>
+        <Label className="font-semibold">Question Creator:</Label>
+        <Select
+          value={questionCreatorId ? String(questionCreatorId) : ""}
+          onChange={(e) => onSelectChange("questionCreator", e.target.value)}
+          disabled={isSaving || !canAssignUser}
+          options={userOptions}
+          placeholder="-- Select user --"
+          disablePlaceholderOpt={false}
+        />
+      </div>
+    </div>
   );
 }

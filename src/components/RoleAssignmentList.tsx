@@ -160,9 +160,11 @@ export function RoleAssignmentList({
         <div className="w-3/5">
           <Select
             options={selectOpts}
+            value={String(selectedRoleId)}
             placeholder="Select a role"
             onChange={handleRoleChange}
             disabled={rolesData.length === 0}
+            autoComplete="off"
           />
         </div>
         <div className="flex gap-3">

@@ -6,6 +6,7 @@ export enum FaultOrderPermission {
   ANALYZE = "ANALYZE",
   ASSIGN_TASK = "ASSIGN_TASK",
   DO_TASK = "DO_TASK",
+  FAULT_HANDLER = "FAULT_HANDLER",
 }
 
 export enum Analyze {
@@ -245,7 +246,7 @@ export interface FaultOrderSummary {
   taskAssigneeUsername?: string | null;
   questionCreatorId?: number | null;
   questionCreatorUsername?: string | null;
-
+  priorityLevel?: string | null;
   faultBatches?: FaultBatch[];
   processOrders?: FaultBatchProcessOrderSummary[];
 }
@@ -268,11 +269,6 @@ export interface FaultBatch extends Batch {
   faultBatchProcessOrder?: FaultBatchProcessOrderSummary | null;
   faultBatchProcessOrderId?: number | null;
   taskId?: number | null;
-}
-
-export interface FaultOrderDetail extends FaultOrderSummary {
-  faultBatches?: FaultBatch[];
-  processOrders?: FaultBatchProcessOrderSummary[];
 }
 
 export interface FaultQuestion {

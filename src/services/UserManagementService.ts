@@ -23,6 +23,11 @@ export const userManagementService = {
       cache: "no-store",
     });
   },
+  getAllByPermissionCode: async (permissionCode: string) => {
+    return apiClient.get<User[]>(`users/permission/${permissionCode}`, {
+      cache: "no-store",
+    });
+  },
   getById: async (id: string) => {
     return apiClient.get<User>(`/users/${id}`, {
       cache: "no-store",

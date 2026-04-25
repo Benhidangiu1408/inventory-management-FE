@@ -24,6 +24,8 @@ import {
   type FaultBatchProcessOrder,
 } from "@/interfaces/inventoryManagementType";
 import { useAuth } from "@/context/AuthContext";
+import ComponentCard from "@/default_components/common/ComponentCard";
+import Radio from "@/default_components/form/input/Radio";
 
 type FaultBatchRowStatus = "Pending" | "In progress" | "Completed";
 type TaskRowStatus = "Not Started" | "In Progress" | "Completed" | "Blocked";
@@ -33,6 +35,15 @@ type ProcessOrderDetailFormProps = {
   currentUserId: number | null;
   questionCreatorId: number | null;
   analyzerId: number | null;
+};
+type ProcessOrderFormValues = {
+  whatHappened: string;
+  impact: string;
+  rootCause: string;
+  questions: { question: string; answer: string }[];
+  faultType: FaultProcessOrderType;
+  decision: "approve" | "reject";
+  comment: string;
 };
 
 type WhyQuestionFormItem = {
@@ -65,17 +76,6 @@ const formatDisplayDate = (value?: string | null) => {
   return DATE_FORMATTER.format(date);
 };
 
-const formatDateInputValue = (value?: string | null) => {
-  if (!value) return "";
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
-
-  return date.toISOString().slice(0, 10);
-};
-
 const mapBatchStatusToLabel = (
   status?: FaultBatchStatus,
 ): FaultBatchRowStatus => {
@@ -103,19 +103,6 @@ const mapProcessStatusToLabel = (status: FaultProcessOrderStatus) => {
       return "Failed";
     default:
       return status;
-  }
-};
-
-const mapProcessTypeToLabel = (type: FaultProcessOrderType) => {
-  switch (type) {
-    case FaultProcessOrderType.RETURNED:
-      return "Returned";
-    case FaultProcessOrderType.CANCELLED:
-      return "Canceled";
-    case FaultProcessOrderType.SHORTAGE:
-      return "Shortage";
-    default:
-      return "Other";
   }
 };
 
@@ -166,6 +153,7 @@ export default function ProcessOrderDetailForm({
 }: ProcessOrderDetailFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  // Form state
   const [whatHappened, setWhatHappened] = useState(
     processOrder.whatHappened ?? "",
   );
@@ -184,6 +172,8 @@ export default function ProcessOrderDetailForm({
       : "approve",
   );
   const [comment, setComment] = useState(processOrder.note ?? "");
+
+  // Permissions
   const { user } = useAuth();
   const canApproveProcessOrder = user?.permissions.includes(Analyze.APPROVE);
   const canEditQuestions =
@@ -194,30 +184,6 @@ export default function ProcessOrderDetailForm({
     currentUserId !== null &&
     analyzerId !== null &&
     currentUserId === analyzerId;
-  const approveDisplayUser = processOrder.approvedByUsername;
-  const approveDisplayDate = formatDateInputValue(processOrder.approveAt);
-  // canApproveProcessOrder
-  //   ? currentUserId
-  //     ? String(currentUserId)
-  //     : ""
-  //   : (processOrder.approvedByUsername ?? "");
-  // const approveDisplayDate = canApproveProcessOrder
-  //   ? formatDateInputValue(new Date().toISOString())
-  //   : formatDateInputValue(processOrder.approveAt);
-
-  const summaryInfoItems = [
-    { label: "Fault Type", value: mapProcessTypeToLabel(processOrder.type) },
-    { label: "Root Cause", value: processOrder.rootCause ?? "-" },
-    { label: "Status", value: mapProcessStatusToLabel(processOrder.status) },
-    {
-      label: "Created Date",
-      value: formatDisplayDate(
-        processOrder.processedAt ?? processOrder.createdAt,
-      ),
-    },
-    { label: "Analyzed By", value: processOrder.creatorUsername ?? "-" },
-    { label: "Approved By", value: processOrder.approvedByUsername ?? "-" },
-  ];
 
   const handleInfoItems = [
     { label: "Process Order ID", value: processOrder.id },
@@ -298,8 +264,6 @@ export default function ProcessOrderDetailForm({
       })
       .filter((item) => item.question.length > 0);
 
-    const approverUserId = canApproveProcessOrder ? currentUserId : null;
-
     const nextStatus = canApproveProcessOrder
       ? decision === "approve"
         ? FaultProcessOrderStatus.APPROVED
@@ -307,15 +271,9 @@ export default function ProcessOrderDetailForm({
       : processOrder.status;
 
     startTransition(async () => {
-      if (canApproveProcessOrder && !approverUserId) {
-        toast.error("Cannot determine current approver user id.");
-        return;
-      }
-
-      if (canApproveProcessOrder && approverUserId) {
+      if (canApproveProcessOrder) {
         const { error: approvalError } = await updateProcessOrderApprovalAction(
           processOrder.id,
-          approverUserId,
         );
 
         if (approvalError) {
@@ -371,33 +329,36 @@ export default function ProcessOrderDetailForm({
   };
 
   return (
-    <div className="flex justify-between gap-6">
-      <div className="flex flex-3 flex-col gap-6">
-        <GeneralInfoSection title="Summary" items={summaryInfoItems} />
-
-        <h2 className="text-xl font-semibold">Problem Description</h2>
-        <div className="flex items-center gap-4">
-          <Label className="mb-0 shrink-0">What happened?</Label>
-          <div className="min-w-0 flex-1">
+    <div className="flex flex-3 flex-col gap-6">
+      <ComponentCard title="Problem Description">
+        <div className="flex w-full">
+          <div className="flex h-11 min-w-[150] items-center justify-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+            <span className="whitespace-nowrap">What happened?</span>
+          </div>
+          <div className="w-full">
             <Input
+              className="rounded-l-none"
               value={whatHappened}
               disabled={!canAnswerQuestions}
               onChange={(event) => setWhatHappened(event.target.value)}
             />
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <Label className="mb-0 shrink-0">What is impacted?</Label>
-          <div className="min-w-0 flex-1">
+        <div className="flex w-full">
+          <div className="flex h-11 min-w-[150] items-center justify-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+            <span className="whitespace-nowrap">What is impacted?</span>
+          </div>
+          <div className="w-full">
             <Input
+              className="rounded-l-none"
               value={impact}
               disabled={!canAnswerQuestions}
               onChange={(event) => setImpact(event.target.value)}
             />
           </div>
         </div>
-
-        <h2 className="text-xl font-semibold">5+ Whys</h2>
+      </ComponentCard>
+      <ComponentCard title="5+ Whys Analysis">
         <div className="space-y-4">
           {whyQuestions.map((item, index) => (
             <div
@@ -428,97 +389,87 @@ export default function ProcessOrderDetailForm({
             </div>
           ))}
         </div>
-
-        <h2 className="text-xl font-semibold">Root Causes</h2>
-        <Input
-          value={rootCause}
-          disabled={!canAnswerQuestions}
-          onChange={(event) => setRootCause(event.target.value)}
-        />
-
-        <div className="my-4 space-y-3">
-          <Label className="mb-5 text-xl font-semibold">Fault Type</Label>
-
-          <div className="flex items-center gap-6">
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="faultType"
-                value={FaultProcessOrderType.RETURNED}
-                checked={faultType === FaultProcessOrderType.RETURNED}
-                disabled={!canAnswerQuestions}
-                onChange={() => setFaultType(FaultProcessOrderType.RETURNED)}
-              />
-              Return to supplier
-            </label>
-
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="faultType"
-                value={FaultProcessOrderType.CANCELLED}
-                checked={faultType === FaultProcessOrderType.CANCELLED}
-                disabled={!canAnswerQuestions}
-                onChange={() => setFaultType(FaultProcessOrderType.CANCELLED)}
-              />
-              Cancel batch
-            </label>
-
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="faultType"
-                value={FaultProcessOrderType.WAREHOUSE_TRANSFER}
-                checked={faultType === FaultProcessOrderType.WAREHOUSE_TRANSFER}
-                disabled={!canAnswerQuestions}
-                onChange={() =>
-                  setFaultType(FaultProcessOrderType.WAREHOUSE_TRANSFER)
-                }
-              />
-              Warehouse Transfer
-            </label>
-
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="faultType"
-                value={FaultProcessOrderType.OTHER}
-                checked={
-                  faultType === FaultProcessOrderType.OTHER ||
-                  faultType === FaultProcessOrderType.SHORTAGE
-                }
-                disabled={!canAnswerQuestions}
-                onChange={() => setFaultType(FaultProcessOrderType.OTHER)}
-              />
-              Other
-            </label>
-          </div>
-
-          {/* <Input placeholder="Specify other reason..." /> */}
+      </ComponentCard>
+      <ComponentCard title="Resolutions">
+        <div>
+          <Label className="font-semibold">Root Causes</Label>
+          <Input
+            value={rootCause}
+            disabled={!canAnswerQuestions}
+            onChange={(event) => setRootCause(event.target.value)}
+          />
         </div>
-
+        <div className="my-4">
+          <Label className="mb-3 font-semibold">Fault Type</Label>
+          <div className="flex items-center gap-6">
+            <Radio
+              label="Return to supplier"
+              id="faultTypeReturn"
+              name="faultType"
+              value={FaultProcessOrderType.RETURNED}
+              checked={faultType === FaultProcessOrderType.RETURNED}
+              disabled={!canAnswerQuestions}
+              onChange={() => setFaultType(FaultProcessOrderType.RETURNED)}
+            />
+            <Radio
+              label="Cancel batch"
+              id="faultTypeCancel"
+              name="faultType"
+              value={FaultProcessOrderType.CANCELLED}
+              checked={faultType === FaultProcessOrderType.CANCELLED}
+              disabled={!canAnswerQuestions}
+              onChange={() => setFaultType(FaultProcessOrderType.CANCELLED)}
+            />
+            <Radio
+              label="Warehouse Transfer"
+              id="faultTypeTransfer"
+              name="faultType"
+              value={FaultProcessOrderType.WAREHOUSE_TRANSFER}
+              checked={faultType === FaultProcessOrderType.WAREHOUSE_TRANSFER}
+              disabled={!canAnswerQuestions}
+              onChange={() =>
+                setFaultType(FaultProcessOrderType.WAREHOUSE_TRANSFER)
+              }
+            />
+            <Radio
+              label="Other"
+              name="faultType"
+              id="faultTypeOther"
+              value={FaultProcessOrderType.OTHER}
+              checked={
+                faultType === FaultProcessOrderType.OTHER ||
+                faultType === FaultProcessOrderType.SHORTAGE
+              }
+              disabled={!canAnswerQuestions}
+              onChange={() => setFaultType(FaultProcessOrderType.OTHER)}
+            />
+          </div>
+        </div>
+      </ComponentCard>
+      <ComponentCard title="Decision">
         <div className="space-y-6">
-          <h2 className="text-xl font-semibold">Decision</h2>
-
           {/* Approver info */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-600">
-                Approver
-              </label>
+            <div className="flex flex-col">
+              <Label>Approver</Label>
               <Input
                 type="text"
-                defaultValue={approveDisplayUser ?? ""}
+                defaultValue={processOrder.approvedByUsername ?? ""}
                 disabled
                 className="bg-gray-100"
               />
             </div>
-
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-600">Date</label>
+            <div className="flex flex-col">
+              <Label>Approved Date</Label>
               <Input
                 type="date"
-                defaultValue={approveDisplayDate}
+                defaultValue={
+                  processOrder.approveAt
+                    ? new Date(
+                        processOrder.approveAt as string,
+                      ).toLocaleDateString("en-GB")
+                    : ""
+                }
                 disabled
                 className="bg-gray-100"
               />
@@ -526,37 +477,39 @@ export default function ProcessOrderDetailForm({
           </div>
 
           {/* Decision */}
-          <div className="space-y-3">
-            <div className="flex gap-6">
-              <label className="flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 hover:bg-gray-50">
-                <input
-                  type="radio"
-                  value="approve"
-                  checked={decision === "approve"}
-                  disabled={!canApproveProcessOrder}
-                  onChange={() => setDecision("approve")}
-                />
-                <span className="font-medium text-green-600">Approve</span>
-              </label>
-
-              <label className="flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 hover:bg-gray-50">
-                <input
-                  type="radio"
-                  value="reject"
-                  checked={decision === "reject"}
-                  disabled={!canApproveProcessOrder}
-                  onChange={() => setDecision("reject")}
-                />
-                <span className="font-medium text-red-600">Reject</span>
-              </label>
+          <div className="flex gap-6">
+            <div
+              className={`cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 ${canApproveProcessOrder ? "hover:bg-gray-50" : ""}`}
+            >
+              <Radio
+                label="Approve"
+                id="approveBtn"
+                value="approve"
+                checked={decision === "approve"}
+                disabled={!canApproveProcessOrder}
+                onChange={() => setDecision("approve")}
+                className={`font-medium ${canApproveProcessOrder ? "text-green-600" : ""}`}
+              />
+            </div>
+            <div
+              className={`cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 ${canApproveProcessOrder ? "hover:bg-gray-50" : ""}`}
+            >
+              <Radio
+                label="Reject"
+                id="rejectBtn"
+                value="reject"
+                checked={decision === "reject"}
+                disabled={!canApproveProcessOrder}
+                onChange={() => setDecision("reject")}
+                className={`font-medium ${canApproveProcessOrder ? "text-red-600" : ""}`}
+              />
             </div>
           </div>
 
           {/* Comment */}
           <div className="space-y-2">
-            <h2 className="text-lg font-semibold">Comment</h2>
-            <textarea
-              className="w-full rounded-lg border border-gray-300 p-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+            <Label>Comment</Label>
+            <TextArea
               rows={4}
               placeholder="Write your comment..."
               value={comment}
@@ -565,30 +518,22 @@ export default function ProcessOrderDetailForm({
             />
           </div>
         </div>
+        <Button variant="primary" onClick={handleSave} disabled={isPending}>
+          {isPending
+            ? "Saving..."
+            : canApproveProcessOrder
+              ? "Approve"
+              : "Confirm"}
+        </Button>
+      </ComponentCard>
 
-        <div className="flex justify-end">
-          <Button
-            size="sm"
-            variant="primary"
-            onClick={handleSave}
-            disabled={isPending}
-          >
-            {isPending
-              ? "Saving..."
-              : canApproveProcessOrder
-                ? "Approve"
-                : "Confirm"}
-          </Button>
+      {/* Reserved blocks kept for future task and batch detail tables. */}
+      {taskRows.length > 0 || processingRows.length > 0 ? (
+        <div className="hidden">
+          <GeneralInfoSection title="Handle" items={handleInfoItems} />
+          <GeneralInfoSection title="Resolve" items={resolveInfoItems} />
         </div>
-
-        {/* Reserved blocks kept for future task and batch detail tables. */}
-        {taskRows.length > 0 || processingRows.length > 0 ? (
-          <div className="hidden">
-            <GeneralInfoSection title="Handle" items={handleInfoItems} />
-            <GeneralInfoSection title="Resolve" items={resolveInfoItems} />
-          </div>
-        ) : null}
-      </div>
+      ) : null}
     </div>
   );
 }
