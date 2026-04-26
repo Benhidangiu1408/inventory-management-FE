@@ -536,6 +536,13 @@ export const faultOrderHeader: Column<FaultOrderSummary>[] = [
     ),
   },
   {
+    label: "Warehouse",
+    key: "warehouseCode",
+    width: 250,
+    filter: "agTextColumnFilter",
+    render: (value, row) => `${row.warehouseName} (${value})`,
+  },
+  {
     label: "Date",
     key: "createdAt",
     filter: "agDateColumnFilter",
@@ -648,6 +655,12 @@ export const detailFaultBatchColumns: Column<FaultBatch>[] = [
     filter: "agTextColumnFilter",
   },
   {
+    label: "Location",
+    key: "locationCode",
+    width: 250,
+    filter: "agTextColumnFilter",
+  },
+  {
     label: "Date",
     key: "createdAt",
     filter: "agDateColumnFilter",
@@ -691,6 +704,12 @@ export const detailAssignedFaultBatchColumns: Column<FaultBatch>[] = [
     filter: "agTextColumnFilter",
     sort: true,
     width: 300,
+  },
+  {
+    label: "Location",
+    key: "locationCode",
+    width: 250,
+    filter: "agTextColumnFilter",
   },
   {
     label: "Process Order ID",
@@ -895,6 +914,12 @@ export const getTaskFaultBatchColumns = (
     label: "Fault Batch Code",
     key: "code",
     sort: true,
+    width: 250,
+    filter: "agTextColumnFilter",
+  },
+  {
+    label: "Location",
+    key: "locationCode",
     width: 250,
     filter: "agTextColumnFilter",
   },
