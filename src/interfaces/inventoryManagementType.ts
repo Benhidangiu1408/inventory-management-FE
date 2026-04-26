@@ -119,16 +119,14 @@ export interface FaultOrderSummary {
   code: string;
   status: FaultOrderStatus;
   createdAt: string;
-  priorityId?: number | null;
-  priorityName?: string | null;
-  referenceSheetId?: number | null;
+  warehouseCode: string;
+  warehouseName: string;
   analyzerId?: number | null;
   analyzerUsername?: string | null;
   taskAssigneeId?: number | null;
   taskAssigneeUsername?: string | null;
   questionCreatorId?: number | null;
   questionCreatorUsername?: string | null;
-  priorityLevel?: string | null;
   faultBatches?: FaultBatch[];
   processOrders?: FaultBatchProcessOrderSummary[];
 }
@@ -140,8 +138,7 @@ export interface Batch {
   initialQuantity?: number;
   productionDate?: string | null;
   productVariantId?: number | null;
-  supplierId?: number | null;
-  locationId?: number | null;
+  locationCode?: number | null;
 }
 
 export interface FaultBatch extends Batch {
