@@ -1,14 +1,11 @@
 import {
   AssignFaultOrderUsersRequest,
   CreateFaultBatchProcessOrderRequest,
-  CreateFaultBatchRequest,
-  CreateFaultOrderRequest,
   CreateFaultTaskRequest,
   CreateInventoryCheckRequest,
   FaultBatch,
   FaultBatchProcessOrder,
   FaultQuestion,
-  FaultOrderStatus,
   FaultOrderSummary,
   FaultTask,
   InboundOutboundMonthlyPoint,
@@ -19,9 +16,9 @@ import {
   OverviewSummaryResponse,
   SubmitCheckResultRequest,
   UpdateFaultBatchHandlingStatusRequest,
-  UpdateTasksStatusRequest,
   AnalyzeFaultBatchProcessOrderRequest,
   ProcessOrderDecisionRequest,
+  UpdateTaskStatusRequest,
 } from "@/interfaces/inventoryManagementType";
 import { apiClient } from "@/lib/api-mask";
 
@@ -195,108 +192,29 @@ export const faultOrderService = {
     );
   },
 
-  // Checked
-
-  createFaultBatch: async (data: CreateFaultBatchRequest) => {
-    const query = new URLSearchParams({
-      batchId: String(data.batchId),
-      handlingStatus: data.handlingStatus,
-      referenceSheetId: String(data.referenceSheetId),
-    }).toString();
-
-    return apiClient.post<FaultBatch>(
-      `/inventory/v1/fault-batches?${query}`,
-      null,
-    );
-  },
-
-  createFaultOrder: async (data: CreateFaultOrderRequest) => {
-    const query = new URLSearchParams({
-      referenceSheetId: String(data.referenceSheetId),
-    }).toString();
-
-    return apiClient.post<FaultOrderSummary>(
-      `/inventory/v1/fault-orders?${query}`,
-      null,
-    );
-  },
-
-  updateFaultOrderStatus: async (
-    faultOrderId: number,
-    status: FaultOrderStatus,
-  ) => {
-    const query = new URLSearchParams({
-      status,
-    }).toString();
-
-    return apiClient.put<FaultOrderSummary>(
-      `/inventory/v1/fault-orders/${faultOrderId}/status?${query}`,
-      null,
-    );
-  },
-
-  updateFaultOrderPriority: async (
-    faultOrderId: number,
-    priorityId?: number | null,
-  ) => {
-    const query =
-      priorityId === null || priorityId === undefined
-        ? ""
-        : `?${new URLSearchParams({ priorityId: String(priorityId) }).toString()}`;
-
-    return apiClient.put<FaultOrderSummary>(
-      `/inventory/v1/fault-orders/${faultOrderId}/priority${query}`,
-      null,
-    );
-  },
-
-  getFaultBatchProcessOrdersByFaultOrderId: async (faultOrderId: number) => {
-    return apiClient.get<FaultBatchProcessOrder[]>(
-      `/inventory/v1/fault-orders/${faultOrderId}/process-orders`,
-      {
-        cache: "no-cache",
-      },
-    );
-  },
-
-  createTasksForProcessOrder: async (
+  createTaskForProcessOrder: async (
     faultBatchProcessOrderId: number,
-    tasks: CreateFaultTaskRequest[],
+    task: CreateFaultTaskRequest,
   ) => {
-    return apiClient.post<FaultTask[]>(
-      `/inventory/v1/process-orders/${faultBatchProcessOrderId}/tasks`,
-      tasks,
+    return apiClient.post<FaultTask>(
+      `/inventory/v1/process-orders/${faultBatchProcessOrderId}/task`,
+      task,
     );
   },
-
-  // addQuestionsToProcessOrder: async (
-  //   faultBatchProcessOrderId: number,
-  //   questions: CreateFaultQuestionRequest[],
-  // ) => {
-  //   return apiClient.post<FaultQuestion[]>(
-  //     `/inventory/v1/process-orders/${faultBatchProcessOrderId}/questions`,
-  //     questions,
-  //   );
-  // },
-
-  updateTasksStatus: async (data: UpdateTasksStatusRequest) => {
-    return apiClient.put<FaultTask[]>("/inventory/v1/tasks/status", data);
+  updateTaskStatus: async (data: UpdateTaskStatusRequest) => {
+    return apiClient.put<FaultTask>("/inventory/v1/task/status", data);
   },
 
   markFaultBatchesFixed: async (
-    data: UpdateFaultBatchHandlingStatusRequest[],
+    data: UpdateFaultBatchHandlingStatusRequest,
   ) => {
-    return apiClient.put<FaultBatch[]>(
+    return apiClient.put<FaultBatch>(
       "/inventory/v1/fault-batches/handling-status",
       data,
     );
   },
-  assignTaskToFaultBatch: async (
-    faultBatchId: number,
-    taskId?: number | null,
-  ) => {
-    const query =
-      taskId === null || taskId === undefined ? "" : `?taskId=${taskId}`;
+  assignTaskToFaultBatch: async (faultBatchId: number, taskId?: number) => {
+    const query = !taskId ? "" : `?taskId=${taskId}`;
     return apiClient.put<FaultBatch>(
       `/inventory/v1/fault-batches/${faultBatchId}/task${query}`,
       null,

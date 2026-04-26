@@ -25,9 +25,6 @@ import ComponentCard from "@/default_components/common/ComponentCard";
 import Radio from "@/default_components/form/input/Radio";
 import { useFieldArray, useForm } from "react-hook-form";
 
-// type FaultBatchRowStatus = "Pending" | "In progress" | "Completed";
-// type TaskRowStatus = "Not Started" | "In Progress" | "Completed" | "Blocked";
-
 type ProcessOrderDetailFormProps = {
   processOrder: FaultBatchProcessOrder;
   currentUserId: number | null;
@@ -43,80 +40,6 @@ type ProcessOrderFormValues = {
   decision: FaultProcessOrderStatus;
   comment: string;
 };
-
-// const DATE_FORMATTER = new Intl.DateTimeFormat("en-GB", {
-//   day: "2-digit",
-//   month: "2-digit",
-//   year: "numeric",
-// });
-
-// const formatDisplayDate = (value?: string | null) => {
-//   if (!value) return "-";
-
-//   const date = new Date(value);
-//   if (Number.isNaN(date.getTime())) {
-//     return "-";
-//   }
-
-//   return DATE_FORMATTER.format(date);
-// };
-
-// const mapBatchStatusToLabel = (
-//   status?: FaultBatchStatus,
-// ): FaultBatchRowStatus => {
-//   switch (status) {
-//     case FaultBatchStatus.RESOLVED:
-//       return "Completed";
-//     case FaultBatchStatus.PROCESSING:
-//       return "In progress";
-//     default:
-//       return "Pending";
-//   }
-// };
-
-// const mapProcessStatusToLabel = (status: FaultProcessOrderStatus) => {
-//   switch (status) {
-//     case FaultProcessOrderStatus.IN_PROGRESS:
-//       return "In progress";
-//     case FaultProcessOrderStatus.COMPLETED:
-//       return "Completed";
-//     case FaultProcessOrderStatus.CANCELLED:
-//       return "Canceled";
-//     case FaultProcessOrderStatus.REJECTED:
-//       return "Rejected";
-//     case FaultProcessOrderStatus.FAILED:
-//       return "Failed";
-//     default:
-//       return status;
-//   }
-// };
-
-// const mapTaskStatusToLabel = (status?: TaskStatus): TaskRowStatus => {
-//   switch (status) {
-//     case TaskStatus.IN_PROGRESS:
-//       return "In Progress";
-//     case TaskStatus.COMPLETED:
-//       return "Completed";
-//     case TaskStatus.CREATED:
-//       return "Not Started";
-//     default:
-//       return "Blocked";
-//   }
-// };
-
-// const buildFaultBatchRows = (batches?: FaultBatch[]) => {
-//   if (!batches?.length) {
-//     return [];
-//   }
-
-//   return batches.map((batch) => ({
-//     id: batch.id,
-//     code: batch.code ?? `FB-${batch.id}`,
-//     date: formatDisplayDate(batch.createdAt),
-//     status: mapBatchStatusToLabel(batch.handlingStatus),
-//     checked: batch.handlingStatus === FaultBatchStatus.RESOLVED,
-//   }));
-// };
 
 export default function ProcessOrderDetailForm({
   processOrder,
@@ -261,51 +184,6 @@ export default function ProcessOrderDetailForm({
       }
     });
   };
-
-  // const handleInfoItems = [
-  //   { label: "Process Order ID", value: processOrder.id },
-  //   { label: "Create Date", value: formatDisplayDate(processOrder.createdAt) },
-  //   {
-  //     label: "Return Date",
-  //     value: formatDisplayDate(processOrder.processedAt),
-  //   },
-  //   { label: "Expected Arrival Date", value: "-" },
-  //   { label: "Status", value: mapProcessStatusToLabel(processOrder.status) },
-  //   { label: "Return To", value: "-" },
-  //   { label: "Handled By", value: processOrder.creatorUsername ?? "-" },
-  //   { label: "Note", value: processOrder.note ?? "-" },
-  // ];
-
-  // const resolveInfoItems = [
-  //   {
-  //     label: "Resolve Date",
-  //     value: formatDisplayDate(processOrder.processedAt),
-  //   },
-  //   { label: "Resolve Image", value: "-" },
-  //   { label: "Resolve By", value: processOrder.approvedByUsername ?? "-" },
-  //   { label: "Status", value: mapProcessStatusToLabel(processOrder.status) },
-  // ];
-
-  // const taskRows = (processOrder.tasks ?? []).map((task) => ({
-  //   task: task.task ?? "-",
-  //   owner: task.assignedUsername ?? "-",
-  //   dueDate: formatDisplayDate(task.dueDate),
-  //   status: mapTaskStatusToLabel(task.status),
-  // }));
-
-  // const processingRows = buildFaultBatchRows(processOrder.faultBatches);
-
-  // const updateWhyQuestion = (
-  //   index: number,
-  //   key: keyof WhyQuestionFormItem,
-  //   value: string,
-  // ) => {
-  //   setWhyQuestions((current) =>
-  //     current.map((item, currentIndex) =>
-  //       currentIndex === index ? { ...item, [key]: value } : item,
-  //     ),
-  //   );
-  // };
 
   return (
     <div className="flex flex-col gap-6">
@@ -515,14 +393,6 @@ export default function ProcessOrderDetailForm({
           </Button>
         )}
       </ComponentCard>
-
-      {/* Reserved blocks kept for future task and batch detail tables. */}
-      {/* {taskRows.length > 0 || processingRows.length > 0 ? (
-        <div className="hidden">
-          <GeneralInfoSection title="Handle" items={handleInfoItems} />
-          <GeneralInfoSection title="Resolve" items={resolveInfoItems} />
-        </div>
-      ) : null} */}
     </div>
   );
 }

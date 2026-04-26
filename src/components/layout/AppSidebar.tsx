@@ -4,28 +4,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "@/context/SidebarContext";
-import {
-  BoxCubeIcon,
-  CalenderIcon,
-  ChevronDownIcon,
-  GridIcon,
-  HorizontaLDots,
-  PieChartIcon,
-} from "../../icons";
+import { ChevronDownIcon, GridIcon, HorizontaLDots } from "../../icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBell,
-  faDolly,
-  faTruckRampBox,
-  faWarehouse,
-} from "@fortawesome/free-solid-svg-icons";
+import { faDolly, faTruckRampBox } from "@fortawesome/free-solid-svg-icons";
 import {
   FileBox,
   UserRoundCog,
-  UsersRound,
   UserCircle,
   ClipboardCheck,
-  Package,
   ArchiveX,
 } from "lucide-react";
 
@@ -44,14 +30,14 @@ export const navItems: NavItem[] = [
     path: "/",
   },
 
-  {
-    icon: <Package />,
-    name: "Inventory",
-    subItems: [
-      { name: "Item", path: "/s" },
-      { name: "Batch", path: "/s" },
-    ],
-  },
+  // {
+  //   icon: <Package />,
+  //   name: "Inventory",
+  //   subItems: [
+  //     { name: "Item", path: "/s" },
+  //     { name: "Batch", path: "/s" },
+  //   ],
+  // },
   {
     icon: <FontAwesomeIcon icon={faDolly} size="lg" />,
     name: "Import",
@@ -70,7 +56,7 @@ export const navItems: NavItem[] = [
   {
     icon: <ArchiveX />,
     name: "Fault Handle",
-    path: "/fault-order"
+    path: "/fault-order",
     // subItems: [
     //   { name: "Root Cause Analysis", path: "/s" },
     //   { name: "Fault Order", path: "/s" },
@@ -87,69 +73,68 @@ export const navItems: NavItem[] = [
       { name: "UOM (Unit of Measurement)", path: "/catalog/unit" },
     ],
   },
-  {
-    icon: <UsersRound />,
-    name: "Business Partners",
-    subItems: [
-      { name: "Supplier", path: "/s" },
-      { name: "Customer", path: "/s" },
-    ],
-  },
+  // {
+  //   icon: <UsersRound />,
+  //   name: "Business Partners",
+  //   subItems: [
+  //     { name: "Supplier", path: "/s" },
+  //     { name: "Customer", path: "/s" },
+  //   ],
+  // },
+  // {
+  //   icon: <FontAwesomeIcon icon={faBell} size="lg" />,
+  //   name: "Notification",
+  //   path: "/notification",
+  // },
+];
 
+// các link nav trong mục Other
+export const othersItems: NavItem[] = [
   {
     name: "Users Settings",
     icon: <UserRoundCog />,
     subItems: [
       { name: "Users Management", path: "/admin/user-management" },
       { name: "Role & Permission", path: "/admin/role-management" },
-      { name: "User History", path: "/s" },
+      // { name: "User History", path: "/s" },
     ],
-  },
-  {
-    icon: <FontAwesomeIcon icon={faBell} size="lg" />,
-    name: "Notification",
-    path: "/notification",
   },
   {
     icon: <UserCircle />,
     name: "Profile",
     path: `/profile`,
   },
-];
-
-// các link nav trong mục Other
-export const othersItems: NavItem[] = [
-  {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "/calendar",
-  },
-  {
-    name: "Forms",
-    icon: <FontAwesomeIcon icon={faWarehouse} />,
-    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  },
-  {
-    icon: <PieChartIcon />,
-    name: "Charts",
-    subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
-    ],
-  },
-  {
-    icon: <BoxCubeIcon />,
-    name: "UI Elements",
-    subItems: [
-      { name: "Alerts", path: "/alerts", pro: false },
-      { name: "Avatar", path: "/avatars", pro: false },
-      { name: "Badge", path: "/badge", pro: false },
-      { name: "Buttons", path: "/buttons", pro: false },
-      { name: "Images", path: "/images", pro: false },
-      { name: "Videos", path: "/videos", pro: false },
-      { name: "Modals", path: "/modals" },
-    ],
-  },
+  // {
+  //   icon: <CalenderIcon />,
+  //   name: "Calendar",
+  //   path: "/calendar",
+  // },
+  // {
+  //   name: "Forms",
+  //   icon: <FontAwesomeIcon icon={faWarehouse} />,
+  //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+  // },
+  // {
+  //   icon: <PieChartIcon />,
+  //   name: "Charts",
+  //   subItems: [
+  //     { name: "Line Chart", path: "/line-chart", pro: false },
+  //     { name: "Bar Chart", path: "/bar-chart", pro: false },
+  //   ],
+  // },
+  // {
+  //   icon: <BoxCubeIcon />,
+  //   name: "UI Elements",
+  //   subItems: [
+  //     { name: "Alerts", path: "/alerts", pro: false },
+  //     { name: "Avatar", path: "/avatars", pro: false },
+  //     { name: "Badge", path: "/badge", pro: false },
+  //     { name: "Buttons", path: "/buttons", pro: false },
+  //     { name: "Images", path: "/images", pro: false },
+  //     { name: "Videos", path: "/videos", pro: false },
+  //     { name: "Modals", path: "/modals" },
+  //   ],
+  // },
 ];
 
 const AppSidebar: React.FC = () => {

@@ -127,19 +127,21 @@ export default function FaultOrderDetailClient({
                       {analysisActionLabel}
                     </Button>
                   )}
-                  {taskActionLabel && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() =>
-                        router.push(
-                          `/fault-order/details/${faultOrderId}/assign-task/${row.id}`,
-                        )
-                      }
-                    >
-                      {taskActionLabel}
-                    </Button>
-                  )}
+                  {taskActionLabel &&
+                    row.status != FaultProcessOrderStatus.IN_PROGRESS &&
+                    row.status != FaultProcessOrderStatus.REJECTED && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          router.push(
+                            `/fault-order/details/${faultOrderId}/assign-task/${row.id}`,
+                          )
+                        }
+                      >
+                        {taskActionLabel}
+                      </Button>
+                    )}
                 </div>
               ),
             } as Column<FaultBatchProcessOrderSummary>,

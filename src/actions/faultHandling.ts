@@ -3,25 +3,14 @@
 import type {
   AssignFaultOrderUsersRequest,
   CreateFaultBatchProcessOrderRequest,
-  CreateFaultBatchRequest,
-  CreateFaultOrderRequest,
   CreateFaultTaskRequest,
-  FaultOrderStatus,
   UpdateFaultBatchHandlingStatusRequest,
-  UpdateTasksStatusRequest,
   AnalyzeFaultBatchProcessOrderRequest,
   FaultQuestion,
   ProcessOrderDecisionRequest,
+  UpdateTaskStatusRequest,
 } from "@/interfaces/inventoryManagementType";
 import { faultOrderService } from "@/services/InventoryManagementService";
-
-function getErrorMessage(error: unknown) {
-  if (error instanceof Error) {
-    return error.message;
-  }
-
-  return "An unexpected error happened!";
-}
 
 export async function assignAnalyzerAndAssigneeAction(
   faultOrderId: number,
@@ -66,145 +55,29 @@ export async function updateProcessOrderDecisionAction(
   );
 }
 
-// checked
-
-export async function updateFaultOrderStatusAction(
-  faultOrderId: number,
-  status: FaultOrderStatus,
-) {
-  return await faultOrderService.updateFaultOrderStatus(faultOrderId, status);
-}
-export async function createFaultBatchAction(data: CreateFaultBatchRequest) {
-  try {
-    const response = await faultOrderService.createFaultBatch(data);
-    return { data: response, error: null };
-  } catch (error: unknown) {
-    return { data: null, error: getErrorMessage(error) };
-  }
-}
-
-export async function createFaultOrderAction(data: CreateFaultOrderRequest) {
-  try {
-    const response = await faultOrderService.createFaultOrder(data);
-    return { data: response, error: null };
-  } catch (error: unknown) {
-    return { data: null, error: getErrorMessage(error) };
-  }
-}
-
-export async function updateFaultOrderPriorityAction(
-  faultOrderId: number,
-  priorityId?: number | null,
-) {
-  try {
-    const response = await faultOrderService.updateFaultOrderPriority(
-      faultOrderId,
-      priorityId,
-    );
-    return { data: response, error: null };
-  } catch (error: unknown) {
-    return { data: null, error: getErrorMessage(error) };
-  }
-}
-
-export async function getFaultOrderAction(faultOrderId: number) {
-  try {
-    const response = await faultOrderService.getFaultOrder(faultOrderId);
-    return { data: response, error: null };
-  } catch (error: unknown) {
-    return { data: null, error: getErrorMessage(error) };
-  }
-}
-
-export async function getFaultBatchProcessOrderWithDetailsAction(
+export async function createTaskForProcessOrderAction(
   faultBatchProcessOrderId: number,
+  task: CreateFaultTaskRequest,
 ) {
-  try {
-    const response =
-      await faultOrderService.getFaultBatchProcessOrderWithDetails(
-        faultBatchProcessOrderId,
-      );
-    return { data: response, error: null };
-  } catch (error: unknown) {
-    return { data: null, error: getErrorMessage(error) };
-  }
+  return await faultOrderService.createTaskForProcessOrder(
+    faultBatchProcessOrderId,
+    task,
+  );
 }
 
-export async function getFaultBatchProcessOrdersByFaultOrderIdAction(
-  faultOrderId: number,
-) {
-  try {
-    const response =
-      await faultOrderService.getFaultBatchProcessOrdersByFaultOrderId(
-        faultOrderId,
-      );
-    return { data: response, error: null };
-  } catch (error: unknown) {
-    return { data: null, error: getErrorMessage(error) };
-  }
-}
-
-export async function createTasksForProcessOrderAction(
-  faultBatchProcessOrderId: number,
-  tasks: CreateFaultTaskRequest[],
-) {
-  try {
-    const response = await faultOrderService.createTasksForProcessOrder(
-      faultBatchProcessOrderId,
-      tasks,
-    );
-    return { data: response, error: null };
-  } catch (error: unknown) {
-    return { data: null, error: getErrorMessage(error) };
-  }
-}
-
-// export async function addQuestionsToProcessOrderAction(
-//   faultBatchProcessOrderId: number,
-//   questions: CreateFaultQuestionRequest[],
-// ) {
-//   try {
-//     const response = await faultOrderService.addQuestionsToProcessOrder(
-//       faultBatchProcessOrderId,
-//       questions,
-//     );
-//     return { data: response, error: null };
-//   } catch (error: unknown) {
-//     return { data: null, error: getErrorMessage(error) };
-//   }
-// }
-
-export async function updateTasksStatusAction(data: UpdateTasksStatusRequest) {
-  try {
-    const response = await faultOrderService.updateTasksStatus(data);
-    return { data: response, error: null };
-  } catch (error: unknown) {
-    return { data: null, error: getErrorMessage(error) };
-  }
+export async function updateTaskStatusAction(data: UpdateTaskStatusRequest) {
+  return await faultOrderService.updateTaskStatus(data);
 }
 
 export async function markFaultBatchesFixedAction(
-  data: UpdateFaultBatchHandlingStatusRequest[],
+  data: UpdateFaultBatchHandlingStatusRequest,
 ) {
-  try {
-    const response = await faultOrderService.markFaultBatchesFixed(data);
-    return { data: response, error: null };
-  } catch (error: unknown) {
-    return { data: null, error: getErrorMessage(error) };
-  }
+  return await faultOrderService.markFaultBatchesFixed(data);
 }
 
 export async function assignTaskToFaultBatchAction(
   faultBatchId: number,
-  taskId?: number | null,
+  taskId?: number,
 ) {
-  try {
-    const response = await faultOrderService.assignTaskToFaultBatch(
-      faultBatchId,
-      taskId,
-    );
-    return { data: response, error: null };
-  } catch (error: unknown) {
-    return { data: null, error: getErrorMessage(error) };
-  }
+  return await faultOrderService.assignTaskToFaultBatch(faultBatchId, taskId);
 }

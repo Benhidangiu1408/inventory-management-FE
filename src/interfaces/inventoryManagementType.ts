@@ -152,6 +152,13 @@ export interface FaultBatch extends Batch {
   taskId?: number | null;
 }
 
+export interface TaskBatchResponse extends FaultBatch {
+  taskId: number;
+  taskName: string;
+  assignedUserId: number;
+  assignedUserUsername: string;
+}
+
 export interface FaultBatchProcessOrderSummary {
   id: number;
   status: FaultProcessOrderStatus;
@@ -215,6 +222,30 @@ export interface ProcessOrderDecisionRequest {
   status: FaultProcessOrderStatus;
   note?: string;
 }
+
+export enum TaskStatus {
+  COMPLETED = "COMPLETED",
+  IN_PROGRESS = "IN_PROGRESS",
+  CREATED = "CREATED",
+  FAILED = "FAILED",
+  CANCELLED = "CANCELLED",
+}
+
+export interface CreateFaultTaskRequest {
+  task: string;
+  dueDate: string;
+  assignedUserId: number;
+}
+export interface UpdateTaskStatusRequest {
+  taskId: number;
+  status: TaskStatus;
+}
+
+export type UpdateFaultBatchHandlingStatusRequest = {
+  batchId: number;
+  status: FaultBatchStatus;
+};
+
 // Checked
 
 export interface SubmitCheckResultRequest {
@@ -274,49 +305,11 @@ export interface InboundOutboundOrderCountResponse {
   monthlyOrderCounts: InboundOutboundOrderCountPoint[];
 }
 
-export enum TaskStatus {
-  COMPLETED = "COMPLETED",
-  IN_PROGRESS = "IN_PROGRESS",
-  CREATED = "CREATED",
-  FAILED = "FAILED",
-  CANCELLED = "CANCELLED",
-}
-
-export enum PriorityLevel {
-  HIGH = "HIGH",
-  MEDIUM = "MEDIUM",
-  LOW = "LOW",
-}
-
-export interface BasicUserReference {
-  id: number;
-  username?: string;
-  fullName?: string;
-}
-
 export interface BasicSheetReference {
   id: number;
   code?: string;
   warehouseId?: number;
   warehouseName?: string;
-}
-
-export interface BasicPriorityReference {
-  id: number;
-  name?: string;
-  description?: string;
-  level?: PriorityLevel;
-}
-
-export interface BasicProductVariantReference {
-  id: number;
-  sku?: string;
-  name?: string;
-}
-
-export interface BasicSupplierReference {
-  id: number;
-  name?: string;
 }
 
 export interface BasicLocationReference {
@@ -325,44 +318,8 @@ export interface BasicLocationReference {
   name?: string;
 }
 
-export interface CreateFaultBatchRequest {
-  batchId: number;
-  handlingStatus: FaultBatchStatus;
-  referenceSheetId: number;
-}
-
-export interface CreateFaultOrderRequest {
-  referenceSheetId: number;
-}
-
 export interface AssignFaultOrderUsersRequest {
   analyzerUserId?: number | null;
   assigneeUserId?: number | null;
   questionCreatorUserId?: number | null;
 }
-
-export interface UpdateFaultOrderStatusRequest {
-  status: FaultOrderStatus;
-}
-
-export interface UpdateFaultOrderPriorityRequest {
-  priorityId: number | null;
-}
-
-export interface CreateFaultTaskRequest {
-  task?: string;
-  result?: string | null;
-  due_date?: string | null;
-  status?: TaskStatus;
-  assignedUser?: { id: number } | null;
-}
-
-export interface UpdateTasksStatusRequest {
-  taskIds: number[];
-  status: TaskStatus;
-}
-
-export type UpdateFaultBatchHandlingStatusRequest = Pick<
-  FaultBatch,
-  "id" | "handlingStatus"
->;
