@@ -5,6 +5,7 @@ import ComponentCard from "@/default_components/common/ComponentCard";
 import {
   FaultOrderSummary,
   FaultOrderPermission,
+  FaultOrderStatus,
 } from "@/interfaces/inventoryManagementType";
 import FaultOrderDetailClient from "@/components/fault-order/FaultOrderDetailClient";
 import AnalyzerAssigneeSelect from "@/components/fault-order/AnalyzerAssigneeSelect";
@@ -22,10 +23,6 @@ export default async function FaultOrderDetailPage({
   const faultOrderId = Number(id);
   const currentUserId = Number(cookieStore.get("userId")?.value);
   const permissions = cookieStore.get("permissions")?.value;
-  const canAssignUser =
-    permissions?.includes(FaultOrderPermission.ASSIGN) ?? false;
-  const canCreateProcessOrder =
-    permissions?.includes(FaultOrderPermission.CREATE) ?? false;
 
   let error: string | null = null;
   let data: FaultOrderSummary | null = null;
@@ -56,25 +53,23 @@ export default async function FaultOrderDetailPage({
     );
   }
 
+  const canAssignUser =
+    (permissions?.includes(FaultOrderPermission.ASSIGN) &&
+      data.status != FaultOrderStatus.COMPLETED) ??
+    false;
+  const canCreateProcessOrder =
+    (permissions?.includes(FaultOrderPermission.CREATE) &&
+      data.status != FaultOrderStatus.COMPLETED) ??
+    false;
+
   const analysisActionLabel =
-    permissions?.includes(FaultOrderPermission.ANALYZE) ||
     currentUserId === data.analyzerId ||
     currentUserId === data.questionCreatorId
       ? "Analyze"
-      : permissions?.includes(FaultOrderPermission.VIEW_ANALYSIS) ||
-          currentUserId === data.taskAssigneeId
-        ? "View Analysis"
-        : null;
+      : "View Analysis";
 
   const taskActionLabel =
-    permissions?.includes(FaultOrderPermission.ASSIGN_TASK) ||
-    currentUserId === data.taskAssigneeId
-      ? "Assign Tasks"
-      : permissions?.includes(FaultOrderPermission.DO_TASK)
-        ? "Do Task"
-        : permissions?.includes(FaultOrderPermission.VIEW_TASK)
-          ? "View Task"
-          : null;
+    currentUserId === data.taskAssigneeId ? "Assign Tasks" : "View Tasks";
 
   return (
     <div>

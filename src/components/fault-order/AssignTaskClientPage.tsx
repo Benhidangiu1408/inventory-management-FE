@@ -19,6 +19,7 @@ import {
   TaskBatchResponse,
   FaultBatch,
   FaultBatchStatus,
+  FaultProcessOrderStatus,
 } from "@/interfaces/inventoryManagementType";
 import CustomizableTable from "@/components/table/CustomizableTable";
 import ComponentCard from "@/default_components/common/ComponentCard";
@@ -45,8 +46,11 @@ export default function AssignTaskClientPage({
 
   // Permission
   const canAssignTasks = useMemo(() => {
-    return currentUserId === taskAssignerUserId;
-  }, [currentUserId, taskAssignerUserId]);
+    return (
+      currentUserId === taskAssignerUserId &&
+      initialProcessOrderData.status == FaultProcessOrderStatus.APPROVED
+    );
+  }, [currentUserId, initialProcessOrderData.status, taskAssignerUserId]);
 
   const handleBatchStatusChange = useCallback(
     (batchId: number, status: FaultBatchStatus) => {
@@ -101,6 +105,8 @@ export default function AssignTaskClientPage({
   const taskColumns = getTaskColumns(
     currentUserId,
     isPending,
+    canAssignTasks,
+    initialProcessOrderData.status == FaultProcessOrderStatus.APPROVED,
     handleTaskStatusChange,
   );
   const taskBatchData: TaskBatchResponse[] = useMemo(() => {
@@ -123,6 +129,7 @@ export default function AssignTaskClientPage({
   const TaskFaultBatchColumns = getTaskFaultBatchColumns(
     currentUserId,
     canAssignTasks,
+    initialProcessOrderData.status == FaultProcessOrderStatus.APPROVED,
     initialProcessOrderData.tasks as FaultTask[],
     handleTaskAssign,
     handleBatchStatusChange,

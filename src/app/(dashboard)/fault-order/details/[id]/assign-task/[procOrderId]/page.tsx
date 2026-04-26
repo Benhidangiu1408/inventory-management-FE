@@ -6,6 +6,7 @@ import {
   FaultBatchProcessOrder,
   FaultOrderPermission,
   FaultOrderSummary,
+  FaultProcessOrderStatus,
 } from "@/interfaces/inventoryManagementType";
 import { faultOrderService } from "@/services/InventoryManagementService";
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
@@ -44,7 +45,12 @@ export default async function AssignTaskPage({
     error = `Could not load data from server. ${e.message}`;
   }
 
-  if (error || !data) {
+  if (
+    error ||
+    !data ||
+    (data.status != FaultProcessOrderStatus.APPROVED &&
+      data.status != FaultProcessOrderStatus.COMPLETED)
+  ) {
     return (
       <div>
         <PageBreadcrumb

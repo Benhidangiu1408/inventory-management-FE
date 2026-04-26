@@ -16,7 +16,6 @@ import Button from "@/default_components/ui/button/Button";
 import { createFaultBatchProcessOrderAction } from "@/actions/faultHandling";
 import {
   FaultProcessOrderStatus,
-  FaultProcessOrderType,
   type FaultBatch,
   type FaultBatchProcessOrderSummary,
 } from "@/interfaces/inventoryManagementType";
@@ -29,8 +28,8 @@ type FaultOrderDetailClientProps = {
   initialFaultBatches: FaultBatch[];
   initialProcessingOrders: FaultBatchProcessOrderSummary[];
   canCreateProcessOrder: boolean;
-  analysisActionLabel: "Analyze" | "View Analysis" | null;
-  taskActionLabel: "Assign Tasks" | "Do Task" | "View Task" | null;
+  analysisActionLabel: "Analyze" | "View Analysis";
+  taskActionLabel: "Assign Tasks" | "Do Task" | "View Tasks" | null;
 };
 
 export default function FaultOrderDetailClient({
@@ -105,48 +104,46 @@ export default function FaultOrderDetailClient({
   >(
     () => [
       ...detailProcessingOrderColumns,
-      ...(analysisActionLabel || taskActionLabel
-        ? [
-            {
-              label: "Action",
-              key: "id",
-              autoHeight: true,
-              width: 250,
-              render: (_, row) => (
-                <div className="flex flex-wrap items-center justify-center gap-2">
-                  {analysisActionLabel && (
-                    <Button
-                      size="sm"
-                      variant="primary"
-                      onClick={() =>
-                        router.push(
-                          `/fault-order/details/${faultOrderId}/process-order/${row.id}`,
-                        )
-                      }
-                    >
-                      {analysisActionLabel}
-                    </Button>
-                  )}
-                  {taskActionLabel &&
-                    row.status != FaultProcessOrderStatus.IN_PROGRESS &&
-                    row.status != FaultProcessOrderStatus.REJECTED && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          router.push(
-                            `/fault-order/details/${faultOrderId}/assign-task/${row.id}`,
-                          )
-                        }
-                      >
-                        {taskActionLabel}
-                      </Button>
-                    )}
-                </div>
-              ),
-            } as Column<FaultBatchProcessOrderSummary>,
-          ]
-        : []),
+      {
+        label: "Action",
+        key: "id",
+        autoHeight: true,
+        width: 300,
+        render: (_, row) => (
+          <div className="flex items-center justify-center gap-2">
+            <Button
+              size="sm"
+              variant="primary"
+              className="whitespace-nowrap"
+              onClick={() =>
+                router.push(
+                  `/fault-order/details/${faultOrderId}/process-order/${row.id}`,
+                )
+              }
+            >
+              {row.status == FaultProcessOrderStatus.APPROVED ||
+              row.status == FaultProcessOrderStatus.COMPLETED
+                ? "View Analysis"
+                : analysisActionLabel}
+            </Button>
+            {(row.status == FaultProcessOrderStatus.APPROVED ||
+              row.status == FaultProcessOrderStatus.COMPLETED) && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="whitespace-nowrap"
+                onClick={() =>
+                  router.push(
+                    `/fault-order/details/${faultOrderId}/assign-task/${row.id}`,
+                  )
+                }
+              >
+                {taskActionLabel}
+              </Button>
+            )}
+          </div>
+        ),
+      } as Column<FaultBatchProcessOrderSummary>,
     ],
     [analysisActionLabel, faultOrderId, router, taskActionLabel],
   );
@@ -168,8 +165,6 @@ export default function FaultOrderDetailClient({
       const data = await createFaultBatchProcessOrderAction({
         faultOrderId,
         creatorUserId: currentUserId,
-        status: FaultProcessOrderStatus.IN_PROGRESS,
-        type: FaultProcessOrderType.OTHER,
         faultBatchIds: selectedIds,
       });
 

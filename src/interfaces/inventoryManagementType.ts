@@ -1,16 +1,14 @@
 export enum FaultOrderPermission {
   ASSIGN = "ASSIGN_USER",
   CREATE = "CREATE_PROCESS_ORDER",
-  VIEW_ANALYSIS = "ANALYSIS_VIEW",
-  VIEW_TASK = "TASK_VIEW",
-  ANALYZE = "ANALYZE",
-  ASSIGN_TASK = "ASSIGN_TASK",
-  DO_TASK = "DO_TASK",
+  // VIEW_ANALYSIS = "ANALYSIS_VIEW",
+  // VIEW_TASK = "TASK_VIEW",
+  // ANALYZE = "ANALYZE",
+  // ASSIGN_TASK = "ASSIGN_TASK",
+  // DO_TASK = "DO_TASK",
   FAULT_HANDLER = "FAULT_HANDLER",
-}
-
-export enum Analyze {
   APPROVE = "APPROVE_PROCESS_ORDER",
+  VIEW_FAULT_LIST = "VIEW_FAULT_LIST",
 }
 
 export enum SheetStatus {
@@ -82,6 +80,8 @@ export interface InventoryCheckBatchRow {
   storedQuantity: number; // System Snapshot
   scannedQuantity: number | null; // User Input (starts as null)
   hasFaults: boolean; // <--- Added flag (default false in Java mapper)
+  secondUnit: string;
+  conversionRate: number;
 
   draftQuantity?: number | null;
   draftFaults?: boolean;
@@ -169,8 +169,6 @@ export interface FaultBatchProcessOrderSummary {
 export interface CreateFaultBatchProcessOrderRequest {
   faultOrderId: number;
   creatorUserId: number;
-  status: FaultProcessOrderStatus;
-  type: FaultProcessOrderType;
   faultBatchIds?: number[];
 }
 

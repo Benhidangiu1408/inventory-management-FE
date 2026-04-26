@@ -10,7 +10,7 @@ export default async function FaultOrderPage() {
   let errorMsg = null;
 
   try {
-    data = await faultOrderService.getFaultOrdersByWarehouse();
+    data = await faultOrderService.getAllFaultOrders();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     errorMsg = `Could not load data from server. ${error.message}`;

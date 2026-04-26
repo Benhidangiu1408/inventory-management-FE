@@ -436,6 +436,11 @@ export const getIcSheetBatchSubheaders = (
     width: 250,
   },
   {
+    label: "Batch Unit",
+    key: "secondUnit",
+    render: (val, row) => `${row.storedQuantity / row.conversionRate} ${val}`,
+  },
+  {
     label: "System Qty",
     key: "storedQuantity",
     width: 50,

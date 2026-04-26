@@ -14,7 +14,7 @@ import Input from "@/default_components/form/input/InputField";
 import TextArea from "@/default_components/form/input/TextArea";
 import Button from "@/default_components/ui/button/Button";
 import {
-  Analyze,
+  FaultOrderPermission,
   FaultProcessOrderStatus,
   FaultProcessOrderType,
   FaultQuestion,
@@ -49,6 +49,14 @@ export default function ProcessOrderDetailForm({
 }: ProcessOrderDetailFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+
+  const initialDecision =
+    processOrder.status === FaultProcessOrderStatus.COMPLETED
+      ? FaultProcessOrderStatus.APPROVED
+      : processOrder.status === FaultProcessOrderStatus.FAILED ||
+          processOrder.status === FaultProcessOrderStatus.CANCELLED
+        ? FaultProcessOrderStatus.REJECTED
+        : processOrder.status;
   // Form state
   const {
     register,
@@ -63,7 +71,7 @@ export default function ProcessOrderDetailForm({
       rootCause: processOrder.rootCause ?? "",
       questions: processOrder.questions,
       faultType: processOrder.type ?? FaultProcessOrderType.OTHER,
-      decision: processOrder.status ?? FaultProcessOrderStatus.APPROVED,
+      decision: initialDecision,
       comment: processOrder.note ?? "",
     },
   });
@@ -76,14 +84,17 @@ export default function ProcessOrderDetailForm({
   // Permissions
   const { user } = useAuth();
   const canApproveProcessOrder =
-    user?.permissions.includes(Analyze.APPROVE) &&
-    processOrder.status === FaultProcessOrderStatus.IN_PROGRESS;
+    user?.permissions.includes(FaultOrderPermission.APPROVE) &&
+    (processOrder.status == FaultProcessOrderStatus.IN_PROGRESS ||
+      processOrder.status == FaultProcessOrderStatus.REJECTED);
   const canEditQuestions =
     currentUserId === questionCreatorId &&
-    processOrder.status == FaultProcessOrderStatus.IN_PROGRESS;
+    (processOrder.status == FaultProcessOrderStatus.IN_PROGRESS ||
+      processOrder.status == FaultProcessOrderStatus.REJECTED);
   const canAnswerQuestions =
     currentUserId === analyzerId &&
-    processOrder.status == FaultProcessOrderStatus.IN_PROGRESS;
+    (processOrder.status == FaultProcessOrderStatus.IN_PROGRESS ||
+      processOrder.status == FaultProcessOrderStatus.REJECTED);
 
   const isAnalysisDirty = Boolean(
     dirtyFields.whatHappened ||
@@ -317,7 +328,16 @@ export default function ProcessOrderDetailForm({
         )}
       </ComponentCard>
       <ComponentCard title="Decision">
-        <div className="space-y-6">
+        {/* 1. The Dynamic Wrapper Block (Dark Mode Ready) */}
+        <div
+          className={`space-y-6 rounded-xl border p-5 transition-colors ${
+            initialDecision === FaultProcessOrderStatus.APPROVED
+              ? "border-green-200 bg-green-50/50 dark:border-green-900/50 dark:bg-green-900/10"
+              : initialDecision === FaultProcessOrderStatus.REJECTED
+                ? "border-red-200 bg-red-50/50 dark:border-red-900/50 dark:bg-red-900/10"
+                : "border-transparent bg-transparent"
+          }`}
+        >
           {/* Approver info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col">
@@ -332,12 +352,19 @@ export default function ProcessOrderDetailForm({
             <div className="flex flex-col">
               <Label>Approved Date</Label>
               <Input
-                type="date"
+                type="datetime-local"
                 defaultValue={
                   processOrder.approveAt
-                    ? new Date(
-                        processOrder.approveAt as string,
-                      ).toLocaleDateString("en-GB")
+                    ? (() => {
+                        const d = new Date(processOrder.approveAt as string);
+                        const yyyy = d.getFullYear();
+                        const mm = String(d.getMonth() + 1).padStart(2, "0");
+                        const dd = String(d.getDate()).padStart(2, "0");
+                        const hh = String(d.getHours()).padStart(2, "0");
+                        const min = String(d.getMinutes()).padStart(2, "0");
+
+                        return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+                      })()
                     : ""
                 }
                 disabled
@@ -345,33 +372,51 @@ export default function ProcessOrderDetailForm({
               />
             </div>
           </div>
-          {/* Decision */}
+
+          {/* Decision Radios */}
           <div className="flex gap-6">
             <div
-              className={`cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 ${canApproveProcessOrder ? "hover:bg-gray-50" : ""}`}
+              className={`flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 transition-colors ${
+                initialDecision === FaultProcessOrderStatus.APPROVED
+                  ? "border-green-300 bg-green-100/50 dark:border-green-800 dark:bg-green-900/30"
+                  : "border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+              }`}
             >
               <Radio
                 label="Approve"
                 id="approveBtn"
                 value={FaultProcessOrderStatus.APPROVED}
                 disabled={!canApproveProcessOrder || isPending}
-                className={`font-medium ${canApproveProcessOrder ? "text-green-600" : ""}`}
+                className={`font-medium ${
+                  initialDecision === FaultProcessOrderStatus.APPROVED
+                    ? "text-green-800 dark:text-green-400"
+                    : "text-gray-700 dark:text-gray-300"
+                }`}
                 {...register("decision")}
               />
             </div>
             <div
-              className={`cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 ${canApproveProcessOrder ? "hover:bg-gray-50" : ""}`}
+              className={`flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 transition-colors ${
+                initialDecision === FaultProcessOrderStatus.REJECTED
+                  ? "border-red-300 bg-red-100/50 dark:border-red-800 dark:bg-red-900/30"
+                  : "border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+              }`}
             >
               <Radio
                 label="Reject"
                 id="rejectBtn"
                 value={FaultProcessOrderStatus.REJECTED}
                 disabled={!canApproveProcessOrder || isPending}
-                className={`font-medium ${canApproveProcessOrder ? "text-red-600" : ""}`}
+                className={`font-medium ${
+                  initialDecision === FaultProcessOrderStatus.REJECTED
+                    ? "text-red-800 dark:text-red-400"
+                    : "text-gray-700 dark:text-gray-300"
+                }`}
                 {...register("decision")}
               />
             </div>
           </div>
+
           {/* Comment */}
           <div className="space-y-2">
             <Label>Comment</Label>
@@ -379,15 +424,18 @@ export default function ProcessOrderDetailForm({
               rows={4}
               placeholder="Write your comment..."
               disabled={!canApproveProcessOrder || isPending}
+              className="bg-white/60 dark:bg-gray-900/50"
               {...register("comment")}
             />
           </div>
         </div>
+
         {canApproveProcessOrder && (
           <Button
             variant="primary"
             onClick={onSubmitDecision}
             disabled={isPending || !isDecisionDirty}
+            className="mt-6"
           >
             {isPending ? "Saving..." : "Submit Decision"}
           </Button>

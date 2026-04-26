@@ -122,15 +122,10 @@ export const faultOrderService = {
     );
   },
 
-  getFaultOrdersByWarehouse: async (warehouseId?: number | null) => {
-    const query = warehouseId ? `?warehouseId=${warehouseId}` : "";
-
-    return apiClient.get<FaultOrderSummary[]>(
-      `/inventory/v1/fault-orders${query}`,
-      {
-        cache: "no-store",
-      },
-    );
+  getAllFaultOrders: async () => {
+    return apiClient.get<FaultOrderSummary[]>(`/inventory/v1/fault-orders`, {
+      cache: "no-store",
+    });
   },
 
   assignAnalyzerAndAssignee: async (

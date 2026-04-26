@@ -528,7 +528,7 @@ export const faultOrderHeader: Column<FaultOrderSummary>[] = [
     width: 80,
     render: (value, row) => (
       <Link
-        href={`/src/app/(dashboard)/fault-order/details/${row.id}`}
+        href={`/fault-order/details/${row.id}`}
         className="text-brand-500 text-sm font-normal underline transition-colors"
       >
         {value as string}
@@ -797,9 +797,24 @@ export const detailProcessingOrderColumns: Column<FaultBatchProcessOrderSummary>
     },
   ];
 
+const getTaskStatusColor = (status: string) => {
+  switch (status) {
+    case TaskStatus.COMPLETED:
+      return "!text-green-700 dark:!text-green-400";
+    case TaskStatus.IN_PROGRESS:
+      return "!text-yellow-700 dark:!text-yellow-400";
+    case TaskStatus.FAILED:
+      return "!text-red-700 dark:!text-red-400";
+    case TaskStatus.CREATED:
+    default:
+      return "!text-gray-700 dark:!text-gray-400";
+  }
+};
 export const getTaskColumns = (
   currentUserId: number,
   isUpdatingTask: boolean,
+  canAssignTask: boolean,
+  isApprove: boolean,
   handleTaskStatusChange: (id: number, status: TaskStatus) => void,
 ): Column<FaultTask>[] => [
   { label: "Task", key: "task", filter: "agTextColumnFilter" },
@@ -831,28 +846,46 @@ export const getTaskColumns = (
           return "Blocked";
       }
     },
-    render: (_, row) => (
-      <Select
-        className="border-none !bg-transparent !ring-0"
-        options={[
-          { value: TaskStatus.CREATED, label: "Not Started" },
-          { value: TaskStatus.IN_PROGRESS, label: "In Progress" },
-          { value: TaskStatus.COMPLETED, label: "Completed" },
-          { value: TaskStatus.FAILED, label: "Blocked" },
-        ]}
-        value={row.status as string}
-        onChange={(e) =>
-          handleTaskStatusChange(Number(row.id), e.target.value as TaskStatus)
-        }
-        disabled={isUpdatingTask || currentUserId != row.assignedUserId}
-      />
-    ),
+    render: (_, row) => {
+      return (
+        <Select
+          className={`border-none font-medium !ring-0 ${getTaskStatusColor(row.status as string)}`}
+          options={[
+            { value: TaskStatus.CREATED, label: "Not Started" },
+            { value: TaskStatus.IN_PROGRESS, label: "In Progress" },
+            { value: TaskStatus.COMPLETED, label: "Completed" },
+            { value: TaskStatus.FAILED, label: "Blocked" },
+          ]}
+          value={row.status as string}
+          onChange={(e) =>
+            handleTaskStatusChange(Number(row.id), e.target.value as TaskStatus)
+          }
+          disabled={
+            isUpdatingTask ||
+            (!canAssignTask &&
+              !(currentUserId == row.assignedUserId && isApprove))
+          }
+        />
+      );
+    },
   },
 ];
 
+const getBatchStatusColor = (status: string) => {
+  switch (status) {
+    case FaultBatchStatus.RESOLVED:
+      return "!text-green-700 dark:!text-green-400";
+    case FaultBatchStatus.PROCESSING:
+      return "!text-blue-700 dark:!text-yellow-400";
+    case FaultBatchStatus.REPORTED:
+    default:
+      return "!text-gray-700 dark:!text-gray-400";
+  }
+};
 export const getTaskFaultBatchColumns = (
   currentUserId: number,
   canAssignTask: boolean,
+  isApprove: boolean,
   taskData: FaultTask[],
   handleTaskAssign: (batchId: number, taskId: number) => void,
   handleBatchStatusChange: (id: number, status: FaultBatchStatus) => void,
@@ -902,20 +935,22 @@ export const getTaskFaultBatchColumns = (
           return "Pending";
       }
     },
-    render: (value, row) => (
+    render: (_, row) => (
       <Select
-        className="border-none !bg-transparent !ring-0"
+        className={`border-none font-medium !ring-0 ${getBatchStatusColor(row.handlingStatus as string)}`}
         options={[
           { value: FaultBatchStatus.REPORTED, label: "Pending" },
           { value: FaultBatchStatus.PROCESSING, label: "In Progress" },
           { value: FaultBatchStatus.RESOLVED, label: "Completed" },
         ]}
         placeholder="Select status"
-        value={value as string}
+        value={row.handlingStatus as string}
         onChange={(e) =>
           handleBatchStatusChange(row.id, e.target.value as FaultBatchStatus)
         }
-        disabled={isUpdating || currentUserId != row.assignedUserId}
+        disabled={
+          isUpdating || currentUserId != row.assignedUserId || !isApprove
+        }
       />
     ),
   },
