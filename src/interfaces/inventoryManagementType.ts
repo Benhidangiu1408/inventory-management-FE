@@ -68,7 +68,6 @@ export interface InventoryCheckProductGroup {
   productSku: string;
   productName: string; // e.g. "T-Shirt (Red, XL)"
   description: string;
-  unitName: string; // e.g. "Piece" (Base Unit)
   batches: InventoryCheckBatchRow[]; // List of specific batches for this product
 }
 
@@ -80,6 +79,7 @@ export interface InventoryCheckBatchRow {
   storedQuantity: number; // System Snapshot
   scannedQuantity: number | null; // User Input (starts as null)
   hasFaults: boolean; // <--- Added flag (default false in Java mapper)
+  unit: string; // e.g. "Piece" (Base Unit)
   secondUnit: string;
   conversionRate: number;
 
