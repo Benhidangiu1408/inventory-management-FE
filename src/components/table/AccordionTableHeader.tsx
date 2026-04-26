@@ -383,11 +383,6 @@ export const icSheetProductHeaders: Column<InventoryCheckProductGroup>[] = [
       ),
   },
   {
-    label: "Unit",
-    key: "unitName",
-    width: 100,
-  },
-  {
     label: "Progress",
     key: "batches",
     render: (batches) => {
@@ -440,6 +435,10 @@ export const getIcSheetBatchSubheaders = (
     key: "storedQuantity",
     width: 50,
     filter: false,
+    render: (val, row) =>
+      row.conversionRate
+        ? `${(row.storedQuantity / row.conversionRate).toFixed(0)} ${row.secondUnit} (${val} ${row.unit})`
+        : `${val} ${row.unit}`,
   },
   {
     label: "Scanned Qty",

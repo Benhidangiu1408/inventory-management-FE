@@ -8,7 +8,7 @@ export default async function CreateWarehousePage() {
   let data: User[] = [];
 
   try {
-    data = await userManagementService.getAll();
+    data = await userManagementService.getAllByPermissionCode("EDIT_WAREHOUSE");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     errorMsg = `Could not load data from server. ${error.message}`;

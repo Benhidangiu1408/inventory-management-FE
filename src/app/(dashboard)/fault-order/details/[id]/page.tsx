@@ -5,34 +5,13 @@ import ComponentCard from "@/default_components/common/ComponentCard";
 import {
   FaultOrderSummary,
   FaultOrderPermission,
+  FaultOrderStatus,
 } from "@/interfaces/inventoryManagementType";
-import FaultOrderDetailClient from "./FaultOrderDetailClient";
-import AnalyzerAssigneeSelect from "./AnalyzerAssigneeSelect";
+import FaultOrderDetailClient from "@/components/fault-order/FaultOrderDetailClient";
+import AnalyzerAssigneeSelect from "@/components/fault-order/AnalyzerAssigneeSelect";
 import { faultOrderService } from "@/services/InventoryManagementService";
 import { userManagementService } from "@/services/UserManagementService";
 import { User } from "@/interfaces/userManagementType";
-
-const parsePermissionCookie = (rawValue?: string): string[] => {
-  if (!rawValue) return [];
-  const trimmed = rawValue.trim();
-  if (!trimmed) return [];
-  try {
-    const parsed = JSON.parse(trimmed);
-    if (Array.isArray(parsed)) {
-      return parsed
-        .filter((p): p is string => typeof p === "string")
-        .map((p) => p.trim())
-        .filter(Boolean);
-    }
-    if (typeof parsed === "string") return parsed.trim() ? [parsed.trim()] : [];
-  } catch {
-    /* ignore */
-  }
-  return trimmed
-    .split(",")
-    .map((p) => p.trim())
-    .filter(Boolean);
-};
 
 export default async function FaultOrderDetailPage({
   params,
@@ -43,12 +22,7 @@ export default async function FaultOrderDetailPage({
   const { id } = await params;
   const faultOrderId = Number(id);
   const currentUserId = Number(cookieStore.get("userId")?.value);
-  const permissionSet = new Set(
-    parsePermissionCookie(cookieStore.get("permissions")?.value),
-  );
-
-  const canAssignUser = permissionSet.has(FaultOrderPermission.ASSIGN);
-  const canCreateProcessOrder = permissionSet.has(FaultOrderPermission.CREATE);
+  const permissions = cookieStore.get("permissions")?.value;
 
   let error: string | null = null;
   let data: FaultOrderSummary | null = null;
@@ -79,25 +53,23 @@ export default async function FaultOrderDetailPage({
     );
   }
 
+  const canAssignUser =
+    (permissions?.includes(FaultOrderPermission.ASSIGN) &&
+      data.status != FaultOrderStatus.COMPLETED) ??
+    false;
+  const canCreateProcessOrder =
+    (permissions?.includes(FaultOrderPermission.CREATE) &&
+      data.status != FaultOrderStatus.COMPLETED) ??
+    false;
+
   const analysisActionLabel =
-    permissionSet.has(FaultOrderPermission.ANALYZE) ||
     currentUserId === data.analyzerId ||
     currentUserId === data.questionCreatorId
       ? "Analyze"
-      : permissionSet.has(FaultOrderPermission.VIEW_ANALYSIS) ||
-          currentUserId === data.taskAssigneeId
-        ? "View Analysis"
-        : null;
+      : "View Analysis";
 
   const taskActionLabel =
-    permissionSet.has(FaultOrderPermission.ASSIGN_TASK) ||
-    currentUserId === data.taskAssigneeId
-      ? "Assign Tasks"
-      : permissionSet.has(FaultOrderPermission.DO_TASK)
-        ? "Do Task"
-        : permissionSet.has(FaultOrderPermission.VIEW_TASK)
-          ? "View Task"
-          : null;
+    currentUserId === data.taskAssigneeId ? "Assign Tasks" : "View Tasks";
 
   return (
     <div>

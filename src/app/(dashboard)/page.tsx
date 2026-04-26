@@ -1,10 +1,11 @@
-import {
-  getInboundOutboundMonthlySummaryAction,
-  getInboundOutboundTotalSummaryAction,
-  getOverviewSummaryAction,
-} from "@/actions/dashboard";
-import InventoryDashboardRealtime from "../../components/dashboard/InventoryDashboardRealtime";
-import type { InboundOutboundMonthlyRequest } from "@/interfaces/inventoryManagementType";
+import InventoryDashboardRealtime from "@/components/dashboard/InventoryDashboardRealtime";
+import type {
+  InboundOutboundMonthlyPoint,
+  InboundOutboundMonthlyRequest,
+  InboundOutboundOrderCountResponse,
+  OverviewSummaryResponse,
+} from "@/interfaces/inventoryManagementType";
+import { inventoryDashboardService } from "@/services/InventoryManagementService";
 // import { predictionService } from "@/services/PredictionService";
 
 type DashboardQueryParams = Record<string, string | string[] | undefined>;
@@ -148,14 +149,6 @@ async function resolveSearchParams(
   return await searchParams;
 }
 
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-
-  return "Unable to load dashboard data.";
-}
-
 export default async function Dashboard({ searchParams }: DashboardPageProps) {
   // const response = await predictionService.predict({
   //   product_id: "P0001",
@@ -196,33 +189,31 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
     defaultTo,
   );
 
-  const [overviewResult, monthlyResult, totalResult] = await Promise.allSettled(
-    [
-      getOverviewSummaryAction(),
-      getInboundOutboundMonthlySummaryAction(quantityRange.request),
-      getInboundOutboundTotalSummaryAction(orderRange.request),
-    ],
-  );
-
-  const overview =
-    overviewResult.status === "fulfilled" ? overviewResult.value : null;
-  const monthlyPoints =
-    monthlyResult.status === "fulfilled" ? monthlyResult.value : [];
-  const totalSummary =
-    totalResult.status === "fulfilled" ? totalResult.value : null;
-
-  const errors = [overviewResult, monthlyResult, totalResult]
-    .filter(
-      (result): result is PromiseRejectedResult => result.status === "rejected",
-    )
-    .map((result) => getErrorMessage(result.reason));
+  let overviewResult: OverviewSummaryResponse | null = null;
+  let monthlyResult: InboundOutboundMonthlyPoint[] = [];
+  let totalResult: InboundOutboundOrderCountResponse | null = null;
+  let error: string | null = null;
+  try {
+    overviewResult = await inventoryDashboardService.getOverviewSummary();
+    monthlyResult =
+      await inventoryDashboardService.getInboundOutboundMonthlySummary(
+        quantityRange.request,
+      );
+    totalResult =
+      await inventoryDashboardService.getInboundOutboundTotalSummary(
+        orderRange.request,
+      );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any) {
+    error = `Could not load data from server. ${e.message}`;
+  }
 
   return (
     <InventoryDashboardRealtime
-      overview={overview}
-      monthlyPoints={monthlyPoints}
-      totalSummary={totalSummary}
-      errors={errors}
+      overview={overviewResult}
+      monthlyPoints={monthlyResult}
+      totalSummary={totalResult}
+      error={error}
       quantityRange={quantityRange}
       orderRange={orderRange}
       maxRangeMonths={MAX_MONTH_RANGE}

@@ -28,7 +28,7 @@ type InventoryDashboardRealtimeProps = {
   overview: OverviewSummaryResponse | null;
   monthlyPoints: InboundOutboundMonthlyPoint[];
   totalSummary: InboundOutboundOrderCountResponse | null;
-  errors: string[];
+  error: string | null;
   quantityRange: DashboardChartRange;
   orderRange: DashboardChartRange;
   maxRangeMonths: number;
@@ -56,7 +56,7 @@ export default function InventoryDashboardRealtime({
   overview,
   monthlyPoints,
   totalSummary,
-  errors,
+  error,
   quantityRange,
   orderRange,
   maxRangeMonths,
@@ -297,9 +297,11 @@ export default function InventoryDashboardRealtime({
 
   return (
     <div className="space-y-6">
-      {errors.length > 0 && (
-        <div className="border-error-200 bg-error-50 text-error-700 dark:border-error-500/30 dark:bg-error-500/10 dark:text-error-400 rounded-xl border px-4 py-3 text-sm">
-          {errors.join(" | ")}
+      {error && (
+        <div>
+          <div className="default-card border-red-200 p-6 text-red-700 dark:border-red-700 dark:text-red-800">
+            {error ?? "Unable to load summary data."}
+          </div>
         </div>
       )}
 
@@ -492,7 +494,7 @@ export default function InventoryDashboardRealtime({
             Fault Type Distribution
           </h3>
 
-          <div className="mt-4 font-outfit">
+          <div className="font-outfit mt-4">
             {faultPieSeries.length > 0 ? (
               <ReactApexChart
                 options={faultPieOptions}
@@ -501,7 +503,7 @@ export default function InventoryDashboardRealtime({
                 height={300}
               />
             ) : (
-              <p className="font-outfit font-normal rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-500 dark:bg-gray-800/60 dark:text-gray-400">
+              <p className="font-outfit rounded-lg bg-gray-50 px-3 py-2 text-sm font-normal text-gray-500 dark:bg-gray-800/60 dark:text-gray-400">
                 No fault status data available.
               </p>
             )}

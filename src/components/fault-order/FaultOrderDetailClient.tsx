@@ -13,14 +13,9 @@ import {
   detailProcessingOrderColumns,
 } from "@/components/table/CustomizableTableHeader";
 import Button from "@/default_components/ui/button/Button";
+import { createFaultBatchProcessOrderAction } from "@/actions/faultHandling";
 import {
-  createFaultBatchProcessOrderAction,
-  updateFaultOrderStatusAction,
-} from "@/actions/faultHandling";
-import {
-  FaultOrderStatus,
   FaultProcessOrderStatus,
-  FaultProcessOrderType,
   type FaultBatch,
   type FaultBatchProcessOrderSummary,
 } from "@/interfaces/inventoryManagementType";
@@ -33,8 +28,8 @@ type FaultOrderDetailClientProps = {
   initialFaultBatches: FaultBatch[];
   initialProcessingOrders: FaultBatchProcessOrderSummary[];
   canCreateProcessOrder: boolean;
-  analysisActionLabel: "Analyze" | "View Analysis" | null;
-  taskActionLabel: "Assign Tasks" | "Do Task" | "View Task" | null;
+  analysisActionLabel: "Analyze" | "View Analysis";
+  taskActionLabel: "Assign Tasks" | "Do Task" | "View Tasks" | null;
 };
 
 export default function FaultOrderDetailClient({
@@ -54,17 +49,11 @@ export default function FaultOrderDetailClient({
 
   // 1. Filter the raw data directly from the server props
   const unassignedBatches = useMemo(
-    () =>
-      initialFaultBatches.filter(
-        (b) => !b.faultBatchProcessOrderId && !b.faultBatchProcessOrder,
-      ),
+    () => initialFaultBatches.filter((b) => !b.faultBatchProcessOrderId),
     [initialFaultBatches],
   );
   const assignedBatches = useMemo(
-    () =>
-      initialFaultBatches.filter(
-        (b) => b.faultBatchProcessOrderId || b.faultBatchProcessOrder,
-      ),
+    () => initialFaultBatches.filter((b) => b.faultBatchProcessOrderId),
     [initialFaultBatches],
   );
   const toggleBatch = (batchId: number) => {
@@ -115,46 +104,46 @@ export default function FaultOrderDetailClient({
   >(
     () => [
       ...detailProcessingOrderColumns,
-      ...(analysisActionLabel || taskActionLabel
-        ? [
-            {
-              label: "Action",
-              key: "id",
-              autoHeight: true,
-              width: 250,
-              render: (_, row) => (
-                <div className="flex flex-wrap items-center justify-center gap-2">
-                  {analysisActionLabel && (
-                    <Button
-                      size="sm"
-                      variant="primary"
-                      onClick={() =>
-                        router.push(
-                          `/fault-order/details/${faultOrderId}/process-order/${row.id}`,
-                        )
-                      }
-                    >
-                      {analysisActionLabel}
-                    </Button>
-                  )}
-                  {taskActionLabel && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() =>
-                        router.push(
-                          `/fault-order/details/${faultOrderId}/assign-task/${row.id}`,
-                        )
-                      }
-                    >
-                      {taskActionLabel}
-                    </Button>
-                  )}
-                </div>
-              ),
-            } as Column<FaultBatchProcessOrderSummary>,
-          ]
-        : []),
+      {
+        label: "Action",
+        key: "id",
+        autoHeight: true,
+        width: 300,
+        render: (_, row) => (
+          <div className="flex items-center justify-center gap-2">
+            <Button
+              size="sm"
+              variant="primary"
+              className="whitespace-nowrap"
+              onClick={() =>
+                router.push(
+                  `/fault-order/details/${faultOrderId}/process-order/${row.id}`,
+                )
+              }
+            >
+              {row.status == FaultProcessOrderStatus.APPROVED ||
+              row.status == FaultProcessOrderStatus.COMPLETED
+                ? "View Analysis"
+                : analysisActionLabel}
+            </Button>
+            {(row.status == FaultProcessOrderStatus.APPROVED ||
+              row.status == FaultProcessOrderStatus.COMPLETED) && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="whitespace-nowrap"
+                onClick={() =>
+                  router.push(
+                    `/fault-order/details/${faultOrderId}/assign-task/${row.id}`,
+                  )
+                }
+              >
+                {taskActionLabel}
+              </Button>
+            )}
+          </div>
+        ),
+      } as Column<FaultBatchProcessOrderSummary>,
     ],
     [analysisActionLabel, faultOrderId, router, taskActionLabel],
   );
@@ -171,51 +160,26 @@ export default function FaultOrderDetailClient({
       toast.error("Session error: Cannot determine user.");
       return;
     }
-
-    setIsSubmitting(true);
-    const { data, error } = await createFaultBatchProcessOrderAction({
-      faultOrderId,
-      creatorUserId: currentUserId,
-      status: FaultProcessOrderStatus.IN_PROGRESS,
-      type: FaultProcessOrderType.OTHER,
-      faultBatchIds: selectedIds,
-    });
-
-    if (error || !data?.id) {
-      setIsSubmitting(false);
-      toast.error(error ?? "Failed to create process order.");
-      return;
-    }
-
-    if (initialProcessingOrders.length === 0) {
-      const { error: updateError } = await updateFaultOrderStatusAction(
+    try {
+      setIsSubmitting(true);
+      const data = await createFaultBatchProcessOrderAction({
         faultOrderId,
-        FaultOrderStatus.IN_PROGRESS,
+        creatorUserId: currentUserId,
+        faultBatchIds: selectedIds,
+      });
+
+      toast.success("Investigation created successfully.");
+      setSelectedBatchIds(new Set());
+      router.refresh();
+      router.push(
+        `/fault-order/details/${faultOrderId}/process-order/${data.id}`,
       );
-      if (updateError) {
-        setIsSubmitting(false);
-        toast.error(
-          `Process order created, but failed to update parent status: ${updateError}`,
-        );
-
-        // We still refresh and push because the actual process order exists now!
-        router.refresh();
-        router.push(
-          `/fault-order/details/${faultOrderId}/process-order/${data.id}`,
-        );
-        return;
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message ?? "Failed to create process order.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    toast.success("Investigation created successfully.");
-    setSelectedBatchIds(new Set());
-
-    // Refresh Server State!
-    router.refresh();
-    router.push(
-      `/fault-order/details/${faultOrderId}/process-order/${data.id}`,
-    );
-    setIsSubmitting(false);
   };
 
   return (

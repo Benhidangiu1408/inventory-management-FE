@@ -19,8 +19,12 @@ import { Pencil, Trash2 } from "lucide-react";
 import {
   FaultBatch,
   FaultBatchProcessOrderSummary,
+  FaultBatchStatus,
   FaultOrderSummary,
+  FaultTask,
   InventoryCheckResponse,
+  TaskBatchResponse,
+  TaskStatus,
 } from "@/interfaces/inventoryManagementType";
 import { Role, User } from "@/interfaces/userManagementType";
 import { AssignRoleAction } from "@/actions/user";
@@ -600,8 +604,8 @@ export const faultOrderHeader: Column<FaultOrderSummary>[] = [
             statusStr === "COMPLETED"
               ? "success"
               : statusStr === "PENDING"
-                ? "warning"
-                : "error"
+                ? "light"
+                : "warning"
           }
           variant="solid"
         >
@@ -610,26 +614,26 @@ export const faultOrderHeader: Column<FaultOrderSummary>[] = [
       );
     },
   },
-  {
-    label: "Priority",
-    key: "priorityLevel",
-    filter: "agSetColumnFilter",
-    width: 120,
-    render: (value) => {
-      const priorityStr = (value as string) || "Unassigned";
+  // {
+  //   label: "Priority",
+  //   key: "priorityLevel",
+  //   filter: "agSetColumnFilter",
+  //   width: 120,
+  //   render: (value) => {
+  //     const priorityStr = (value as string) || "Unassigned";
 
-      let badgeColor: "error" | "warning" | "success" | "light" = "light";
-      if (priorityStr.toUpperCase() === "HIGH") badgeColor = "error";
-      if (priorityStr.toUpperCase() === "MEDIUM") badgeColor = "warning";
-      if (priorityStr.toUpperCase() === "LOW") badgeColor = "success";
+  //     let badgeColor: "error" | "warning" | "success" | "light" = "light";
+  //     if (priorityStr.toUpperCase() === "HIGH") badgeColor = "error";
+  //     if (priorityStr.toUpperCase() === "MEDIUM") badgeColor = "warning";
+  //     if (priorityStr.toUpperCase() === "LOW") badgeColor = "success";
 
-      return (
-        <Badge variant="solid" color={badgeColor}>
-          {priorityStr}
-        </Badge>
-      );
-    },
-  },
+  //     return (
+  //       <Badge variant="solid" color={badgeColor}>
+  //         {priorityStr}
+  //       </Badge>
+  //     );
+  //   },
+  // },
 ];
 
 // ------------------------------------------------------
@@ -693,8 +697,7 @@ export const detailAssignedFaultBatchColumns: Column<FaultBatch>[] = [
     key: "faultBatchProcessOrderId",
     filter: "agTextColumnFilter",
     render: (_, row) => {
-      const processId =
-        row.faultBatchProcessOrderId || row.faultBatchProcessOrder?.id;
+      const processId = row.faultBatchProcessOrderId;
       return processId ? String(processId) : "-";
     },
   },
@@ -794,16 +797,161 @@ export const detailProcessingOrderColumns: Column<FaultBatchProcessOrderSummary>
     },
   ];
 
-export type TaskItem = {
-  task: string;
-  owner: string;
-  dueDate: string; // e.g. "2025-10-01"
-  status: "Not Started" | "In Progress" | "Completed" | "Blocked";
+const getTaskStatusColor = (status: string) => {
+  switch (status) {
+    case TaskStatus.COMPLETED:
+      return "!text-green-700 dark:!text-green-400";
+    case TaskStatus.IN_PROGRESS:
+      return "!text-yellow-700 dark:!text-yellow-400";
+    case TaskStatus.FAILED:
+      return "!text-red-700 dark:!text-red-400";
+    case TaskStatus.CREATED:
+    default:
+      return "!text-gray-700 dark:!text-gray-400";
+  }
 };
+export const getTaskColumns = (
+  currentUserId: number,
+  isUpdatingTask: boolean,
+  canAssignTask: boolean,
+  isApprove: boolean,
+  handleTaskStatusChange: (id: number, status: TaskStatus) => void,
+): Column<FaultTask>[] => [
+  { label: "Task", key: "task", filter: "agTextColumnFilter" },
+  {
+    label: "Assigned To",
+    key: "assignedUsername",
+    filter: "agTextColumnFilter",
+    render: (val) => val || "Not assigned",
+  },
+  {
+    label: "Due Date",
+    key: "dueDate",
+    filter: "agDateColumnFilter",
+    render: (val) =>
+      val ? new Date(val as string).toLocaleString("en-GB") : "-",
+  },
+  {
+    label: "Status",
+    key: "status",
+    valueGetter: (params) => {
+      switch (params.status) {
+        case TaskStatus.IN_PROGRESS:
+          return "In Progress";
+        case TaskStatus.COMPLETED:
+          return "Completed";
+        case TaskStatus.CREATED:
+          return "Not Started";
+        case TaskStatus.FAILED:
+          return "Blocked";
+      }
+    },
+    render: (_, row) => {
+      return (
+        <Select
+          className={`border-none font-medium !ring-0 ${getTaskStatusColor(row.status as string)}`}
+          options={[
+            { value: TaskStatus.CREATED, label: "Not Started" },
+            { value: TaskStatus.IN_PROGRESS, label: "In Progress" },
+            { value: TaskStatus.COMPLETED, label: "Completed" },
+            { value: TaskStatus.FAILED, label: "Blocked" },
+          ]}
+          value={row.status as string}
+          onChange={(e) =>
+            handleTaskStatusChange(Number(row.id), e.target.value as TaskStatus)
+          }
+          disabled={
+            isUpdatingTask ||
+            (!canAssignTask &&
+              !(currentUserId == row.assignedUserId && isApprove))
+          }
+        />
+      );
+    },
+  },
+];
 
-export const taskColumns: Column<TaskItem>[] = [
-  { label: "Task", key: "task" },
-  { label: "Owner", key: "owner" },
-  { label: "Due Date", key: "dueDate" },
-  { label: "Status", key: "status" },
+const getBatchStatusColor = (status: string) => {
+  switch (status) {
+    case FaultBatchStatus.RESOLVED:
+      return "!text-green-700 dark:!text-green-400";
+    case FaultBatchStatus.PROCESSING:
+      return "!text-blue-700 dark:!text-yellow-400";
+    case FaultBatchStatus.REPORTED:
+    default:
+      return "!text-gray-700 dark:!text-gray-400";
+  }
+};
+export const getTaskFaultBatchColumns = (
+  currentUserId: number,
+  canAssignTask: boolean,
+  isApprove: boolean,
+  taskData: FaultTask[],
+  handleTaskAssign: (batchId: number, taskId: number) => void,
+  handleBatchStatusChange: (id: number, status: FaultBatchStatus) => void,
+  isUpdating: boolean,
+): Column<TaskBatchResponse>[] => [
+  {
+    label: "Fault Batch Code",
+    key: "code",
+    sort: true,
+    width: 250,
+    filter: "agTextColumnFilter",
+  },
+  {
+    label: "Assigned To Task",
+    key: "taskId",
+    render: (val, row) => (
+      <Select
+        className="border-none !bg-transparent !ring-0"
+        options={taskData.map((task) => ({
+          value: String(task.id),
+          label: task.task as string,
+        }))}
+        disablePlaceholderOpt={false}
+        placeholder="Select task"
+        value={String(val)}
+        onChange={(e) => handleTaskAssign(row.id, Number(e.target.value))}
+        disabled={isUpdating || !canAssignTask}
+      />
+    ),
+  },
+  {
+    label: "Handle By",
+    key: "assignedUserUsername",
+    filter: "agTextColumnFilter",
+  },
+  {
+    label: "Handling Status",
+    key: "handlingStatus",
+    width: 200,
+    valueGetter: (params) => {
+      switch (params.handlingStatus) {
+        case FaultBatchStatus.RESOLVED:
+          return "Completed";
+        case FaultBatchStatus.PROCESSING:
+          return "In progress";
+        case FaultBatchStatus.REPORTED:
+          return "Pending";
+      }
+    },
+    render: (_, row) => (
+      <Select
+        className={`border-none font-medium !ring-0 ${getBatchStatusColor(row.handlingStatus as string)}`}
+        options={[
+          { value: FaultBatchStatus.REPORTED, label: "Pending" },
+          { value: FaultBatchStatus.PROCESSING, label: "In Progress" },
+          { value: FaultBatchStatus.RESOLVED, label: "Completed" },
+        ]}
+        placeholder="Select status"
+        value={row.handlingStatus as string}
+        onChange={(e) =>
+          handleBatchStatusChange(row.id, e.target.value as FaultBatchStatus)
+        }
+        disabled={
+          isUpdating || currentUserId != row.assignedUserId || !isApprove
+        }
+      />
+    ),
+  },
 ];

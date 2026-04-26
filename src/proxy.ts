@@ -39,51 +39,58 @@ export async function proxy(request: NextRequest) {
    */
   const PERMISSION_RULES = [
     // --- Catalog ---
-    { pattern: /^\/catalog\/category(\/.*)?$/, permission: "MANAGE_CATEGORY" }, // Starts with (catch-all for category)
-    { pattern: /^\/catalog\/unit(\/.*)?$/, permission: "MANAGE_UNIT" },
+    {
+      pattern: /^\/catalog\/category(\/.*)?$/,
+      permissions: ["MANAGE_CATEGORY", "SUPER_ADMIN"],
+    },
+    { pattern: /^\/catalog\/unit(\/.*)?$/, permissions: ["MANAGE_UNIT"] },
     {
       pattern: /^\/catalog\/variant-attributes(\/.*)?$/,
-      permission: "MANAGE_ATTR",
+      permissions: ["MANAGE_ATTR"],
     },
+
     // --- Catalog: Products ---
-    { pattern: /^\/catalog\/product\/new\/?$/, permission: "EDIT_PRODUCT" }, // Exact match: /catalog/product/new
-    { pattern: /^\/catalog\/product(\/.*)?$/, permission: "VIEW_PRODUCT" },
+    {
+      pattern: /^\/catalog\/product\/new\/?$/,
+      permissions: ["EDIT_PRODUCT", "CREATE_PRODUCT"],
+    },
+    { pattern: /^\/catalog\/product(\/.*)?$/, permissions: ["VIEW_PRODUCT"] },
 
     // --- Admin ---
-    { pattern: /^\/admin\/role-management(\/.*)?$/, permission: "MANAGE_ROLE" },
+    {
+      pattern: /^\/admin\/role-management(\/.*)?$/,
+      permissions: ["MANAGE_ROLE"],
+    },
     {
       pattern: /^\/admin\/user-management\/new\/?$/,
-      permission: "CREATE_USER",
+      permissions: ["CREATE_USER"],
     },
     {
       pattern: /^\/admin\/user-management(\/.*)?$/,
-      permission: "VIEW_OTHER_USER",
+      permissions: ["VIEW_OTHER_USER"],
     },
+
     // --- Warehouse ---
     {
       pattern: /^\/warehouse-management\/inventory-check\/new\/?$/,
-      permission: "SCHEDULE_STOCKTAKING",
+      permissions: ["SCHEDULE_STOCKTAKING"],
     },
     {
       pattern: /^\/warehouse-management\/warehouse\/new\/?$/,
-      permission: "EDIT_WAREHOUSE",
+      permissions: ["EDIT_WAREHOUSE"],
     },
     {
       pattern: /^\/warehouse-management\/warehouse(\/.*)?$/,
-      permission: "VIEW_WAREHOUSE",
+      permissions: ["VIEW_WAREHOUSE"],
     },
+
     // --- Inbound / Outbound / Faults ---
-    { pattern: /^\/import\/new\/?$/, permission: "STOCK_IN" },
-    { pattern: /^\/export\/new\/?$/, permission: "STOCK_OUT" },
+    { pattern: /^\/import\/new\/?$/, permissions: ["STOCK_IN"] },
+    { pattern: /^\/export\/new\/?$/, permissions: ["STOCK_OUT"] },
     {
-      pattern: /^\/fault-order\/details\/\d+\/process-order\/\d+\/?$/,
-      permission: "ANALYSIS_VIEW",
+      pattern: /^\/fault-order(\/.*)?$/,
+      permissions: ["VIEW_FAULT_LIST", "FAULT_HANDLER"],
     },
-    {
-      pattern: /^\/fault-order\/details\/\d+\/assign-task\/\d+\/?$/,
-      permission: "TASK_VIEW",
-    },
-    { pattern: /^\/fault-order(\/.*)?$/, permission: "VIEW_FAULT_LIST" },
   ];
   // If the user has NO token, and they are NOT on the login page -> send to login
   if (!token && !isLoginPage) {
@@ -101,9 +108,19 @@ export async function proxy(request: NextRequest) {
 
   if (matchedRule) {
     const permissionsString = request.cookies.get("permissions")?.value || "";
-    const permissions = permissionsString.split(",");
+    const userPermissions = permissionsString.split(",");
+    const hasAccess = matchedRule.permissions.some((requiredPermission) =>
+      userPermissions.includes(requiredPermission),
+    );
 
-    if (!permissions.includes(matchedRule.permission)) {
+    /* // If you wanted an "AND" condition (user must have ALL listed permissions), 
+    // you would use .every() instead of .some() like this:
+    const hasAccess = matchedRule.permissions.every((requiredPermission) =>
+      userPermissions.includes(requiredPermission)
+    );
+    */
+
+    if (!hasAccess) {
       return NextResponse.rewrite(new URL("/forbidden", request.url));
     }
   }

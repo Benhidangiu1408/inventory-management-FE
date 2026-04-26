@@ -22,7 +22,8 @@ export default async function WarehouseDetailPage({
 
   try {
     data = await warehouseService.getDetail(Number(id));
-    userData = await userManagementService.getAll();
+    userData =
+      await userManagementService.getAllByPermissionCode("EDIT_WAREHOUSE");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     errorMsg = `Could not load data from server. ${error.message}`;
