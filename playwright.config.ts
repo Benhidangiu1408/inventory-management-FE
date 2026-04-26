@@ -69,6 +69,14 @@ export default defineConfig({
       testIgnore: ["**/login.spec.ts", "**/*.no-permission.spec.ts"],
     },
 
+    // 5. Multi-user stocktaking flow (admin + staff contexts within the same test)
+    {
+      name: "inventory-check-staff-flow",
+      testMatch: "**/inventory-check/flows/inventory-check-staff-flow.spec.ts",
+      use: { ...devices["Desktop Chrome"] },
+      dependencies: ["setup", "setup-no-permission"],
+    },
+
     // 4. Test với tài khoản không có quyền
     {
       name: "no-permission",

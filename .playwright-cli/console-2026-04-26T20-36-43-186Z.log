@@ -1,0 +1,39 @@
+[     622ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     641ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     765ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     766ms] [ERROR] ************************************************ AG Grid Enterprise License ************************************************ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     766ms] [ERROR] ************************************************** License Key Not Found *************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     767ms] [ERROR] * All AG Grid Enterprise features are unlocked for trial.                                                                  * @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     767ms] [ERROR] * If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 * @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     768ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     768ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     802ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     805ms] [WARNING] AG Grid: warning #48 Cell data type is "object" but no Value Formatter has been provided. Please either provide an object data type definition with a Value Formatter, or set "colDef.valueFormatter" 
+See https://www.ag-grid.com/react-data-grid/errors/48?_version_=34.3.1&property=Formatter @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     868ms] [LOG] [Fast Refresh] done in 210ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     973ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     997ms] [LOG] [Fast Refresh] done in 125ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[    3864ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[    3870ms] [LOG] [Fast Refresh] done in 106ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[    3981ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[    3988ms] [LOG] [Fast Refresh] done in 108ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   64113ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64114ms] [ERROR] ************************************************ AG Grid Enterprise License ************************************************ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64115ms] [ERROR] ************************************************** License Key Not Found *************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64115ms] [ERROR] * All AG Grid Enterprise features are unlocked for trial.                                                                  * @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64116ms] [ERROR] * If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 * @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64117ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64117ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64132ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64132ms] [ERROR] ************************************************ AG Grid Enterprise License ************************************************ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64133ms] [ERROR] ************************************************** License Key Not Found *************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64133ms] [ERROR] * All AG Grid Enterprise features are unlocked for trial.                                                                  * @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64134ms] [ERROR] * If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 * @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64134ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64134ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   64365ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   64518ms] [LOG] [Fast Refresh] done in 255ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   66416ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   66553ms] [LOG] [Fast Refresh] done in 238ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   66654ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   66689ms] [LOG] [Fast Refresh] done in 135ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297

@@ -1,0 +1,20 @@
+[     750ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     775ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     887ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     888ms] [ERROR] ************************************************ AG Grid Enterprise License ************************************************ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     888ms] [ERROR] ************************************************** License Key Not Found *************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     889ms] [ERROR] * All AG Grid Enterprise features are unlocked for trial.                                                                  * @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     889ms] [ERROR] * If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 * @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     889ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[     890ms] [ERROR] **************************************************************************************************************************** @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   12886ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   13045ms] [LOG] [Fast Refresh] done in 259ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   26030ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   26039ms] [LOG] [Fast Refresh] done in 110ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   31160ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   31202ms] [LOG] [Fast Refresh] done in 143ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   36337ms] [WARNING] The specified value "05/01/2026 09:00 AM" does not conform to the required format.  The format is "yyyy-MM-ddThh:mm" followed by optional ":ss" or ":ss.SSS". @ :7056
+[   50463ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   50509ms] [LOG] [Fast Refresh] done in 147ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   63153ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   63161ms] [LOG] [Fast Refresh] done in 109ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297

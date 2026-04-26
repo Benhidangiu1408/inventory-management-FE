@@ -1,0 +1,290 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - link "Logo Stockify" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]:
+          - img "Logo" [ref=e8]
+          - generic [ref=e9]: Stockify
+      - navigation [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - heading "Menu" [level=2] [ref=e14]
+            - list [ref=e15]:
+              - listitem [ref=e16]:
+                - link "Dashboard" [ref=e17] [cursor=pointer]:
+                  - /url: /
+                  - img [ref=e19]
+                  - generic [ref=e21]: Dashboard
+              - listitem [ref=e22]:
+                - link "Import" [ref=e23] [cursor=pointer]:
+                  - /url: /import
+                  - img [ref=e25]
+                  - generic [ref=e27]: Import
+              - listitem [ref=e28]:
+                - link "Export" [ref=e29] [cursor=pointer]:
+                  - /url: /export
+                  - img [ref=e31]
+                  - generic [ref=e33]: Export
+              - listitem [ref=e34]:
+                - link "Stocktaking" [ref=e35] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - img [ref=e37]
+                  - generic [ref=e41]: Stocktaking
+              - listitem [ref=e42]:
+                - link "Fault Handle" [ref=e43] [cursor=pointer]:
+                  - /url: /fault-order
+                  - img [ref=e45]
+                  - generic [ref=e50]: Fault Handle
+              - listitem [ref=e51]:
+                - button "Master Data" [ref=e52] [cursor=pointer]:
+                  - img [ref=e54]
+                  - generic [ref=e59]: Master Data
+                  - img [ref=e60]
+                - list [ref=e62]:
+                  - listitem [ref=e63]:
+                    - link "Warehouse" [ref=e64] [cursor=pointer]:
+                      - /url: /warehouse-management/warehouse
+                      - text: Warehouse
+                  - listitem [ref=e65]:
+                    - link "Category" [ref=e66] [cursor=pointer]:
+                      - /url: /catalog/category
+                      - text: Category
+                  - listitem [ref=e67]:
+                    - link "Product" [ref=e68] [cursor=pointer]:
+                      - /url: /catalog/product
+                      - text: Product
+                  - listitem [ref=e69]:
+                    - link "Product Attributes" [ref=e70] [cursor=pointer]:
+                      - /url: /catalog/variant-attributes
+                      - text: Product Attributes
+                  - listitem [ref=e71]:
+                    - link "UOM (Unit of Measurement)" [ref=e72] [cursor=pointer]:
+                      - /url: /catalog/unit
+                      - text: UOM (Unit of Measurement)
+          - generic [ref=e73]:
+            - heading "Others" [level=2] [ref=e74]
+            - list [ref=e75]:
+              - listitem [ref=e76]:
+                - button "Users Settings" [ref=e77] [cursor=pointer]:
+                  - img [ref=e79]
+                  - generic [ref=e91]: Users Settings
+                  - img [ref=e92]
+                - list [ref=e94]:
+                  - listitem [ref=e95]:
+                    - link "Users Management" [ref=e96] [cursor=pointer]:
+                      - /url: /admin/user-management
+                      - text: Users Management
+                  - listitem [ref=e97]:
+                    - link "Role & Permission" [ref=e98] [cursor=pointer]:
+                      - /url: /admin/role-management
+                      - text: Role & Permission
+              - listitem [ref=e99]:
+                - link "Profile" [ref=e100] [cursor=pointer]:
+                  - /url: /profile
+                  - img [ref=e102]
+                  - generic [ref=e106]: Profile
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - button "Toggle Sidebar" [ref=e111] [cursor=pointer]:
+              - img [ref=e112]
+            - generic [ref=e116]:
+              - generic:
+                - img
+              - textbox "Search or type command..." [ref=e117]
+              - button "⌘ K" [ref=e118] [cursor=pointer]:
+                - generic [ref=e119]: ⌘
+                - generic [ref=e120]: K
+          - generic [ref=e121]:
+            - generic [ref=e122]:
+              - button [ref=e123] [cursor=pointer]:
+                - img [ref=e124]
+              - button [ref=e127] [cursor=pointer]:
+                - img [ref=e130]
+            - button "User nam3.nguyen" [ref=e133] [cursor=pointer]:
+              - img "User" [ref=e135]
+              - generic [ref=e136]: nam3.nguyen
+              - img [ref=e137]
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - heading "Inventory Check" [level=2] [ref=e143]
+          - navigation [ref=e144]:
+            - list [ref=e145]:
+              - listitem [ref=e146]:
+                - link "Home" [ref=e147] [cursor=pointer]:
+                  - /url: /
+                  - text: Home
+                  - img [ref=e148]
+              - listitem [ref=e150]: Inventory Check
+        - generic [ref=e152]:
+          - link "Schedule Inventory Check" [ref=e154] [cursor=pointer]:
+            - /url: /warehouse-management/inventory-check/new
+            - button "Schedule Inventory Check" [ref=e155]:
+              - img [ref=e157]
+              - text: Schedule Inventory Check
+          - generic [ref=e158]:
+            - grid [ref=e161]:
+              - rowgroup [ref=e162]:
+                - row "Code Warehouse Assignee Planned Date Status" [ref=e163]:
+                  - columnheader "Code" [ref=e164]:
+                    - generic [ref=e167] [cursor=pointer]: Code
+                  - columnheader "Warehouse" [ref=e170]:
+                    - generic [ref=e173] [cursor=pointer]: Warehouse
+                  - columnheader "Assignee" [ref=e174]:
+                    - generic [ref=e177] [cursor=pointer]: Assignee
+                  - columnheader "Planned Date" [ref=e178]:
+                    - generic [ref=e181] [cursor=pointer]: Planned Date
+                  - columnheader "Status" [ref=e182]:
+                    - generic [ref=e185] [cursor=pointer]: Status
+              - rowgroup [ref=e186]:
+                - row "IC-2C813BAD Backup Warehouse (WH-0003) nam3.nguyen Apr 14, 2026 9:40 PM IN PROGRESS" [ref=e187]:
+                  - gridcell "IC-2C813BAD" [ref=e188]:
+                    - link "IC-2C813BAD" [ref=e189] [cursor=pointer]:
+                      - /url: /warehouse-management/inventory-check/detail/702
+                  - gridcell "Backup Warehouse (WH-0003)" [ref=e190]:
+                    - generic [ref=e191]: Backup Warehouse (WH-0003)
+                  - gridcell "nam3.nguyen" [ref=e192]
+                  - gridcell "Apr 14, 2026 9:40 PM" [ref=e193]
+                  - gridcell "IN PROGRESS" [ref=e194]:
+                    - generic [ref=e195]: IN PROGRESS
+                - row "IC-38A562C3 Backup Warehouse (WH-0003) nam3.nguyen Apr 13, 2026 9:40 PM APPROVED" [ref=e196]:
+                  - gridcell "IC-38A562C3" [ref=e197]:
+                    - link "IC-38A562C3" [ref=e198] [cursor=pointer]:
+                      - /url: /warehouse-management/inventory-check/detail/701
+                  - gridcell "Backup Warehouse (WH-0003)" [ref=e199]:
+                    - generic [ref=e200]: Backup Warehouse (WH-0003)
+                  - gridcell "nam3.nguyen" [ref=e201]
+                  - gridcell "Apr 13, 2026 9:40 PM" [ref=e202]
+                  - gridcell "APPROVED" [ref=e203]:
+                    - generic [ref=e204]: APPROVED
+                - row "IC-59C00DCC Main Warehouse (WH-0001) tuanemtramtinh May 10, 2026 10:00 AM CREATED" [ref=e205]:
+                  - gridcell "IC-59C00DCC" [ref=e206]:
+                    - link "IC-59C00DCC" [ref=e207] [cursor=pointer]:
+                      - /url: /warehouse-management/inventory-check/detail/1257
+                  - gridcell "Main Warehouse (WH-0001)" [ref=e208]:
+                    - generic [ref=e209]: Main Warehouse (WH-0001)
+                  - gridcell "tuanemtramtinh" [ref=e210]
+                  - gridcell "May 10, 2026 10:00 AM" [ref=e211]
+                  - gridcell "CREATED" [ref=e212]:
+                    - generic [ref=e213]: CREATED
+                - row "IC-66015CDC Backup Warehouse (WH-0003) nam3.nguyen Apr 15, 2026 9:40 PM IN PROGRESS" [ref=e214]:
+                  - gridcell "IC-66015CDC" [ref=e215]:
+                    - link "IC-66015CDC" [ref=e216] [cursor=pointer]:
+                      - /url: /warehouse-management/inventory-check/detail/1209
+                  - gridcell "Backup Warehouse (WH-0003)" [ref=e217]:
+                    - generic [ref=e218]: Backup Warehouse (WH-0003)
+                  - gridcell "nam3.nguyen" [ref=e219]
+                  - gridcell "Apr 15, 2026 9:40 PM" [ref=e220]
+                  - gridcell "IN PROGRESS" [ref=e221]:
+                    - generic [ref=e222]: IN PROGRESS
+                - row "IC-709E67B5 Test Warehouse (WH-0006) vck Apr 27, 2026 1:00 AM IN PROGRESS" [ref=e223]:
+                  - gridcell "IC-709E67B5" [ref=e224]:
+                    - link "IC-709E67B5" [ref=e225] [cursor=pointer]:
+                      - /url: /warehouse-management/inventory-check/detail/1251
+                  - gridcell "Test Warehouse (WH-0006)" [ref=e226]:
+                    - generic [ref=e227]: Test Warehouse (WH-0006)
+                  - gridcell "vck" [ref=e228]
+                  - gridcell "Apr 27, 2026 1:00 AM" [ref=e229]
+                  - gridcell "IN PROGRESS" [ref=e230]:
+                    - generic [ref=e231]: IN PROGRESS
+                - row "IC-71625AA5 Test Warehouse (WH-0006) tuanemdeptrai Apr 28, 2026 9:00 AM CREATED" [ref=e232]:
+                  - gridcell "IC-71625AA5" [ref=e233]:
+                    - link "IC-71625AA5" [ref=e234] [cursor=pointer]:
+                      - /url: /warehouse-management/inventory-check/detail/1254
+                  - gridcell "Test Warehouse (WH-0006)" [ref=e235]:
+                    - generic [ref=e236]: Test Warehouse (WH-0006)
+                  - gridcell "tuanemdeptrai" [ref=e237]
+                  - gridcell "Apr 28, 2026 9:00 AM" [ref=e238]
+                  - gridcell "CREATED" [ref=e239]:
+                    - generic [ref=e240]: CREATED
+                - row "IC-7D720798 Backup Warehouse (WH-0003) tuanemtramtinh Jun 1, 2099 9:00 AM CREATED" [ref=e241]:
+                  - gridcell "IC-7D720798" [ref=e242]:
+                    - link "IC-7D720798" [ref=e243] [cursor=pointer]:
+                      - /url: /warehouse-management/inventory-check/detail/1258
+                  - gridcell "Backup Warehouse (WH-0003)" [ref=e244]:
+                    - generic [ref=e245]: Backup Warehouse (WH-0003)
+                  - gridcell "tuanemtramtinh" [ref=e246]
+                  - gridcell "Jun 1, 2099 9:00 AM" [ref=e247]
+                  - gridcell "CREATED" [ref=e248]:
+                    - generic [ref=e249]: CREATED
+                - row "IC-91A93D92 Backup Warehouse (WH-0003) nam3.nguyen Apr 28, 2026 12:56 AM CREATED" [ref=e250]:
+                  - gridcell "IC-91A93D92" [ref=e251]:
+                    - link "IC-91A93D92" [ref=e252] [cursor=pointer]:
+                      - /url: /warehouse-management/inventory-check/detail/1250
+                  - gridcell "Backup Warehouse (WH-0003)" [ref=e253]:
+                    - generic [ref=e254]: Backup Warehouse (WH-0003)
+                  - gridcell "nam3.nguyen" [ref=e255]
+                  - gridcell "Apr 28, 2026 12:56 AM" [ref=e256]
+                  - gridcell "CREATED" [ref=e257]:
+                    - generic [ref=e258]: CREATED
+                - row "IC-B9F557D0 Test Warehouse (WH-0006) tuanemdeptrai May 4, 2026 3:17 AM CREATED" [ref=e259]:
+                  - gridcell "IC-B9F557D0" [ref=e260]:
+                    - link "IC-B9F557D0" [ref=e261] [cursor=pointer]:
+                      - /url: /warehouse-management/inventory-check/detail/1256
+                  - gridcell "Test Warehouse (WH-0006)" [ref=e262]:
+                    - generic [ref=e263]: Test Warehouse (WH-0006)
+                  - gridcell "tuanemdeptrai" [ref=e264]
+                  - gridcell "May 4, 2026 3:17 AM" [ref=e265]
+                  - gridcell "CREATED" [ref=e266]:
+                    - generic [ref=e267]: CREATED
+                - row "IC-BE9DE5CB Failed Warehouse (WH-0005) tuanemtramtinh Jul 15, 2099 2:00 PM CREATED" [ref=e268]:
+                  - gridcell "IC-BE9DE5CB" [ref=e269]:
+                    - link "IC-BE9DE5CB" [ref=e270] [cursor=pointer]:
+                      - /url: /warehouse-management/inventory-check/detail/1259
+                  - gridcell "Failed Warehouse (WH-0005)" [ref=e271]:
+                    - generic [ref=e272]: Failed Warehouse (WH-0005)
+                  - gridcell "tuanemtramtinh" [ref=e273]
+                  - gridcell "Jul 15, 2099 2:00 PM" [ref=e274]
+                  - gridcell "CREATED" [ref=e275]:
+                    - generic [ref=e276]: CREATED
+              - rowgroup
+              - rowgroup
+              - rowgroup
+            - generic [ref=e277]:
+              - generic [ref=e278]:
+                - generic [ref=e279]:
+                  - button [disabled] [ref=e280]:
+                    - img [ref=e281]
+                  - button [disabled] [ref=e284]:
+                    - img [ref=e285]
+                - generic [ref=e287]:
+                  - button "1" [ref=e288] [cursor=pointer]
+                  - button "2" [ref=e289] [cursor=pointer]
+                - generic [ref=e290]:
+                  - button [ref=e291] [cursor=pointer]:
+                    - img [ref=e292]
+                  - button [ref=e294] [cursor=pointer]:
+                    - img [ref=e295]
+              - generic [ref=e298]:
+                - generic [ref=e299]:
+                  - combobox [ref=e301] [cursor=pointer]:
+                    - option "Select an option" [disabled]
+                    - option "10" [selected]
+                    - option "20"
+                    - option "50"
+                    - option "100"
+                  - generic [ref=e302]: Row/page
+                - generic [ref=e303]:
+                  - generic [ref=e304]: Page
+                  - textbox [ref=e307]: "1"
+                  - button "Go" [ref=e308] [cursor=pointer]
+  - generic [ref=e309]:
+    - img [ref=e311]
+    - button "Open Tanstack query devtools" [ref=e359] [cursor=pointer]:
+      - img [ref=e360]
+  - generic [ref=e412] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e413]:
+      - img [ref=e414]
+    - generic [ref=e417]:
+      - button "Open issues overlay" [ref=e418]:
+        - generic [ref=e419]:
+          - generic [ref=e420]: "6"
+          - generic [ref=e421]: "7"
+        - generic [ref=e422]:
+          - text: Issue
+          - generic [ref=e423]: s
+      - button "Collapse issues badge" [ref=e424]:
+        - img [ref=e425]
+  - alert [ref=e427]
