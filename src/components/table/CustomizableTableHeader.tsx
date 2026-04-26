@@ -528,7 +528,7 @@ export const faultOrderHeader: Column<FaultOrderSummary>[] = [
     width: 80,
     render: (value, row) => (
       <Link
-        href={`/fault-order/details/${row.id}`}
+        href={`/src/app/(dashboard)/fault-order/details/${row.id}`}
         className="text-brand-500 text-sm font-normal underline transition-colors"
       >
         {value as string}

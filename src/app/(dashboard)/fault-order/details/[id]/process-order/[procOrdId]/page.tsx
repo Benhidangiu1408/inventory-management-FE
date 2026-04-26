@@ -1,6 +1,6 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
 import { cookies } from "next/headers";
-import ProcessOrderDetailForm from "./ProcessOrderDetailForm";
+import ProcessOrderDetailForm from "@/components/fault-order/ProcessOrderDetailForm";
 import {
   FaultBatchProcessOrder,
   FaultOrderSummary,

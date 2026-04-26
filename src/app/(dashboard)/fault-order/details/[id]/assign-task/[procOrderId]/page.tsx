@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import AssignTaskClientPage from "./AssignTaskClientPage";
+import AssignTaskClientPage from "@/components/fault-order/AssignTaskClientPage";
 import { User } from "@/interfaces/userManagementType";
 import { userManagementService } from "@/services/UserManagementService";
 import {

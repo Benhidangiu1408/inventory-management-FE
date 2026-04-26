@@ -6,8 +6,8 @@ import {
   FaultOrderSummary,
   FaultOrderPermission,
 } from "@/interfaces/inventoryManagementType";
-import FaultOrderDetailClient from "./FaultOrderDetailClient";
-import AnalyzerAssigneeSelect from "./AnalyzerAssigneeSelect";
+import FaultOrderDetailClient from "@/components/fault-order/FaultOrderDetailClient";
+import AnalyzerAssigneeSelect from "@/components/fault-order/AnalyzerAssigneeSelect";
 import { faultOrderService } from "@/services/InventoryManagementService";
 import { userManagementService } from "@/services/UserManagementService";
 import { User } from "@/interfaces/userManagementType";
