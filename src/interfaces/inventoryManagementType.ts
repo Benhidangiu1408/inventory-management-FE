@@ -135,16 +135,12 @@ export interface Batch {
   id: number;
   code: string;
   status?: string;
-  initialQuantity?: number;
-  productionDate?: string | null;
-  productVariantId?: number | null;
   locationCode?: number | null;
 }
 
 export interface FaultBatch extends Batch {
   handlingStatus?: FaultBatchStatus;
   createdAt?: string | null;
-  faultOrderId?: string | null;
   faultBatchProcessOrderId?: number | null;
   taskId?: number | null;
 }
@@ -171,7 +167,6 @@ export interface CreateFaultBatchProcessOrderRequest {
 
 export interface FaultBatchProcessOrder {
   id: number;
-  faultOrderId: number;
   status: FaultProcessOrderStatus;
   type: FaultProcessOrderType;
   note?: string | null;
@@ -180,7 +175,6 @@ export interface FaultBatchProcessOrder {
   impact?: string | null;
   createdAt: string;
   approveAt?: string | null;
-  processedAt?: string | null;
   creatorId?: number | null;
   creatorUsername?: string | null;
   approvedById?: number | null;
@@ -199,7 +193,6 @@ export interface FaultQuestion {
 export interface FaultTask {
   id?: number;
   task?: string;
-  result?: string | null;
   dueDate?: string | null;
   status?: TaskStatus;
   assignedUserId?: number | null;

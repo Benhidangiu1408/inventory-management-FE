@@ -621,26 +621,6 @@ export const faultOrderHeader: Column<FaultOrderSummary>[] = [
       );
     },
   },
-  // {
-  //   label: "Priority",
-  //   key: "priorityLevel",
-  //   filter: "agSetColumnFilter",
-  //   width: 120,
-  //   render: (value) => {
-  //     const priorityStr = (value as string) || "Unassigned";
-
-  //     let badgeColor: "error" | "warning" | "success" | "light" = "light";
-  //     if (priorityStr.toUpperCase() === "HIGH") badgeColor = "error";
-  //     if (priorityStr.toUpperCase() === "MEDIUM") badgeColor = "warning";
-  //     if (priorityStr.toUpperCase() === "LOW") badgeColor = "success";
-
-  //     return (
-  //       <Badge variant="solid" color={badgeColor}>
-  //         {priorityStr}
-  //       </Badge>
-  //     );
-  //   },
-  // },
 ];
 
 // ------------------------------------------------------
