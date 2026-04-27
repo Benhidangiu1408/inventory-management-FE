@@ -9,7 +9,11 @@ test.describe("Inventory Check flow - schedule inventory check", () => {
     // --- Step 1: Select warehouse ---
     const warehouseSelect = page.locator("select[name='warehouseId']");
     await expect(warehouseSelect).toBeEnabled({ timeout: 10_000 });
-    await warehouseSelect.selectOption({ label: "Backup Warehouse (WH-0003)" });
+    const backupWarehouseValue = await warehouseSelect
+      .locator("option", { hasText: "Backup Warehouse (WH-0003)" })
+      .getAttribute("value");
+    await warehouseSelect.selectOption(backupWarehouseValue!);
+    await expect(warehouseSelect).toHaveValue(backupWarehouseValue!);
 
     // --- Step 2: Assign to tuanemtramtinh ---
     const assigneeSelect = page.locator("select[name='assignedUserId']");
@@ -116,10 +120,26 @@ test.describe("Inventory Check flow - schedule inventory check", () => {
   }) => {
     await page.goto("/warehouse-management/inventory-check/new");
 
+    // Select warehouse first so assignee can be set (assignee depends on warehouse)
+    const warehouseSelect = page.locator("select[name='warehouseId']");
+    await expect(warehouseSelect).toBeEnabled({ timeout: 10_000 });
+    const firstWarehouse = await warehouseSelect
+      .locator("option[value]:not([value=''])")
+      .first()
+      .getAttribute("value");
+    await warehouseSelect.selectOption({ value: firstWarehouse! });
+
     await page
       .locator("select[name='assignedUserId']")
       .selectOption({ label: "tuanemtramtinh (Nguyen Anh)" });
     await page.locator("input[name='plannedDate']").fill("2099-08-01T10:00");
+
+    // Now clear warehouse so it's the only missing required field
+    await warehouseSelect.evaluate((el: HTMLSelectElement) => {
+      el.value = "";
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+      el.dispatchEvent(new Event("change", { bubbles: true }));
+    });
 
     await page.getByRole("button", { name: "Save" }).click();
 
@@ -137,13 +157,21 @@ test.describe("Inventory Check flow - schedule inventory check", () => {
 
     const warehouseSelect = page.locator("select[name='warehouseId']");
     await expect(warehouseSelect).toBeEnabled({ timeout: 10_000 });
-    const firstWarehouse = await warehouseSelect
-      .locator("option[value]:not([value=''])")
-      .first()
+    const backupWarehouseValue = await warehouseSelect
+      .locator("option", { hasText: "Backup Warehouse (WH-0003)" })
       .getAttribute("value");
-    await warehouseSelect.selectOption({ value: firstWarehouse! });
+    await warehouseSelect.selectOption(backupWarehouseValue!);
+    await expect(warehouseSelect).toHaveValue(backupWarehouseValue!);
 
     await page.locator("input[name='plannedDate']").fill("2099-08-01T10:00");
+
+    // Ensure assignee is empty (this is the missing required field for this test)
+    const assigneeSelect = page.locator("select[name='assignedUserId']");
+    await assigneeSelect.evaluate((el: HTMLSelectElement) => {
+      el.value = "";
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+      el.dispatchEvent(new Event("change", { bubbles: true }));
+    });
 
     await page.getByRole("button", { name: "Save" }).click();
 
@@ -161,15 +189,18 @@ test.describe("Inventory Check flow - schedule inventory check", () => {
 
     const warehouseSelect = page.locator("select[name='warehouseId']");
     await expect(warehouseSelect).toBeEnabled({ timeout: 10_000 });
-    const firstWarehouse = await warehouseSelect
-      .locator("option[value]:not([value=''])")
-      .first()
+    const backupWarehouseValue = await warehouseSelect
+      .locator("option", { hasText: "Backup Warehouse (WH-0003)" })
       .getAttribute("value");
-    await warehouseSelect.selectOption({ value: firstWarehouse! });
+    await warehouseSelect.selectOption(backupWarehouseValue!);
+    await expect(warehouseSelect).toHaveValue(backupWarehouseValue!);
 
     await page
       .locator("select[name='assignedUserId']")
       .selectOption({ label: "tuanemtramtinh (Nguyen Anh)" });
+
+    // Ensure date is empty (this is the missing required field for this test)
+    await page.locator("input[name='plannedDate']").fill("");
 
     await page.getByRole("button", { name: "Save" }).click();
 

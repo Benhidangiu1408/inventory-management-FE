@@ -407,7 +407,7 @@ export const inventoryCheckSheetHeaders: Column<InventoryCheckResponse>[] = [
         : `${value}Z`;
       return (
         <span>
-          {format(parseISO(safeDateString as string), "MMM d, yyyy h:mm a")}
+          {format(parseISO(safeDateString as string), "MMM d, yyyy h:mm:ss a")}
         </span>
       );
     },

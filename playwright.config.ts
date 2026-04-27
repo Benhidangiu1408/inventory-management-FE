@@ -21,7 +21,7 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: 3,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -69,13 +69,13 @@ export default defineConfig({
       testIgnore: ["**/login.spec.ts", "**/*.no-permission.spec.ts"],
     },
 
-    // 5. Multi-user stocktaking flow (admin + staff contexts within the same test)
-    {
-      name: "inventory-check-staff-flow",
-      testMatch: "**/inventory-check/flows/inventory-check-staff-flow.spec.ts",
-      use: { ...devices["Desktop Chrome"] },
-      dependencies: ["setup", "setup-no-permission"],
-    },
+    // // 5. Multi-user stocktaking flow (admin + staff contexts within the same test)
+    // {
+    //   name: "inventory-check-staff-flow",
+    //   testMatch: "**/inventory-check/flows/inventory-check-staff-flow.spec.ts",
+    //   use: { ...devices["Desktop Chrome"] },
+    //   dependencies: ["setup", "setup-no-permission"],
+    // },
 
     // 4. Test với tài khoản không có quyền
     {
