@@ -75,6 +75,7 @@ export default function StorageLocationPage() {
   const [defectWarehouses, setDefectWarehouses] = useState<WarehoseResponse[]>(
     [],
   );
+
   const [selectedDefectWarehouseId, setSelectedDefectWarehouseId] = useState<
     number | null
   >(null);
@@ -366,6 +367,8 @@ export default function StorageLocationPage() {
       }),
     }));
   }, [locations, setImportData]);
+
+  console.log(locations);
 
   return (
     <div>

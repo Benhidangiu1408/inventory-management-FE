@@ -1,0 +1,363 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e168]:
+    - complementary [ref=e169]:
+      - link "Logo Stockify" [ref=e171] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e173]:
+          - img "Logo" [ref=e174]
+          - generic [ref=e175]: Stockify
+      - navigation [ref=e177]:
+        - generic [ref=e178]:
+          - generic [ref=e179]:
+            - heading "Menu" [level=2] [ref=e180]
+            - list [ref=e181]:
+              - listitem [ref=e182]:
+                - link "Dashboard" [ref=e183] [cursor=pointer]:
+                  - /url: /
+                  - img [ref=e185]
+                  - generic [ref=e187]: Dashboard
+              - listitem [ref=e188]:
+                - link "Import" [ref=e189] [cursor=pointer]:
+                  - /url: /import
+                  - img [ref=e191]
+                  - generic [ref=e193]: Import
+              - listitem [ref=e194]:
+                - link "Export" [ref=e195] [cursor=pointer]:
+                  - /url: /export
+                  - img [ref=e197]
+                  - generic [ref=e199]: Export
+              - listitem [ref=e200]:
+                - link "Stocktaking" [ref=e201] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - img [ref=e203]
+                  - generic [ref=e207]: Stocktaking
+              - listitem [ref=e208]:
+                - link "Fault Handle" [ref=e209] [cursor=pointer]:
+                  - /url: /fault-order
+                  - img [ref=e211]
+                  - generic [ref=e216]: Fault Handle
+              - listitem [ref=e217]:
+                - button "Master Data" [ref=e218] [cursor=pointer]:
+                  - img [ref=e220]
+                  - generic [ref=e225]: Master Data
+                  - img [ref=e226]
+                - list [ref=e228]:
+                  - listitem [ref=e229]:
+                    - link "Warehouse" [ref=e230] [cursor=pointer]:
+                      - /url: /warehouse-management/warehouse
+                      - text: Warehouse
+                  - listitem [ref=e231]:
+                    - link "Category" [ref=e232] [cursor=pointer]:
+                      - /url: /catalog/category
+                      - text: Category
+                  - listitem [ref=e233]:
+                    - link "Product" [ref=e234] [cursor=pointer]:
+                      - /url: /catalog/product
+                      - text: Product
+                  - listitem [ref=e235]:
+                    - link "Product Attributes" [ref=e236] [cursor=pointer]:
+                      - /url: /catalog/variant-attributes
+                      - text: Product Attributes
+                  - listitem [ref=e237]:
+                    - link "UOM (Unit of Measurement)" [ref=e238] [cursor=pointer]:
+                      - /url: /catalog/unit
+                      - text: UOM (Unit of Measurement)
+          - generic [ref=e239]:
+            - heading "Others" [level=2] [ref=e240]
+            - list [ref=e241]:
+              - listitem [ref=e242]:
+                - button "Users Settings" [ref=e243] [cursor=pointer]:
+                  - img [ref=e245]
+                  - generic [ref=e257]: Users Settings
+                  - img [ref=e258]
+                - list [ref=e260]:
+                  - listitem [ref=e261]:
+                    - link "Users Management" [ref=e262] [cursor=pointer]:
+                      - /url: /admin/user-management
+                      - text: Users Management
+                  - listitem [ref=e263]:
+                    - link "Role & Permission" [ref=e264] [cursor=pointer]:
+                      - /url: /admin/role-management
+                      - text: Role & Permission
+              - listitem [ref=e265]:
+                - link "Profile" [ref=e266] [cursor=pointer]:
+                  - /url: /profile
+                  - img [ref=e268]
+                  - generic [ref=e272]: Profile
+    - generic [ref=e273]:
+      - banner [ref=e274]:
+        - generic [ref=e275]:
+          - generic [ref=e276]:
+            - button "Toggle Sidebar" [ref=e277] [cursor=pointer]:
+              - img [ref=e278]
+            - generic [ref=e282]:
+              - generic:
+                - img
+              - textbox "Search or type command..." [ref=e283]
+              - button "⌘ K" [ref=e284] [cursor=pointer]:
+                - generic [ref=e285]: ⌘
+                - generic [ref=e286]: K
+          - generic [ref=e287]:
+            - generic [ref=e288]:
+              - button [ref=e289] [cursor=pointer]:
+                - img [ref=e290]
+              - button [ref=e293] [cursor=pointer]:
+                - img [ref=e296]
+            - button "User nam3.nguyen" [ref=e299] [cursor=pointer]:
+              - img "User" [ref=e301]
+              - generic [ref=e302]: nam3.nguyen
+              - img [ref=e303]
+      - generic [ref=e306]:
+        - generic [ref=e307]:
+          - generic [ref=e308]:
+            - paragraph [ref=e309]: Total
+            - generic [ref=e310]:
+              - generic [ref=e311]:
+                - generic [ref=e312]: Total Categories
+                - generic [ref=e313]: "3"
+              - generic [ref=e314]:
+                - generic [ref=e315]: Total Products
+                - generic [ref=e316]: "8"
+              - generic [ref=e317]:
+                - generic [ref=e318]: Total Warehouses
+                - generic [ref=e319]: "10"
+          - generic [ref=e320]:
+            - paragraph [ref=e321]: Today
+            - generic [ref=e322]:
+              - generic [ref=e323]:
+                - generic [ref=e324]: Today Inbound Orders
+                - generic [ref=e325]: "1"
+              - generic [ref=e326]:
+                - generic [ref=e327]: Today Outbound Orders
+                - generic [ref=e328]: "0"
+              - generic [ref=e329]:
+                - generic [ref=e330]: Today Total Orders
+                - generic [ref=e331]: "1"
+          - generic [ref=e332]:
+            - paragraph [ref=e333]: Total Orders (Selected Range)
+            - generic [ref=e334]:
+              - generic [ref=e335]:
+                - generic [ref=e336]: Inbound Orders
+                - generic [ref=e337]: "144"
+              - generic [ref=e338]:
+                - generic [ref=e339]: Outbound Orders
+                - generic [ref=e340]: "54"
+              - generic [ref=e341]:
+                - generic [ref=e342]: Total Orders
+                - generic [ref=e343]: "198"
+        - generic [ref=e344]:
+          - generic [ref=e345]:
+            - generic [ref=e346]:
+              - generic [ref=e347]:
+                - heading "Inbound/Outbound Quantity by Month" [level=3] [ref=e348]
+                - paragraph [ref=e349]: "Current range: 11/2025 - 04/2026"
+              - generic [ref=e350]:
+                - generic [ref=e351]:
+                  - generic [ref=e352]: From
+                  - textbox "From" [ref=e353]: 2025-11
+                - generic [ref=e354]:
+                  - generic [ref=e355]: To
+                  - textbox "To" [ref=e356]: 2026-04
+                - button "Apply" [ref=e357] [cursor=pointer]
+                - link "Reset" [ref=e358] [cursor=pointer]:
+                  - /url: /
+                  - button "Reset" [ref=e359]
+            - generic [ref=e363]:
+              - img [ref=e364]:
+                - generic [ref=e367]:
+                  - generic "1.200" [ref=e368]
+                  - generic "1.000" [ref=e369]
+                  - generic "800" [ref=e370]
+                  - generic "600" [ref=e371]
+                  - generic "400" [ref=e372]
+                  - generic "200" [ref=e373]
+                  - generic "0" [ref=e374]
+                - generic [ref=e386]:
+                  - generic "2025-11" [ref=e387]
+                  - generic "2025-12" [ref=e388]
+                  - generic "2026-01" [ref=e389]
+                  - generic "2026-02" [ref=e390]
+                  - generic "2026-03" [ref=e391]
+                  - generic "2026-04" [ref=e392]
+              - generic [ref=e393]:
+                - generic [ref=e394] [cursor=pointer]:
+                  - generic [ref=e395]:
+                    - img
+                  - generic [ref=e396]: Inbound Quantity
+                - generic [ref=e397] [cursor=pointer]:
+                  - generic [ref=e398]:
+                    - img
+                  - generic [ref=e399]: Outbound Quantity
+              - generic: ● ●
+          - generic [ref=e400]:
+            - heading "Fault Type Distribution" [level=3] [ref=e401]
+            - generic [ref=e404]:
+              - img [ref=e405]:
+                - generic [ref=e410]:
+                  - generic:
+                    - generic: 5.9%
+                  - generic:
+                    - generic: 11.8%
+                  - generic:
+                    - generic: 23.5%
+                  - generic:
+                    - generic: 58.8%
+              - generic [ref=e421]:
+                - generic [ref=e422] [cursor=pointer]:
+                  - generic [ref=e423]:
+                    - img
+                  - generic [ref=e424]: Returned
+                - generic [ref=e425] [cursor=pointer]:
+                  - generic [ref=e426]:
+                    - img
+                  - generic [ref=e427]: Cancelled
+                - generic [ref=e428] [cursor=pointer]:
+                  - generic [ref=e429]:
+                    - img
+                  - generic [ref=e430]: Warehouse Transfer
+                - generic [ref=e431] [cursor=pointer]:
+                  - generic [ref=e432]:
+                    - img
+                  - generic [ref=e433]: Other
+                - generic [ref=e434] [cursor=pointer]:
+                  - generic [ref=e435]:
+                    - img
+                  - generic [ref=e436]: Shortage
+              - generic: ● ● ● ● ●
+        - generic [ref=e437]:
+          - generic [ref=e438]:
+            - generic [ref=e439]:
+              - heading "Inbound/Outbound Order Number by Month" [level=3] [ref=e440]
+              - paragraph [ref=e441]: "Current range: 11/2025 - 04/2026"
+            - generic [ref=e442]:
+              - generic [ref=e443]:
+                - generic [ref=e444]: From
+                - textbox "From" [ref=e445]: 2025-11
+              - generic [ref=e446]:
+                - generic [ref=e447]: To
+                - textbox "To" [ref=e448]: 2026-04
+              - button "Apply" [ref=e449] [cursor=pointer]
+              - link "Reset" [ref=e450] [cursor=pointer]:
+                - /url: /
+                - button "Reset" [ref=e451]
+          - generic [ref=e455]:
+            - img [ref=e456]:
+              - generic [ref=e459]:
+                - generic "200" [ref=e460]
+                - generic "150" [ref=e461]
+                - generic "100" [ref=e462]
+                - generic "50" [ref=e463]
+                - generic "0" [ref=e464]
+              - generic [ref=e492]:
+                - generic "2025-11" [ref=e493]
+                - generic "2025-12" [ref=e494]
+                - generic "2026-01" [ref=e495]
+                - generic "2026-02" [ref=e496]
+                - generic "2026-03" [ref=e497]
+                - generic "2026-04" [ref=e498]
+            - generic [ref=e499]:
+              - generic [ref=e500] [cursor=pointer]:
+                - generic [ref=e501]:
+                  - img
+                - generic [ref=e502]: Inbound Orders
+              - generic [ref=e503] [cursor=pointer]:
+                - generic [ref=e504]:
+                  - img
+                - generic [ref=e505]: Outbound Orders
+              - generic [ref=e506] [cursor=pointer]:
+                - generic [ref=e507]:
+                  - img
+                - generic [ref=e508]: Total Orders
+            - generic: ● ● ●
+        - generic [ref=e509]:
+          - heading "Top Product Quantities" [level=3] [ref=e510]
+          - generic [ref=e512]:
+            - generic [ref=e513]:
+              - generic [ref=e514]: No Rows To Show
+              - grid [ref=e515]:
+                - rowgroup [ref=e516]:
+                  - row "Product Code Product Name Total Quantity" [ref=e517]:
+                    - columnheader "Product Code" [ref=e518]:
+                      - generic [ref=e520] [cursor=pointer]: Product Code
+                    - columnheader "Product Name" [ref=e521]:
+                      - generic [ref=e523] [cursor=pointer]: Product Name
+                    - columnheader "Total Quantity" [ref=e524]:
+                      - generic [ref=e527] [cursor=pointer]: Total Quantity
+                - rowgroup [ref=e528]:
+                  - row "PRD-0003 Full-face Helmet 1.663" [ref=e529]:
+                    - gridcell "PRD-0003" [ref=e530]
+                    - gridcell "Full-face Helmet" [ref=e531]
+                    - gridcell "1.663" [ref=e532]:
+                      - generic [ref=e533]: "1.663"
+                  - row "PRD-0004 Half-face Helmet 382" [ref=e534]:
+                    - gridcell "PRD-0004" [ref=e535]
+                    - gridcell "Half-face Helmet" [ref=e536]
+                    - gridcell "382" [ref=e537]:
+                      - generic [ref=e538]: "382"
+                  - row "PRD-0006 Coca Helmet 298" [ref=e539]:
+                    - gridcell "PRD-0006" [ref=e540]
+                    - gridcell "Coca Helmet" [ref=e541]
+                    - gridcell "298" [ref=e542]:
+                      - generic [ref=e543]: "298"
+                  - row "PRD-0005 Ladybug Helmet 96" [ref=e544]:
+                    - gridcell "PRD-0005" [ref=e545]
+                    - gridcell "Ladybug Helmet" [ref=e546]
+                    - gridcell "96" [ref=e547]:
+                      - generic [ref=e548]: "96"
+                  - row "PRD-0045 Luxury Helmet 74" [ref=e549]:
+                    - gridcell "PRD-0045" [ref=e550]
+                    - gridcell "Luxury Helmet" [ref=e551]
+                    - gridcell "74" [ref=e552]:
+                      - generic [ref=e553]: "74"
+                  - row "PRD-0007 Pepsi Helmet 16" [ref=e554]:
+                    - gridcell "PRD-0007" [ref=e555]
+                    - gridcell "Pepsi Helmet" [ref=e556]
+                    - gridcell "16" [ref=e557]:
+                      - generic [ref=e558]: "16"
+                - rowgroup
+                - rowgroup
+                - rowgroup
+            - generic [ref=e559]:
+              - generic [ref=e560]:
+                - generic [ref=e561]:
+                  - button [disabled] [ref=e562]:
+                    - img [ref=e563]
+                  - button [disabled] [ref=e566]:
+                    - img [ref=e567]
+                - button "1" [ref=e570] [cursor=pointer]
+                - generic [ref=e571]:
+                  - button [disabled] [ref=e572]:
+                    - img [ref=e573]
+                  - button [disabled] [ref=e575]:
+                    - img [ref=e576]
+              - generic [ref=e579]:
+                - generic [ref=e580]:
+                  - combobox [ref=e582] [cursor=pointer]:
+                    - option "Select an option" [disabled]
+                    - option "10" [selected]
+                    - option "20"
+                    - option "50"
+                    - option "100"
+                  - generic [ref=e583]: Row/page
+                - generic [ref=e584]:
+                  - generic [ref=e585]: Page
+                  - textbox [ref=e588]: "1"
+                  - button "Go" [ref=e589] [cursor=pointer]
+  - generic [ref=e55]:
+    - img [ref=e57]
+    - button "Open Tanstack query devtools" [ref=e105] [cursor=pointer]:
+      - img [ref=e106]
+  - generic [ref=e49] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e50]:
+      - img [ref=e51]
+    - generic [ref=e590]:
+      - button "Open issues overlay" [ref=e591]:
+        - generic [ref=e592]:
+          - generic [ref=e593]: "13"
+          - generic [ref=e594]: "14"
+        - generic [ref=e595]:
+          - text: Issue
+          - generic [ref=e596]: s
+      - button "Collapse issues badge" [ref=e597]:
+        - img [ref=e598]
+  - alert [ref=e54]

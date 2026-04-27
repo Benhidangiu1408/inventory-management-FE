@@ -1,0 +1,201 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - link "Logo Stockify" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]:
+          - img "Logo" [ref=e8]
+          - generic [ref=e9]: Stockify
+      - navigation [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - heading "Menu" [level=2] [ref=e14]
+            - list [ref=e15]:
+              - listitem [ref=e16]:
+                - link "Dashboard" [ref=e17] [cursor=pointer]:
+                  - /url: /
+                  - img [ref=e19]
+                  - generic [ref=e21]: Dashboard
+              - listitem [ref=e22]:
+                - link "Import" [ref=e23] [cursor=pointer]:
+                  - /url: /import
+                  - img [ref=e25]
+                  - generic [ref=e27]: Import
+              - listitem [ref=e28]:
+                - link "Export" [ref=e29] [cursor=pointer]:
+                  - /url: /export
+                  - img [ref=e31]
+                  - generic [ref=e33]: Export
+              - listitem [ref=e34]:
+                - link "Stocktaking" [ref=e35] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - img [ref=e37]
+                  - generic [ref=e41]: Stocktaking
+              - listitem [ref=e42]:
+                - link "Fault Handle" [ref=e43] [cursor=pointer]:
+                  - /url: /fault-order
+                  - img [ref=e45]
+                  - generic [ref=e50]: Fault Handle
+              - listitem [ref=e51]:
+                - button "Master Data" [ref=e52] [cursor=pointer]:
+                  - img [ref=e54]
+                  - generic [ref=e59]: Master Data
+                  - img [ref=e60]
+                - list [ref=e62]:
+                  - listitem [ref=e63]:
+                    - link "Warehouse" [ref=e64] [cursor=pointer]:
+                      - /url: /warehouse-management/warehouse
+                      - text: Warehouse
+                  - listitem [ref=e65]:
+                    - link "Category" [ref=e66] [cursor=pointer]:
+                      - /url: /catalog/category
+                      - text: Category
+                  - listitem [ref=e67]:
+                    - link "Product" [ref=e68] [cursor=pointer]:
+                      - /url: /catalog/product
+                      - text: Product
+                  - listitem [ref=e69]:
+                    - link "Product Attributes" [ref=e70] [cursor=pointer]:
+                      - /url: /catalog/variant-attributes
+                      - text: Product Attributes
+                  - listitem [ref=e71]:
+                    - link "UOM (Unit of Measurement)" [ref=e72] [cursor=pointer]:
+                      - /url: /catalog/unit
+                      - text: UOM (Unit of Measurement)
+          - generic [ref=e73]:
+            - heading "Others" [level=2] [ref=e74]
+            - list [ref=e75]:
+              - listitem [ref=e76]:
+                - button "Users Settings" [ref=e77] [cursor=pointer]:
+                  - img [ref=e79]
+                  - generic [ref=e91]: Users Settings
+                  - img [ref=e92]
+                - list [ref=e94]:
+                  - listitem [ref=e95]:
+                    - link "Users Management" [ref=e96] [cursor=pointer]:
+                      - /url: /admin/user-management
+                      - text: Users Management
+                  - listitem [ref=e97]:
+                    - link "Role & Permission" [ref=e98] [cursor=pointer]:
+                      - /url: /admin/role-management
+                      - text: Role & Permission
+              - listitem [ref=e99]:
+                - link "Profile" [ref=e100] [cursor=pointer]:
+                  - /url: /profile
+                  - img [ref=e102]
+                  - generic [ref=e106]: Profile
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - button "Toggle Sidebar" [ref=e111] [cursor=pointer]:
+              - img [ref=e112]
+            - generic [ref=e116]:
+              - generic:
+                - img
+              - textbox "Search or type command..." [ref=e117]
+              - button "⌘ K" [ref=e118] [cursor=pointer]:
+                - generic [ref=e119]: ⌘
+                - generic [ref=e120]: K
+          - generic [ref=e121]:
+            - generic [ref=e122]:
+              - button [ref=e123] [cursor=pointer]:
+                - img [ref=e124]
+              - button [ref=e127] [cursor=pointer]:
+                - img [ref=e130]
+            - button "User nam3.nguyen" [ref=e133] [cursor=pointer]:
+              - img "User" [ref=e135]
+              - generic [ref=e136]: nam3.nguyen
+              - img [ref=e137]
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - heading "Schedule Inventory Check" [level=2] [ref=e143]
+          - navigation [ref=e144]:
+            - list [ref=e145]:
+              - listitem [ref=e146]:
+                - link "Home" [ref=e147] [cursor=pointer]:
+                  - /url: /
+                  - text: Home
+                  - img [ref=e148]
+              - listitem [ref=e150]:
+                - link "inventory check" [ref=e151] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - text: inventory check
+                  - img [ref=e152]
+              - listitem [ref=e154]: Schedule Inventory Check
+        - generic [ref=e156]:
+          - generic [ref=e157]:
+            - heading "Sheet Detail" [level=3] [ref=e159]
+            - generic [ref=e162]:
+              - generic [ref=e163]:
+                - generic [ref=e164]: Warehouse
+                - generic [ref=e165]:
+                  - combobox [active] [ref=e166] [cursor=pointer]:
+                    - option "Select Warehouse" [disabled] [selected]
+                    - option "Failed Warehouse (WH-0005)"
+                    - option "Test Warehouse (WH-0006)"
+                    - option "Main Warehouse (WH-0001)"
+                    - option "Backup Warehouse (WH-0003)"
+                    - option "Test Automation Warehouse (WH-0060)"
+                    - option "Auto Delete Warehouse 1777174814937 (WH-0066)"
+                    - option "Test Automation Warehouse (WH-0063)"
+                    - option "Auto Delete Warehouse 1777173937258 (WH-0064)"
+                    - option "Test Automation Warehouse (WH-0065)"
+                    - option "Test Update Warehouse (WH-0048)"
+                  - paragraph [ref=e322]: Please select a warehouse
+              - generic [ref=e167]:
+                - generic [ref=e168]: Assignee
+                - generic [ref=e169]:
+                  - combobox [ref=e170] [cursor=pointer]:
+                    - option "Select Employee" [disabled] [selected]
+                    - option "tuanemdeptrai (Nguyen Tuan Anh)"
+                    - option "nam3.nguyen (Nguyen nam3)"
+                    - option "nhi123 (Tran Luong Yen Nhi)"
+                    - option "ngoc123 (Tran Luong Yen Ngoc)"
+                    - option "ngan123 (Tran Luong Yen Ngan)"
+                    - option "my123 (Tran Luong Yen My)"
+                    - option "han123 (Tran Luong Yen Han)"
+                    - option "nhu123 (Tran Luong Yen Nhu)"
+                    - option "huylam (Lam Huy)"
+                    - option "tuanemtramtinh (Nguyen Anh)"
+                    - option "vy123 (Tran Luong Yen Vy)"
+                    - option "vck (Vu Ky)"
+                    - option "usre_test (test test)"
+                  - paragraph [ref=e323]: Please assign an employee
+              - generic [ref=e171]:
+                - generic [ref=e172]: Planned Date & Time
+                - generic [ref=e173]:
+                  - textbox [ref=e175]
+                  - paragraph [ref=e324]: Date is required
+              - generic [ref=e176]:
+                - generic [ref=e177]:
+                  - generic [ref=e178]: Target Products (Optional)
+                  - generic [ref=e182] [cursor=pointer]:
+                    - generic [ref=e184]: Select options...
+                    - img [ref=e187]
+                - paragraph [ref=e189]:
+                  - text: Select specific products to check. Leave empty to check
+                  - strong [ref=e190]: entire warehouse
+                  - text: .
+              - generic [ref=e191]:
+                - generic [ref=e192]: Note
+                - textbox "e.g. Focus on Aisle 5 damaged goods..." [ref=e195]
+          - generic [ref=e196]:
+            - heading "Cycle Settings" [level=3] [ref=e198]
+            - generic [ref=e202]:
+              - generic [ref=e204] [cursor=pointer]:
+                - generic [ref=e205]:
+                  - checkbox "Enable Recurring Cycle Count" [ref=e206]
+                  - img
+                - generic [ref=e208]: Enable Recurring Cycle Count
+              - paragraph [ref=e209]: If enabled, the system will automatically schedule the next check after this one starts.
+          - generic [ref=e210]:
+            - button "Cancel" [ref=e211] [cursor=pointer]
+            - button "Save" [ref=e212] [cursor=pointer]
+  - generic [ref=e213]:
+    - img [ref=e215]
+    - button "Open Tanstack query devtools" [ref=e263] [cursor=pointer]:
+      - img [ref=e264]
+  - button "Open Next.js Dev Tools" [ref=e317] [cursor=pointer]:
+    - img [ref=e318]
+  - alert [ref=e321]

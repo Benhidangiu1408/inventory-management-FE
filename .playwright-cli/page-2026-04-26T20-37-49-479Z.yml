@@ -1,0 +1,298 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - link "Logo Stockify" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]:
+          - img "Logo" [ref=e8]
+          - generic [ref=e9]: Stockify
+      - navigation [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - heading "Menu" [level=2] [ref=e14]
+            - list [ref=e15]:
+              - listitem [ref=e16]:
+                - link "Dashboard" [ref=e17] [cursor=pointer]:
+                  - /url: /
+                  - img [ref=e19]
+                  - generic [ref=e21]: Dashboard
+              - listitem [ref=e22]:
+                - link "Import" [ref=e23] [cursor=pointer]:
+                  - /url: /import
+                  - img [ref=e25]
+                  - generic [ref=e27]: Import
+              - listitem [ref=e28]:
+                - link "Export" [ref=e29] [cursor=pointer]:
+                  - /url: /export
+                  - img [ref=e31]
+                  - generic [ref=e33]: Export
+              - listitem [ref=e34]:
+                - link "Stocktaking" [ref=e35] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - img [ref=e37]
+                  - generic [ref=e41]: Stocktaking
+              - listitem [ref=e42]:
+                - link "Fault Handle" [ref=e43] [cursor=pointer]:
+                  - /url: /fault-order
+                  - img [ref=e45]
+                  - generic [ref=e50]: Fault Handle
+              - listitem [ref=e51]:
+                - button "Master Data" [ref=e52] [cursor=pointer]:
+                  - img [ref=e54]
+                  - generic [ref=e59]: Master Data
+                  - img [ref=e60]
+                - list [ref=e62]:
+                  - listitem [ref=e63]:
+                    - link "Warehouse" [ref=e64] [cursor=pointer]:
+                      - /url: /warehouse-management/warehouse
+                      - text: Warehouse
+                  - listitem [ref=e65]:
+                    - link "Category" [ref=e66] [cursor=pointer]:
+                      - /url: /catalog/category
+                      - text: Category
+                  - listitem [ref=e67]:
+                    - link "Product" [ref=e68] [cursor=pointer]:
+                      - /url: /catalog/product
+                      - text: Product
+                  - listitem [ref=e69]:
+                    - link "Product Attributes" [ref=e70] [cursor=pointer]:
+                      - /url: /catalog/variant-attributes
+                      - text: Product Attributes
+                  - listitem [ref=e71]:
+                    - link "UOM (Unit of Measurement)" [ref=e72] [cursor=pointer]:
+                      - /url: /catalog/unit
+                      - text: UOM (Unit of Measurement)
+          - generic [ref=e73]:
+            - heading "Others" [level=2] [ref=e74]
+            - list [ref=e75]:
+              - listitem [ref=e76]:
+                - button "Users Settings" [ref=e77] [cursor=pointer]:
+                  - img [ref=e79]
+                  - generic [ref=e91]: Users Settings
+                  - img [ref=e92]
+                - list [ref=e94]:
+                  - listitem [ref=e95]:
+                    - link "Users Management" [ref=e96] [cursor=pointer]:
+                      - /url: /admin/user-management
+                      - text: Users Management
+                  - listitem [ref=e97]:
+                    - link "Role & Permission" [ref=e98] [cursor=pointer]:
+                      - /url: /admin/role-management
+                      - text: Role & Permission
+              - listitem [ref=e99]:
+                - link "Profile" [ref=e100] [cursor=pointer]:
+                  - /url: /profile
+                  - img [ref=e102]
+                  - generic [ref=e106]: Profile
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - button "Toggle Sidebar" [ref=e111] [cursor=pointer]:
+              - img [ref=e112]
+            - generic [ref=e116]:
+              - generic:
+                - img
+              - textbox "Search or type command..." [ref=e117]
+              - button "⌘ K" [ref=e118] [cursor=pointer]:
+                - generic [ref=e119]: ⌘
+                - generic [ref=e120]: K
+          - generic [ref=e121]:
+            - generic [ref=e122]:
+              - button [ref=e123] [cursor=pointer]:
+                - img [ref=e124]
+              - button [ref=e127] [cursor=pointer]:
+                - img [ref=e130]
+            - button "User nam3.nguyen" [ref=e133] [cursor=pointer]:
+              - img "User" [ref=e135]
+              - generic [ref=e136]: nam3.nguyen
+              - img [ref=e137]
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - heading "Inventory Check Detail" [level=2] [ref=e143]
+          - navigation [ref=e144]:
+            - list [ref=e145]:
+              - listitem [ref=e146]:
+                - link "Home" [ref=e147] [cursor=pointer]:
+                  - /url: /
+                  - text: Home
+                  - img [ref=e148]
+              - listitem [ref=e150]:
+                - link "inventory check" [ref=e151] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - text: inventory check
+                  - img [ref=e152]
+              - listitem [ref=e154]: Inventory Check Detail
+        - generic [ref=e155]:
+          - generic [ref=e156]:
+            - generic [ref=e158]: General Information
+            - generic [ref=e159]:
+              - generic [ref=e160]:
+                - generic [ref=e161]: Code
+                - generic [ref=e162]: IC-2C813BAD
+              - generic [ref=e163]:
+                - generic [ref=e164]: Warehouse Name
+                - generic [ref=e165]: Backup Warehouse
+              - generic [ref=e166]:
+                - generic [ref=e167]: Assigner
+                - generic [ref=e168]: vck
+              - generic [ref=e169]:
+                - generic [ref=e170]: Assignee
+                - generic [ref=e171]: nam3.nguyen
+              - generic [ref=e172]:
+                - generic [ref=e173]: Status
+                - generic [ref=e174]: IN_PROGRESS
+              - generic [ref=e175]:
+                - generic [ref=e176]: Cycle Check
+                - generic [ref=e177]: None
+              - generic [ref=e178]:
+                - generic [ref=e179]: Note
+                - generic [ref=e181]: No Note
+          - generic [ref=e183]:
+            - generic [ref=e184]:
+              - heading "IC-2C813BAD" [level=1] [ref=e186]
+              - generic [ref=e187]:
+                - generic [ref=e188]: In Progress
+                - button "Complete Check" [ref=e189] [cursor=pointer]:
+                  - img [ref=e191]
+                  - text: Complete Check
+            - generic [ref=e195]:
+              - generic [ref=e196]:
+                - generic [ref=e197]: No Rows To Show
+                - grid [ref=e198]:
+                  - rowgroup [ref=e199]:
+                    - row "Code Product Name Description Progress" [ref=e200]:
+                      - columnheader [ref=e201]
+                      - columnheader "Code" [ref=e202]:
+                        - generic [ref=e205] [cursor=pointer]: Code
+                      - columnheader "Product Name" [ref=e208]:
+                        - generic [ref=e211] [cursor=pointer]: Product Name
+                      - columnheader "Description" [ref=e212]:
+                        - generic [ref=e215] [cursor=pointer]: Description
+                      - columnheader "Progress" [ref=e216]:
+                        - generic [ref=e219] [cursor=pointer]: Progress
+                  - rowgroup [ref=e220]:
+                    - row "PRD-0045 Luxury Helmet (Default Variant with image 2) Default Variant with image 2 0 / 2 Batches" [ref=e221]:
+                      - gridcell [ref=e222]
+                      - gridcell "PRD-0045" [ref=e225]
+                      - gridcell "Luxury Helmet (Default Variant with image 2)" [ref=e226]
+                      - gridcell "Default Variant with image 2" [ref=e227]
+                      - gridcell "0 / 2 Batches" [ref=e228]:
+                        - generic [ref=e230]: 0 / 2 Batches
+                    - 'row "PRD-0045-002 Luxury Helmet (Material: Gold) good 0 / 2 Batches" [expanded] [active] [ref=e231]':
+                      - gridcell [expanded] [ref=e232]
+                      - gridcell "PRD-0045-002" [ref=e235]
+                      - 'gridcell "Luxury Helmet (Material: Gold)" [ref=e236]'
+                      - gridcell "good" [ref=e237]
+                      - gridcell "0 / 2 Batches" [ref=e238]:
+                        - generic [ref=e240]: 0 / 2 Batches
+                  - rowgroup:
+                    - 'row "No Rows To Show. 1 to 2 of 2. Page 1 of 1 Page Size: 1 to 2 of 2 First Page Previous Page Page 1 of 1 Next Page Last Page" [ref=e393]':
+                      - generic [ref=e395]:
+                        - generic [ref=e396]: No Rows To Show. 1 to 2 of 2. Page 1 of 1
+                        - grid [ref=e397]:
+                          - rowgroup [ref=e398]:
+                            - row "Batch Code Location System Qty Scanned Qty Variance Faulty Action" [ref=e399]:
+                              - columnheader "Batch Code" [ref=e400]:
+                                - generic [ref=e403] [cursor=pointer]: Batch Code
+                              - columnheader "Location" [ref=e404]:
+                                - generic [ref=e407] [cursor=pointer]: Location
+                              - columnheader "System Qty" [ref=e410]:
+                                - generic [ref=e412] [cursor=pointer]: System Qty
+                              - columnheader "Scanned Qty" [ref=e413]:
+                                - generic [ref=e415]: Scanned Qty
+                              - columnheader "Variance" [ref=e416]:
+                                - generic [ref=e418]: Variance
+                              - columnheader "Faulty" [ref=e419]:
+                                - generic [ref=e422]: Faulty
+                              - columnheader "Action" [ref=e423]:
+                                - generic [ref=e425]: Action
+                          - rowgroup [ref=e426]:
+                            - row "BAT-7d23ec0a R001.Z001.A001.R001.S002.B003 20 Kilogram -" [ref=e427]:
+                              - gridcell "BAT-7d23ec0a" [ref=e428]
+                              - gridcell "R001.Z001.A001.R001.S002.B003" [ref=e429]
+                              - gridcell "20 Kilogram" [ref=e430]
+                              - gridcell [ref=e431]:
+                                - textbox "0" [ref=e435]
+                              - gridcell "-" [ref=e436]
+                              - gridcell [ref=e437]:
+                                - generic [ref=e441] [cursor=pointer]:
+                                  - checkbox [ref=e442]
+                                  - img
+                              - gridcell [ref=e443]:
+                                - button [disabled] [ref=e445]:
+                                  - img [ref=e446]
+                            - row "BAT-7d23ec0b R001.Z001.A001.R002.S001.B002 20 Kilogram -" [ref=e450]:
+                              - gridcell "BAT-7d23ec0b" [ref=e451]
+                              - gridcell "R001.Z001.A001.R002.S001.B002" [ref=e452]
+                              - gridcell "20 Kilogram" [ref=e453]
+                              - gridcell [ref=e454]:
+                                - textbox "0" [ref=e458]
+                              - gridcell "-" [ref=e459]
+                              - gridcell [ref=e460]:
+                                - generic [ref=e464] [cursor=pointer]:
+                                  - checkbox [ref=e465]
+                                  - img
+                              - gridcell [ref=e466]:
+                                - button [disabled] [ref=e468]:
+                                  - img [ref=e469]
+                          - rowgroup
+                          - rowgroup
+                          - rowgroup
+                        - generic [ref=e473]:
+                          - generic [ref=e474]:
+                            - generic [ref=e475]: "Page Size:"
+                            - combobox "Page Size" [ref=e476]:
+                              - generic [ref=e477]: "10"
+                          - generic [ref=e479]: 1 to 2 of 2
+                          - button "First Page" [disabled] [ref=e480]
+                          - button "Previous Page" [disabled] [ref=e481]
+                          - generic [ref=e482]: Page 1 of 1
+                          - button "Next Page" [disabled] [ref=e483]
+                          - button "Last Page" [disabled] [ref=e484]
+                  - rowgroup
+                  - rowgroup
+              - generic [ref=e241]:
+                - generic [ref=e242]:
+                  - generic [ref=e243]:
+                    - button [disabled] [ref=e244]:
+                      - img [ref=e245]
+                    - button [disabled] [ref=e248]:
+                      - img [ref=e249]
+                  - button "1" [ref=e252] [cursor=pointer]
+                  - generic [ref=e253]:
+                    - button [disabled] [ref=e254]:
+                      - img [ref=e255]
+                    - button [disabled] [ref=e257]:
+                      - img [ref=e258]
+                - generic [ref=e261]:
+                  - generic [ref=e262]:
+                    - combobox [ref=e264] [cursor=pointer]:
+                      - option "Select an option" [disabled]
+                      - option "10" [selected]
+                      - option "20"
+                      - option "50"
+                      - option "100"
+                    - generic [ref=e265]: Row/page
+                  - generic [ref=e266]:
+                    - generic [ref=e267]: Page
+                    - textbox [ref=e270]: "1"
+                    - button "Go" [ref=e271] [cursor=pointer]
+  - generic [ref=e272]:
+    - img [ref=e274]
+    - button "Open Tanstack query devtools" [ref=e322] [cursor=pointer]:
+      - img [ref=e323]
+  - generic [ref=e375] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e376]:
+      - img [ref=e377]
+    - generic [ref=e380]:
+      - button "Open issues overlay" [ref=e381]:
+        - generic [ref=e485]:
+          - generic [ref=e486]: "20"
+          - generic [ref=e487]: "21"
+        - generic [ref=e385]:
+          - text: Issue
+          - generic [ref=e386]: s
+      - button "Collapse issues badge" [ref=e387]:
+        - img [ref=e388]
+  - alert [ref=e390]

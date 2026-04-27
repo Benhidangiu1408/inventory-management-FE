@@ -23,7 +23,10 @@
       "Bash(ls:*)",
       "Bash(grep -n \"field:\" /Users/tuanemtramtinh/Desktop/DACN/inventory-management-FE/src/app/\\\\\\(dashboard\\\\\\)/export/process/[type]/[id]/[step]/ExportQuantityCheck.tsx)",
       "Bash(grep -n \"picker\\\\|Picker\\\\|modal\\\\|Modal\\\\|Add\\\\|CreateModal\\\\|ExportProductPicker\\\\|ProductPicker\" /Users/tuanemtramtinh/Desktop/DACN/inventory-management-FE/src/app/\\\\\\(dashboard\\\\\\)/export/process/[type]/[id]/[step]/ExportQuantityCheck.tsx)",
-      "Bash(grep -n \"Success\\\\|success\\\\|toast\\\\|confirmed\\\\|COMPLETED\\\\|Confirm\" /Users/tuanemtramtinh/Desktop/DACN/inventory-management-FE/src/app/\\\\\\(dashboard\\\\\\)/export/process/[type]/[id]/[step]/ExportConfirm.tsx)"
+      "Bash(grep -n \"Success\\\\|success\\\\|toast\\\\|confirmed\\\\|COMPLETED\\\\|Confirm\" /Users/tuanemtramtinh/Desktop/DACN/inventory-management-FE/src/app/\\\\\\(dashboard\\\\\\)/export/process/[type]/[id]/[step]/ExportConfirm.tsx)",
+      "Bash(playwright-cli press *)",
+      "Bash(playwright-cli check *)",
+      "Bash(npx playwright *)"
     ]
   }
 }

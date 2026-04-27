@@ -1,0 +1,176 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - link "Logo Stockify" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]:
+          - img "Logo" [ref=e8]
+          - generic [ref=e9]: Stockify
+      - navigation [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - heading "Menu" [level=2] [ref=e14]
+            - list [ref=e15]:
+              - listitem [ref=e16]:
+                - link "Dashboard" [ref=e17] [cursor=pointer]:
+                  - /url: /
+                  - img [ref=e19]
+                  - generic [ref=e21]: Dashboard
+              - listitem [ref=e22]:
+                - link "Import" [ref=e23] [cursor=pointer]:
+                  - /url: /import
+                  - img [ref=e25]
+                  - generic [ref=e27]: Import
+              - listitem [ref=e28]:
+                - link "Export" [ref=e29] [cursor=pointer]:
+                  - /url: /export
+                  - img [ref=e31]
+                  - generic [ref=e33]: Export
+              - listitem [ref=e34]:
+                - link "Stocktaking" [ref=e35] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - img [ref=e37]
+                  - generic [ref=e41]: Stocktaking
+              - listitem [ref=e42]:
+                - link "Fault Handle" [ref=e43] [cursor=pointer]:
+                  - /url: /fault-order
+                  - img [ref=e45]
+                  - generic [ref=e50]: Fault Handle
+              - listitem [ref=e51]:
+                - button "Master Data" [ref=e52] [cursor=pointer]:
+                  - img [ref=e54]
+                  - generic [ref=e59]: Master Data
+                  - img [ref=e60]
+                - list [ref=e62]:
+                  - listitem [ref=e63]:
+                    - link "Warehouse" [ref=e64] [cursor=pointer]:
+                      - /url: /warehouse-management/warehouse
+                      - text: Warehouse
+                  - listitem [ref=e65]:
+                    - link "Category" [ref=e66] [cursor=pointer]:
+                      - /url: /catalog/category
+                      - text: Category
+                  - listitem [ref=e67]:
+                    - link "Product" [ref=e68] [cursor=pointer]:
+                      - /url: /catalog/product
+                      - text: Product
+                  - listitem [ref=e69]:
+                    - link "Product Attributes" [ref=e70] [cursor=pointer]:
+                      - /url: /catalog/variant-attributes
+                      - text: Product Attributes
+                  - listitem [ref=e71]:
+                    - link "UOM (Unit of Measurement)" [ref=e72] [cursor=pointer]:
+                      - /url: /catalog/unit
+                      - text: UOM (Unit of Measurement)
+          - generic [ref=e73]:
+            - heading "Others" [level=2] [ref=e74]
+            - list [ref=e75]:
+              - listitem [ref=e76]:
+                - button "Users Settings" [ref=e77] [cursor=pointer]:
+                  - img [ref=e79]
+                  - generic [ref=e91]: Users Settings
+                  - img [ref=e92]
+                - list [ref=e94]:
+                  - listitem [ref=e95]:
+                    - link "Users Management" [ref=e96] [cursor=pointer]:
+                      - /url: /admin/user-management
+                      - text: Users Management
+                  - listitem [ref=e97]:
+                    - link "Role & Permission" [ref=e98] [cursor=pointer]:
+                      - /url: /admin/role-management
+                      - text: Role & Permission
+              - listitem [ref=e99]:
+                - link "Profile" [ref=e100] [cursor=pointer]:
+                  - /url: /profile
+                  - img [ref=e102]
+                  - generic [ref=e106]: Profile
+    - generic [ref=e107]:
+      - banner [ref=e108]:
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - button "Toggle Sidebar" [ref=e111] [cursor=pointer]:
+              - img [ref=e112]
+            - generic [ref=e116]:
+              - generic:
+                - img
+              - textbox "Search or type command..." [ref=e117]
+              - button "⌘ K" [ref=e118] [cursor=pointer]:
+                - generic [ref=e119]: ⌘
+                - generic [ref=e120]: K
+          - generic [ref=e121]:
+            - generic [ref=e122]:
+              - button [ref=e123] [cursor=pointer]:
+                - img [ref=e124]
+              - button [ref=e127] [cursor=pointer]:
+                - img [ref=e130]
+            - button "User nam3.nguyen" [ref=e133] [cursor=pointer]:
+              - img "User" [ref=e135]
+              - generic [ref=e136]: nam3.nguyen
+              - img [ref=e137]
+      - generic [ref=e428]:
+        - generic [ref=e429]:
+          - heading "Inventory Check Detail" [level=2] [ref=e431]
+          - navigation [ref=e432]:
+            - list [ref=e433]:
+              - listitem [ref=e434]:
+                - link "Home" [ref=e435] [cursor=pointer]:
+                  - /url: /
+                  - text: Home
+                  - img [ref=e436]
+              - listitem [ref=e438]:
+                - link "inventory check" [ref=e439] [cursor=pointer]:
+                  - /url: /warehouse-management/inventory-check
+                  - text: inventory check
+                  - img [ref=e440]
+              - listitem [ref=e442]: Inventory Check Detail
+        - generic [ref=e443]:
+          - generic [ref=e444]:
+            - generic [ref=e446]: General Information
+            - generic [ref=e447]:
+              - generic [ref=e448]:
+                - generic [ref=e449]: Code
+                - generic [ref=e450]: IC-71625AA5
+              - generic [ref=e451]:
+                - generic [ref=e452]: Warehouse Name
+                - generic [ref=e453]: Test Warehouse
+              - generic [ref=e454]:
+                - generic [ref=e455]: Assigner
+                - generic [ref=e456]: nam3.nguyen
+              - generic [ref=e457]:
+                - generic [ref=e458]: Assignee
+                - generic [ref=e459]: tuanemdeptrai
+              - generic [ref=e460]:
+                - generic [ref=e461]: Status
+                - generic [ref=e462]: CREATED
+              - generic [ref=e463]:
+                - generic [ref=e464]: Cycle Check
+                - generic [ref=e465]: Every 7 day(s)
+              - generic [ref=e466]:
+                - generic [ref=e467]: Note
+                - generic [ref=e469]: No Note
+          - generic [ref=e471]:
+            - generic [ref=e472]:
+              - heading "Ready to Start?" [level=2] [ref=e473]
+              - paragraph [ref=e474]: Starting this check will freeze the current system inventory counts for comparison. Only click this when you are physically ready to count.
+            - button "Start Inventory Check" [ref=e475] [cursor=pointer]:
+              - img [ref=e477]
+              - text: Start Inventory Check
+          - button "Cancel Stocktaking" [ref=e480] [cursor=pointer]
+  - generic [ref=e309]:
+    - img [ref=e311]
+    - button "Open Tanstack query devtools" [ref=e359] [cursor=pointer]:
+      - img [ref=e360]
+  - generic [ref=e412] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e413]:
+      - img [ref=e414]
+    - generic [ref=e417]:
+      - button "Open issues overlay" [ref=e418]:
+        - generic [ref=e419]:
+          - generic [ref=e420]: "6"
+          - generic [ref=e421]: "7"
+        - generic [ref=e422]:
+          - text: Issue
+          - generic [ref=e423]: s
+      - button "Collapse issues badge" [ref=e424]:
+        - img [ref=e425]
+  - alert [ref=e427]
