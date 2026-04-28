@@ -90,7 +90,7 @@ export default async function ImportPage() {
         <Summary />
       </div>
 
-      <div className="rounded-2xl border bg-white">
+      <div className="default-card rounded-2xl border">
         <List type="import" data={importSheetList} />
       </div>
     </div>

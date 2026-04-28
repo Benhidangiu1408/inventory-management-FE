@@ -237,7 +237,7 @@ export default function List({ type, data, exportData }: ListProps) {
   }));
 
   return (
-    <div className="default-card p-6">
+    <div className="p-6">
       {type === "import" ? (
         <CustomizableTable<ImportRow>
           headers={tableHeaderForImport}

@@ -13,7 +13,7 @@ export default function OrderSummary({
   quantity: number;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6">
+    <div className="default-card borderx` rounded-2xl p-6">
       <h2 className="mb-4 text-lg">Order Summary</h2>
       <Table>
         <TableBody className="">

@@ -293,7 +293,7 @@ export default function ExportConfirm() {
             </div>
           )}
         </InfoBox>
-        <div className="rounded-2xl border border-gray-200 bg-white p-6">
+        <div className="default-card rounded-2xl border p-6">
           <h2 className="mb-4 text-lg font-semibold">Export Confirm</h2>
           <AccordionTable<ExportQuantityCheckParentRow, ExportQuantityCheckRow>
             headers={mainColumns}
