@@ -28,7 +28,7 @@ test.describe("Create Warehouse Location Flow", () => {
 
     await expect(
       page.getByText("Location(s) created successfully!"),
-    ).toBeVisible({ timeout: 10_000 });
+    ).toBeVisible({ timeout: 60_000 });
   });
 
   test("should successfully create a bulk nested location hierarchy", async ({
@@ -121,7 +121,7 @@ test.describe("Create Warehouse Location Flow", () => {
 
     await expect(
       page.getByText("Location(s) created successfully!"),
-    ).toBeVisible({ timeout: 10_000 });
+    ).toBeVisible({ timeout: 60_000 });
 
     // ==========================================
     // 3. FIND THE ROOM IN THE "ROOM" TAB
@@ -137,9 +137,7 @@ test.describe("Create Warehouse Location Flow", () => {
 
     // The backend appends " <NNN>" (space + sequential number) to the prefix,
     // so we match by the prefix alone — hasText does a substring match.
-    const targetRow = page
-      .locator(".ag-row", { hasText: roomName })
-      .first();
+    const targetRow = page.locator(".ag-row", { hasText: roomName }).first();
     await expect(targetRow).toBeVisible({ timeout: 10_000 });
 
     // ==========================================

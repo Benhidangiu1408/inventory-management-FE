@@ -155,6 +155,7 @@ export const CreateICSheetForm = ({
             <Label>Planned Date & Time</Label>
             <Input
               type="datetime-local"
+              step={1}
               {...register("plannedDate", { required: "Date is required" })}
               min={new Date().toISOString().slice(0, 16)}
               error={!!errors.plannedDate}

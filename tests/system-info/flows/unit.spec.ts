@@ -48,7 +48,28 @@ test.describe("Unit of Measurement (UOM)", () => {
 
     await page.getByRole("button", { name: "Save" }).click();
 
-    await expect(page.getByText(unitName)).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByText(unitAbbr)).toBeVisible();
+    // Wait for create dialog to close / list view to be ready.
+    await expect(page.getByRole("button", { name: "Save" })).not.toBeVisible({
+      timeout: 15_000,
+    });
+
+    // Make the new row easier to find (pagination / grid virtualization).
+    const rowsPerPageSelect = page.locator("select").last();
+    await rowsPerPageSelect.selectOption("100");
+
+    const unitNameCell = page.getByRole("gridcell", { name: unitName });
+    const unitAbbrCell = page.getByRole("gridcell", { name: unitAbbr });
+
+    // The new unit may land on a different page depending on sorting.
+    for (const pageNum of ["1", "2", "3", "4", "5"]) {
+      const pageBtn = page.getByRole("button", { name: pageNum });
+      if (await pageBtn.isVisible()) {
+        await pageBtn.click();
+      }
+      if ((await unitNameCell.count()) > 0) break;
+    }
+
+    await expect(unitNameCell).toBeVisible({ timeout: 15_000 });
+    await expect(unitAbbrCell).toBeVisible();
   });
 });
