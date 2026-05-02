@@ -54,7 +54,7 @@ export default function ProgressBar({
   }
 
   return (
-    <div className="flex gap-6 rounded-2xl border border-gray-200 bg-white px-6 py-5">
+    <div className="default-card flex gap-6 rounded-2xl border px-6 py-5">
       {Object.entries(PROCESS).map(([key, value], index) => (
         <ProgressBarItem
           key={index}

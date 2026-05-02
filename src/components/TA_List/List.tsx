@@ -71,10 +71,12 @@ export default function List({ type, data, exportData }: ListProps) {
       key: "id",
       label: "Export Sheet ID",
       sort: true,
+      filter: "agTextColumnFilter",
     },
     {
       key: "type",
       label: "Type",
+      filter: "agSetColumnFilter",
       render: (value: ExportRow[keyof ExportRow]) => {
         if (typeof value === "string") {
           const formattedValue = value.replace("-", " ");
@@ -101,10 +103,12 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       key: "warehouse",
       label: "Warehouse",
+      filter: "agTextColumnFilter",
     },
     {
       key: "status",
       label: "Status",
+      filter: "agSetColumnFilter",
       render: (value) => {
         switch (value) {
           case SheetStatus.CREATED:
@@ -125,6 +129,7 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       key: "createdAt",
       label: "Created At",
+      filter: "agDateColumnFilter",
     },
     {
       key: "actions",
@@ -146,10 +151,12 @@ export default function List({ type, data, exportData }: ListProps) {
       key: "id",
       sort: true,
       width: 180,
+      filter: "agTextColumnFilter",
     },
     {
       label: "Type",
       key: "type",
+      filter: "agSetColumnFilter",
       render: (_, row) => {
         return (
           <Badge
@@ -175,6 +182,7 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       label: "Status",
       key: "status",
+      filter: "agSetColumnFilter",
       render: (_, row) => {
         switch (row.status) {
           case SheetStatus.CREATED:
@@ -200,6 +208,7 @@ export default function List({ type, data, exportData }: ListProps) {
     {
       label: "Created At",
       key: "createdAt",
+      filter: "agDateColumnFilter",
     },
     {
       label: "Actions",
@@ -237,7 +246,7 @@ export default function List({ type, data, exportData }: ListProps) {
   }));
 
   return (
-    <div className="default-card p-6">
+    <div className="p-6">
       {type === "import" ? (
         <CustomizableTable<ImportRow>
           headers={tableHeaderForImport}

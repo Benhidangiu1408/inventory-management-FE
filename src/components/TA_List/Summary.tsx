@@ -54,7 +54,7 @@ export default function Summary() {
   ];
 
   return (
-    <div className="flex justify-between gap-4 bg-white">
+    <div className="default-card flex justify-between gap-4 p-3">
       {importSummaryItems.map((item) => (
         <SummaryItem key={item.title} {...item} />
       ))}
