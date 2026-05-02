@@ -118,7 +118,8 @@ export default function ExportProductListInfoBox({
   const handleDelete = async (detailId: number) => {
     const ok = await confirm({
       title: "Delete product",
-      message: "Are you sure you want to remove this product from the export sheet?",
+      message:
+        "Are you sure you want to remove this product from the export sheet?",
     });
     if (!ok) return;
     try {
@@ -165,7 +166,6 @@ export default function ExportProductListInfoBox({
               (detail) => detail.productVariant.id === selectedProduct.id,
             );
             if (!foundDetail) {
-              console.log("Not found correct Detail for", selectedProduct.id);
               return null;
             }
 
@@ -218,37 +218,37 @@ export default function ExportProductListInfoBox({
     <>
       {ConfirmationModal}
       <InfoBox
-      icon={<FontAwesomeIcon icon={faCube} />}
-      title="Product List"
-      modal={
-        <CustomContentModalBox
-          step={step}
-          showAddButton={
-            step === "quantity-check" &&
-            exportData.status === SheetStatus.CREATED &&
-            hasStockOutPermission
-          }
-          startIcon={<FontAwesomeIcon icon={faPlus} />}
-          width={"max-w-[1200px]"}
-          btnName="Add"
-          onSave={handleSave}
-          modalContent={
-            <CreateModal
-              productVariants={productVariants}
-              onSelectedProductsChange={setSelectedProducts}
-              onHasInvalidChange={setHasInvalidSelection}
-            />
-          }
-        />
-      }
-    >
-      <div className="p-6">
-        <CustomizableTable<ProductTempRow>
-          headers={productTempColumn}
-          data={productTempData}
-          getRowId={(params) => String(params.data.id)}
-        />
-      </div>
+        icon={<FontAwesomeIcon icon={faCube} />}
+        title="Product List"
+        modal={
+          <CustomContentModalBox
+            step={step}
+            showAddButton={
+              step === "quantity-check" &&
+              exportData.status === SheetStatus.CREATED &&
+              hasStockOutPermission
+            }
+            startIcon={<FontAwesomeIcon icon={faPlus} />}
+            width={"max-w-[1200px]"}
+            btnName="Add"
+            onSave={handleSave}
+            modalContent={
+              <CreateModal
+                productVariants={productVariants}
+                onSelectedProductsChange={setSelectedProducts}
+                onHasInvalidChange={setHasInvalidSelection}
+              />
+            }
+          />
+        }
+      >
+        <div className="p-6">
+          <CustomizableTable<ProductTempRow>
+            headers={productTempColumn}
+            data={productTempData}
+            getRowId={(params) => String(params.data.id)}
+          />
+        </div>
       </InfoBox>
     </>
   );

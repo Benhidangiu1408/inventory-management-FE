@@ -8,7 +8,14 @@ import {
   VariantAttributeResponse,
   VariantResponse,
 } from "@/interfaces/warehouseManagementType";
-import { AlertCircle, CheckCircle, Pencil, Save, Trash2 } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  Pencil,
+  Save,
+  ScanQrCodeIcon,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import {
   InventoryCheckBatchRow,
@@ -317,8 +324,40 @@ const BatchActionCell = ({
   const isDirty =
     qtyToSave !== row.scannedQuantity || faultsToSave !== row.hasFaults;
 
+  const handleSimulateScan = () => {
+    const { storedQuantity, detailId } = row;
+
+    // 1. Calculate Variance: 85% chance of exact match, 15% chance of slight variance
+    let simulatedQty = storedQuantity;
+    const varianceRoll = Math.random();
+
+    if (varianceRoll > 0.85) {
+      // Creates a slight variance between -2 and +2
+      const variance = Math.floor(Math.random() * 5) - 2;
+      // Ensure quantity never drops below 0
+      simulatedQty = Math.max(0, storedQuantity + variance);
+    }
+
+    // 2. Calculate Fault: 10% chance of being marked faulty
+    const simulatedFault = Math.random() > 0.9;
+
+    // 3. Auto-fill and Save
+    onSave(detailId, simulatedQty, simulatedFault);
+  };
+
   return (
     <div className="flex h-full items-center justify-center">
+      <button
+        onClick={handleSimulateScan}
+        disabled={loading}
+        className="hover:bg-brand-50 hover:text-brand-600 inline-flex items-center justify-center rounded-lg p-1.5 text-gray-500 disabled:opacity-50 dark:hover:bg-gray-800"
+      >
+        {loading ? (
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        ) : (
+          <ScanQrCodeIcon size={18} className="text-blue-600" />
+        )}
+      </button>
       <button
         onClick={() => {
           onSave(row.detailId, Number(qtyToSave), Boolean(faultsToSave));
@@ -385,6 +424,8 @@ export const icSheetProductHeaders: Column<InventoryCheckProductGroup>[] = [
   {
     label: "Progress",
     key: "batches",
+    filter: false,
+    sortable: false,
     render: (batches) => {
       const list = batches as InventoryCheckBatchRow[];
       const total = list.length;
