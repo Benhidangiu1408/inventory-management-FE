@@ -104,9 +104,6 @@ export default function UnitConversionManager({
   ) => {
     setLoading(true);
     try {
-      console.log(
-        `API Call: Toggling rule ${ruleId} to ${newState ? "ACTIVE" : "DELETED"}`,
-      );
       await ToggleConversionAction(ruleId);
       toast.success(
         `Conversion rule ${newState ? "activated" : "deactivated"}!`,

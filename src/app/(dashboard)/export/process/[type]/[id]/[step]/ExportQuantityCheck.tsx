@@ -77,7 +77,6 @@ export default function ExportQuantityCheck() {
               if (isRejected) return;
               setLoadingBatchId(row.batchId);
               try {
-                console.log(row.batchId);
                 const res = await getExportedItemsByBatchId(
                   row.batchId,
                   row.detailId,
@@ -229,9 +228,7 @@ export default function ExportQuantityCheck() {
       );
       setItemBarCode(barcode);
     } catch (err: unknown) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to get barcode",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to get barcode");
     } finally {
       setAutoScanLoading(false);
     }

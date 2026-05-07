@@ -320,7 +320,6 @@ export function VariantManager({
 
   const handleDeleteProduct = useCallback(
     async (id: number) => {
-      console.log(id);
       const isConfirmed = await confirm({
         title: "Delete Product",
         message: "Are you sure you want to delete this product?",

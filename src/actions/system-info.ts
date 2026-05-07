@@ -13,6 +13,7 @@ import {
   VariantCreateRequest,
   VariantUpdateRequest,
 } from "@/interfaces/warehouseManagementType";
+import { predictionService } from "@/services/PredictionService";
 import {
   attributesService,
   categoryService,
@@ -111,4 +112,37 @@ export async function VariantUpdateAction(
 }
 export async function uploadImageAction(name: string, type: string) {
   return await productService.uploadImage(name, type);
+}
+
+export async function getDemandPredictionAction(
+  productId: string,
+  horizon: number,
+) {
+  try {
+    const response = await predictionService.predict({
+      product_id: productId,
+      horizon: horizon,
+      // You can hardcode these mock values for now as per your comment,
+      // or fetch the real product's current Price/Discount from your DB later!
+      Price: 25.5,
+      Discount: 0.05,
+      "Competitor Pricing": 26.0,
+      "Units Sold": 120,
+      Seasonality: "Autumn",
+      Category: "Groceries",
+      Region: "North",
+      "Weather Condition": "Rainy",
+      "Holiday/Promotion": 0,
+      Sales_Today_P0001: 120,
+      Sales_Today_P0002: 45,
+    });
+
+    return response.predicted_units;
+  } catch (error) {
+    console.error(
+      `Failed to predict for ${productId} at horizon ${horizon}`,
+      error,
+    );
+    return null;
+  }
 }

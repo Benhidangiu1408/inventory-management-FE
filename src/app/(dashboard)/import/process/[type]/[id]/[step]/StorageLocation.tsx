@@ -154,7 +154,6 @@ export default function StorageLocationPage() {
             (detail) => detail.id === row.detailId,
           );
 
-          console.log(foundDetail);
           const label = `${foundDetail?.batch?.location.code} - ${foundDetail?.batch?.location.name}`;
           return (
             <Input
@@ -367,8 +366,6 @@ export default function StorageLocationPage() {
       }),
     }));
   }, [locations, setImportData]);
-
-  console.log(locations);
 
   return (
     <div>

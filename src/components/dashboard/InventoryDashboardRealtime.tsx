@@ -12,6 +12,7 @@ import type {
   InboundOutboundOrderCountResponse,
   OverviewSummaryResponse,
 } from "@/interfaces/inventoryManagementType";
+import DemandPredictionWidget from "./PredictionGadget";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -306,8 +307,8 @@ export default function InventoryDashboardRealtime({
       )}
 
       <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
-        <div className="border-brand-200 dark:border-brand-800/40 dark:from-brand-500/20 rounded-2xl border bg-white bg-gradient-to-br p-5 dark:to-gray-900">
-          <p className="text-brand-700 dark:text-brand-300 mb-4 text-lg font-semibold">
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+          <p className="text-brand-700 mb-4 text-lg font-semibold dark:text-gray-200">
             Total
           </p>
 
@@ -405,6 +406,11 @@ export default function InventoryDashboardRealtime({
           </div>
         </div>
       </div>
+      {productQuantityRows.length > 0 && (
+        <div className="col-span-12">
+          <DemandPredictionWidget products={productQuantityRows} />
+        </div>
+      )}
 
       <div className="grid grid-cols-12 gap-4 md:gap-6">
         <div className="col-span-12 rounded-2xl border border-gray-200 bg-white px-5 pt-5 pb-5 sm:px-6 sm:pt-6 xl:col-span-8 dark:border-gray-800 dark:bg-white/[0.03]">
