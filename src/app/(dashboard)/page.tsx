@@ -5,7 +5,9 @@ import type {
   InboundOutboundOrderCountResponse,
   OverviewSummaryResponse,
 } from "@/interfaces/inventoryManagementType";
+import { ProductResponse } from "@/interfaces/warehouseManagementType";
 import { inventoryDashboardService } from "@/services/InventoryManagementService";
+import { productService } from "@/services/WarehouseManagementService";
 
 type DashboardQueryParams = Record<string, string | string[] | undefined>;
 
@@ -174,6 +176,7 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
   let monthlyResult: InboundOutboundMonthlyPoint[] = [];
   let totalResult: InboundOutboundOrderCountResponse | null = null;
   let error: string | null = null;
+  let allProducts: ProductResponse[] = [];
   try {
     overviewResult = await inventoryDashboardService.getOverviewSummary();
     monthlyResult =
@@ -184,6 +187,7 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
       await inventoryDashboardService.getInboundOutboundTotalSummary(
         orderRange.request,
       );
+    allProducts = await productService.getAll();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     error = `Could not load data from server. ${e.message}`;
@@ -198,6 +202,7 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
       quantityRange={quantityRange}
       orderRange={orderRange}
       maxRangeMonths={MAX_MONTH_RANGE}
+      allProducts={allProducts}
     />
   );
 }

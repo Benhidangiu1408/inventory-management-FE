@@ -13,6 +13,7 @@ import type {
   OverviewSummaryResponse,
 } from "@/interfaces/inventoryManagementType";
 import DemandPredictionWidget from "./PredictionGadget";
+import { ProductResponse } from "@/interfaces/warehouseManagementType";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -33,6 +34,7 @@ type InventoryDashboardRealtimeProps = {
   quantityRange: DashboardChartRange;
   orderRange: DashboardChartRange;
   maxRangeMonths: number;
+  allProducts: ProductResponse[];
 };
 
 type ProductQuantityRow = {
@@ -61,6 +63,7 @@ export default function InventoryDashboardRealtime({
   quantityRange,
   orderRange,
   maxRangeMonths,
+  allProducts,
 }: InventoryDashboardRealtimeProps) {
   const totalCategories = overview?.totalCategories ?? 0;
   const totalProducts = overview?.totalProducts ?? 0;
@@ -406,9 +409,9 @@ export default function InventoryDashboardRealtime({
           </div>
         </div>
       </div>
-      {productQuantityRows.length > 0 && (
+      {allProducts.length > 0 && (
         <div className="col-span-12">
-          <DemandPredictionWidget products={productQuantityRows} />
+          <DemandPredictionWidget products={allProducts} />
         </div>
       )}
 
