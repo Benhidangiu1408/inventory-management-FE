@@ -71,6 +71,8 @@ export default function StorageLocationPage() {
   const { importData, setImportData } = useImport();
   const { qcData } = useQualityCheck();
 
+  console.log(importData);
+
   const [locations, setLocations] = useState<LocationResponse[]>([]);
   const [defectWarehouses, setDefectWarehouses] = useState<WarehoseResponse[]>(
     [],
@@ -82,6 +84,7 @@ export default function StorageLocationPage() {
   const [defectLocations, setDefectLocations] = useState<LocationResponse[]>(
     [],
   );
+
   const [loading, setLoading] = useState(false);
   const { confirm, ConfirmationModal } = useConfirmModal();
 
@@ -154,14 +157,13 @@ export default function StorageLocationPage() {
             (detail) => detail.id === row.detailId,
           );
 
-          const label = `${foundDetail?.batch?.location.code} - ${foundDetail?.batch?.location.name}`;
-          return (
-            <Input
-              className="h-[38px]"
-              disabled={isCompleted}
-              value={label}
-              readOnly
-            />
+          const location = foundDetail?.batch?.location;
+          return location ? (
+            <span>{`${location.code} - ${location.name}`}</span>
+          ) : (
+            <span className="text-gray-400 italic">
+              This batch has been moved to Fault Handle section
+            </span>
           );
         }
         return (
@@ -204,10 +206,18 @@ export default function StorageLocationPage() {
       label: "Storage Location",
       render: (value, row) => {
         if (isCompleted) {
-          const label =
-            defectLocationOptions.find((o) => o.value === value)?.label ??
-            value;
-          return <Input className="h-[38px]" value={label} readOnly />;
+          const foundDetail = importData.details.find(
+            (detail) => detail.id === row.detailId,
+          );
+
+          const location = foundDetail?.batch?.location;
+          return location ? (
+            <span>{`${location.code} - ${location.name}`}</span>
+          ) : (
+            <span className="text-gray-400 italic">
+              This batch has been moved to Fault Handle section
+            </span>
+          );
         }
         return (
           <Select
@@ -348,13 +358,20 @@ export default function StorageLocationPage() {
 
   useEffect(() => {
     if (!locations.length) return;
+    if (isCompleted || isRejected) return;
+
+    const failedBatchIds = new Set(
+      qcData?.details
+        .filter((d) => d.status === QCSheetDetailStatus.FAILED)
+        .map((d) => d.batch.id) ?? [],
+    );
 
     setImportData((prev) => ({
       ...prev,
       details: prev.details.map((detail) => {
         if (!detail.batch) return detail;
-
         if (detail.batch.location) return detail;
+        if (failedBatchIds.has(detail.batch.id)) return detail;
 
         return {
           ...detail,
@@ -365,7 +382,39 @@ export default function StorageLocationPage() {
         };
       }),
     }));
-  }, [locations, setImportData]);
+  }, [locations, setImportData, qcData, isCompleted, isRejected]);
+
+  useEffect(() => {
+    if (!defectLocations.length) return;
+    if (isCompleted || isRejected) return;
+
+    const failedBatchIds = new Set(
+      qcData?.details
+        .filter((d) => d.status === QCSheetDetailStatus.FAILED)
+        .map((d) => d.batch.id) ?? [],
+    );
+
+    setImportData((prev) => ({
+      ...prev,
+      details: prev.details.map((detail) => {
+        if (!detail.batch) return detail;
+        if (!failedBatchIds.has(detail.batch.id)) return detail;
+
+        const isValidDefectLocation = defectLocations.some(
+          (l) => l.id === detail.batch!.location?.id,
+        );
+        if (isValidDefectLocation) return detail;
+
+        return {
+          ...detail,
+          batch: {
+            ...detail.batch,
+            location: defectLocations[0],
+          },
+        };
+      }),
+    }));
+  }, [defectLocations, qcData, setImportData, isCompleted, isRejected]);
 
   return (
     <div>

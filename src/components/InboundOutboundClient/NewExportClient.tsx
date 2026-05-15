@@ -122,13 +122,10 @@ export const NewExportClient = ({
     setSelectedExportType(path);
   };
 
-  const customerOptions: Option[] = [
-    { value: "", label: "Select customer..." },
-    ...customers.map((c) => ({
-      value: c.id.toString(),
-      label: `${c.name} (${c.email})`,
-    })),
-  ];
+  const customerOptions: Option[] = customers.map((c) => ({
+    value: c.id.toString(),
+    label: `${c.name} (${c.email})`,
+  }));
 
   const isCustomerReady =
     selectedExportType !== ExportSheetType.CUSTOMER ||

@@ -148,13 +148,10 @@ export const NewImportClient = ({
   //   setSelectedImportType(type);
   // };
 
-  const supplierOptions: Option[] = [
-    { value: "", label: "Select supplier..." },
-    ...suppliers.map((s) => ({
-      value: s.id.toString(),
-      label: `${s.name} (${s.email})`,
-    })),
-  ];
+  const supplierOptions: Option[] = suppliers.map((s) => ({
+    value: s.id.toString(),
+    label: `${s.name} (${s.email})`,
+  }));
 
   const isSupplierReady =
     (supplierMode === "existing" && selectedSupplierId != null) ||
