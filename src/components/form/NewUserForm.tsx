@@ -127,9 +127,7 @@ export default function NewUserForm() {
           </div>
 
           <div className="col-span-2 lg:col-span-1">
-            <Label>
-              Status <span className="text-error-500">*</span>{" "}
-            </Label>
+            <Label>Status</Label>
             <Select
               {...register("status")}
               placeholder={"Select status"}
