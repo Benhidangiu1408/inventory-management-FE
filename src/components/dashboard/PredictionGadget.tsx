@@ -3,27 +3,27 @@
 import { useState, useEffect, useMemo } from "react";
 import { BrainCircuit } from "lucide-react";
 import { getDemandPredictionAction } from "@/actions/system-info";
-
-type ProductOption = {
-  productCode: string;
-  productName: string;
-};
+import { ProductResponse } from "@/interfaces/warehouseManagementType";
 
 type DemandPredictionWidgetProps = {
-  products: ProductOption[];
+  products: ProductResponse[];
 };
 
 export default function DemandPredictionWidget({
   products,
 }: DemandPredictionWidgetProps) {
   const predictionOptions = useMemo(() => {
-    return Array.from({ length: products.length }, (_, i) => {
+    const sortedProducts = [...products].sort((a, b) =>
+      a.code.localeCompare(b.code),
+    );
+
+    // 2. Map the sorted products to the P000X model IDs
+    return sortedProducts.map((realProduct, i) => {
       const modelId = `P${String(i + 1).padStart(4, "0")}`; // e.g., P0001, P0002
-      const realProduct = products[i];
 
       return {
         id: modelId,
-        label: `${realProduct.productCode} - ${realProduct.productName}`,
+        label: `${realProduct.code} - ${realProduct.name}`,
       };
     });
   }, [products]);
