@@ -31,7 +31,7 @@ export const DestinationWarehouseSection = ({
 
   return (
     <div className="mb-4 space-y-4">
-      <div className="rounded-2xl border border-gray-200 bg-white p-6">
+      <div className="default-card p-6">
         <div className="flex items-center justify-center gap-3">
           <span className="font-medium">Destination warehouse:</span>
           <Select
@@ -45,8 +45,8 @@ export const DestinationWarehouseSection = ({
       </div>
 
       {selectedWarehouse && (
-        <div className="rounded-2xl border border-gray-200 bg-white p-6">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500">
+        <div className="default-card p-6">
+          <h3 className="mb-4 text-sm font-semibold tracking-wide text-gray-500 uppercase">
             Destination warehouse information
           </h3>
           <div className="grid w-full grid-cols-2 gap-6">

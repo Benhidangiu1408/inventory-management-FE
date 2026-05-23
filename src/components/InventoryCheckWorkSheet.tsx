@@ -237,37 +237,35 @@ export function InventoryCheckWorkSheet({
         {header.status === SheetStatus.CREATED && (
           <div className="flex h-[50vh] flex-col items-center justify-center space-y-6 text-center">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 Ready to Start?
               </h2>
-              <p className="mt-2 max-w-md text-gray-500">
+              <p className="mt-2 max-w-md text-gray-500 dark:text-gray-400">
                 Starting this check will freeze the current system inventory
                 counts for comparison. Only click this when you are physically
                 ready to count.
               </p>
             </div>
 
-            {
-              <Button
-                size="md"
-                onClick={handleStart}
-                disabled={loading}
-                startIcon={<Play size={18} />}
-              >
-                Start Inventory Check
-              </Button>
-            }
+            <Button
+              size="md"
+              onClick={handleStart}
+              disabled={loading}
+              startIcon={<Play size={18} />}
+            >
+              Start Inventory Check
+            </Button>
           </div>
         )}
         {/* State: Complete */}
         {header.status === SheetStatus.COMPLETED && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between rounded-lg border border-blue-100 bg-blue-50 p-4">
+            <div className="flex items-center justify-between rounded-lg border border-blue-100 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-900/20">
               <div>
-                <h2 className="text-lg font-bold text-blue-900">
+                <h2 className="text-lg font-bold text-blue-900 dark:text-blue-100">
                   Review Required
                 </h2>
-                <p className="text-sm text-blue-700">
+                <p className="text-sm text-blue-700 dark:text-blue-300">
                   Check completed. Please review variances and approve or
                   reject.
                 </p>
@@ -307,23 +305,27 @@ export function InventoryCheckWorkSheet({
           header.status === SheetStatus.REJECTED) && (
           <div className="space-y-6">
             <div
-              className={`flex items-center gap-3 rounded-lg border p-4 ${isApproved ? "bg-success-50 border-success-100" : "bg-error-50 border-error-100"}`}
+              className={`flex items-center gap-3 rounded-lg border p-4 ${
+                isApproved
+                  ? "bg-success-50 border-success-100 dark:bg-success-900/20 dark:border-success-900"
+                  : "bg-error-50 border-error-100 dark:bg-error-900/20 dark:border-error-900"
+              }`}
             >
               {isApproved ? (
-                <CheckCircle className="text-success-600" />
+                <CheckCircle className="text-success-600 dark:text-success-400" />
               ) : (
-                <XCircle className="text-error-600" />
+                <XCircle className="text-error-600 dark:text-error-400" />
               )}
               <div>
                 <h2
-                  className={`font-bold ${isApproved ? "text-success-900" : "text-error-900"}`}
+                  className={`font-bold ${isApproved ? "text-success-900 dark:text-success-100" : "text-error-900 dark:text-error-100"}`}
                 >
                   {isApproved
                     ? "Inventory Check Approved"
                     : "Inventory Check Rejected"}
                 </h2>
                 <p
-                  className={`text-sm ${isApproved ? "text-success-700" : "text-error-700"}`}
+                  className={`text-sm ${isApproved ? "text-success-700 dark:text-success-300" : "text-error-700 dark:text-error-300"}`}
                 >
                   This sheet is closed and cannot be modified.
                 </p>
@@ -341,11 +343,11 @@ export function InventoryCheckWorkSheet({
         {header.status === SheetStatus.IN_PROGRESS && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold">{header.code}</h1>
-              </div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                {header.code}
+              </h1>
               <div className="flex items-center gap-3">
-                <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+                <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
                   In Progress
                 </span>
                 <Button

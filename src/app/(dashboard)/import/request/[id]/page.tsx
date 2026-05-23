@@ -120,7 +120,7 @@ export default function ThirdPartyRequestDetailPage({
         filters={["request", requestId]}
       />
       <div className="flex flex-col gap-6">
-        <div className="rounded-2xl border border-gray-200 bg-white p-6">
+        <div className="default-card p-6">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-xl font-bold">Request Details</h2>
             <Button
