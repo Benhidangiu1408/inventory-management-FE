@@ -30,6 +30,7 @@ import { Role, User } from "@/interfaces/userManagementType";
 import { AssignRoleAction } from "@/actions/user";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import CircleProgressBar from "@/default_components/ui/CircleProgressBar";
 
 // --- Warehouse General Header ---
 export const warehouseHeaders: Column<WarehouseGeneral>[] = [
@@ -79,6 +80,25 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
     ),
   },
   {
+    label: "Capacity",
+    key: "totalBins",
+    render(_, row) {
+      const total = row.totalBins ?? 0;
+      const occupied = row.occupiedBins ?? 0;
+      return (
+        <div className="flex w-full items-center justify-center gap-2">
+          <CircleProgressBar
+            percent={total > 0 ? Math.round((occupied / total) * 100) : 0}
+            size={30}
+          />
+          <div className="text-gray-500">
+            {occupied} / {total} Bins
+          </div>
+        </div>
+      );
+    },
+  },
+  {
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
@@ -108,38 +128,80 @@ export const getLocationHeaders = (
     filter: "agTextColumnFilter",
   },
   {
-    label: "Status",
+    label: "Status/Capacity",
     key: "status",
-    width: 100,
-    render: (value) => {
-      const statusColors: Record<
-        string,
-        "success" | "info" | "warning" | "error" | "light"
-      > = {
-        EMPTY: "success", // Green
-        OCCUPIED: "info", // Blue
-        RESERVED: "warning", // Orange
-        UNDER_MAINTENANCE: "warning", // Orange
-        BLOCKED: "error", // Red
-        INACTIVE: "light", // Gray
-      };
-      const color = statusColors[value as string] || "light";
-      const label = (value as string).replace(/_/g, " ");
-      return (
-        <Badge variant="solid" color={color}>
-          {label}
-        </Badge>
-      );
+    width: 200,
+    render: (value, row) => {
+      if (row.type == "BIN") {
+        const statusColors: Record<
+          string,
+          "success" | "info" | "warning" | "error" | "light"
+        > = {
+          EMPTY: "success", // Green
+          OCCUPIED: "info", // Blue
+          RESERVED: "warning", // Orange
+          UNDER_MAINTENANCE: "warning", // Orange
+          BLOCKED: "error", // Red
+          INACTIVE: "light", // Gray
+        };
+        const color = statusColors[value as string] || "light";
+        const label = (value as string).replace(/_/g, " ");
+        return (
+          <Badge variant="solid" color={color}>
+            {label}
+          </Badge>
+        );
+      } else {
+        const total = row.totalBins ?? 0;
+        const occupied = row.occupiedBins ?? 0;
+        return (
+          <div className="flex w-full items-center justify-center gap-2">
+            <CircleProgressBar
+              percent={total > 0 ? Math.round((occupied / total) * 100) : 0}
+              size={30}
+            />
+            <div className="text-gray-500">
+              {occupied} / {total} Bins
+            </div>
+          </div>
+        );
+      }
+    },
+  },
+  {
+    label: "Max Size",
+    key: "maxVolume",
+    width: 200,
+    filter: "agTextColumnFilter",
+    valueGetter: (row) =>
+      row.type === "BIN"
+        ? `${row.maxLength}x${row.maxWidth}x${row.maxHeight}cm | ${row.maxWeight}kg`
+        : "",
+    render: (_, row) => {
+      if (row.type === "BIN") {
+        return (
+          <span className="text-sm text-gray-400">
+            {row.maxLength}x{row.maxWidth}x{row.maxHeight}cm | {row.maxWeight}kg
+          </span>
+        );
+      } else {
+        return null;
+      }
     },
   },
   {
     label: "Inventory",
     key: "batch",
-    filter: false, // Filtering on nested objects requires a custom AG Grid filter, so we disable standard text filter here
+    filter: "agTextColumnFilter",
+    valueGetter: (row) =>
+      row.batch ? `${row.batch.productName} ${row.batch.code}` : "",
     sortable: false,
     width: 250,
-    render: (val) => {
-      const batch = val as LocationBatch | null | undefined;
+    render: (_, row) => {
+      if (row.type !== "BIN") {
+        return null;
+      }
+      const batch = row.batch as LocationBatch | null | undefined;
 
       // If the location is empty, show a soft placeholder
       if (!batch) {
