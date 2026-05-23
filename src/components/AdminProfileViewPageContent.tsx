@@ -38,7 +38,7 @@ export default function AdminProfileViewPageContent({
               </div>
               <div className="order-3 xl:order-2">
                 <h4 className="mb-2 text-center text-lg font-semibold text-gray-800 xl:text-left dark:text-white/90">
-                  {userInfo.firstName ?? ""} {userInfo.lastName ?? ""}
+                  {userInfo.lastName ?? ""} {userInfo.firstName ?? ""}
                 </h4>
                 <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                   <p className="text-sm text-gray-500 dark:text-gray-400">

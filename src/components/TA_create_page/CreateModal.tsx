@@ -183,7 +183,7 @@ export default function CreateModal({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-2xl border border-[#E4E7EC] bg-white">
+      <div className="default-card">
         {/* <CustomFilter>
           <FilterItem
             type="input"
@@ -222,7 +222,7 @@ export default function CreateModal({
               </div>
             </div>
           </div>
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+          <div className="default-card overflow-hidden">
             <CustomizableTable<ImportCreateRow>
               headers={columns}
               data={data}

@@ -114,6 +114,13 @@ export enum FaultBatchStatus {
   RESOLVED = "RESOLVED",
 }
 
+export enum FaultOrderSourceType {
+  INVENTORY_CHECK = "INVENTORY CHECK",
+  INBOUND_SHIPMENT = "INBOUND SHIPMENT",
+  OUTBOUND_SHIPMENT = "OUTBOUND SHIPMENT",
+  UNKNOWN = "UNKNOWN",
+}
+
 export interface FaultOrderSummary {
   id: number;
   code: string;
@@ -129,6 +136,7 @@ export interface FaultOrderSummary {
   questionCreatorUsername?: string | null;
   faultBatches?: FaultBatch[];
   processOrders?: FaultBatchProcessOrderSummary[];
+  referenceSheetType: FaultOrderSourceType;
 }
 
 export interface Batch {
@@ -143,6 +151,7 @@ export interface FaultBatch extends Batch {
   createdAt?: string | null;
   faultBatchProcessOrderId?: number | null;
   taskId?: number | null;
+  initialReason: string | null;
 }
 
 export interface TaskBatchResponse extends FaultBatch {

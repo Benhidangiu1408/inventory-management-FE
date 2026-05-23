@@ -66,7 +66,7 @@ export default function UserDropdown({ userInfo }: { userInfo: User }) {
       >
         <div>
           <span className="text-theme-sm block font-medium text-gray-700 dark:text-gray-400">
-            {userInfo?.firstName ?? ""} {userInfo?.lastName ?? ""}
+            {userInfo?.lastName ?? ""} {userInfo?.firstName ?? ""}
           </span>
           <span className="text-theme-xs mt-0.5 block text-gray-500 dark:text-gray-400">
             {userInfo?.email ?? ""}

@@ -82,6 +82,7 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
   {
     label: "Capacity",
     key: "totalBins",
+    filter: false,
     render(_, row) {
       const total = row.totalBins ?? 0;
       const occupied = row.occupiedBins ?? 0;
@@ -605,54 +606,71 @@ export const faultOrderHeader: Column<FaultOrderSummary>[] = [
     render: (value, row) => `${row.warehouseName} (${value})`,
   },
   {
-    label: "Date",
-    key: "createdAt",
-    filter: "agDateColumnFilter",
-    width: 100,
+    label: "Source",
+    key: "referenceSheetType",
+    width: 200,
     render(value) {
-      if (!value) return "";
-      return new Date(value as string).toLocaleDateString("en-GB");
+      return (
+        <div className="capitalize">
+          {value?.toString().replace("_", " ").toLowerCase()}
+        </div>
+      );
     },
   },
   {
-    label: "Analyzer",
-    key: "analyzerUsername",
-    filter: "agTextColumnFilter",
-    render: (value) =>
-      value ? (
-        <span className="text-gray-800 dark:text-white/90">
-          {value as string}
+    label: "Date",
+    key: "createdAt",
+    filter: "agDateColumnFilter",
+    render(value) {
+      const safeDateString = (value as string).endsWith("Z")
+        ? value
+        : `${value}Z`;
+      return (
+        <span>
+          {format(parseISO(safeDateString as string), "MMM d, yyyy h:mm:ss a")}
         </span>
-      ) : (
-        <span className="text-xs text-gray-400 italic">Unassigned</span>
-      ),
+      );
+    },
   },
-  {
-    label: "Assignee",
-    key: "taskAssigneeUsername",
-    filter: "agTextColumnFilter",
-    render: (value) =>
-      value ? (
-        <span className="text-gray-800 dark:text-white/90">
-          {value as string}
-        </span>
-      ) : (
-        <span className="text-xs text-gray-400 italic">Unassigned</span>
-      ),
-  },
-  {
-    label: "Questioner",
-    key: "questionCreatorUsername",
-    filter: "agTextColumnFilter",
-    render: (value) =>
-      value ? (
-        <span className="text-gray-800 dark:text-white/90">
-          {value as string}
-        </span>
-      ) : (
-        <span className="text-xs text-gray-400 italic">Unassigned</span>
-      ),
-  },
+  // {
+  //   label: "Analyzer",
+  //   key: "analyzerUsername",
+  //   filter: "agTextColumnFilter",
+  //   render: (value) =>
+  //     value ? (
+  //       <span className="text-gray-800 dark:text-white/90">
+  //         {value as string}
+  //       </span>
+  //     ) : (
+  //       <span className="text-xs text-gray-400 italic">Unassigned</span>
+  //     ),
+  // },
+  // {
+  //   label: "Assignee",
+  //   key: "taskAssigneeUsername",
+  //   filter: "agTextColumnFilter",
+  //   render: (value) =>
+  //     value ? (
+  //       <span className="text-gray-800 dark:text-white/90">
+  //         {value as string}
+  //       </span>
+  //     ) : (
+  //       <span className="text-xs text-gray-400 italic">Unassigned</span>
+  //     ),
+  // },
+  // {
+  //   label: "Questioner",
+  //   key: "questionCreatorUsername",
+  //   filter: "agTextColumnFilter",
+  //   render: (value) =>
+  //     value ? (
+  //       <span className="text-gray-800 dark:text-white/90">
+  //         {value as string}
+  //       </span>
+  //     ) : (
+  //       <span className="text-xs text-gray-400 italic">Unassigned</span>
+  //     ),
+  // },
   {
     label: "Status",
     key: "status",
@@ -706,8 +724,26 @@ export const detailFaultBatchColumns: Column<FaultBatch>[] = [
     label: "Date",
     key: "createdAt",
     filter: "agDateColumnFilter",
-    render: (value) =>
-      value ? new Date(value as string).toLocaleDateString("en-GB") : "-",
+    width: 200,
+    render: (value) => {
+      const safeDateString = (value as string).endsWith("Z")
+        ? value
+        : `${value}Z`;
+      return (
+        <span>
+          {format(parseISO(safeDateString as string), "MMM d, yyyy h:mm:ss a")}
+        </span>
+      );
+    },
+  },
+  {
+    label: "Initial Reason",
+    key: "initialReason",
+    filter: "agTextColumnFilter",
+    width: 200,
+    autoHeight: true,
+    render: (val) =>
+      (val as string) || <span className="text-gray-400 italic">None</span>,
   },
   {
     label: "Status",
@@ -766,8 +802,16 @@ export const detailAssignedFaultBatchColumns: Column<FaultBatch>[] = [
     label: "Date",
     key: "createdAt",
     filter: "agDateColumnFilter",
-    render: (value) =>
-      value ? new Date(value as string).toLocaleDateString("en-GB") : "-",
+    render: (value) => {
+      const safeDateString = (value as string).endsWith("Z")
+        ? value
+        : `${value}Z`;
+      return (
+        <span>
+          {format(parseISO(safeDateString as string), "MMM d, yyyy h:mm:ss a")}
+        </span>
+      );
+    },
   },
   {
     label: "Status",

@@ -91,7 +91,7 @@ export default function CreateImportPage() {
     <>
       <PageBreadcrumb pageTitle="Create Import" />
       <div className="flex flex-col gap-6">
-        <div className="rounded-2xl border border-[#E4E7EC] bg-white">
+        <div className="default-card">
           <CustomFilter>
             <FilterItem
               type="input"
