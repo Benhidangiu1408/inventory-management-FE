@@ -362,6 +362,10 @@ const LevelRow = ({
                       {...register(`uiLevels.${index}.maxLength`, {
                         valueAsNumber: true,
                         min: { value: 1, message: "Minimum of 1" },
+                        max: {
+                          value: 9999.99,
+                          message: "The maximum is 9999.99",
+                        },
                       })}
                       error={!!rowErrors?.maxLength}
                       hint={rowErrors?.maxLength?.message}
@@ -376,6 +380,10 @@ const LevelRow = ({
                       {...register(`uiLevels.${index}.maxWidth`, {
                         valueAsNumber: true,
                         min: { value: 1, message: "Minimum of 1" },
+                        max: {
+                          value: 9999.99,
+                          message: "The maximum is 9999.99",
+                        },
                       })}
                       error={!!rowErrors?.maxWidth}
                       hint={rowErrors?.maxWidth?.message}
@@ -390,6 +398,10 @@ const LevelRow = ({
                       {...register(`uiLevels.${index}.maxHeight`, {
                         valueAsNumber: true,
                         min: { value: 1, message: "Minimum of 1" },
+                        max: {
+                          value: 9999.99,
+                          message: "The maximum is 9999.99",
+                        },
                       })}
                       error={!!rowErrors?.maxHeight}
                       hint={rowErrors?.maxHeight?.message}
@@ -404,6 +416,10 @@ const LevelRow = ({
                       {...register(`uiLevels.${index}.maxWeight`, {
                         valueAsNumber: true,
                         min: { value: 1, message: "Minimum of 1" },
+                        max: {
+                          value: 999999.99,
+                          message: "The maximum is 999999.99",
+                        },
                       })}
                       error={!!rowErrors?.maxWeight}
                       hint={rowErrors?.maxWeight?.message}
