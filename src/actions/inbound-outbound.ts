@@ -135,6 +135,13 @@ export async function getLocationByType(
   );
 }
 
+export async function getLocationsByBatch(
+  batchId: number | string,
+  warehouseId?: number | string,
+) {
+  return await inboundOutboundService.getLocationsByBatch(batchId, warehouseId);
+}
+
 export async function createExportSheet(data: ExportSheetCreateReq) {
   const cookieStore = await cookies();
   const userId = cookieStore.get("userId")?.value;

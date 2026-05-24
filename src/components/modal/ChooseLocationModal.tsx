@@ -10,9 +10,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LocationStatus } from "@/interfaces/warehouseManagementType";
 
 interface ChooseLocationModalProps {
-  locations: LocationResponse[];
+  fetchLocations: () => Promise<LocationResponse[]>;
   currentLocation?: LocationResponse;
-  onSave: (locationId: number) => Promise<void>;
+  onSave: (location: LocationResponse) => Promise<void>;
   disabled?: boolean;
 }
 
@@ -26,7 +26,7 @@ const statusBadge: Record<LocationStatus, string> = {
 };
 
 export default function ChooseLocationModal({
-  locations,
+  fetchLocations,
   currentLocation,
   onSave,
   disabled = false,
@@ -35,18 +35,29 @@ export default function ChooseLocationModal({
   const [selectedId, setSelectedId] = useState<number | null>(
     currentLocation?.id ?? null,
   );
+  const [locations, setLocations] = useState<LocationResponse[]>([]);
+  const [fetching, setFetching] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const handleOpen = () => {
+  const handleOpen = async () => {
     setSelectedId(currentLocation?.id ?? null);
     openModal();
+    setFetching(true);
+    try {
+      const res = await fetchLocations();
+      setLocations(res);
+    } finally {
+      setFetching(false);
+    }
   };
 
   const handleSave = async () => {
     if (!selectedId) return;
+    const selectedLocation = locations.find((l) => l.id === selectedId);
+    if (!selectedLocation) return;
     setSaving(true);
     try {
-      await onSave(selectedId);
+      await onSave(selectedLocation);
       closeModal();
     } finally {
       setSaving(false);
@@ -96,52 +107,57 @@ export default function ChooseLocationModal({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {locations.length === 0 && (
+              {fetching && (
                 <tr>
-                  <td
-                    colSpan={3}
-                    className="px-4 py-6 text-center text-gray-400"
-                  >
-                    No locations available.
+                  <td colSpan={3} className="px-4 py-6 text-center text-gray-400">
+                    Loading...
                   </td>
                 </tr>
               )}
-              {locations.map((loc) => {
-                const isSelected = selectedId === loc.id;
-                return (
-                  <tr
-                    key={loc.id}
-                    onClick={() => setSelectedId(loc.id)}
-                    className={`cursor-pointer transition-colors ${
-                      isSelected
-                        ? "bg-brand-50 dark:bg-brand-900/20"
-                        : "bg-white hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800"
-                    }`}
-                  >
-                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">
-                      <div className="flex items-center gap-2">
-                        {isSelected && (
-                          <span className="text-brand-500">✓</span>
-                        )}
-                        <span className="font-medium">{loc.code}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
-                      {loc.name}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                          statusBadge[loc.locationStatus] ??
-                          "bg-gray-100 text-gray-500"
-                        }`}
-                      >
-                        {loc.locationStatus}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
+              {!fetching && locations.length === 0 && (
+                <tr>
+                  <td colSpan={3} className="px-4 py-6 text-center text-gray-400 italic">
+                    No suitable location for batch dimensions or warehouse is full
+                  </td>
+                </tr>
+              )}
+              {!fetching &&
+                locations.map((loc) => {
+                  const isSelected = selectedId === loc.id;
+                  return (
+                    <tr
+                      key={loc.id}
+                      onClick={() => setSelectedId(loc.id)}
+                      className={`cursor-pointer transition-colors ${
+                        isSelected
+                          ? "bg-brand-50 dark:bg-brand-900/20"
+                          : "bg-white hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800"
+                      }`}
+                    >
+                      <td className="px-4 py-3 text-gray-800 dark:text-gray-100">
+                        <div className="flex items-center gap-2">
+                          {isSelected && (
+                            <span className="text-brand-500">✓</span>
+                          )}
+                          <span className="font-medium">{loc.code}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
+                        {loc.name}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                            statusBadge[loc.locationStatus] ??
+                            "bg-gray-100 text-gray-500"
+                          }`}
+                        >
+                          {loc.locationStatus}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>
@@ -153,7 +169,7 @@ export default function ChooseLocationModal({
           <Button
             size="sm"
             onClick={handleSave}
-            disabled={!selectedId || saving}
+            disabled={!selectedId || saving || fetching}
           >
             {saving ? "Saving..." : "Save"}
           </Button>

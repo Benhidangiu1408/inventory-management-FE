@@ -3,7 +3,7 @@
 import { useImport } from "@/context/ImportContext";
 import { useQualityCheck } from "@/context/QualityCheckContext";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
-import { ImportSheetType } from "@/interfaces/inboundOutboundType";
+import { ImportSheetType, QCSheetDetailStatus } from "@/interfaces/inboundOutboundType";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
@@ -13,8 +13,12 @@ export default function ProcessPagination() {
   const { type, id, step } = params;
 
   const { importData, isDirty: isImportDirty } = useImport();
-  const { isDirty: isQCDirty } = useQualityCheck();
+  const { isDirty: isQCDirty, qcData } = useQualityCheck();
   const isDirty = isImportDirty || isQCDirty;
+
+  const hasQCPending = qcData?.details.some(
+    (d) => d.status === QCSheetDetailStatus.PENDING,
+  ) ?? false;
 
   const baseProcessList: { label: string; value: string }[] = [
     {
@@ -86,7 +90,23 @@ export default function ProcessPagination() {
                 key={item.value}
                 onClick={() =>
                   toast.error(
-                    "You have unsaved changes. Please confirm quantity check before navigating.",
+                    "You have unsaved changes. Please save before navigating.",
+                  )
+                }
+                className={baseClasses + " bg-white cursor-pointer"}
+              >
+                {item.label}
+              </span>
+            );
+          }
+
+          if (item.value === "storage-location" && hasQCPending) {
+            return (
+              <span
+                key={item.value}
+                onClick={() =>
+                  toast.error(
+                    "Quality check is not complete. Please set a status for all pending items before proceeding.",
                   )
                 }
                 className={baseClasses + " bg-white cursor-pointer"}

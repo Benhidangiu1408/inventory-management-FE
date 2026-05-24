@@ -18,7 +18,7 @@ import {
 import { QuantityCheckRow } from "@/interfaces/interface.table";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import { UserPermissions } from "@/interfaces/userManagementType";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -116,8 +116,8 @@ export default function ImportProcessPage() {
 
   const quantityCheckColumn: Column<QuantityCheckRow>[] = [
     {
-      key: "productVariantId",
-      label: "Product Variant ID",
+      key: "detailId",
+      label: "Import Sheet Detail ID",
     },
     {
       key: "name",
@@ -141,11 +141,11 @@ export default function ImportProcessPage() {
             defaultValue={value}
             type="number"
             // disabled={!hasStockInPermission || !isCreated}
-            onBlur={(e) =>
-              updateRow(row.detailId, {
-                actualQuantity: Number(e.target.value),
-              })
-            }
+            onBlur={(e) => {
+              const newValue = Number(e.target.value);
+              if (newValue === row.actualQuantity) return;
+              updateRow(row.detailId, { actualQuantity: newValue });
+            }}
           />
         );
       },
@@ -176,11 +176,10 @@ export default function ImportProcessPage() {
             defaultValue={value}
             className="h-[35px]"
             // disabled={!hasStockInPermission || !isCreated}
-            onBlur={(e) =>
-              updateRow(row.detailId, {
-                reason: e.target.value,
-              })
-            }
+            onBlur={(e) => {
+              if (e.target.value === row.reason) return;
+              updateRow(row.detailId, { reason: e.target.value });
+            }}
           />
         );
       },
@@ -206,8 +205,9 @@ export default function ImportProcessPage() {
             <Button
               onClick={handleOpenConfirmModal}
               // disabled={!hasStockInPermission || !isCreated}
+              className={isDirty ? "bg-warning-500 hover:bg-warning-600" : ""}
             >
-              Save
+              {isDirty && <FontAwesomeIcon icon={faTriangleExclamation} className="mr-1" />}Save
             </Button>
           </div>
         </div>

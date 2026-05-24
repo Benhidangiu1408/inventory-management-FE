@@ -137,6 +137,11 @@ export interface LocationResponse {
   name: string;
   locationType: LocationType;
   locationStatus: LocationStatus;
+  maxWeight?: number;
+  maxLength?: number;
+  maxWidth?: number;
+  maxHeight?: number;
+  maxVolume?: number;
 }
 
 export interface ItemResponse {
@@ -154,6 +159,10 @@ export interface BatchResponse {
   unit: UnitResponse;
   unitConversion: UnitConversionResponse;
   status?: BatchStatus;
+  weight?: number;
+  length?: number;
+  width?: number;
+  height?: number;
 }
 
 export interface BatchSummaryResponse {
@@ -175,12 +184,20 @@ export interface ImportSheetDetailResponse {
   rawSku: string;
   unitConversion: UnitConversionResponse;
   mappingStatus: ImportSheetDetailMappingStatus;
+  weight?: number;
+  length?: number;
+  width?: number;
+  height?: number;
 }
 
 export interface ImportSheetDetailCreateReq {
   productVariantId: number;
   expectedQuantity: number;
   unitId: number;
+  weight?: number;
+  length?: number;
+  width?: number;
+  height?: number;
 }
 
 export interface ExportSheetDetailCreateReq {
@@ -200,6 +217,10 @@ export interface ImportSheetDetailUpdateReq {
   actualQuantity?: number;
   reason?: string;
   mappingStatus?: ImportSheetDetailMappingStatus;
+  weight?: number;
+  length?: number;
+  width?: number;
+  height?: number;
 }
 
 export interface ImportSheetResponse {

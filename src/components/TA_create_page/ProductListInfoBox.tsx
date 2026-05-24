@@ -28,6 +28,7 @@ import { useAuth } from "@/context/AuthContext";
 import { UserPermissions } from "@/interfaces/userManagementType";
 import Button from "@/default_components/ui/button/Button";
 import EditableQuantity from "./EditableQuantity";
+import Input from "@/default_components/form/input/InputField";
 import { Trash } from "lucide-react";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
 
@@ -61,6 +62,10 @@ export default function ProductListInfoBox({
       description: detail.productVariant.description,
       expectedQuantity: detail.expectedQuantity ?? 0,
       unit: detail.unit ?? detail.productVariant.product.baseUnit,
+      weight: detail.weight,
+      length: detail.length,
+      width: detail.width,
+      height: detail.height,
     }),
   );
 
@@ -115,6 +120,53 @@ export default function ProductListInfoBox({
       label: "Unit",
       render: (_, row) => row.unit.name,
     },
+    ...(
+      ["weight", "length", "width", "height"] as (keyof ProductTempRow)[]
+    ).map((field) => ({
+      key: field,
+      label: field.charAt(0).toUpperCase() + field.slice(1),
+      render: (
+        _: ProductTempRow[keyof ProductTempRow],
+        row: ProductTempRow,
+      ) => {
+        if (!canDelete)
+          return String((row[field] as number | undefined) ?? "-");
+        return (
+          <Input
+            type="number"
+            className="h-[35px] w-[80px]"
+            defaultValue={String(row[field] ?? "")}
+            placeholder="-"
+            onBlur={async (e) => {
+              const value =
+                e.target.value === "" ? undefined : Number(e.target.value);
+              const data: ImportSheetDetailUpdateReq = {
+                productVariantId: row.id,
+                unitId: row.unit.id,
+                [field]: value,
+              };
+              try {
+                const updated = await updateImportSheetDetail(
+                  id as string,
+                  row.detailId,
+                  data,
+                );
+                setImportData((prev) => ({
+                  ...prev,
+                  details: prev.details.map((d) =>
+                    d.id === updated.id ? updated : d,
+                  ),
+                }));
+                setIsDirty(true);
+                toast.success("Updated successfully");
+              } catch {
+                toast.error("Failed to update");
+              }
+            }}
+          />
+        );
+      },
+    })),
     ...(canDelete
       ? [
           {
@@ -179,6 +231,10 @@ export default function ProductListInfoBox({
             productVariantId: selectedProduct.id,
             expectedQuantity: selectedProduct.expectedQuantity,
             unitId: selectedProduct.unit.id,
+            weight: selectedProduct.weight,
+            length: selectedProduct.length,
+            width: selectedProduct.width,
+            height: selectedProduct.height,
           };
           const res = await createImportSheetDetail(id as string, data);
           return { type: "create" as const, res };

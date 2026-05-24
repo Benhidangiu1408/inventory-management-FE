@@ -7,7 +7,7 @@ import { QualityCheckRow } from "@/interfaces/interface.table";
 import CustomizableTable, {
   Column,
 } from "@/components/table/CustomizableTable";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQualityCheck } from "@/context/QualityCheckContext";
 import Select, { Option } from "@/default_components/form/Select";
@@ -187,6 +187,17 @@ export default function QualityCheckPage() {
   const handleConfirmQCSheet = async () => {
     if (!qcData) return;
 
+    const pendingRows = rows.filter(
+      (row) => row.qualityStatus === QCSheetDetailStatus.PENDING,
+    );
+
+    if (pendingRows.length > 0) {
+      toast.error(
+        `${pendingRows.length} item(s) are still PENDING. Please set a status for all items before saving.`,
+      );
+      return;
+    }
+
     const invalidRows = rows.filter(
       (row) =>
         (row.qualityStatus == QCSheetDetailStatus.SKIPPED ||
@@ -242,8 +253,9 @@ export default function QualityCheckPage() {
             <Button
               onClick={handleOpenConfirmModal}
               // disabled={!hasStockInPermission || !isCreated}
+              className={isDirty ? "bg-warning-500 hover:bg-warning-600" : ""}
             >
-              Save
+              {isDirty && <FontAwesomeIcon icon={faTriangleExclamation} className="mr-1" />}Save
             </Button>
           </div>
         </div>

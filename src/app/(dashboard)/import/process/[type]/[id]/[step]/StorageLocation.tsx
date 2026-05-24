@@ -13,17 +13,11 @@ import {
   faCircleXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  LocationResponse,
-  WarehoseResponse,
-} from "@/interfaces/inboundOutboundType";
+import { WarehoseResponse } from "@/interfaces/inboundOutboundType";
 import { BatchStatus } from "@/interfaces/warehouseManagementType";
 import { useCallback, useEffect, useState } from "react";
 import { useImport } from "@/context/ImportContext";
-import {
-  LocationType,
-  WarehouseType,
-} from "@/interfaces/warehouseManagementType";
+import { WarehouseType } from "@/interfaces/warehouseManagementType";
 import Button from "@/default_components/ui/button/Button";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -32,7 +26,7 @@ import { useConfirmModal } from "@/hooks/useConfirmModal";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import {
   finalizeImportSheet,
-  getLocationByType,
+  getLocationsByBatch,
   getWarehouses,
   setBatchLocationSingle,
 } from "@/actions/inbound-outbound";
@@ -69,7 +63,6 @@ export default function StorageLocationPage() {
 
   const { importData, setImportData } = useImport();
 
-  const [locations, setLocations] = useState<LocationResponse[]>([]);
   const [defectWarehouses, setDefectWarehouses] = useState<WarehoseResponse[]>(
     [],
   );
@@ -77,9 +70,6 @@ export default function StorageLocationPage() {
   const [selectedDefectWarehouseId, setSelectedDefectWarehouseId] = useState<
     number | null
   >(null);
-  const [defectLocations, setDefectLocations] = useState<LocationResponse[]>(
-    [],
-  );
 
   const [loading, setLoading] = useState(false);
   const { confirm, ConfirmationModal } = useConfirmModal();
@@ -94,34 +84,20 @@ export default function StorageLocationPage() {
 
   const handleSaveLocation = async (
     detailId: number,
-    locationId: number,
-    locationList: LocationResponse[] = locations,
+    location: import("@/interfaces/inboundOutboundType").LocationResponse,
   ) => {
     await setBatchLocationSingle(id as string, {
       importSheetDetailId: detailId,
-      locationId,
+      locationId: location.id,
     });
-    const newLocation = locationList.find((l) => l.id === locationId);
-    if (!newLocation) return;
     setImportData((prev) => ({
       ...prev,
       details: prev.details.map((detail) => {
         if (detail.id !== detailId || !detail.batch) return detail;
-        return { ...detail, batch: { ...detail.batch, location: newLocation } };
+        return { ...detail, batch: { ...detail.batch, location } };
       }),
     }));
     toast.success("Location saved");
-
-    const isDefect = locationList === defectLocations;
-    if (isDefect && selectedDefectWarehouseId) {
-      getLocationByType(selectedDefectWarehouseId, LocationType.BIN)
-        .then(setDefectLocations)
-        .catch(console.error);
-    } else {
-      getLocationByType(importData.warehouse.id, LocationType.BIN)
-        .then(setLocations)
-        .catch(console.error);
-    }
   };
 
   const buildStorageData = (
@@ -178,16 +154,16 @@ export default function StorageLocationPage() {
           );
         }
         return (
-          <>
-            <ChooseLocationModal
-              locations={locations}
-              currentLocation={location}
-              disabled={!hasStockInPermission || isRejected}
-              onSave={(locationId) =>
-                handleSaveLocation(row.detailId, locationId)
-              }
-            />
-          </>
+          <ChooseLocationModal
+            fetchLocations={() => {
+              const batchId = foundDetail?.batch?.id;
+              if (!batchId) return Promise.resolve([]);
+              return getLocationsByBatch(batchId, importData.warehouse.id);
+            }}
+            currentLocation={location}
+            disabled={!hasStockInPermission || isRejected}
+            onSave={(loc) => handleSaveLocation(row.detailId, loc)}
+          />
         );
       },
       width: 400,
@@ -232,12 +208,14 @@ export default function StorageLocationPage() {
         }
         return (
           <ChooseLocationModal
-            locations={defectLocations}
+            fetchLocations={() => {
+              const batchId = foundDetail?.batch?.id;
+              if (!batchId) return Promise.resolve([]);
+              return getLocationsByBatch(batchId, selectedDefectWarehouseId ?? undefined);
+            }}
             currentLocation={location}
             disabled={!hasStockInPermission || isRejected}
-            onSave={(locationId) =>
-              handleSaveLocation(row.detailId, locationId, defectLocations)
-            }
+            onSave={(loc) => handleSaveLocation(row.detailId, loc)}
           />
         );
       },
@@ -267,6 +245,14 @@ export default function StorageLocationPage() {
   };
 
   const handleOpenConfirmModal = async () => {
+    const hasUnassigned = importData.details.some(
+      (detail) => detail.batch && !detail.batch.location,
+    );
+    if (hasUnassigned) {
+      toast.error("Please assign a storage location to all batches before confirming");
+      return;
+    }
+
     const isConfirmed = await confirm({
       title: "Confirm Storage Location",
       message:
@@ -278,15 +264,6 @@ export default function StorageLocationPage() {
     await handleConfirm();
   };
 
-  const fetchLocations = useCallback(async () => {
-    const res = await getLocationByType(
-      importData.warehouse.id,
-      LocationType.BIN,
-    );
-
-    setLocations(res);
-  }, [importData.warehouse.id]);
-
   const fetchDefectWarehouses = useCallback(async () => {
     const res = await getWarehouses(WarehouseType.DEFECT);
     setDefectWarehouses(res);
@@ -297,65 +274,8 @@ export default function StorageLocationPage() {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchLocations().catch(console.error);
-  }, [fetchLocations]);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchDefectWarehouses().catch(console.error);
   }, [fetchDefectWarehouses]);
-
-  useEffect(() => {
-    if (!selectedDefectWarehouseId) return;
-
-    getLocationByType(selectedDefectWarehouseId, LocationType.BIN)
-      .then(setDefectLocations)
-      .catch(console.error);
-  }, [selectedDefectWarehouseId]);
-
-  useEffect(() => {
-    if (!locations.length) return;
-    if (isCompleted || isRejected) return;
-
-    setImportData((prev) => ({
-      ...prev,
-      details: prev.details.map((detail) => {
-        if (!detail.batch) return detail;
-        if (detail.batch.location) return detail;
-        if (detail.batch.status === BatchStatus.FAULT) return detail;
-
-        return {
-          ...detail,
-          batch: {
-            ...detail.batch,
-            location: locations[0],
-          },
-        };
-      }),
-    }));
-  }, [locations, setImportData, isCompleted, isRejected]);
-
-  useEffect(() => {
-    if (!defectLocations.length) return;
-    if (isCompleted || isRejected) return;
-
-    setImportData((prev) => ({
-      ...prev,
-      details: prev.details.map((detail) => {
-        if (!detail.batch) return detail;
-        if (detail.batch.status !== BatchStatus.FAULT) return detail;
-        if (detail.batch.location) return detail;
-
-        return {
-          ...detail,
-          batch: {
-            ...detail.batch,
-            location: defectLocations[0],
-          },
-        };
-      }),
-    }));
-  }, [defectLocations, setImportData, isCompleted, isRejected]);
 
   return (
     <div>

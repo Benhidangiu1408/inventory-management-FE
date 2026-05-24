@@ -64,6 +64,7 @@ export default function CreateModal({
         (item) => item.pickQuantity !== "" && Number(item.pickQuantity) > 0,
       )
       .map((selectedItem) => ({
+        detailId: 0,
         id: Number(selectedItem.productId),
         name: selectedItem.name,
         expectedQuantity: Number(selectedItem.pickQuantity),
@@ -74,6 +75,22 @@ export default function CreateModal({
             : (selectedItem.unitConversions.find(
                 (c) => c.fromUnit.id === selectedItem.unitId,
               )?.fromUnit ?? selectedItem.unit),
+        weight:
+          selectedItem.weight !== "" && selectedItem.weight !== undefined
+            ? Number(selectedItem.weight)
+            : undefined,
+        length:
+          selectedItem.length !== "" && selectedItem.length !== undefined
+            ? Number(selectedItem.length)
+            : undefined,
+        width:
+          selectedItem.width !== "" && selectedItem.width !== undefined
+            ? Number(selectedItem.width)
+            : undefined,
+        height:
+          selectedItem.height !== "" && selectedItem.height !== undefined
+            ? Number(selectedItem.height)
+            : undefined,
       }));
 
     onSelectedProductsChange(selected);
@@ -112,6 +129,21 @@ export default function CreateModal({
       ),
     );
   }, []);
+
+  const handleDimensionChange = useCallback(
+    (
+      productId: string,
+      field: "weight" | "length" | "width" | "height",
+      value: string,
+    ) => {
+      setData((prev) =>
+        prev.map((item) =>
+          item.productId === productId ? { ...item, [field]: value } : item,
+        ),
+      );
+    },
+    [],
+  );
 
   const columns: Column<ImportCreateRow>[] = useMemo(
     () => [
@@ -177,41 +209,43 @@ export default function CreateModal({
           />
         ),
       },
+      ...(
+        ["weight", "length", "width", "height"] as (
+          | "weight"
+          | "length"
+          | "width"
+          | "height"
+        )[]
+      ).map((field) => ({
+        label: field.charAt(0).toUpperCase() + field.slice(1),
+        key: field as keyof ImportCreateRow,
+        render: (
+          _: ImportCreateRow[keyof ImportCreateRow],
+          row: ImportCreateRow,
+        ) => (
+          <Input
+            type="number"
+            className="h-[35px] w-[80px]"
+            value={String(row[field] ?? "")}
+            placeholder="-"
+            onChange={(e) =>
+              handleDimensionChange(row.productId, field, e.target.value)
+            }
+          />
+        ),
+      })),
     ],
-    [handleCheckboxChange, handlePickQuantityChange, handleUnitChange],
+    [
+      handleCheckboxChange,
+      handlePickQuantityChange,
+      handleUnitChange,
+      handleDimensionChange,
+    ],
   );
 
   return (
     <div className="flex flex-col gap-6">
       <div className="default-card">
-        {/* <CustomFilter>
-          <FilterItem
-            type="input"
-            label="Search"
-            placeholder="Search"
-            icon={faMagnifyingGlass}
-          />
-          <FilterItem
-            type="select"
-            label="Status"
-            placeholder="Status"
-            icon={faFilter}
-            options={[{ label: "Active", value: "active" }]}
-          />
-          <FilterItem
-            type="select"
-            label="Warehouse"
-            placeholder="Warehouse"
-            icon={faWarehouse}
-            options={[{ label: "Active", value: "active" }]}
-          />
-          <FilterItem
-            type="date"
-            label="Date"
-            placeholder="Date"
-            icon={faCalendar}
-          />
-        </CustomFilter> */}
         <div className="flex flex-col gap-6 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -222,7 +256,7 @@ export default function CreateModal({
               </div>
             </div>
           </div>
-          <div className="default-card overflow-hidden">
+          <div className="default-card overflow-hidden p-6">
             <CustomizableTable<ImportCreateRow>
               headers={columns}
               data={data}

@@ -48,6 +48,10 @@ export interface ProductTempRow {
   description: string;
   expectedQuantity: number;
   unit: UnitResponse;
+  weight?: number;
+  length?: number;
+  width?: number;
+  height?: number;
 }
 
 export interface QuantityCheckRow {
@@ -105,6 +109,10 @@ export interface ImportCreateRow {
   unitConversions: UnitConversionResponse[];
   pickQuantity: number | string; // can be number or string for easy input in
   unitSelect?: ReactNode;
+  weight?: number | string;
+  length?: number | string;
+  width?: number | string;
+  height?: number | string;
 }
 
 export interface ExportQuantityCheckRow {

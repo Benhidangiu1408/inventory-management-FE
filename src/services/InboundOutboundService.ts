@@ -161,6 +161,16 @@ export const inboundOutboundService = {
     );
   },
 
+  getLocationsByBatch: async (
+    batchId: number | string,
+    warehouseId?: number | string,
+  ) => {
+    const params = warehouseId ? `?warehouseId=${warehouseId}` : "";
+    return await apiClient.get<LocationResponse[]>(
+      `/inbound-outbound/v1/locations/batch/${batchId}${params}`,
+    );
+  },
+
   setBatchLocations: async (
     importSheetId: number | string,
     data: SetBatchLocationReq[],
