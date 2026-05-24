@@ -1,16 +1,20 @@
 "use client";
 
 import { useImport } from "@/context/ImportContext";
+import { useQualityCheck } from "@/context/QualityCheckContext";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import { ImportSheetType } from "@/interfaces/inboundOutboundType";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function ProcessPagination() {
   const params = useParams<{ type: string; id: string; step: string }>();
   const { type, id, step } = params;
 
-  const { importData } = useImport();
+  const { importData, isDirty: isImportDirty } = useImport();
+  const { isDirty: isQCDirty } = useQualityCheck();
+  const isDirty = isImportDirty || isQCDirty;
 
   const baseProcessList: { label: string; value: string }[] = [
     {
@@ -55,6 +59,7 @@ export default function ProcessPagination() {
                     : importData.status === SheetStatus.APPROVED
                       ? false
                       : false;
+
           const baseClasses =
             "shadow-theme-xs flex h-10 items-center justify-center rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]";
           const stateClasses = isActive
@@ -69,6 +74,22 @@ export default function ProcessPagination() {
                 key={item.value}
                 aria-disabled
                 className={baseClasses + stateClasses}
+              >
+                {item.label}
+              </span>
+            );
+          }
+
+          if (isDirty) {
+            return (
+              <span
+                key={item.value}
+                onClick={() =>
+                  toast.error(
+                    "You have unsaved changes. Please confirm quantity check before navigating.",
+                  )
+                }
+                className={baseClasses + " bg-white cursor-pointer"}
               >
                 {item.label}
               </span>

@@ -1,7 +1,6 @@
 "use client";
 
-import Select, { Option } from "@/default_components/form/Select";
-import Input from "@/default_components/form/input/InputField";
+import Select, { Option } from "@/default_components/form/Select"; // kept for defect warehouse dropdown
 import CustomizableTable, {
   Column,
 } from "@/components/table/CustomizableTable";
@@ -16,10 +15,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   LocationResponse,
-  QCSheetDetailStatus,
-  SetBatchLocationReq,
   WarehoseResponse,
 } from "@/interfaces/inboundOutboundType";
+import { BatchStatus } from "@/interfaces/warehouseManagementType";
 import { useCallback, useEffect, useState } from "react";
 import { useImport } from "@/context/ImportContext";
 import {
@@ -27,19 +25,20 @@ import {
   WarehouseType,
 } from "@/interfaces/warehouseManagementType";
 import Button from "@/default_components/ui/button/Button";
-import { useQualityCheck } from "@/context/QualityCheckContext";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Loading } from "@/components/TA_common/Loading";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import {
+  finalizeImportSheet,
   getLocationByType,
   getWarehouses,
-  setBatchLocations,
+  setBatchLocationSingle,
 } from "@/actions/inbound-outbound";
 import { useAuth } from "@/context/AuthContext";
 import { UserPermissions } from "@/interfaces/userManagementType";
+import ChooseLocationModal from "@/components/modal/ChooseLocationModal";
 
 const Title = ({
   icon,
@@ -69,9 +68,6 @@ export default function StorageLocationPage() {
   );
 
   const { importData, setImportData } = useImport();
-  const { qcData } = useQualityCheck();
-
-  console.log(importData);
 
   const [locations, setLocations] = useState<LocationResponse[]>([]);
   const [defectWarehouses, setDefectWarehouses] = useState<WarehoseResponse[]>(
@@ -91,45 +87,59 @@ export default function StorageLocationPage() {
   const isCompleted = importData.status === SheetStatus.COMPLETED;
   const isRejected = importData.status === SheetStatus.REJECTED;
 
-  const options: Option[] = locations.map((location) => ({
-    value: String(location.id),
-    label: `${location.code} - ${location.name}`,
-  }));
-
   const defectWarehouseOptions: Option[] = defectWarehouses.map((w) => ({
     value: String(w.id),
     label: w.name,
   }));
 
-  const defectLocationOptions: Option[] = defectLocations.map((location) => ({
-    value: String(location.id),
-    label: `${location.code} - ${location.name}`,
-  }));
+  const handleSaveLocation = async (
+    detailId: number,
+    locationId: number,
+    locationList: LocationResponse[] = locations,
+  ) => {
+    await setBatchLocationSingle(id as string, {
+      importSheetDetailId: detailId,
+      locationId,
+    });
+    const newLocation = locationList.find((l) => l.id === locationId);
+    if (!newLocation) return;
+    setImportData((prev) => ({
+      ...prev,
+      details: prev.details.map((detail) => {
+        if (detail.id !== detailId || !detail.batch) return detail;
+        return { ...detail, batch: { ...detail.batch, location: newLocation } };
+      }),
+    }));
+    toast.success("Location saved");
 
-  const firstLocationValue = locations[0]?.id ?? 0;
+    const isDefect = locationList === defectLocations;
+    if (isDefect && selectedDefectWarehouseId) {
+      getLocationByType(selectedDefectWarehouseId, LocationType.BIN)
+        .then(setDefectLocations)
+        .catch(console.error);
+    } else {
+      getLocationByType(importData.warehouse.id, LocationType.BIN)
+        .then(setLocations)
+        .catch(console.error);
+    }
+  };
 
   const buildStorageData = (
-    statuses: QCSheetDetailStatus[],
-  ): StorageLocationCheckRow[] => {
-    const filterData = importData.details.filter((detail) => {
-      const foundedQcDetail = qcData?.details.find(
-        (qcDetail) => qcDetail.batch.id === detail.batch?.id,
-      );
-
-      return statuses.includes(foundedQcDetail?.status as QCSheetDetailStatus);
-    });
-
-    return filterData.map((detail) => ({
-      detailId: detail.id,
-      batchCode: detail.batch?.code ?? "",
-      name: detail.batch?.productVariant.product.name ?? "",
-      description: detail.batch?.productVariant.description ?? "",
-      quantity: detail.batch?.initialQuantity ?? 0,
-      storageLocation:
-        detail.batch?.location?.id?.toString() ?? String(firstLocationValue),
-      notes: "",
-    }));
-  };
+    batchStatuses: BatchStatus[],
+  ): StorageLocationCheckRow[] =>
+    importData.details
+      .filter((detail) =>
+        batchStatuses.includes(detail.batch?.status as BatchStatus),
+      )
+      .map((detail) => ({
+        detailId: detail.id,
+        batchCode: detail.batch?.code ?? "",
+        name: detail.batch?.productVariant.product.name ?? "",
+        description: detail.batch?.productVariant.description ?? "",
+        quantity: detail.batch?.initialQuantity ?? 0,
+        storageLocation: detail.batch?.location?.id?.toString() ?? "",
+        notes: "",
+      }));
 
   const storageLocationColumn: Column<StorageLocationCheckRow>[] = [
     {
@@ -151,13 +161,14 @@ export default function StorageLocationPage() {
     {
       key: "storageLocation",
       label: "Storage Location",
-      render: (value, row) => {
-        if (isCompleted) {
-          const foundDetail = importData.details.find(
-            (detail) => detail.id === row.detailId,
-          );
+      autoHeight: true,
+      render: (_, row) => {
+        const foundDetail = importData.details.find(
+          (detail) => detail.id === row.detailId,
+        );
+        const location = foundDetail?.batch?.location;
 
-          const location = foundDetail?.batch?.location;
+        if (isCompleted) {
           return location ? (
             <span>{`${location.code} - ${location.name}`}</span>
           ) : (
@@ -167,20 +178,19 @@ export default function StorageLocationPage() {
           );
         }
         return (
-          <Select
-            className="h-[38px]"
-            disabled={!hasStockInPermission || isRejected}
-            value={row.storageLocation}
-            options={options}
-            onChange={(e) =>
-              updateRows(row.detailId, {
-                storageLocation: e.target.value,
-              })
-            }
-          />
+          <>
+            <ChooseLocationModal
+              locations={locations}
+              currentLocation={location}
+              disabled={!hasStockInPermission || isRejected}
+              onSave={(locationId) =>
+                handleSaveLocation(row.detailId, locationId)
+              }
+            />
+          </>
         );
       },
-      width: 375,
+      width: 400,
     },
   ];
 
@@ -204,13 +214,14 @@ export default function StorageLocationPage() {
     {
       key: "storageLocation",
       label: "Storage Location",
-      render: (value, row) => {
-        if (isCompleted) {
-          const foundDetail = importData.details.find(
-            (detail) => detail.id === row.detailId,
-          );
+      autoHeight: true,
+      render: (_, row) => {
+        const foundDetail = importData.details.find(
+          (detail) => detail.id === row.detailId,
+        );
+        const location = foundDetail?.batch?.location;
 
-          const location = foundDetail?.batch?.location;
+        if (isCompleted) {
           return location ? (
             <span>{`${location.code} - ${location.name}`}</span>
           ) : (
@@ -220,55 +231,39 @@ export default function StorageLocationPage() {
           );
         }
         return (
-          <Select
-            className="h-[38px]"
+          <ChooseLocationModal
+            locations={defectLocations}
+            currentLocation={location}
             disabled={!hasStockInPermission || isRejected}
-            value={value}
-            options={defectLocationOptions}
-            onChange={(e) =>
-              updateRows(
-                row.detailId,
-                {
-                  storageLocation: e.target.value,
-                },
-                defectLocations,
-              )
+            onSave={(locationId) =>
+              handleSaveLocation(row.detailId, locationId, defectLocations)
             }
           />
         );
       },
-      width: 375,
+      width: 400,
     },
   ];
 
   const storagePassData: StorageLocationCheckRow[] = buildStorageData([
-    QCSheetDetailStatus.PASSED,
-    QCSheetDetailStatus.SKIPPED,
+    BatchStatus.ACTIVE,
   ]);
 
   const storageFailData: StorageLocationCheckRow[] = buildStorageData([
-    QCSheetDetailStatus.FAILED,
+    BatchStatus.FAULT,
   ]);
 
   const handleConfirm = async () => {
-    const data: SetBatchLocationReq[] = importData.details.map((detail) => ({
-      importSheetDetailId: detail.id,
-      locationId: detail.batch!.location!.id,
-    }));
-
-    const locationIds = data.map((d) => d.locationId);
-    const hasDuplicate = new Set(locationIds).size !== locationIds.length;
-    if (hasDuplicate) {
-      toast.error("Duplicate locations are not allowed");
-      return;
-    }
-
     setLoading(true);
-    await setBatchLocations(id as string, data);
-
-    setLoading(false);
-    toast.success("Storage Location Successfully");
-    router.refresh();
+    try {
+      await finalizeImportSheet(id as string);
+      toast.success("Import sheet finalized successfully");
+      router.refresh();
+    } catch {
+      toast.error("Failed to finalize import sheet");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleOpenConfirmModal = async () => {
@@ -281,44 +276,6 @@ export default function StorageLocationPage() {
     if (!isConfirmed) return;
 
     await handleConfirm();
-  };
-
-  const updateRows = (
-    detailId: number,
-    changes: Partial<StorageLocationCheckRow>,
-    locationList: LocationResponse[] = locations,
-  ) => {
-    setImportData((prev) => ({
-      ...prev,
-      details: prev.details.map((detail) => {
-        if (detail.id !== detailId) return detail;
-
-        if (!detail.batch) return detail;
-
-        let currentBatchLocation = detail.batch.location;
-
-        if (
-          String(currentBatchLocation?.id ?? firstLocationValue) !==
-          changes.storageLocation
-        ) {
-          const newLocation = locationList.find(
-            (location) => String(location.id) === changes.storageLocation,
-          );
-
-          if (newLocation) {
-            currentBatchLocation = newLocation;
-          }
-        }
-
-        return {
-          ...detail,
-          batch: {
-            ...detail.batch,
-            location: currentBatchLocation,
-          },
-        };
-      }),
-    }));
   };
 
   const fetchLocations = useCallback(async () => {
@@ -360,18 +317,12 @@ export default function StorageLocationPage() {
     if (!locations.length) return;
     if (isCompleted || isRejected) return;
 
-    const failedBatchIds = new Set(
-      qcData?.details
-        .filter((d) => d.status === QCSheetDetailStatus.FAILED)
-        .map((d) => d.batch.id) ?? [],
-    );
-
     setImportData((prev) => ({
       ...prev,
       details: prev.details.map((detail) => {
         if (!detail.batch) return detail;
         if (detail.batch.location) return detail;
-        if (failedBatchIds.has(detail.batch.id)) return detail;
+        if (detail.batch.status === BatchStatus.FAULT) return detail;
 
         return {
           ...detail,
@@ -382,28 +333,18 @@ export default function StorageLocationPage() {
         };
       }),
     }));
-  }, [locations, setImportData, qcData, isCompleted, isRejected]);
+  }, [locations, setImportData, isCompleted, isRejected]);
 
   useEffect(() => {
     if (!defectLocations.length) return;
     if (isCompleted || isRejected) return;
 
-    const failedBatchIds = new Set(
-      qcData?.details
-        .filter((d) => d.status === QCSheetDetailStatus.FAILED)
-        .map((d) => d.batch.id) ?? [],
-    );
-
     setImportData((prev) => ({
       ...prev,
       details: prev.details.map((detail) => {
         if (!detail.batch) return detail;
-        if (!failedBatchIds.has(detail.batch.id)) return detail;
-
-        const isValidDefectLocation = defectLocations.some(
-          (l) => l.id === detail.batch!.location?.id,
-        );
-        if (isValidDefectLocation) return detail;
+        if (detail.batch.status !== BatchStatus.FAULT) return detail;
+        if (detail.batch.location) return detail;
 
         return {
           ...detail,
@@ -414,7 +355,7 @@ export default function StorageLocationPage() {
         };
       }),
     }));
-  }, [defectLocations, qcData, setImportData, isCompleted, isRejected]);
+  }, [defectLocations, setImportData, isCompleted, isRejected]);
 
   return (
     <div>

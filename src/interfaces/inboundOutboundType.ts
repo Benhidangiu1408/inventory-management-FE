@@ -1,5 +1,5 @@
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
-import { LocationStatus, LocationType } from "./warehouseManagementType";
+import { BatchStatus, LocationStatus, LocationType } from "./warehouseManagementType";
 
 export enum CustomerStatus {
   ACTIVE = "ACTIVE",
@@ -153,6 +153,7 @@ export interface BatchResponse {
   productVariant: ProductVariantResponse;
   unit: UnitResponse;
   unitConversion: UnitConversionResponse;
+  status?: BatchStatus;
 }
 
 export interface BatchSummaryResponse {
@@ -266,6 +267,11 @@ export interface QCSheetUpdateReq {
 }
 
 export interface SetBatchLocationReq {
+  importSheetDetailId: number;
+  locationId: number;
+}
+
+export interface SetSingleBatchLocationReq {
   importSheetDetailId: number;
   locationId: number;
 }

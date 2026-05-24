@@ -1,5 +1,6 @@
 "use client";
 import React, { useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
   isOpen: boolean;
@@ -59,7 +60,7 @@ export const Modal: React.FC<ModalProps> = ({
     ? overlayClassName
     : "bg-gray-400/50 backdrop-blur-[32px]";
 
-  return (
+  const modalContent = (
     <div className="modal fixed inset-0 z-99999 flex items-center justify-center overflow-y-auto">
       {!isFullscreen && (
         <div
@@ -97,4 +98,6 @@ export const Modal: React.FC<ModalProps> = ({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };

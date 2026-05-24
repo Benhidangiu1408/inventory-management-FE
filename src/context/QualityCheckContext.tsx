@@ -12,6 +12,8 @@ import {
 interface QualityCheckContextType {
   qcData: QCSheetResponse | null;
   setQCData: React.Dispatch<React.SetStateAction<QCSheetResponse | null>>;
+  isDirty: boolean;
+  setIsDirty: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const QualityCheckContext = createContext<QualityCheckContextType | undefined>(
@@ -26,13 +28,15 @@ export function QualityCheckProvider({
   initialData: QCSheetResponse | null;
 }) {
   const [qcData, setQCData] = useState(initialData);
+  const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
     setQCData(initialData);
+    setIsDirty(false);
   }, [initialData]);
 
   return (
-    <QualityCheckContext.Provider value={{ qcData, setQCData }}>
+    <QualityCheckContext.Provider value={{ qcData, setQCData, isDirty, setIsDirty }}>
       {children}
     </QualityCheckContext.Provider>
   );

@@ -17,7 +17,6 @@ import {
 } from "@/interfaces/inboundOutboundType";
 import { useCallback, useMemo, useState } from "react";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
-import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Loading } from "@/components/TA_common/Loading";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
@@ -27,9 +26,7 @@ import { UserPermissions } from "@/interfaces/userManagementType";
 import { ApiError } from "next/dist/server/api-utils";
 
 export default function QualityCheckPage() {
-  const router = useRouter();
-  const { type, id } = useParams();
-  const { qcData, setQCData } = useQualityCheck();
+  const { qcData, setQCData, isDirty, setIsDirty } = useQualityCheck();
   const { confirm, ConfirmationModal } = useConfirmModal();
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
@@ -58,6 +55,7 @@ export default function QualityCheckPage() {
 
   const updateRows = useCallback(
     (detailId: number, changes: Partial<QualityCheckRow>) => {
+      setIsDirty(true);
       setQCData((prev) => {
         if (!prev) return prev;
         return {
@@ -125,7 +123,7 @@ export default function QualityCheckPage() {
             }
             value={value}
             className="h-[38px]"
-            disabled={!hasStockInPermission || !isCreated}
+            // disabled={!hasStockInPermission || !isCreated}
             onChange={(e) =>
               updateRows(row.detailId, {
                 qualityStatus: e.target.value as QCSheetDetailStatus,
@@ -141,7 +139,7 @@ export default function QualityCheckPage() {
           <Input
             className="h-[35px]"
             defaultValue={value}
-            disabled={!hasStockInPermission || !isCreated}
+            // disabled={!hasStockInPermission || !isCreated}
             onBlur={(e) =>
               updateRows(row.detailId, {
                 reason: e.target.value,
@@ -157,7 +155,7 @@ export default function QualityCheckPage() {
           <Input
             className="h-[35px]"
             defaultValue={value}
-            disabled={!hasStockInPermission || !isCreated}
+            // disabled={!hasStockInPermission || !isCreated}
             onBlur={(e) =>
               updateRows(row.detailId, {
                 notes: e.target.value,
@@ -167,7 +165,7 @@ export default function QualityCheckPage() {
         ),
       },
     ],
-    [options, updateRows, isCreated, hasStockInPermission],
+    [options, updateRows],
   );
 
   const rows: QualityCheckRow[] = useMemo(
@@ -220,8 +218,8 @@ export default function QualityCheckPage() {
     setLoading(false);
 
     setQCData(res);
+    setIsDirty(false);
 
-    router.push(`/import/process/${type}/${id}/storage-location`);
     toast.success("Quality Check Successfully");
   };
 
@@ -243,9 +241,9 @@ export default function QualityCheckPage() {
           <div className="flex justify-end">
             <Button
               onClick={handleOpenConfirmModal}
-              disabled={!hasStockInPermission || !isCreated}
+              // disabled={!hasStockInPermission || !isCreated}
             >
-              Confirm Check Quality
+              Save
             </Button>
           </div>
         </div>

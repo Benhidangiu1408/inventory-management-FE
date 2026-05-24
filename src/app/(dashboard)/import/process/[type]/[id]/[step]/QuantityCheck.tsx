@@ -1,6 +1,6 @@
 "use client";
 
-import { confirmImportSheet } from "@/actions/inbound-outbound";
+import { confirmQuantityCheck } from "@/actions/inbound-outbound";
 import { Loading } from "@/components/TA_common/Loading";
 import InfoBox from "@/components/TA_create_page/InfoBox";
 import CustomizableTable, {
@@ -20,16 +20,14 @@ import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import { UserPermissions } from "@/interfaces/userManagementType";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function ImportProcessPage() {
-  const router = useRouter();
-
   const { type, id } = useParams();
 
-  const { importData, setImportData } = useImport();
+  const { importData, setImportData, isDirty, setIsDirty } = useImport();
 
   const { user } = useAuth();
   const hasStockInPermission = user?.permissions.includes(
@@ -54,6 +52,7 @@ export default function ImportProcessPage() {
   }));
 
   const updateRow = (detailId: number, changes: Partial<QuantityCheckRow>) => {
+    setIsDirty(true);
     setImportData((prev) => ({
       ...prev,
       details: prev.details.map((detail) => {
@@ -81,15 +80,14 @@ export default function ImportProcessPage() {
 
     setLoading(true);
 
-    const res = await confirmImportSheet(importData.id, data);
+    const res = await confirmQuantityCheck(importData.id, data);
 
     setImportData(res);
+    setIsDirty(false);
 
     setLoading(false);
 
     toast.success("Updated Quantity Check Successfully");
-
-    router.push(`/import/process/${type}/${id}/quality-check`);
   };
 
   const handleOpenConfirmModal = async () => {
@@ -142,7 +140,7 @@ export default function ImportProcessPage() {
             className="h-[35px]"
             defaultValue={value}
             type="number"
-            disabled={!hasStockInPermission || !isCreated}
+            // disabled={!hasStockInPermission || !isCreated}
             onBlur={(e) =>
               updateRow(row.detailId, {
                 actualQuantity: Number(e.target.value),
@@ -177,7 +175,7 @@ export default function ImportProcessPage() {
           <Input
             defaultValue={value}
             className="h-[35px]"
-            disabled={!hasStockInPermission || !isCreated}
+            // disabled={!hasStockInPermission || !isCreated}
             onBlur={(e) =>
               updateRow(row.detailId, {
                 reason: e.target.value,
@@ -207,9 +205,9 @@ export default function ImportProcessPage() {
           <div className="flex justify-end">
             <Button
               onClick={handleOpenConfirmModal}
-              disabled={!hasStockInPermission || !isCreated}
+              // disabled={!hasStockInPermission || !isCreated}
             >
-              Confirm Check Quantity
+              Save
             </Button>
           </div>
         </div>

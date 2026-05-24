@@ -19,7 +19,9 @@ import {
   ProductVariantResponse,
   QCSheetResponse,
   QCSheetUpdateReq,
+  BatchResponse,
   SetBatchLocationReq,
+  SetSingleBatchLocationReq,
   SupplierCreateReq,
   SupplierResponse,
   WarehoseResponse,
@@ -127,6 +129,16 @@ export const inboundOutboundService = {
     );
   },
 
+  confirmQuantityCheck: async (
+    importSheetId: number,
+    data: ImportSheetUpdateReq,
+  ) => {
+    return await apiClient.post<ImportSheetResponse>(
+      `/inbound-outbound/v1/import-sheet/${importSheetId}/confirm-quantity-check`,
+      data,
+    );
+  },
+
   getQCSheetByImportSheetId: async (importSheetId: string) => {
     return await apiClient.get<QCSheetResponse>(
       `/inbound-outbound/v1/qc-sheet/import-sheet/${importSheetId}`,
@@ -156,6 +168,23 @@ export const inboundOutboundService = {
     return await apiClient.post<ImportSheetResponse>(
       `/inbound-outbound/v1/import-sheet/${importSheetId}/batch-location`,
       data,
+    );
+  },
+
+  setBatchLocationSingle: async (
+    importSheetId: number | string,
+    data: SetSingleBatchLocationReq,
+  ) => {
+    return await apiClient.post<BatchResponse>(
+      `/inbound-outbound/v1/import-sheet/${importSheetId}/batch-location/single`,
+      data,
+    );
+  },
+
+  finalizeImportSheet: async (importSheetId: number | string) => {
+    return await apiClient.post<ImportSheetResponse>(
+      `/inbound-outbound/v1/import-sheet/${importSheetId}/finalize`,
+      {},
     );
   },
 

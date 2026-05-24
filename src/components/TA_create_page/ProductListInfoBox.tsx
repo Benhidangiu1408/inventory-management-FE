@@ -42,7 +42,7 @@ export default function ProductListInfoBox({
 
   const { id } = params;
 
-  const { importData, setImportData } = useImport();
+  const { importData, setImportData, setIsDirty } = useImport();
 
   const details = importData.details;
 
@@ -69,10 +69,7 @@ export default function ProductListInfoBox({
   );
   const [hasInvalidSelection, setHasInvalidSelection] = useState(false);
 
-  const canDelete =
-    hasStockInPermission &&
-    step === "quantity-check" &&
-    importData.status === SheetStatus.CREATED;
+  const canDelete = step === "quantity-check";
 
   const productTempColumn: Column<ProductTempRow>[] = [
     {
@@ -156,6 +153,7 @@ export default function ProductListInfoBox({
         ...prev,
         details: prev.details.filter((d) => d.id !== detailId),
       }));
+      setIsDirty(true);
       toast.success("Deleted successfully");
     } catch {
       toast.error("Failed to delete product");
@@ -199,6 +197,7 @@ export default function ProductListInfoBox({
       ...prev,
       details: [...prev.details, ...results.map((r) => r.res)],
     }));
+    setIsDirty(true);
   };
 
   return (
@@ -210,13 +209,14 @@ export default function ProductListInfoBox({
         modal={
           <CustomContentModalBox
             step={step}
-            showAddButton={
-              hasStockInPermission &&
-              step === "quantity-check" &&
-              importData.status === SheetStatus.CREATED &&
-              importData.type !== ImportSheetType.EXTERNAL_SUPPLIER &&
-              importData.type !== ImportSheetType.INTERNAL
-            }
+            // showAddButton={
+            //   hasStockInPermission &&
+            //   step === "quantity-check" &&
+            //   importData.status === SheetStatus.CREATED &&
+            //   importData.type !== ImportSheetType.EXTERNAL_SUPPLIER &&
+            //   importData.type !== ImportSheetType.INTERNAL
+            // }
+            showAddButton={step === "quantity-check"}
             startIcon={<FontAwesomeIcon icon={faPlus} />}
             width={"max-w-[1200px]"}
             btnName="Add"

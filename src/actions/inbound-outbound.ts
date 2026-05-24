@@ -12,6 +12,7 @@ import {
   ImportSheetUpdateReq,
   QCSheetUpdateReq,
   SetBatchLocationReq,
+  SetSingleBatchLocationReq,
   SupplierCreateReq,
 } from "@/interfaces/inboundOutboundType";
 import {
@@ -89,6 +90,16 @@ export async function confirmImportSheet(
   return await inboundOutboundService.confirmImportSheet(importSheetId, data);
 }
 
+export async function confirmQuantityCheck(
+  importSheetId: number,
+  data: ImportSheetUpdateReq,
+) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+  data.userId = Number(userId);
+  return await inboundOutboundService.confirmQuantityCheck(importSheetId, data);
+}
+
 export async function updateQCSheet(
   qcSheetId: string | number,
   data: QCSheetUpdateReq,
@@ -101,6 +112,17 @@ export async function setBatchLocations(
   data: SetBatchLocationReq[],
 ) {
   return await inboundOutboundService.setBatchLocations(importSheetId, data);
+}
+
+export async function setBatchLocationSingle(
+  importSheetId: number | string,
+  data: SetSingleBatchLocationReq,
+) {
+  return await inboundOutboundService.setBatchLocationSingle(importSheetId, data);
+}
+
+export async function finalizeImportSheet(importSheetId: number | string) {
+  return await inboundOutboundService.finalizeImportSheet(importSheetId);
 }
 
 export async function getLocationByType(

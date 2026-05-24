@@ -12,6 +12,8 @@ import {
 interface ImportContextType {
   importData: ImportSheetResponse;
   setImportData: React.Dispatch<React.SetStateAction<ImportSheetResponse>>;
+  isDirty: boolean;
+  setIsDirty: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ImportContext = createContext<ImportContextType | undefined>(undefined);
@@ -24,13 +26,15 @@ export function ImportProvider({
   initialData: ImportSheetResponse;
 }) {
   const [importData, setImportData] = useState(initialData);
+  const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
     setImportData(initialData);
+    setIsDirty(false);
   }, [initialData]);
 
   return (
-    <ImportContext.Provider value={{ importData, setImportData }}>
+    <ImportContext.Provider value={{ importData, setImportData, isDirty, setIsDirty }}>
       {children}
     </ImportContext.Provider>
   );
