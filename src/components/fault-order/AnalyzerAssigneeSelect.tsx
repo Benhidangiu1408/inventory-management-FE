@@ -46,7 +46,7 @@ export default function AnalyzerAssigneeSelect({
   const userOptions = useMemo(() => {
     const options = users.map((user) => ({
       value: String(user.id),
-      label: `${user.firstName} ${user.lastName}`.trim() || user.username,
+      label: `${user.lastName} ${user.firstName}`.trim() || user.username,
     }));
 
     // Helper to add a user if they are missing from the current active staff list

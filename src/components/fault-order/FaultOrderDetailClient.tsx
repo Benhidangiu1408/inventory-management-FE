@@ -73,9 +73,9 @@ export default function FaultOrderDetailClient({
     () => [
       ...detailFaultBatchColumns,
       {
-        label: "Actions",
+        label: "Select",
         key: "id",
-        width: 90,
+        width: 50,
         render: (_, row) => {
           // if (row.handlingStatus === "RESOLVED") {
           //   return (
@@ -184,7 +184,7 @@ export default function FaultOrderDetailClient({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6">
         <div className="default-card p-6">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="mb-3 font-medium text-black dark:text-white">

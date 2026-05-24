@@ -201,8 +201,8 @@ export const NewExportClient = ({
         onChange={setSelectedWarehouseId}
       />
 
-      <div className="mb-6 rounded-2xl border border-gray-200 bg-white">
-        <div className="flex items-center justify-center gap-3 border-b border-gray-200 p-6 text-xl font-bold">
+      <div className="default-card mb-6">
+        <div className="flex items-center justify-center gap-3 border-b border-gray-200 p-6 text-xl font-bold dark:border-gray-800">
           <FontAwesomeIcon icon={faHandPointer} />
           <h2>Please Choose Your Type Of Export</h2>
         </div>

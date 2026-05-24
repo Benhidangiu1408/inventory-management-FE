@@ -308,7 +308,7 @@ export default function ExportConfirm() {
         <OrderSummary products={productQuantity} quantity={totalQuantity} />
         {hasStockOutPermission &&
           exportData.status !== SheetStatus.COMPLETED && (
-            <div className="rounded-2xl border border-gray-200 bg-white p-6">
+            <div className="default-card p-6">
               <h2 className="mb-4 text-lg">Confirmation</h2>
               <Button className="w-full" size="md" onClick={handleConfirmation}>
                 <FontAwesomeIcon icon={faArrowRight} /> Confirm

@@ -70,7 +70,7 @@ const WarehouseSelector = ({
   });
 
   return (
-    <div className="mb-4 rounded-2xl border border-gray-200 bg-white p-6">
+    <div className="default-card mb-4 p-6">
       <div className="flex items-center justify-center gap-3">
         <span className="font-medium">Warehouse:</span>
         <Select

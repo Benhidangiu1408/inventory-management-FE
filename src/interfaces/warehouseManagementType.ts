@@ -45,6 +45,8 @@ export interface WarehouseGeneral {
   description: string | null;
   type: WarehouseType;
   status: WarehouseStatus;
+  totalBins: number;
+  occupiedBins: number;
   // managerName: string; // Derived from backend `manager.firstName` + `last`
 }
 
@@ -110,8 +112,15 @@ export interface LocationResponse {
   name: string;
   code: string;
   type: LocationType;
+  maxLength: number;
+  maxWidth: number;
+  maxHeight: number;
+  maxVolume: number;
+  maxWeight: number;
   status: LocationStatus;
   batch: LocationBatch;
+  totalBins: number;
+  occupiedBins: number;
 }
 
 export interface LocationUpdate {
@@ -129,6 +138,10 @@ interface LevelConfig {
   type: LocationType;
   quantity: number;
   namePrefix: string | null;
+  maxLength: number | null;
+  maxWidth: number | null;
+  maxHeight: number | null;
+  maxWeight: number | null;
 }
 
 // Unit

@@ -27,7 +27,7 @@ export const WarehouseSelector = ({
 
   return (
     <div className="mb-4 space-y-4">
-      <div className="rounded-2xl border border-gray-200 bg-white p-6">
+      <div className="default-card p-6">
         <div className="flex items-center justify-center gap-3">
           <span className="font-medium">{label}</span>
           <Select
@@ -39,20 +39,20 @@ export const WarehouseSelector = ({
       </div>
 
       {selectedWarehouse && (
-        <div className="rounded-2xl border border-gray-200 bg-white p-6">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500">
+        <div className="default-card p-6">
+          <h3 className="mb-4 text-sm font-semibold tracking-wide text-gray-500 uppercase">
             Selected warehouse information
           </h3>
           <div className="grid w-full grid-cols-2 gap-6">
             <div className="w-full min-w-0">
               <span className="text-md text-gray-500">Warehouse ID</span>
-              <p className="font-medium text-gray-900">
+              <p className="font-medium text-gray-900 dark:text-white">
                 #{selectedWarehouse.id}
               </p>
             </div>
             <div className="w-full min-w-0">
               <span className="text-md text-gray-500">Warehouse name</span>
-              <p className="font-medium text-gray-900">
+              <p className="font-medium text-gray-900 dark:text-white">
                 {selectedWarehouse.name}
               </p>
             </div>

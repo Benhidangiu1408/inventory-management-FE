@@ -1,9 +1,5 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import CustomFilter from "@/components/TA_common/CustomFilter";
-import FilterItem from "@/components/TA_common/FilterItem";
-// import Filter from "@/components/TA_List/Filter";
 import List from "@/components/TA_List/List";
-import Summary from "@/components/TA_List/Summary";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ImportSheetResponse } from "@/interfaces/inboundOutboundType";
@@ -85,10 +81,6 @@ export default async function ImportPage() {
           />
         </CustomFilter>
       </div> */}
-
-      {/*<div>
-        <Summary />
-      </div>*/}
 
       <div className="default-card rounded-2xl border">
         <List type="import" data={importSheetList} />

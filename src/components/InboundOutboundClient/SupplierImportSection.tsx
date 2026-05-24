@@ -31,7 +31,7 @@ export function SupplierImportSection({
   suppliersLoading,
 }: SupplierImportSectionProps) {
   return (
-    <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6">
+    <div className="default-card mt-6 p-6">
       <h3 className="mb-4 font-semibold text-gray-800 dark:text-white/90">
         Supplier information
       </h3>

@@ -1,14 +1,6 @@
 import PageBreadcrumb from "@/default_components/common/PageBreadCrumb";
-import CustomFilter from "@/components/TA_common/CustomFilter";
-import FilterItem from "@/components/TA_common/FilterItem";
 import List from "@/components/TA_List/List";
-import Summary from "@/components/TA_List/Summary";
-import {
-  faCalendar,
-  faFilter,
-  faMagnifyingGlass,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { inboundOutboundService } from "@/services/InboundOutboundService";
 import Button from "@/default_components/ui/button/Button";
@@ -86,10 +78,6 @@ export default async function ExportPage() {
           />
         </CustomFilter>
       </div> */}
-
-      {/*<div>
-        <Summary />
-      </div>*/}
 
       <div className="rounded-2xl border">
         <List type="export" exportData={exportSheets} />
