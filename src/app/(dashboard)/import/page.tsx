@@ -86,9 +86,9 @@ export default async function ImportPage() {
         </CustomFilter>
       </div> */}
 
-      <div>
+      {/*<div>
         <Summary />
-      </div>
+      </div>*/}
 
       <div className="default-card rounded-2xl border">
         <List type="import" data={importSheetList} />

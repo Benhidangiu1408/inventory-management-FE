@@ -87,9 +87,9 @@ export default async function ExportPage() {
         </CustomFilter>
       </div> */}
 
-      <div>
+      {/*<div>
         <Summary />
-      </div>
+      </div>*/}
 
       <div className="rounded-2xl border">
         <List type="export" exportData={exportSheets} />
