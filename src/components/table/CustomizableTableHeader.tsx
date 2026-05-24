@@ -30,6 +30,7 @@ import { Role, User } from "@/interfaces/userManagementType";
 import { AssignRoleAction } from "@/actions/user";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import CircleProgressBar from "@/default_components/ui/CircleProgressBar";
 
 // --- Warehouse General Header ---
 export const warehouseHeaders: Column<WarehouseGeneral>[] = [
@@ -79,6 +80,26 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
     ),
   },
   {
+    label: "Capacity",
+    key: "totalBins",
+    filter: false,
+    render(_, row) {
+      const total = row.totalBins ?? 0;
+      const occupied = row.occupiedBins ?? 0;
+      return (
+        <div className="flex w-full items-center justify-center gap-2">
+          <CircleProgressBar
+            percent={total > 0 ? Math.round((occupied / total) * 100) : 0}
+            size={30}
+          />
+          <div className="text-gray-500">
+            {occupied} / {total} Bins
+          </div>
+        </div>
+      );
+    },
+  },
+  {
     label: "Description",
     key: "description",
     filter: "agTextColumnFilter",
@@ -108,38 +129,80 @@ export const getLocationHeaders = (
     filter: "agTextColumnFilter",
   },
   {
-    label: "Status",
+    label: "Status/Capacity",
     key: "status",
-    width: 100,
-    render: (value) => {
-      const statusColors: Record<
-        string,
-        "success" | "info" | "warning" | "error" | "light"
-      > = {
-        EMPTY: "success", // Green
-        OCCUPIED: "info", // Blue
-        RESERVED: "warning", // Orange
-        UNDER_MAINTENANCE: "warning", // Orange
-        BLOCKED: "error", // Red
-        INACTIVE: "light", // Gray
-      };
-      const color = statusColors[value as string] || "light";
-      const label = (value as string).replace(/_/g, " ");
-      return (
-        <Badge variant="solid" color={color}>
-          {label}
-        </Badge>
-      );
+    width: 200,
+    render: (value, row) => {
+      if (row.type == "BIN") {
+        const statusColors: Record<
+          string,
+          "success" | "info" | "warning" | "error" | "light"
+        > = {
+          EMPTY: "success", // Green
+          OCCUPIED: "info", // Blue
+          RESERVED: "warning", // Orange
+          UNDER_MAINTENANCE: "warning", // Orange
+          BLOCKED: "error", // Red
+          INACTIVE: "light", // Gray
+        };
+        const color = statusColors[value as string] || "light";
+        const label = (value as string).replace(/_/g, " ");
+        return (
+          <Badge variant="solid" color={color}>
+            {label}
+          </Badge>
+        );
+      } else {
+        const total = row.totalBins ?? 0;
+        const occupied = row.occupiedBins ?? 0;
+        return (
+          <div className="flex w-full items-center justify-center gap-2">
+            <CircleProgressBar
+              percent={total > 0 ? Math.round((occupied / total) * 100) : 0}
+              size={30}
+            />
+            <div className="text-gray-500">
+              {occupied} / {total} Bins
+            </div>
+          </div>
+        );
+      }
+    },
+  },
+  {
+    label: "Max Size",
+    key: "maxVolume",
+    width: 200,
+    filter: "agTextColumnFilter",
+    valueGetter: (row) =>
+      row.type === "BIN"
+        ? `${row.maxLength}x${row.maxWidth}x${row.maxHeight}cm | ${row.maxWeight}kg`
+        : "",
+    render: (_, row) => {
+      if (row.type === "BIN") {
+        return (
+          <span className="text-sm text-gray-400">
+            {row.maxLength}x{row.maxWidth}x{row.maxHeight}cm | {row.maxWeight}kg
+          </span>
+        );
+      } else {
+        return null;
+      }
     },
   },
   {
     label: "Inventory",
     key: "batch",
-    filter: false, // Filtering on nested objects requires a custom AG Grid filter, so we disable standard text filter here
+    filter: "agTextColumnFilter",
+    valueGetter: (row) =>
+      row.batch ? `${row.batch.productName} ${row.batch.code}` : "",
     sortable: false,
     width: 250,
-    render: (val) => {
-      const batch = val as LocationBatch | null | undefined;
+    render: (_, row) => {
+      if (row.type !== "BIN") {
+        return null;
+      }
+      const batch = row.batch as LocationBatch | null | undefined;
 
       // If the location is empty, show a soft placeholder
       if (!batch) {
@@ -543,54 +606,71 @@ export const faultOrderHeader: Column<FaultOrderSummary>[] = [
     render: (value, row) => `${row.warehouseName} (${value})`,
   },
   {
-    label: "Date",
-    key: "createdAt",
-    filter: "agDateColumnFilter",
-    width: 100,
+    label: "Source",
+    key: "referenceSheetType",
+    width: 200,
     render(value) {
-      if (!value) return "";
-      return new Date(value as string).toLocaleDateString("en-GB");
+      return (
+        <div className="capitalize">
+          {value?.toString().replace("_", " ").toLowerCase()}
+        </div>
+      );
     },
   },
   {
-    label: "Analyzer",
-    key: "analyzerUsername",
-    filter: "agTextColumnFilter",
-    render: (value) =>
-      value ? (
-        <span className="text-gray-800 dark:text-white/90">
-          {value as string}
+    label: "Date",
+    key: "createdAt",
+    filter: "agDateColumnFilter",
+    render(value) {
+      const safeDateString = (value as string).endsWith("Z")
+        ? value
+        : `${value}Z`;
+      return (
+        <span>
+          {format(parseISO(safeDateString as string), "MMM d, yyyy h:mm:ss a")}
         </span>
-      ) : (
-        <span className="text-xs text-gray-400 italic">Unassigned</span>
-      ),
+      );
+    },
   },
-  {
-    label: "Assignee",
-    key: "taskAssigneeUsername",
-    filter: "agTextColumnFilter",
-    render: (value) =>
-      value ? (
-        <span className="text-gray-800 dark:text-white/90">
-          {value as string}
-        </span>
-      ) : (
-        <span className="text-xs text-gray-400 italic">Unassigned</span>
-      ),
-  },
-  {
-    label: "Questioner",
-    key: "questionCreatorUsername",
-    filter: "agTextColumnFilter",
-    render: (value) =>
-      value ? (
-        <span className="text-gray-800 dark:text-white/90">
-          {value as string}
-        </span>
-      ) : (
-        <span className="text-xs text-gray-400 italic">Unassigned</span>
-      ),
-  },
+  // {
+  //   label: "Analyzer",
+  //   key: "analyzerUsername",
+  //   filter: "agTextColumnFilter",
+  //   render: (value) =>
+  //     value ? (
+  //       <span className="text-gray-800 dark:text-white/90">
+  //         {value as string}
+  //       </span>
+  //     ) : (
+  //       <span className="text-xs text-gray-400 italic">Unassigned</span>
+  //     ),
+  // },
+  // {
+  //   label: "Assignee",
+  //   key: "taskAssigneeUsername",
+  //   filter: "agTextColumnFilter",
+  //   render: (value) =>
+  //     value ? (
+  //       <span className="text-gray-800 dark:text-white/90">
+  //         {value as string}
+  //       </span>
+  //     ) : (
+  //       <span className="text-xs text-gray-400 italic">Unassigned</span>
+  //     ),
+  // },
+  // {
+  //   label: "Questioner",
+  //   key: "questionCreatorUsername",
+  //   filter: "agTextColumnFilter",
+  //   render: (value) =>
+  //     value ? (
+  //       <span className="text-gray-800 dark:text-white/90">
+  //         {value as string}
+  //       </span>
+  //     ) : (
+  //       <span className="text-xs text-gray-400 italic">Unassigned</span>
+  //     ),
+  // },
   {
     label: "Status",
     key: "status",
@@ -644,8 +724,26 @@ export const detailFaultBatchColumns: Column<FaultBatch>[] = [
     label: "Date",
     key: "createdAt",
     filter: "agDateColumnFilter",
-    render: (value) =>
-      value ? new Date(value as string).toLocaleDateString("en-GB") : "-",
+    width: 200,
+    render: (value) => {
+      const safeDateString = (value as string).endsWith("Z")
+        ? value
+        : `${value}Z`;
+      return (
+        <span>
+          {format(parseISO(safeDateString as string), "MMM d, yyyy h:mm:ss a")}
+        </span>
+      );
+    },
+  },
+  {
+    label: "Initial Reason",
+    key: "initialReason",
+    filter: "agTextColumnFilter",
+    width: 200,
+    autoHeight: true,
+    render: (val) =>
+      (val as string) || <span className="text-gray-400 italic">None</span>,
   },
   {
     label: "Status",
@@ -704,8 +802,16 @@ export const detailAssignedFaultBatchColumns: Column<FaultBatch>[] = [
     label: "Date",
     key: "createdAt",
     filter: "agDateColumnFilter",
-    render: (value) =>
-      value ? new Date(value as string).toLocaleDateString("en-GB") : "-",
+    render: (value) => {
+      const safeDateString = (value as string).endsWith("Z")
+        ? value
+        : `${value}Z`;
+      return (
+        <span>
+          {format(parseISO(safeDateString as string), "MMM d, yyyy h:mm:ss a")}
+        </span>
+      );
+    },
   },
   {
     label: "Status",

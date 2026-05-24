@@ -145,7 +145,7 @@ export default function CreateImportPage() {
           <Select options={[]} onChange={() => {}} />
         </ComponentCard> */}
 
-        <div className="rounded-2xl border border-[#E4E7EC] bg-white">
+        <div className="default-card">
           <CustomFilter>
             <FilterItem
               type="input"

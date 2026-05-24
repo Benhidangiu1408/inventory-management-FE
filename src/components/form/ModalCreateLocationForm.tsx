@@ -44,6 +44,10 @@ interface LevelConfigFormValues {
   mode: "create" | "select";
   quantity?: number; // Create mode only
   namePrefix?: string | null; // Create mode only
+  maxLength?: number;
+  maxWidth?: number;
+  maxHeight?: number;
+  maxWeight?: number;
   selectedId?: string; // Select mode only
 }
 interface ConfigLevelArrayData {
@@ -122,6 +126,20 @@ const CreateForm = ({
             type: level.type,
             quantity: level.quantity || 1,
             namePrefix: level.namePrefix || null,
+            maxLength:
+              level.maxLength && !isNaN(level.maxLength)
+                ? level.maxLength
+                : null,
+            maxWidth:
+              level.maxWidth && !isNaN(level.maxWidth) ? level.maxWidth : null,
+            maxHeight:
+              level.maxHeight && !isNaN(level.maxHeight)
+                ? level.maxHeight
+                : null,
+            maxWeight:
+              level.maxWeight && !isNaN(level.maxWeight)
+                ? level.maxWeight
+                : null,
           });
         }
       }
@@ -332,6 +350,83 @@ const LevelRow = ({
                   hint={rowErrors?.quantity?.message}
                 />
               </div>
+              {/* Row 2: Dimensions and Capacity (ONLY SHOW FOR BIN) */}
+              {myType === "BIN" && (
+                <>
+                  <div>
+                    <Label className="mb-2">Max Length (cm)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="e.g. 200"
+                      {...register(`uiLevels.${index}.maxLength`, {
+                        valueAsNumber: true,
+                        min: { value: 1, message: "Minimum of 1" },
+                        max: {
+                          value: 9999.99,
+                          message: "The maximum is 9999.99",
+                        },
+                      })}
+                      error={!!rowErrors?.maxLength}
+                      hint={rowErrors?.maxLength?.message}
+                    />
+                  </div>
+                  <div>
+                    <Label className="mb-2">Max Width (cm)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="e.g. 100"
+                      {...register(`uiLevels.${index}.maxWidth`, {
+                        valueAsNumber: true,
+                        min: { value: 1, message: "Minimum of 1" },
+                        max: {
+                          value: 9999.99,
+                          message: "The maximum is 9999.99",
+                        },
+                      })}
+                      error={!!rowErrors?.maxWidth}
+                      hint={rowErrors?.maxWidth?.message}
+                    />
+                  </div>
+                  <div>
+                    <Label className="mb-2">Max Height (cm)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="e.g. 150"
+                      {...register(`uiLevels.${index}.maxHeight`, {
+                        valueAsNumber: true,
+                        min: { value: 1, message: "Minimum of 1" },
+                        max: {
+                          value: 9999.99,
+                          message: "The maximum is 9999.99",
+                        },
+                      })}
+                      error={!!rowErrors?.maxHeight}
+                      hint={rowErrors?.maxHeight?.message}
+                    />
+                  </div>
+                  <div>
+                    <Label className="mb-2">Max Weight (kg)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="e.g. 500"
+                      {...register(`uiLevels.${index}.maxWeight`, {
+                        valueAsNumber: true,
+                        min: { value: 1, message: "Minimum of 1" },
+                        max: {
+                          value: 999999.99,
+                          message: "The maximum is 999999.99",
+                        },
+                      })}
+                      error={!!rowErrors?.maxWeight}
+                      hint={rowErrors?.maxWeight?.message}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
