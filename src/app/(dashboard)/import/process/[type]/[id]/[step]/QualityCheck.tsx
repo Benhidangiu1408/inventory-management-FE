@@ -10,12 +10,14 @@ import CustomizableTable, {
 import { faCircleCheck, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQualityCheck } from "@/context/QualityCheckContext";
+import { useImport } from "@/context/ImportContext";
 import Select, { Option } from "@/default_components/form/Select";
 import {
   QCSheetDetailStatus,
   QCSheetUpdateReq,
 } from "@/interfaces/inboundOutboundType";
 import { useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import toast from "react-hot-toast";
 import { Loading } from "@/components/TA_common/Loading";
@@ -27,8 +29,11 @@ import { ApiError } from "next/dist/server/api-utils";
 
 export default function QualityCheckPage() {
   const { qcData, setQCData, isDirty, setIsDirty } = useQualityCheck();
+  const { importData } = useImport();
   const { confirm, ConfirmationModal } = useConfirmModal();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const isCompleted = importData.status === SheetStatus.COMPLETED;
   const { user } = useAuth();
   const hasStockInPermission = user?.permissions.includes(
     UserPermissions.STOCK_IN,
@@ -37,6 +42,11 @@ export default function QualityCheckPage() {
   const isCreated = qcData?.status === SheetStatus.CREATED;
 
   const handleOpenConfirmModal = async () => {
+    if (rows.length === 0) {
+      toast.error("Nothing to save");
+      return;
+    }
+
     try {
       const isConfirmed = await confirm({
         title: "Confirm Quality Check",
@@ -123,7 +133,7 @@ export default function QualityCheckPage() {
             }
             value={value}
             className="h-[38px]"
-            // disabled={!hasStockInPermission || !isCreated}
+            disabled={isCompleted}
             onChange={(e) =>
               updateRows(row.detailId, {
                 qualityStatus: e.target.value as QCSheetDetailStatus,
@@ -139,7 +149,7 @@ export default function QualityCheckPage() {
           <Input
             className="h-[35px]"
             defaultValue={value}
-            // disabled={!hasStockInPermission || !isCreated}
+            disabled={isCompleted}
             onBlur={(e) =>
               updateRows(row.detailId, {
                 reason: e.target.value,
@@ -155,7 +165,7 @@ export default function QualityCheckPage() {
           <Input
             className="h-[35px]"
             defaultValue={value}
-            // disabled={!hasStockInPermission || !isCreated}
+            disabled={isCompleted}
             onBlur={(e) =>
               updateRows(row.detailId, {
                 notes: e.target.value,
@@ -232,6 +242,7 @@ export default function QualityCheckPage() {
     setIsDirty(false);
 
     toast.success("Quality Check Successfully");
+    router.refresh();
   };
 
   return (
@@ -252,7 +263,7 @@ export default function QualityCheckPage() {
           <div className="flex justify-end">
             <Button
               onClick={handleOpenConfirmModal}
-              // disabled={!hasStockInPermission || !isCreated}
+              disabled={isCompleted}
               className={isDirty ? "bg-warning-500 hover:bg-warning-600" : ""}
             >
               {isDirty && <FontAwesomeIcon icon={faTriangleExclamation} className="mr-1" />}Save

@@ -10,6 +10,7 @@ import { ProductTempRow } from "../../interfaces/interface.table";
 import { Column } from "../table/CustomizableTable";
 import AsyncAccordionTable from "../table/AsyncAccordionTable";
 import {
+  AttributeResponse,
   BatchResponse,
   ExportSheetDetailCreateReq,
   ExportSheetDetailUpdateReq,
@@ -60,6 +61,7 @@ export default function ExportProductListInfoBox({
       description: detail.productVariant.description,
       expectedQuantity: detail.expectedQuantity ?? 0,
       unit: detail.unit ?? detail.productVariant.product.baseUnit,
+      attributes: detail.productVariant.attributes ?? [],
     }),
   );
 
@@ -101,6 +103,29 @@ export default function ExportProductListInfoBox({
       {
         key: "description",
         label: "Description",
+      },
+      {
+        key: "attributes",
+        label: "Attributes",
+        filter: false,
+        render: (attrs) => {
+          const attributeArray = attrs as AttributeResponse[];
+          if (!Array.isArray(attributeArray) || attributeArray.length === 0)
+            return <span className="text-gray-400 italic">Default</span>;
+          return (
+            <div className="flex h-full w-full flex-wrap items-center justify-center gap-1 py-1">
+              {attributeArray.map((attr) => (
+                <span
+                  key={attr.id}
+                  className="inline-flex items-center rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+                >
+                  <span className="mr-1 font-semibold">{attr.name}:</span>{" "}
+                  {attr.value}
+                </span>
+              ))}
+            </div>
+          );
+        },
       },
       {
         key: "expectedQuantity",

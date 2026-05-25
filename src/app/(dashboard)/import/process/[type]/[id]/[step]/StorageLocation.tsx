@@ -245,6 +245,11 @@ export default function StorageLocationPage() {
   };
 
   const handleOpenConfirmModal = async () => {
+    if (storagePassData.length === 0 && storageFailData.length === 0) {
+      toast.error("Nothing to save");
+      return;
+    }
+
     const hasUnassigned = importData.details.some(
       (detail) => detail.batch && !detail.batch.location,
     );

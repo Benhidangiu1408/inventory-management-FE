@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import {
+  AttributeResponse,
   ImportSheetDetailMappingStatus,
   QCSheetDetailStatus,
   UnitConversionResponse,
@@ -52,6 +53,7 @@ export interface ProductTempRow {
   length?: number;
   width?: number;
   height?: number;
+  attributes: AttributeResponse[];
 }
 
 export interface QuantityCheckRow {
@@ -113,6 +115,7 @@ export interface ImportCreateRow {
   length?: number | string;
   width?: number | string;
   height?: number | string;
+  attributes: AttributeResponse[];
 }
 
 export interface ExportCreateRow {
@@ -125,6 +128,7 @@ export interface ExportCreateRow {
   unitConversions: UnitConversionResponse[];
   pickQuantity: number | string;
   stockQuantity: number;
+  attributes: AttributeResponse[];
 }
 
 export interface ExportQuantityCheckRow {

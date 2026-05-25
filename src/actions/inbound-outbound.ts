@@ -244,6 +244,10 @@ export async function getBatchesByProductVariantId(productVariantId: number) {
   );
 }
 
+export async function deleteExportSheetItem(exportSheetItemId: number) {
+  return await inboundOutboundService.deleteExportSheetItem(exportSheetItemId);
+}
+
 export async function getBarcodeFromActiveBatchWithLocation(
   productVariantId: number,
 ) {

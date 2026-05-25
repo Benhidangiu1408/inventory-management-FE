@@ -38,6 +38,7 @@ export default function ImportProcessPage() {
 
   const [loading, setLoading] = useState(false);
   const isCreated = importData.status === SheetStatus.CREATED;
+  const isCompleted = importData.status === SheetStatus.COMPLETED;
 
   const rows: QuantityCheckRow[] = importData.details.map((detail) => ({
     detailId: detail.id,
@@ -91,6 +92,11 @@ export default function ImportProcessPage() {
   };
 
   const handleOpenConfirmModal = async () => {
+    if (rows.length === 0) {
+      toast.error("Nothing to save");
+      return;
+    }
+
     const isConfirmed = await confirm({
       title: "Confirm Quantity Check",
       message:
@@ -140,7 +146,7 @@ export default function ImportProcessPage() {
             className="h-[35px]"
             defaultValue={value}
             type="number"
-            // disabled={!hasStockInPermission || !isCreated}
+            disabled={isCompleted}
             onBlur={(e) => {
               const newValue = Number(e.target.value);
               if (newValue === row.actualQuantity) return;
@@ -175,7 +181,7 @@ export default function ImportProcessPage() {
           <Input
             defaultValue={value}
             className="h-[35px]"
-            // disabled={!hasStockInPermission || !isCreated}
+            disabled={isCompleted}
             onBlur={(e) => {
               if (e.target.value === row.reason) return;
               updateRow(row.detailId, { reason: e.target.value });
@@ -204,7 +210,7 @@ export default function ImportProcessPage() {
           <div className="flex justify-end">
             <Button
               onClick={handleOpenConfirmModal}
-              // disabled={!hasStockInPermission || !isCreated}
+              disabled={isCompleted}
               className={isDirty ? "bg-warning-500 hover:bg-warning-600" : ""}
             >
               {isDirty && <FontAwesomeIcon icon={faTriangleExclamation} className="mr-1" />}Save

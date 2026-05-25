@@ -10,7 +10,10 @@ import {
 import CustomizableTable, { Column } from "../table/CustomizableTable";
 import Input from "../../default_components/form/input/InputField";
 import Checkbox from "../../default_components/form/input/Checkbox";
-import { ProductVariantStockResponse } from "@/interfaces/inboundOutboundType";
+import {
+  AttributeResponse,
+  ProductVariantStockResponse,
+} from "@/interfaces/inboundOutboundType";
 import Select from "@/default_components/form/Select";
 
 type ExportCreateModalProps = {
@@ -34,6 +37,7 @@ export default function ExportCreateModal({
     unitConversions: variant.product.unitConversions,
     pickQuantity: "",
     stockQuantity: variant.stockQuantity,
+    attributes: variant.attributes ?? [],
   }));
 
   const [data, setData] = useState<ExportCreateRow[]>(variants ?? []);
@@ -41,9 +45,18 @@ export default function ExportCreateModal({
   useEffect(() => {
     const checkedItems = data.filter((item) => item.checkBox);
 
-    const invalidItems = checkedItems.filter(
-      (item) => item.pickQuantity === "" || Number(item.pickQuantity) <= 0,
-    );
+    const invalidItems = checkedItems.filter((item) => {
+      if (item.pickQuantity === "" || Number(item.pickQuantity) <= 0)
+        return true;
+      const conversion = item.unitConversions.find(
+        (c) => c.fromUnit.id === item.unitId,
+      );
+      const effectiveStock =
+        item.unitId === item.unit.id || !conversion
+          ? item.stockQuantity
+          : Math.floor(item.stockQuantity / conversion.conversionRate);
+      return Number(item.pickQuantity) > effectiveStock;
+    });
 
     onHasInvalidChange?.(invalidItems.length > 0);
 
@@ -65,6 +78,7 @@ export default function ExportCreateModal({
             : (selectedItem.unitConversions.find(
                 (c) => c.fromUnit.id === selectedItem.unitId,
               )?.fromUnit ?? selectedItem.unit),
+        attributes: selectedItem.attributes,
       }));
 
     onSelectedProductsChange(selected);
@@ -133,6 +147,29 @@ export default function ExportCreateModal({
         key: "description",
       },
       {
+        label: "Attributes",
+        key: "attributes",
+        filter: false,
+        render: (attrs) => {
+          const attributeArray = attrs as AttributeResponse[];
+          if (!Array.isArray(attributeArray) || attributeArray.length === 0)
+            return <span className="text-gray-400 italic">Default</span>;
+          return (
+            <div className="flex h-full w-full flex-wrap items-center justify-center gap-1 py-1">
+              {attributeArray.map((attr) => (
+                <span
+                  key={attr.id}
+                  className="inline-flex items-center rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+                >
+                  <span className="mr-1 font-semibold">{attr.name}:</span>{" "}
+                  {attr.value}
+                </span>
+              ))}
+            </div>
+          );
+        },
+      },
+      {
         label: "Unit",
         key: "unitId",
         render: (_, row) => (
@@ -156,20 +193,61 @@ export default function ExportCreateModal({
       {
         label: "Stock Quantity",
         key: "stockQuantity",
+        valueGetter: (row) => {
+          if (row.unitId === row.unit.id) return row.stockQuantity;
+          const conversion = row.unitConversions.find(
+            (c) => c.fromUnit.id === row.unitId,
+          );
+          if (!conversion) return row.stockQuantity;
+          return Math.floor(row.stockQuantity / conversion.conversionRate);
+        },
+        render: (value, row) => {
+          const unitAbb =
+            row.unitId === row.unit.id
+              ? row.unit.abb
+              : (row.unitConversions.find((c) => c.fromUnit.id === row.unitId)
+                  ?.fromUnit.abb ?? row.unit.abb);
+          return (
+            <span>
+              {value as number}{" "}
+              <span className="text-xs text-gray-500">{unitAbb}</span>
+            </span>
+          );
+        },
       },
       {
         label: "Pick Quantity",
         key: "pickQuantity",
-        render: (_, row) => (
-          <Input
-            type="number"
-            className="h-[35px]"
-            value={String(row.pickQuantity || "")}
-            onChange={(e) =>
-              handlePickQuantityChange(row.productId, e.target.value)
-            }
-          />
-        ),
+        autoHeight: true,
+        render: (_, row) => {
+          const conversion = row.unitConversions.find(
+            (c) => c.fromUnit.id === row.unitId,
+          );
+          const effectiveStock =
+            row.unitId === row.unit.id || !conversion
+              ? row.stockQuantity
+              : Math.floor(row.stockQuantity / conversion.conversionRate);
+          const isExceeded =
+            row.pickQuantity !== "" &&
+            Number(row.pickQuantity) > effectiveStock;
+          return (
+            <div className="flex flex-col gap-1">
+              <Input
+                type="number"
+                className={`h-[35px] ${isExceeded ? "border-red-500" : ""}`}
+                value={String(row.pickQuantity || "")}
+                onChange={(e) =>
+                  handlePickQuantityChange(row.productId, e.target.value)
+                }
+              />
+              {isExceeded && (
+                <span className="text-xs text-red-500">
+                  Exceeds stock ({effectiveStock})
+                </span>
+              )}
+            </div>
+          );
+        },
       },
     ],
     [handleCheckboxChange, handlePickQuantityChange, handleUnitChange],

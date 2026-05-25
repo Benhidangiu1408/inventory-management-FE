@@ -328,6 +328,13 @@ export const inboundOutboundService = {
     );
   },
 
+  deleteExportSheetItem: async (exportSheetItemId: number) => {
+    return await apiClient.delete<{ message: string }>(
+      `/inbound-outbound/v1/export-sheet/detail/item/${exportSheetItemId}`,
+      {},
+    );
+  },
+
   getBarcodeFromActiveBatchWithLocation: async (productVariantId: number) => {
     const res = await apiClient.get<{ message: string; data: string }>(
       `/inbound-outbound/v1/items/active-batch/barcode?productVariantId=${productVariantId}`,

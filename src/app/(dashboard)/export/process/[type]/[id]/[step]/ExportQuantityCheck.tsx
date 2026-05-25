@@ -20,15 +20,17 @@ import {
   faEye,
   faSpinner,
   faRobot,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useExport } from "@/context/ExportContext";
 import { useState } from "react";
 import {
   getBarcodeFromActiveBatchWithLocation,
   getExportedItemsByBatchId,
   updateExportSheetDetail,
+  deleteExportSheetItem,
 } from "@/actions/inbound-outbound";
 import toast from "react-hot-toast";
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
@@ -38,6 +40,7 @@ import { UserPermissions } from "@/interfaces/userManagementType";
 export default function ExportQuantityCheck() {
   const params = useParams();
   const { type, id } = params;
+  const router = useRouter();
   const { exportData, setExportData } = useExport();
   const isRejected = exportData.status === SheetStatus.REJECTED;
   const { user } = useAuth();
@@ -52,11 +55,64 @@ export default function ExportQuantityCheck() {
   const [items, setItems] = useState<ExportItemModalRow[]>([]);
   const [loadingBatchId, setLoadingBatchId] = useState<number | null>(null);
   const [autoScanLoading, setAutoScanLoading] = useState(false);
+  const [deletingItemId, setDeletingItemId] = useState<number | null>(null);
+
+  const handleDeleteItem = async (exportSheetItemId: number) => {
+    setDeletingItemId(exportSheetItemId);
+    try {
+      await deleteExportSheetItem(exportSheetItemId);
+      setItems((prev) => prev.filter((i) => i.id !== exportSheetItemId));
+      if (viewItemsRow) {
+        setExportData((prev) => ({
+          ...prev,
+          details: prev.details.map((detail) => {
+            if (detail.id !== viewItemsRow.detailId) return detail;
+            return {
+              ...detail,
+              batches: detail.batches.map((b) => {
+                if (b.batch.id !== viewItemsRow.batchId) return b;
+                return { ...b, quantity: (b.quantity ?? 0) - 1 };
+              }),
+            };
+          }),
+        }));
+      }
+      toast.success("Item removed successfully");
+      setViewItemsRow(null);
+      setItems([]);
+      router.refresh();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to remove item");
+    } finally {
+      setDeletingItemId(null);
+    }
+  };
 
   const itemModalColumns: Column<ExportItemModalRow>[] = [
     { key: "itemId", label: "Item ID" },
     { key: "barcode", label: "Barcode" },
     { key: "serialNumber", label: "Serial Number" },
+    {
+      key: "id",
+      label: "Action",
+      render: (_, row) => {
+        const isDeleting = deletingItemId === row.id;
+        return (
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-red-500 hover:text-red-700"
+            disabled={isDeleting || isRejected}
+            onClick={() => handleDeleteItem(row.id)}
+          >
+            <FontAwesomeIcon
+              icon={isDeleting ? faSpinner : faTrash}
+              className={isDeleting ? "animate-spin" : ""}
+            />
+          </Button>
+        );
+      },
+    },
   ];
 
   const subTableColumns: Column<ExportQuantityCheckRow>[] = [

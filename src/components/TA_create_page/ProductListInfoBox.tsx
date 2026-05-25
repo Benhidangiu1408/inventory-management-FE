@@ -9,6 +9,7 @@ import CreateModal from "./CreateModal";
 import { ProductTempRow } from "../../interfaces/interface.table";
 import CustomizableTable, { Column } from "../table/CustomizableTable";
 import {
+  AttributeResponse,
   ImportSheetDetailCreateReq,
   ImportSheetDetailUpdateReq,
   ImportSheetType,
@@ -66,6 +67,7 @@ export default function ProductListInfoBox({
       length: detail.length,
       width: detail.width,
       height: detail.height,
+      attributes: detail.productVariant.attributes ?? [],
     }),
   );
 
@@ -74,7 +76,8 @@ export default function ProductListInfoBox({
   );
   const [hasInvalidSelection, setHasInvalidSelection] = useState(false);
 
-  const canDelete = step === "quantity-check";
+  const isCompleted = importData.status === SheetStatus.COMPLETED;
+  const canDelete = step === "quantity-check" && !isCompleted;
 
   const productTempColumn: Column<ProductTempRow>[] = [
     {
@@ -84,6 +87,29 @@ export default function ProductListInfoBox({
     {
       key: "description",
       label: "Description",
+    },
+    {
+      key: "attributes",
+      label: "Attributes",
+      filter: false,
+      render: (attrs) => {
+        const attributeArray = attrs as AttributeResponse[];
+        if (!Array.isArray(attributeArray) || attributeArray.length === 0)
+          return <span className="text-gray-400 italic">Default</span>;
+        return (
+          <div className="flex h-full w-full flex-wrap items-center justify-center gap-1 py-1">
+            {attributeArray.map((attr) => (
+              <span
+                key={attr.id}
+                className="inline-flex items-center rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+              >
+                <span className="mr-1 font-semibold">{attr.name}:</span>{" "}
+                {attr.value}
+              </span>
+            ))}
+          </div>
+        );
+      },
     },
     {
       key: "expectedQuantity",
@@ -274,7 +300,10 @@ export default function ProductListInfoBox({
             //   importData.type !== ImportSheetType.EXTERNAL_SUPPLIER &&
             //   importData.type !== ImportSheetType.INTERNAL
             // }
-            showAddButton={step === "quantity-check"}
+            showAddButton={
+              step === "quantity-check" &&
+              importData.status !== SheetStatus.COMPLETED
+            }
             startIcon={<FontAwesomeIcon icon={faPlus} />}
             width={"max-w-[1200px]"}
             btnName="Add"
