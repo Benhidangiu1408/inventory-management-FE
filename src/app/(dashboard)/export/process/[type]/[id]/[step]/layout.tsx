@@ -29,7 +29,7 @@ export default async function ExportProcessLayout({
 }>) {
   const { type, id, step } = await params;
 
-  const productVariants = await inboundOutboundService.getProductVariants();
+  const productVariants = await inboundOutboundService.getProductVariantsInStock();
   const exportSheetDetail = await inboundOutboundService.getExportSheetById(id);
 
   const cookieStore = await cookies();

@@ -17,6 +17,7 @@ import {
   ItemResponse,
   LocationResponse,
   ProductVariantResponse,
+  ProductVariantStockResponse,
   QCSheetResponse,
   QCSheetUpdateReq,
   BatchResponse,
@@ -65,6 +66,15 @@ export const inboundOutboundService = {
   getProductVariants: async () => {
     return await apiClient.get<ProductVariantResponse[]>(
       "/inbound-outbound/v1/product-variants",
+      {
+        cache: "no-cache",
+      },
+    );
+  },
+
+  getProductVariantsInStock: async () => {
+    return await apiClient.get<ProductVariantStockResponse[]>(
+      "/inbound-outbound/v1/product-variants/in-stock",
       {
         cache: "no-cache",
       },
@@ -308,6 +318,13 @@ export const inboundOutboundService = {
   ) => {
     return await apiClient.get<ItemResponse>(
       `/inbound-outbound/v1/items/${exportSheetId}/${productVariantId}`,
+    );
+  },
+
+  getBatchesByProductVariantId: async (productVariantId: number) => {
+    return await apiClient.get<BatchResponse[]>(
+      `/inbound-outbound/v1/batches/product-variant/${productVariantId}`,
+      { cache: "no-cache" },
     );
   },
 

@@ -140,6 +140,8 @@ export default function ProductListInfoBox({
             onBlur={async (e) => {
               const value =
                 e.target.value === "" ? undefined : Number(e.target.value);
+              const original = row[field] as number | undefined;
+              if (value === original) return;
               const data: ImportSheetDetailUpdateReq = {
                 productVariantId: row.id,
                 unitId: row.unit.id,

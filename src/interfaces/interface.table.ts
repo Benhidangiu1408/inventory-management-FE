@@ -115,6 +115,18 @@ export interface ImportCreateRow {
   height?: number | string;
 }
 
+export interface ExportCreateRow {
+  checkBox: boolean;
+  productId: string;
+  name: string;
+  description: string;
+  unit: UnitResponse;
+  unitId: number;
+  unitConversions: UnitConversionResponse[];
+  pickQuantity: number | string;
+  stockQuantity: number;
+}
+
 export interface ExportQuantityCheckRow {
   detailId: number;
   batchId: number;

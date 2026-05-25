@@ -1,5 +1,9 @@
 import { SheetStatus } from "@/interfaces/inventoryManagementType";
-import { BatchStatus, LocationStatus, LocationType } from "./warehouseManagementType";
+import {
+  BatchStatus,
+  LocationStatus,
+  LocationType,
+} from "./warehouseManagementType";
 
 export enum CustomerStatus {
   ACTIVE = "ACTIVE",
@@ -124,11 +128,23 @@ export interface ProductRepsonse {
   unitConversions: UnitConversionResponse[];
 }
 
+export interface AttributeResponse {
+  id: number;
+  name: string;
+  description: string;
+  value: string;
+}
+
 export interface ProductVariantResponse {
   id: number;
   description: string;
   code: string;
   product: ProductRepsonse;
+  attributes: AttributeResponse[];
+}
+
+export interface ProductVariantStockResponse extends ProductVariantResponse {
+  stockQuantity: number;
 }
 
 export interface LocationResponse {
@@ -154,6 +170,7 @@ export interface BatchResponse {
   id: number;
   code: string;
   initialQuantity: number;
+  baseQuantity: number;
   location: LocationResponse;
   productVariant: ProductVariantResponse;
   unit: UnitResponse;

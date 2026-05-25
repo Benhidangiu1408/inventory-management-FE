@@ -57,6 +57,8 @@ export default async function ImportProcessLayout({
   const productVariants: ProductVariantResponse[] =
     await inboundOutboundService.getProductVariants();
 
+  console.log(productVariants);
+
   const title =
     type === "SUPPLIER".toLowerCase()
       ? "Supplier Information"

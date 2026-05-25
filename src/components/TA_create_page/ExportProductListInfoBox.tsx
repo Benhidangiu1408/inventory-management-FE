@@ -1,17 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import InfoBox from "./InfoBox";
 import { faCube, faPlus } from "@fortawesome/free-solid-svg-icons";
 import CustomContentModalBox from "../modal/CustomContentModalBox";
-import CreateModal from "./CreateModal";
+import ExportCreateModal from "./ExportCreateModal";
 import { ProductTempRow } from "../../interfaces/interface.table";
-import CustomizableTable, { Column } from "../table/CustomizableTable";
+import { Column } from "../table/CustomizableTable";
+import AsyncAccordionTable from "../table/AsyncAccordionTable";
 import {
+  BatchResponse,
   ExportSheetDetailCreateReq,
   ExportSheetDetailUpdateReq,
-  ProductVariantResponse,
+  ProductVariantStockResponse,
 } from "@/interfaces/inboundOutboundType";
 import { useExport } from "@/context/ExportContext";
 import toast from "react-hot-toast";
@@ -20,6 +22,7 @@ import { useParams } from "next/navigation";
 import {
   createExportSheetDetail,
   deleteExportSheetDetail,
+  getBatchesByProductVariantId,
   updateExportSheetDetail,
 } from "@/actions/inbound-outbound";
 import { ApiError } from "next/dist/server/api-utils";
@@ -28,13 +31,14 @@ import { UserPermissions } from "@/interfaces/userManagementType";
 import Button from "@/default_components/ui/button/Button";
 import { Trash } from "lucide-react";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
+import Badge from "@/default_components/ui/badge/Badge";
 
 export default function ExportProductListInfoBox({
   step = "",
   productVariants,
 }: {
   step?: string;
-  productVariants: ProductVariantResponse[];
+  productVariants: ProductVariantStockResponse[];
 }) {
   const { id } = useParams();
 
@@ -50,6 +54,7 @@ export default function ExportProductListInfoBox({
 
   const productTempData: ProductTempRow[] = exportData.details.map(
     (detail) => ({
+      detailId: detail.id,
       id: detail.productVariant.id,
       name: detail.productVariant.product.name,
       description: detail.productVariant.description,
@@ -67,53 +72,6 @@ export default function ExportProductListInfoBox({
     hasStockOutPermission &&
     step === "quantity-check" &&
     exportData.status === SheetStatus.CREATED;
-
-  const productTempColumn: Column<ProductTempRow>[] = [
-    {
-      key: "name",
-      label: "Product Name",
-    },
-    {
-      key: "description",
-      label: "Description",
-    },
-    {
-      key: "expectedQuantity",
-      label: "Expected Quantity",
-    },
-    {
-      key: "unit",
-      label: "Unit",
-      render: (_, row) => row.unit.name,
-    },
-    ...(canDelete
-      ? [
-          {
-            key: "id" as keyof ProductTempRow,
-            label: "Action",
-            render: (
-              _: ProductTempRow[keyof ProductTempRow],
-              row: ProductTempRow,
-            ) => {
-              const detail = exportData.details.find(
-                (d) => d.productVariant.id === row.id,
-              );
-              if (!detail) return null;
-              return (
-                <Button
-                  onClick={() => handleDelete(detail.id)}
-                  size="sm"
-                  variant="outline"
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <Trash size={15} />
-                </Button>
-              );
-            },
-          },
-        ]
-      : []),
-  ];
 
   const handleDelete = async (detailId: number) => {
     const ok = await confirm({
@@ -133,6 +91,88 @@ export default function ExportProductListInfoBox({
       toast.error("Failed to delete product");
     }
   };
+
+  const productTempColumn: Column<ProductTempRow>[] = useMemo(
+    () => [
+      {
+        key: "name",
+        label: "Product Name",
+      },
+      {
+        key: "description",
+        label: "Description",
+      },
+      {
+        key: "expectedQuantity",
+        label: "Expected Quantity",
+      },
+      {
+        key: "unit",
+        label: "Unit",
+        render: (_, row) => row.unit.name,
+      },
+      ...(canDelete
+        ? [
+            {
+              key: "detailId" as keyof ProductTempRow,
+              label: "Action",
+              render: (
+                _: ProductTempRow[keyof ProductTempRow],
+                row: ProductTempRow,
+              ) => (
+                <Button
+                  onClick={() => handleDelete(row.detailId)}
+                  size="sm"
+                  variant="outline"
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash size={15} />
+                </Button>
+              ),
+            },
+          ]
+        : []),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [canDelete],
+  );
+
+  const batchColumns: Column<BatchResponse>[] = useMemo(
+    () => [
+      {
+        label: "Batch Code",
+        key: "code",
+      },
+      {
+        label: "Location",
+        key: "location",
+        render: (_, row) =>
+          row.location ? `${row.location.code} — ${row.location.name}` : "—",
+      },
+      {
+        label: "Quantity",
+        key: "baseQuantity",
+      },
+      {
+        label: "Unit",
+        key: "unit",
+        render: (_, row) => row.unit?.name ?? "—",
+      },
+      {
+        label: "Status",
+        key: "status",
+        render: (_, row) => <Badge color="success">{row.status}</Badge>,
+      },
+    ],
+    [],
+  );
+
+  const getDetailRowDataFn = useCallback(
+    async (row: ProductTempRow): Promise<BatchResponse[]> => {
+      return getBatchesByProductVariantId(row.id);
+    },
+    [],
+  );
 
   const handleSave = async () => {
     if (hasInvalidSelection) {
@@ -233,7 +273,7 @@ export default function ExportProductListInfoBox({
             btnName="Add"
             onSave={handleSave}
             modalContent={
-              <CreateModal
+              <ExportCreateModal
                 productVariants={productVariants}
                 onSelectedProductsChange={setSelectedProducts}
                 onHasInvalidChange={setHasInvalidSelection}
@@ -243,9 +283,12 @@ export default function ExportProductListInfoBox({
         }
       >
         <div className="p-6">
-          <CustomizableTable<ProductTempRow>
+          <AsyncAccordionTable<ProductTempRow, BatchResponse>
             headers={productTempColumn}
             data={productTempData}
+            getDetailRowDataFn={getDetailRowDataFn}
+            subTableHeaders={batchColumns}
+            subTableGetRowId={(params) => String(params.data.id)}
             getRowId={(params) => String(params.data.id)}
           />
         </div>
