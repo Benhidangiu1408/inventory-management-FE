@@ -16,6 +16,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { getUnitHeaders } from "../table/CustomizableTableHeader";
 import CustomizableTable from "../table/CustomizableTable";
 import { UnitCreateAction, UnitUpdateAction } from "@/actions/system-info";
+import { useAuth } from "@/context/AuthContext";
 
 interface UnitFormProps {
   setLoading: (loading: boolean) => void;
@@ -127,6 +128,9 @@ const UnitForm = ({
 };
 
 export function ModalUnitForm({ data }: { data: UnitResponse[] }) {
+  const { user } = useAuth();
+  const hasCreatePerm = user?.permissions.includes("CREATE_UNIT") ?? false;
+  const hasUpdatePerm = user?.permissions.includes("UPDATE_UNIT") ?? false;
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
@@ -140,7 +144,10 @@ export function ModalUnitForm({ data }: { data: UnitResponse[] }) {
     },
     [openModal],
   );
-  const headers = useMemo(() => getUnitHeaders(handleEdit), [handleEdit]);
+  const headers = useMemo(
+    () => getUnitHeaders(handleEdit, hasUpdatePerm),
+    [handleEdit, hasUpdatePerm],
+  );
 
   return (
     <div>
@@ -152,6 +159,7 @@ export function ModalUnitForm({ data }: { data: UnitResponse[] }) {
           isLoading={loading}
           isOpen={isOpen}
           disableSaveBtn={disable}
+          showOpenBtn={hasCreatePerm}
           onOpen={() => {
             setSelectedUpdateUnit(undefined);
             openModal();

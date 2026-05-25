@@ -21,6 +21,7 @@ type ModalProps = {
   onOpen: () => void;
   onClose: () => void;
   modalContent: ReactNode;
+  showOpenBtn?: boolean;
 };
 
 export default function NoControlModalBox({
@@ -37,6 +38,7 @@ export default function NoControlModalBox({
   isOpen,
   onOpen,
   onClose,
+  showOpenBtn = true,
 }: ModalProps) {
   const handleSave = () => {
     if (onSave) onSave();
@@ -45,14 +47,16 @@ export default function NoControlModalBox({
   return (
     <div>
       {/* 1. The Trigger Button (Opens the Modal) */}
-      <Button
-        size="sm"
-        onClick={onOpen}
-        startIcon={startIcon}
-        className={btnClassName}
-      >
-        {openBtnTitle}
-      </Button>
+      {showOpenBtn && (
+        <Button
+          size="sm"
+          onClick={onOpen}
+          startIcon={startIcon}
+          className={btnClassName}
+        >
+          {openBtnTitle}
+        </Button>
+      )}
       {/* Modal */}
       <Modal
         isOpen={isOpen}

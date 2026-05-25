@@ -61,7 +61,7 @@ export default async function ProductDetailPage({
           title="General Information"
           items={generalInfoItems}
           editBtn={
-            permissions?.includes("EDIT_PRODUCT") ? (
+            permissions?.includes("UPDATE_PRODUCT") ? (
               <ModalProductUpdateForm
                 categoryData={categoryData}
                 initialData={data as ProductResponse}

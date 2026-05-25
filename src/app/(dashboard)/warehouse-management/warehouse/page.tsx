@@ -31,7 +31,7 @@ export default async function WarehousePage() {
       <div>
         <div className="default-card p-6">
           <div className="mb-6 flex justify-end px-1 pt-2">
-            {permissions?.includes("EDIT_WAREHOUSE") && (
+            {permissions?.includes("CREATE_WAREHOUSE") && (
               <Link href={`/warehouse-management/warehouse/new`}>
                 <Button
                   size="sm"

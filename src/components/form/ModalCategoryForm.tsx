@@ -26,6 +26,7 @@ import {
   categoryUpdateAction,
 } from "@/actions/system-info";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
+import { useAuth } from "@/context/AuthContext";
 
 interface CategoryFormProps {
   setLoading: (loading: boolean) => void;
@@ -149,6 +150,10 @@ const CategoryForm = ({
 };
 
 export function ModalCategoryForm({ data }: { data: Category[] }) {
+  const { user } = useAuth();
+  const hasCreatePerm = user?.permissions.includes("CREATE_CATEGORY") ?? false;
+  const hasUpdatePerm = user?.permissions.includes("UPDATE_CATEGORY") ?? false;
+  const hasDeletePerm = user?.permissions.includes("DELETE_CATEGORY") ?? false;
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(false);
@@ -194,12 +199,26 @@ export function ModalCategoryForm({ data }: { data: Category[] }) {
     [router],
   );
   const headers = useMemo(
-    () => getCategoryHeaders(handleEdit, handleDelete, disableDelete),
-    [handleEdit, handleDelete, disableDelete],
+    () =>
+      getCategoryHeaders(
+        handleEdit,
+        handleDelete,
+        disableDelete,
+        hasUpdatePerm,
+        hasDeletePerm,
+      ),
+    [handleEdit, handleDelete, disableDelete, hasUpdatePerm, hasDeletePerm],
   );
   const subheaders = useMemo(
-    () => getSubCategoryHeaders(handleEdit, handleDelete, disableDelete),
-    [handleEdit, handleDelete, disableDelete],
+    () =>
+      getSubCategoryHeaders(
+        handleEdit,
+        handleDelete,
+        disableDelete,
+        hasUpdatePerm,
+        hasDeletePerm,
+      ),
+    [handleEdit, handleDelete, disableDelete, hasUpdatePerm, hasDeletePerm],
   );
 
   return (
@@ -213,6 +232,7 @@ export function ModalCategoryForm({ data }: { data: Category[] }) {
           isLoading={loading}
           isOpen={isOpen}
           disableSaveBtn={disable}
+          showOpenBtn={hasCreatePerm}
           onOpen={() => {
             setSelectedCategory(undefined);
             openModal();

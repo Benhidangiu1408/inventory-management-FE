@@ -41,18 +41,18 @@ export async function proxy(request: NextRequest) {
     // --- Catalog ---
     {
       pattern: /^\/catalog\/category(\/.*)?$/,
-      permissions: ["MANAGE_CATEGORY", "SUPER_ADMIN"],
+      permissions: ["VIEW_CATEGORY"],
     },
-    { pattern: /^\/catalog\/unit(\/.*)?$/, permissions: ["MANAGE_UNIT"] },
+    { pattern: /^\/catalog\/unit(\/.*)?$/, permissions: ["VIEW_UNIT"] },
     {
       pattern: /^\/catalog\/variant-attributes(\/.*)?$/,
-      permissions: ["MANAGE_ATTR"],
+      permissions: ["VIEW_ATTR"],
     },
 
     // --- Catalog: Products ---
     {
       pattern: /^\/catalog\/product\/new\/?$/,
-      permissions: ["EDIT_PRODUCT", "CREATE_PRODUCT"],
+      permissions: ["CREATE_PRODUCT"],
     },
     { pattern: /^\/catalog\/product(\/.*)?$/, permissions: ["VIEW_PRODUCT"] },
 
@@ -76,8 +76,12 @@ export async function proxy(request: NextRequest) {
       permissions: ["SCHEDULE_STOCKTAKING"],
     },
     {
+      pattern: /^\/warehouse-management\/inventory-check(\/.*)?$/,
+      permissions: ["VIEW_STOCKTAKING"],
+    },
+    {
       pattern: /^\/warehouse-management\/warehouse\/new\/?$/,
-      permissions: ["EDIT_WAREHOUSE"],
+      permissions: ["CREATE_WAREHOUSE"],
     },
     {
       pattern: /^\/warehouse-management\/warehouse(\/.*)?$/,

@@ -40,13 +40,13 @@ export function RoleAssignmentList({
   // Initial permissions data
   const grantedPerms = useMemo(() => {
     const role = rolesData.find((r) => r.id === selectedRoleId);
-    return role?.permissions || [];
+    return role?.permissions.sort((a, b) => a.name.localeCompare(b.name)) || [];
   }, [rolesData, selectedRoleId]);
   const ungrantedPerms = useMemo(() => {
     const grantedNames = grantedPerms.map((p) => p.name);
-    return initialPermissionsData.filter(
-      (perm) => !grantedNames.includes(perm.name),
-    );
+    return initialPermissionsData
+      .filter((perm) => !grantedNames.includes(perm.name))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [initialPermissionsData, grantedPerms]);
   // --- FILTERED LISTS ---
   const filteredUngrantedPerms = useMemo(() => {
