@@ -180,6 +180,7 @@ export interface BatchResponse {
   length?: number;
   width?: number;
   height?: number;
+  expirationDate?: string;
 }
 
 export interface BatchSummaryResponse {
@@ -205,6 +206,7 @@ export interface ImportSheetDetailResponse {
   length?: number;
   width?: number;
   height?: number;
+  expirationDate?: string;
 }
 
 export interface ImportSheetDetailCreateReq {
@@ -238,6 +240,7 @@ export interface ImportSheetDetailUpdateReq {
   length?: number;
   width?: number;
   height?: number;
+  expirationDate?: string;
 }
 
 export interface ImportSheetResponse {

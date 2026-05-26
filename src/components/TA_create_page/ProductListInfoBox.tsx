@@ -77,7 +77,10 @@ export default function ProductListInfoBox({
   const [hasInvalidSelection, setHasInvalidSelection] = useState(false);
 
   const isCompleted = importData.status === SheetStatus.COMPLETED;
-  const canDelete = step === "quantity-check" && !isCompleted;
+  const isInternal = importData.type === ImportSheetType.INTERNAL;
+  const canEdit = step === "quantity-check" && !isCompleted;
+  const canDelete = canEdit && !isInternal;
+  const canEditQuantity = canDelete;
 
   const productTempColumn: Column<ProductTempRow>[] = [
     {
@@ -115,7 +118,7 @@ export default function ProductListInfoBox({
       key: "expectedQuantity",
       label: "Expected Quantity",
       render: (_, row) => {
-        if (!canDelete) return row.expectedQuantity;
+        if (!canEditQuantity) return row.expectedQuantity;
         return (
           <EditableQuantity
             initialValue={row.expectedQuantity}
@@ -155,7 +158,7 @@ export default function ProductListInfoBox({
         _: ProductTempRow[keyof ProductTempRow],
         row: ProductTempRow,
       ) => {
-        if (!canDelete)
+        if (!canEdit)
           return String((row[field] as number | undefined) ?? "-");
         return (
           <Input

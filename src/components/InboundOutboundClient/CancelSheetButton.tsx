@@ -2,13 +2,12 @@
 "use client";
 
 import {
-  updateExportSheet,
-  updateImportSheet,
+  cancelImportSheet,
+  cancelExportSheet,
 } from "@/actions/inbound-outbound";
 import { Loading } from "@/components/TA_common/Loading";
 import Button from "@/default_components/ui/button/Button";
 import { useConfirmModal } from "@/hooks/useConfirmModal";
-import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -35,13 +34,9 @@ export default function CancelSheetButton({
     setLoading(true);
     try {
       if (type !== "export") {
-        await updateImportSheet(id as string, {
-          status: SheetStatus.REJECTED,
-        });
+        await cancelImportSheet(id as string);
       } else {
-        await updateExportSheet(id as string, {
-          status: SheetStatus.REJECTED,
-        });
+        await cancelExportSheet(id as string);
       }
       toast.success("Cancel Sheet Successfully");
       router.refresh();

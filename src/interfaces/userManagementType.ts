@@ -6,6 +6,8 @@ export enum UserPermissions {
   STOCK_IN = "STOCK_IN",
   STOCK_OUT = "STOCK_OUT",
   QC_CHECK = "QC_CHECK",
+  VIEW_STOCK_IN = "VIEW_STOCK_IN",
+  VIEW_STOCK_OUT = "VIEW_STOCK_OUT",
 }
 
 export interface User {

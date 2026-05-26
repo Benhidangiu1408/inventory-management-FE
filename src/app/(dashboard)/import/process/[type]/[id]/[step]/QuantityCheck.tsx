@@ -20,6 +20,7 @@ import { SheetStatus } from "@/interfaces/inventoryManagementType";
 import { UserPermissions } from "@/interfaces/userManagementType";
 import { faCircleCheck, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -39,6 +40,7 @@ export default function ImportProcessPage() {
   const [loading, setLoading] = useState(false);
   const isCreated = importData.status === SheetStatus.CREATED;
   const isCompleted = importData.status === SheetStatus.COMPLETED;
+  const isDisabled = isCompleted || !hasStockInPermission;
 
   const rows: QuantityCheckRow[] = importData.details.map((detail) => ({
     detailId: detail.id,
@@ -50,6 +52,7 @@ export default function ImportProcessPage() {
     variance: (detail.actualQuantity ?? 0) - (detail.expectedQuantity ?? 0),
     reason: detail.reason ?? "",
     unit: detail.unit?.name ?? "",
+    expirationDate: detail.expirationDate,
   }));
 
   const updateRow = (detailId: number, changes: Partial<QuantityCheckRow>) => {
@@ -63,6 +66,7 @@ export default function ImportProcessPage() {
           ...detail,
           actualQuantity: changes.actualQuantity ?? detail.actualQuantity ?? 0,
           reason: changes.reason ?? detail.reason ?? "",
+          expirationDate: changes.expirationDate !== undefined ? changes.expirationDate : detail.expirationDate,
         };
       }),
     }));
@@ -74,6 +78,7 @@ export default function ImportProcessPage() {
         id: detail.id,
         actualQuantity: detail.actualQuantity,
         reason: detail.reason,
+        expirationDate: detail.expirationDate,
       }),
     );
 
@@ -104,6 +109,15 @@ export default function ImportProcessPage() {
     });
 
     if (!isConfirmed) return;
+
+    const missingDateRows = rows.filter((row) => !row.expirationDate);
+
+    if (missingDateRows.length > 0) {
+      toast.error(
+        `${missingDateRows.length} item(s) are missing an expiration date. Please fill in before saving.`,
+      );
+      return;
+    }
 
     const invalidRows = rows.filter(
       (row) =>
@@ -146,7 +160,7 @@ export default function ImportProcessPage() {
             className="h-[35px]"
             defaultValue={value}
             type="number"
-            disabled={isCompleted}
+            disabled={isDisabled}
             onBlur={(e) => {
               const newValue = Number(e.target.value);
               if (newValue === row.actualQuantity) return;
@@ -174,6 +188,31 @@ export default function ImportProcessPage() {
       },
     },
     {
+      key: "expirationDate",
+      label: "Expiration Date",
+      minWidth: 220,
+      render: (value, row) => {
+        const dateValue = value
+          ? format(new Date(value as string), "yyyy-MM-dd'T'HH:mm")
+          : "";
+        return (
+          <Input
+            type="datetime-local"
+            className="h-[35px]"
+            defaultValue={dateValue}
+            disabled={isDisabled}
+            onBlur={(e) => {
+              const iso = e.target.value
+                ? new Date(e.target.value).toISOString()
+                : undefined;
+              if (iso === row.expirationDate) return;
+              updateRow(row.detailId, { expirationDate: iso });
+            }}
+          />
+        );
+      },
+    },
+    {
       key: "reason",
       label: "Reason",
       render: (value, row) => {
@@ -181,7 +220,7 @@ export default function ImportProcessPage() {
           <Input
             defaultValue={value}
             className="h-[35px]"
-            disabled={isCompleted}
+            disabled={isDisabled}
             onBlur={(e) => {
               if (e.target.value === row.reason) return;
               updateRow(row.detailId, { reason: e.target.value });
@@ -210,7 +249,7 @@ export default function ImportProcessPage() {
           <div className="flex justify-end">
             <Button
               onClick={handleOpenConfirmModal}
-              disabled={isCompleted}
+              disabled={isDisabled}
               className={isDirty ? "bg-warning-500 hover:bg-warning-600" : ""}
             >
               {isDirty && <FontAwesomeIcon icon={faTriangleExclamation} className="mr-1" />}Save

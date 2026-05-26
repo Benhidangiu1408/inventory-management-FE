@@ -1,5 +1,6 @@
 "use client";
 
+import { format } from "date-fns";
 import { useCallback, useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import InfoBox from "./InfoBox";
@@ -187,6 +188,14 @@ export default function ExportProductListInfoBox({
         label: "Status",
         key: "status",
         render: (_, row) => <Badge color="success">{row.status}</Badge>,
+      },
+      {
+        label: "Expiration Date",
+        key: "expirationDate",
+        render: (_, row) =>
+          row.expirationDate
+            ? format(new Date(row.expirationDate), "dd/MM/yyyy")
+            : "—",
       },
     ],
     [],

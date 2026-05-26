@@ -208,6 +208,20 @@ export const inboundOutboundService = {
     );
   },
 
+  cancelImportSheet: async (importSheetId: number | string) => {
+    return await apiClient.post<ImportSheetResponse>(
+      `/inbound-outbound/v1/import-sheet/${importSheetId}/cancel`,
+      {},
+    );
+  },
+
+  cancelExportSheet: async (exportSheetId: number | string) => {
+    return await apiClient.post<ExportSheetResponse>(
+      `/inbound-outbound/v1/export-sheet/${exportSheetId}/cancel`,
+      {},
+    );
+  },
+
   getAllExportSheets: async () => {
     return await apiClient.get<ExportSheetResponse[]>(
       `/inbound-outbound/v1/export-sheet`,
