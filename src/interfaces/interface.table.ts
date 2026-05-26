@@ -66,6 +66,7 @@ export interface QuantityCheckRow {
   unit: string;
   variance: number;
   reason: string;
+  expirationDate?: string;
 }
 
 export interface QualityCheckRow {

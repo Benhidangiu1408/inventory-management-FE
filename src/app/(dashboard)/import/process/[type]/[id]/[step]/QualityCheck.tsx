@@ -38,6 +38,7 @@ export default function QualityCheckPage() {
   const hasStockInPermission = user?.permissions.includes(
     UserPermissions.STOCK_IN,
   );
+  const isDisabled = isCompleted || !hasStockInPermission;
 
   const isCreated = qcData?.status === SheetStatus.CREATED;
 
@@ -133,7 +134,7 @@ export default function QualityCheckPage() {
             }
             value={value}
             className="h-[38px]"
-            disabled={isCompleted}
+            disabled={isDisabled}
             onChange={(e) =>
               updateRows(row.detailId, {
                 qualityStatus: e.target.value as QCSheetDetailStatus,
@@ -149,7 +150,7 @@ export default function QualityCheckPage() {
           <Input
             className="h-[35px]"
             defaultValue={value}
-            disabled={isCompleted}
+            disabled={isDisabled}
             onBlur={(e) =>
               updateRows(row.detailId, {
                 reason: e.target.value,
@@ -165,7 +166,7 @@ export default function QualityCheckPage() {
           <Input
             className="h-[35px]"
             defaultValue={value}
-            disabled={isCompleted}
+            disabled={isDisabled}
             onBlur={(e) =>
               updateRows(row.detailId, {
                 notes: e.target.value,
@@ -263,7 +264,7 @@ export default function QualityCheckPage() {
           <div className="flex justify-end">
             <Button
               onClick={handleOpenConfirmModal}
-              disabled={isCompleted}
+              disabled={isDisabled}
               className={isDirty ? "bg-warning-500 hover:bg-warning-600" : ""}
             >
               {isDirty && <FontAwesomeIcon icon={faTriangleExclamation} className="mr-1" />}Save

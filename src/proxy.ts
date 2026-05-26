@@ -89,8 +89,10 @@ export async function proxy(request: NextRequest) {
     },
 
     // --- Inbound / Outbound / Faults ---
-    { pattern: /^\/import\/new\/?$/, permissions: ["STOCK_IN"] },
-    { pattern: /^\/export\/new\/?$/, permissions: ["STOCK_OUT"] },
+    { pattern: /^\/import\/?$/, permissions: ["VIEW_STOCK_IN", "STOCK_IN"] },
+    { pattern: /^\/import\/.+$/, permissions: ["STOCK_IN"] },
+    { pattern: /^\/export\/?$/, permissions: ["VIEW_STOCK_OUT", "STOCK_OUT"] },
+    { pattern: /^\/export\/.+$/, permissions: ["STOCK_OUT"] },
     {
       pattern: /^\/fault-order(\/.*)?$/,
       permissions: ["VIEW_FAULT_LIST", "FAULT_HANDLER"],

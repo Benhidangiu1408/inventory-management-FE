@@ -94,7 +94,7 @@ export default async function ImportProcessLayout({
         </div>
         {hasStockInPermission && (
           <CancelSheetButton
-            disabled={importSheetDetail.status !== SheetStatus.CREATED}
+            disabled={importSheetDetail.status === SheetStatus.COMPLETED}
           />
         )}
       </div>

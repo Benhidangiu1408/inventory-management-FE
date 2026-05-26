@@ -125,6 +125,14 @@ export async function finalizeImportSheet(importSheetId: number | string) {
   return await inboundOutboundService.finalizeImportSheet(importSheetId);
 }
 
+export async function cancelImportSheet(importSheetId: number | string) {
+  return await inboundOutboundService.cancelImportSheet(importSheetId);
+}
+
+export async function cancelExportSheet(exportSheetId: number | string) {
+  return await inboundOutboundService.cancelExportSheet(exportSheetId);
+}
+
 export async function getLocationByType(
   warehouseId: string | number,
   locationType: LocationType,
