@@ -1,16 +1,13 @@
 import { apiClient } from "@/lib/api-mask";
 
 export interface PredictRequest {
-  product_id: string;
+  item_id: string;
   horizon: number;
-  Price: number;
-  Discount: number;
-  "Units Sold": number;
-  Seasonality: string;
-  Category: string;
-  Region: string;
-  "Weather Condition": string;
-  "Holiday/Promotion": number | string;
+  price: number;
+  promo: number | string;
+  weekday: number | string;
+  month: number | string;
+  sales: number;
   [key: string]: string | number;
 }
 

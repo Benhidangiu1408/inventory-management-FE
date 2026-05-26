@@ -19,7 +19,7 @@ export default function DemandPredictionWidget({
 
     // 2. Map the sorted products to the P000X model IDs
     return sortedProducts.map((realProduct, i) => {
-      const modelId = `P${String(i + 1).padStart(4, "0")}`; // e.g., P0001, P0002
+      const modelId = `item_${String(i + 1)}`; // e.g., item_1, item_2
 
       return {
         id: modelId,

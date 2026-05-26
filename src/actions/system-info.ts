@@ -22,6 +22,7 @@ import {
   unitService,
   warehouseService,
 } from "@/services/WarehouseManagementService";
+import { getISODay, getMonth } from "date-fns";
 
 export async function categoryUpdateAction(id: number, data: CategoryRequest) {
   await categoryService.update(id, data);
@@ -120,21 +121,15 @@ export async function getDemandPredictionAction(
 ) {
   try {
     const response = await predictionService.predict({
-      product_id: productId,
+      item_id: productId,
       horizon: horizon,
       // You can hardcode these mock values for now as per your comment,
       // or fetch the real product's current Price/Discount from your DB later!
-      Price: 25.5,
-      Discount: 0.05,
-      "Competitor Pricing": 26.0,
-      "Units Sold": 120,
-      Seasonality: "Autumn",
-      Category: "Groceries",
-      Region: "North",
-      "Weather Condition": "Rainy",
-      "Holiday/Promotion": 0,
-      Sales_Today_P0001: 120,
-      Sales_Today_P0002: 45,
+      price: 25.5,
+      promo: 0,
+      weekday: getISODay(new Date()) - 1,
+      month: getMonth(new Date()) + 1,
+      sales: 45.0,
     });
 
     return response.predicted_units;
