@@ -201,11 +201,13 @@ export default function ExportProductListInfoBox({
     [],
   );
 
+  const warehouseId = exportData.warehouse?.id;
+
   const getDetailRowDataFn = useCallback(
     async (row: ProductTempRow): Promise<BatchResponse[]> => {
-      return getBatchesByProductVariantId(row.id);
+      return getBatchesByProductVariantId(row.id, warehouseId);
     },
-    [],
+    [warehouseId],
   );
 
   const handleSave = async () => {

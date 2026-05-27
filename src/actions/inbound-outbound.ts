@@ -232,8 +232,8 @@ export async function confirmExportSheet(
   return await inboundOutboundService.confirmExportSheet(exportSheetId, data);
 }
 
-export async function getProductVariantsInStock() {
-  return await inboundOutboundService.getProductVariantsInStock();
+export async function getProductVariantsInStock(warehouseId?: number) {
+  return await inboundOutboundService.getProductVariantsInStock(warehouseId);
 }
 
 export async function getItemsByProductVariantInExportSheet(
@@ -246,9 +246,10 @@ export async function getItemsByProductVariantInExportSheet(
   );
 }
 
-export async function getBatchesByProductVariantId(productVariantId: number) {
+export async function getBatchesByProductVariantId(productVariantId: number, warehouseId?: number) {
   return await inboundOutboundService.getBatchesByProductVariantId(
     productVariantId,
+    warehouseId,
   );
 }
 
@@ -258,8 +259,10 @@ export async function deleteExportSheetItem(exportSheetItemId: number) {
 
 export async function getBarcodeFromActiveBatchWithLocation(
   productVariantId: number,
+  warehouseId?: number,
 ) {
   return await inboundOutboundService.getBarcodeFromActiveBatchWithLocation(
     productVariantId,
+    warehouseId,
   );
 }
