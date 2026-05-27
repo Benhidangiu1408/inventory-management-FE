@@ -25,7 +25,7 @@ export default async function ProductPage() {
       <PageBreadcrumb pageTitle="Product" filters={["catalog"]} />
       <div>
         <div className="default-card p-6">
-          {permissions?.includes("EDIT_PRODUCT") && (
+          {permissions?.includes("CREATE_PRODUCT") && (
             <div className="mb-6 flex justify-end px-1 pt-2">
               <Link href={`/catalog/product/new`}>
                 <Button

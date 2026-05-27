@@ -64,8 +64,8 @@ const TableFetch = ({
 
 export function ViewLocation() {
   const { user } = useAuth();
-  const hasEditLocationPerm =
-    user?.permissions.includes("EDIT_LOCATION") ?? false;
+  const hasViewPerm = user?.permissions.includes("VIEW_LOCATION") ?? false;
+  const hasDeletePerm = user?.permissions.includes("DELETE_LOCATION") ?? false;
   const id = Number(useParams().id);
   const router = useRouter();
   const locationTypes = [
@@ -121,7 +121,7 @@ export function ViewLocation() {
       }
     },
     disable,
-    hasEditLocationPerm,
+    hasDeletePerm,
   );
   const headers = locationTypes.map((type) => ({
     title: type.charAt(0) + type.slice(1).toLowerCase(),
@@ -136,16 +136,16 @@ export function ViewLocation() {
       LocationHeaders={locationHeaders}
     />
   ));
-  if (!hasEditLocationPerm && !user?.permissions.includes("EDIT_WAREHOUSE"))
+  if (!hasViewPerm && !user?.permissions.includes("DELETE_WAREHOUSE"))
     return <div></div>;
   return (
     <div className="default-card flex flex-col gap-6 p-6">
       {ConfirmationModal}
       <div className="flex gap-4">
-        {user?.permissions.includes("EDIT_LOCATION") && (
+        {hasViewPerm && user?.permissions.includes("CREATE_LOCATION") && (
           <ModalCreateLocationForm onSuccess={handleLocationCreated} />
         )}
-        {user?.permissions.includes("EDIT_WAREHOUSE") && (
+        {user?.permissions.includes("DELETE_WAREHOUSE") && (
           <Button
             size="sm"
             variant="danger"

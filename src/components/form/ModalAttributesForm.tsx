@@ -16,6 +16,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { getAttributeHeaders } from "../table/CustomizableTableHeader";
 import CustomizableTable from "../table/CustomizableTable";
 import { AttrCreateAction, AttrUpdateAction } from "@/actions/system-info";
+import { useAuth } from "@/context/AuthContext";
 
 interface AttributeFormProps {
   setLoading: (loading: boolean) => void;
@@ -112,6 +113,9 @@ const AttributeForm = ({
 };
 
 export function ModalAttributesForm({ data }: { data: AttributeResponse[] }) {
+  const { user } = useAuth();
+  const hasCreatePerm = user?.permissions.includes("CREATE_ATTR") ?? false;
+  const hasUpdatePerm = user?.permissions.includes("UPDATE_ATTR") ?? false;
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
@@ -125,7 +129,10 @@ export function ModalAttributesForm({ data }: { data: AttributeResponse[] }) {
     },
     [openModal],
   );
-  const headers = useMemo(() => getAttributeHeaders(handleEdit), [handleEdit]);
+  const headers = useMemo(
+    () => getAttributeHeaders(handleEdit, hasUpdatePerm),
+    [handleEdit, hasUpdatePerm],
+  );
 
   return (
     <div>
@@ -134,6 +141,7 @@ export function ModalAttributesForm({ data }: { data: AttributeResponse[] }) {
           startIcon={<Plus size={16} />}
           openBtnTitle={"New Attribute"}
           formId={"tableForm"}
+          showOpenBtn={hasCreatePerm}
           isLoading={loading}
           isOpen={isOpen}
           disableSaveBtn={disable}

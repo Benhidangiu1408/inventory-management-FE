@@ -115,7 +115,7 @@ export const warehouseHeaders: Column<WarehouseGeneral>[] = [
 export const getLocationHeaders = (
   deleteHandle: (id: number) => void,
   disable: boolean,
-  hasEditPerm: boolean,
+  hasDeletePerm: boolean,
 ): Column<LocationResponse>[] => [
   {
     label: "Code",
@@ -228,7 +228,7 @@ export const getLocationHeaders = (
       );
     },
   },
-  ...(hasEditPerm
+  ...(hasDeletePerm
     ? [
         {
           label: "Action",
@@ -238,12 +238,14 @@ export const getLocationHeaders = (
           render: (val) => {
             return (
               <div className="flex h-full items-center justify-center gap-2">
-                <button
-                  onClick={() => deleteHandle(Number(val))}
-                  disabled={disable}
-                >
-                  <Trash2 size={16} color="red" />
-                </button>
+                {hasDeletePerm && (
+                  <button
+                    onClick={() => deleteHandle(Number(val))}
+                    disabled={disable}
+                  >
+                    <Trash2 size={16} color="red" />
+                  </button>
+                )}
               </div>
             );
           },
@@ -254,6 +256,7 @@ export const getLocationHeaders = (
 
 export const getUnitHeaders = (
   onEdit: (unit: UnitResponse) => void,
+  hasUpdatePerm: boolean,
 ): Column<UnitResponse>[] => [
   {
     label: "Unit Name",
@@ -278,23 +281,28 @@ export const getUnitHeaders = (
         <span className="text-gray-400 italic">No description</span>
       ),
   },
-  {
-    label: "Actions",
-    key: "id",
-    filter: false,
-    width: 50,
-    render: (_, row) => (
-      <div className="flex h-full items-center justify-center gap-2">
-        <button onClick={() => onEdit(row)}>
-          <Pencil size={16} />
-        </button>
-      </div>
-    ),
-  },
+  ...(hasUpdatePerm
+    ? [
+        {
+          label: "Actions",
+          key: "id",
+          filter: false,
+          width: 50,
+          render: (_, row) => (
+            <div className="flex h-full items-center justify-center gap-2">
+              <button onClick={() => onEdit(row)}>
+                <Pencil size={16} />
+              </button>
+            </div>
+          ),
+        } as Column<UnitResponse>,
+      ]
+    : []),
 ];
 
 export const getAttributeHeaders = (
   onEdit: (unit: AttributeResponse) => void,
+  hasUpdatePerm: boolean,
 ): Column<AttributeResponse>[] => [
   {
     label: "Attributes Name",
@@ -313,19 +321,23 @@ export const getAttributeHeaders = (
         <span className="text-gray-400 italic">No description</span>
       ),
   },
-  {
-    label: "Actions",
-    key: "id",
-    width: 50,
-    filter: false,
-    render: (_, row) => (
-      <div className="flex h-full items-center justify-center gap-2">
-        <button onClick={() => onEdit(row)}>
-          <Pencil size={16} />
-        </button>
-      </div>
-    ),
-  },
+  ...(hasUpdatePerm
+    ? [
+        {
+          label: "Actions",
+          key: "id",
+          width: 50,
+          filter: false,
+          render: (_, row) => (
+            <div className="flex h-full items-center justify-center gap-2">
+              <button onClick={() => onEdit(row)}>
+                <Pencil size={16} />
+              </button>
+            </div>
+          ),
+        } as Column<AttributeResponse>,
+      ]
+    : []),
 ];
 
 export const getVariantHeaders = (
@@ -333,6 +345,7 @@ export const getVariantHeaders = (
   onDelete: (id: number) => void,
   disable: boolean,
   hasEditPerm: boolean,
+  hasDeletePerm: boolean,
   onImageClick: (imageUrl: string) => void,
 ): Column<VariantResponse>[] => [
   {
@@ -399,7 +412,7 @@ export const getVariantHeaders = (
         <span className="text-gray-400 italic">No description</span>
       ),
   },
-  ...(hasEditPerm
+  ...(hasEditPerm || hasDeletePerm
     ? [
         {
           label: "Actions",
@@ -408,20 +421,24 @@ export const getVariantHeaders = (
           width: 50,
           render: (_, row) => (
             <div className="flex h-full items-center justify-center gap-2">
-              <button
-                onClick={() => onEdit(row)}
-                disabled={disable}
-                className="text-blue-500 transition-colors hover:text-blue-700"
-              >
-                <Pencil size={18} />
-              </button>
-              <button
-                onClick={() => onDelete(row.id)}
-                disabled={disable}
-                className="text-red-500 transition-colors hover:text-red-700"
-              >
-                <Trash2 size={18} />
-              </button>
+              {hasEditPerm && (
+                <button
+                  onClick={() => onEdit(row)}
+                  disabled={disable}
+                  className="text-blue-500 transition-colors hover:text-blue-700"
+                >
+                  <Pencil size={18} />
+                </button>
+              )}
+              {hasDeletePerm && (
+                <button
+                  onClick={() => onDelete(row.id)}
+                  disabled={disable}
+                  className="text-red-500 transition-colors hover:text-red-700"
+                >
+                  <Trash2 size={18} />
+                </button>
+              )}
             </div>
           ),
         } as Column<VariantResponse>,

@@ -271,7 +271,9 @@ export function VariantManager({
 }) {
   const { user } = useAuth();
   const hasEditProductPerm =
-    user?.permissions.includes("EDIT_PRODUCT") ?? false;
+    user?.permissions.includes("UPDATE_PRODUCT") ?? false;
+  const hasCreatePerm = user?.permissions.includes("CREATE_PRODUCT") ?? false;
+  const hasDeletePerm = user?.permissions.includes("DELETE_PRODUCT") ?? false;
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(false);
@@ -348,9 +350,16 @@ export function VariantManager({
         handleDelete,
         disableDelete,
         hasEditProductPerm,
+        hasDeletePerm,
         (url) => setInspectImageUrl(url),
       ),
-    [handleEdit, handleDelete, disableDelete, hasEditProductPerm],
+    [
+      handleEdit,
+      handleDelete,
+      disableDelete,
+      hasEditProductPerm,
+      hasDeletePerm,
+    ],
   );
 
   return (
@@ -376,6 +385,7 @@ export function VariantManager({
               formId="variantForm"
               isLoading={loading}
               isOpen={isOpen}
+              showOpenBtn={hasCreatePerm}
               disableSaveBtn={disable}
               onOpen={() => {
                 setSelectedVariant(undefined);
@@ -393,15 +403,17 @@ export function VariantManager({
                 />
               }
             />
-            <Button
-              size="sm"
-              variant="danger"
-              disabled={disableDelete}
-              onClick={() => handleDeleteProduct(productId)}
-            >
-              <Trash2 size={16} />
-              Delete Product
-            </Button>
+            {hasDeletePerm && (
+              <Button
+                size="sm"
+                variant="danger"
+                disabled={disableDelete}
+                onClick={() => handleDeleteProduct(productId)}
+              >
+                <Trash2 size={16} />
+                Delete Product
+              </Button>
+            )}
           </div>
         )}
       </div>

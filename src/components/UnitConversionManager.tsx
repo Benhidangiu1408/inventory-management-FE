@@ -59,7 +59,8 @@ export default function UnitConversionManager({
 }: UnitConversionFormProps) {
   const { user } = useAuth();
   const hasEditProductPerm =
-    user?.permissions.includes("EDIT_PRODUCT") ?? false;
+    user?.permissions.includes("UPDATE_PRODUCT") ?? false;
+  const hasCreatePerm = user?.permissions.includes("CREATE_PRODUCT") ?? false;
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -296,7 +297,7 @@ export default function UnitConversionManager({
             </div>
           )}
 
-          {hasEditProductPerm && (
+          {hasCreatePerm && (
             <Button
               type="button"
               variant="outline"

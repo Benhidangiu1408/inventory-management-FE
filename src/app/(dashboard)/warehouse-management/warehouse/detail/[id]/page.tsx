@@ -23,7 +23,7 @@ export default async function WarehouseDetailPage({
   try {
     data = await warehouseService.getDetail(Number(id));
     userData =
-      await userManagementService.getAllByPermissionCode("EDIT_WAREHOUSE");
+      await userManagementService.getAllByPermissionCode("VIEW_WAREHOUSE");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     errorMsg = `Could not load data from server. ${error.message}`;
@@ -49,7 +49,7 @@ export default async function WarehouseDetailPage({
           title="General Information"
           items={generalInfoItems}
           editBtn={
-            permissions?.includes("EDIT_WAREHOUSE") ? (
+            permissions?.includes("UPDATE_WAREHOUSE") ? (
               <ModalUpdateWarehouseForm
                 initialData={data as WarehouseDetail}
                 userData={userData as User[]}

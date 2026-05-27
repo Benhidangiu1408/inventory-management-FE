@@ -8,6 +8,7 @@ import type {
 import { ProductResponse } from "@/interfaces/warehouseManagementType";
 import { inventoryDashboardService } from "@/services/InventoryManagementService";
 import { productService } from "@/services/WarehouseManagementService";
+import { cookies } from "next/headers";
 
 type DashboardQueryParams = Record<string, string | string[] | undefined>;
 
@@ -193,16 +194,31 @@ export default async function Dashboard({ searchParams }: DashboardPageProps) {
     error = `Could not load data from server. ${e.message}`;
   }
 
-  return (
-    <InventoryDashboardRealtime
-      overview={overviewResult}
-      monthlyPoints={monthlyResult}
-      totalSummary={totalResult}
-      error={error}
-      quantityRange={quantityRange}
-      orderRange={orderRange}
-      maxRangeMonths={MAX_MONTH_RANGE}
-      allProducts={allProducts}
-    />
-  );
+  const cookieStore = await cookies();
+  const permissions = cookieStore.get("permissions")?.value.split(",");
+
+  if (!permissions?.includes("VIEW_DASHBOARD")) {
+    return (
+      <div className="flex h-[60vh] flex-col items-center justify-center text-center">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Welcome to STOCKIFY
+        </h1>
+        <p className="mt-2 text-gray-500">
+          Please select a page from the sidebar to get started.
+        </p>
+      </div>
+    );
+  } else
+    return (
+      <InventoryDashboardRealtime
+        overview={overviewResult}
+        monthlyPoints={monthlyResult}
+        totalSummary={totalResult}
+        error={error}
+        quantityRange={quantityRange}
+        orderRange={orderRange}
+        maxRangeMonths={MAX_MONTH_RANGE}
+        allProducts={allProducts}
+      />
+    );
 }

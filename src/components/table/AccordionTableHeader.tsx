@@ -30,6 +30,8 @@ export const getCategoryHeaders = (
   onEdit: (category: Category) => void,
   onDelete: (id: number) => void,
   disable: boolean,
+  hasUpdatePerm: boolean,
+  hasDeletePerm: boolean,
 ): Column<Category>[] => [
   {
     label: "Code",
@@ -54,32 +56,42 @@ export const getCategoryHeaders = (
         <span className="text-gray-400 italic">No description</span>
       ),
   },
-  {
-    label: "Actions",
-    key: "id",
-    width: 50,
-    filter: false,
-    render: (_, row) => (
-      <div className="flex h-full items-center justify-center gap-2">
-        <button onClick={() => onEdit(row)} disabled={disable}>
-          <Pencil size={16} />
-        </button>
-        <button
-          onClick={() => onDelete(row.id)}
-          disabled={disable}
-          className="text-red-500 transition-colors hover:text-red-700"
-        >
-          <Trash2 size={16} />
-        </button>
-      </div>
-    ),
-  },
+  ...(hasDeletePerm || hasUpdatePerm
+    ? [
+        {
+          label: "Actions",
+          key: "id",
+          width: 50,
+          filter: false,
+          render: (_, row) => (
+            <div className="flex h-full items-center justify-center gap-2">
+              {hasUpdatePerm && (
+                <button onClick={() => onEdit(row)} disabled={disable}>
+                  <Pencil size={16} />
+                </button>
+              )}
+              {hasDeletePerm && (
+                <button
+                  onClick={() => onDelete(row.id)}
+                  disabled={disable}
+                  className="text-red-500 transition-colors hover:text-red-700"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+            </div>
+          ),
+        } as Column<Category>,
+      ]
+    : []),
 ];
 // Child Table Headers (Sub-Category)
 export const getSubCategoryHeaders = (
   onEdit: (category: SubCategory) => void,
   onDelete: (id: number) => void,
   disable: boolean,
+  hasUpdatePerm: boolean,
+  hasDeletePerm: boolean,
 ): Column<SubCategory>[] => [
   {
     label: "Code",
@@ -104,26 +116,34 @@ export const getSubCategoryHeaders = (
         <span className="text-gray-400 italic">No description</span>
       ),
   },
-  {
-    label: "Actions",
-    key: "id",
-    filter: false,
-    width: 50,
-    render: (_, row) => (
-      <div className="flex h-full items-center justify-center gap-2">
-        <button onClick={() => onEdit(row)} disabled={disable}>
-          <Pencil size={16} />
-        </button>
-        <button
-          onClick={() => onDelete(row.id)}
-          disabled={disable}
-          className="text-red-500 transition-colors hover:text-red-700"
-        >
-          <Trash2 size={16} />
-        </button>
-      </div>
-    ),
-  },
+  ...(hasDeletePerm || hasUpdatePerm
+    ? [
+        {
+          label: "Actions",
+          key: "id",
+          filter: false,
+          width: 50,
+          render: (_, row) => (
+            <div className="flex h-full items-center justify-center gap-2">
+              {hasUpdatePerm && (
+                <button onClick={() => onEdit(row)} disabled={disable}>
+                  <Pencil size={16} />
+                </button>
+              )}
+              {hasDeletePerm && (
+                <button
+                  onClick={() => onDelete(row.id)}
+                  disabled={disable}
+                  className="text-red-500 transition-colors hover:text-red-700"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+            </div>
+          ),
+        } as Column<SubCategory>,
+      ]
+    : []),
 ];
 
 // Product
