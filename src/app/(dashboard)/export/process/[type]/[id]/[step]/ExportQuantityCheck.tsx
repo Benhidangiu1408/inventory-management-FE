@@ -281,6 +281,7 @@ export default function ExportQuantityCheck() {
     try {
       const barcode = await getBarcodeFromActiveBatchWithLocation(
         scanningRow.productVariantId,
+        exportData.warehouse?.id,
       );
       setItemBarCode(barcode);
     } catch (err: unknown) {

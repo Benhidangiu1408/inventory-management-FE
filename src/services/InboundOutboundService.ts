@@ -72,12 +72,11 @@ export const inboundOutboundService = {
     );
   },
 
-  getProductVariantsInStock: async () => {
+  getProductVariantsInStock: async (warehouseId?: number) => {
+    const params = warehouseId ? `?warehouseId=${warehouseId}` : "";
     return await apiClient.get<ProductVariantStockResponse[]>(
-      "/inbound-outbound/v1/product-variants/in-stock",
-      {
-        cache: "no-cache",
-      },
+      `/inbound-outbound/v1/product-variants/in-stock${params}`,
+      { cache: "no-cache" },
     );
   },
 
@@ -335,9 +334,10 @@ export const inboundOutboundService = {
     );
   },
 
-  getBatchesByProductVariantId: async (productVariantId: number) => {
+  getBatchesByProductVariantId: async (productVariantId: number, warehouseId?: number) => {
+    const params = warehouseId ? `?warehouseId=${warehouseId}` : "";
     return await apiClient.get<BatchResponse[]>(
-      `/inbound-outbound/v1/batches/product-variant/${productVariantId}`,
+      `/inbound-outbound/v1/batches/product-variant/${productVariantId}${params}`,
       { cache: "no-cache" },
     );
   },
@@ -349,9 +349,11 @@ export const inboundOutboundService = {
     );
   },
 
-  getBarcodeFromActiveBatchWithLocation: async (productVariantId: number) => {
+  getBarcodeFromActiveBatchWithLocation: async (productVariantId: number, warehouseId?: number) => {
+    const params = new URLSearchParams({ productVariantId: String(productVariantId) });
+    if (warehouseId) params.append("warehouseId", String(warehouseId));
     const res = await apiClient.get<{ message: string; data: string }>(
-      `/inbound-outbound/v1/items/active-batch/barcode?productVariantId=${productVariantId}`,
+      `/inbound-outbound/v1/items/active-batch/barcode?${params.toString()}`,
       { cache: "no-cache" },
     );
     return res.data;
