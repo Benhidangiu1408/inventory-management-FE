@@ -360,6 +360,7 @@ const LevelRow = ({
                       step="0.01"
                       placeholder="e.g. 200"
                       {...register(`uiLevels.${index}.maxLength`, {
+                        required: "Required",
                         valueAsNumber: true,
                         min: { value: 1, message: "Minimum of 1" },
                         max: {
@@ -378,6 +379,7 @@ const LevelRow = ({
                       step="0.01"
                       placeholder="e.g. 100"
                       {...register(`uiLevels.${index}.maxWidth`, {
+                        required: "Required",
                         valueAsNumber: true,
                         min: { value: 1, message: "Minimum of 1" },
                         max: {
@@ -396,6 +398,7 @@ const LevelRow = ({
                       step="0.01"
                       placeholder="e.g. 150"
                       {...register(`uiLevels.${index}.maxHeight`, {
+                        required: "Required",
                         valueAsNumber: true,
                         min: { value: 1, message: "Minimum of 1" },
                         max: {
@@ -414,6 +417,7 @@ const LevelRow = ({
                       step="0.01"
                       placeholder="e.g. 500"
                       {...register(`uiLevels.${index}.maxWeight`, {
+                        required: "Required",
                         valueAsNumber: true,
                         min: { value: 1, message: "Minimum of 1" },
                         max: {
