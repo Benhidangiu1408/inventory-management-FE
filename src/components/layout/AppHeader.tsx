@@ -23,7 +23,7 @@ export interface NavItemSearch {
   path: string | undefined;
 }
 
-const AppHeader = ({ userInfo }: { userInfo: User }) => {
+const AppHeader = ({ userInfo }: { userInfo?: User }) => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
   const [resultList, setResultList] = useState<NavItemSearch[]>([]);
   const [inputValue, setInputValue] = useState<string>("");

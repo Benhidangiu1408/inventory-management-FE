@@ -6,8 +6,8 @@ import Radio from "../input/Radio";
 export default function RadioButtons() {
   const [selectedValue, setSelectedValue] = useState<string>("option2");
 
-  const handleRadioChange = (value: string) => {
-    setSelectedValue(value);
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedValue(e.target.value);
   };
   return (
     <ComponentCard title="Radio Buttons">

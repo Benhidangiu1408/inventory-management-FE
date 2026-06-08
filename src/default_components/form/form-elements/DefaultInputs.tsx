@@ -39,7 +39,7 @@ export default function DefaultInputs() {
             <Select
               options={options}
               placeholder="Select an option"
-              onChange={handleSelectChange}
+              onChange={(e) => handleSelectChange(e.target.value)}
               className="dark:bg-dark-900"
             />
             <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 dark:text-gray-400">

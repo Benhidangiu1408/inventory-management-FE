@@ -38,16 +38,17 @@ export default function CustomFilter({
         <div className="flex flex-1 gap-3">{children}</div>
         {listButton &&
           listButton.map((button, index) => {
-            if (button.type === "button") {
+            const { type, title, href, ...buttonProps } = button;
+            if (type === "button") {
               return (
-                <Button key={index} {...button}>
-                  {button.title}
+                <Button key={index} {...buttonProps}>
+                  {title}
                 </Button>
               );
             } else {
               return (
-                <Link key={index} href={button.href ?? ""}>
-                  <Button {...button}>{button.title}</Button>
+                <Link key={index} href={href ?? ""}>
+                  <Button {...buttonProps}>{title}</Button>
                 </Link>
               );
             }

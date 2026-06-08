@@ -30,7 +30,7 @@ export default async function ImportProcessLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-  params: { type: string; id: string; step: string };
+  params: Promise<{ type: string; id: string; step: string }>;
 }>) {
   const { type, id, step } = await params;
 

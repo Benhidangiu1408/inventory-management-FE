@@ -13,7 +13,7 @@ export default function SelectInputs() {
     { value: "development", label: "Development" },
   ];
 
-  const [selectedValues, setSelectedValues] = useState<string[]>([]);
+  const [selectedValues, setSelectedValues] = useState<string[]>(["1", "3"]);
 
   const handleSelectChange = (value: string) => {
     console.log("Selected value:", value);
@@ -36,7 +36,7 @@ export default function SelectInputs() {
             <Select
               options={options}
               placeholder="Select Option"
-              onChange={handleSelectChange}
+              onChange={(e) => handleSelectChange(e.target.value)}
               className="dark:bg-dark-900"
             />
             <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 dark:text-gray-400">
@@ -48,7 +48,7 @@ export default function SelectInputs() {
           <MultiSelect
             label="Multiple Select Options"
             options={multiOptions}
-            defaultSelected={["1", "3"]}
+            selected={selectedValues}
             onChange={(values) => setSelectedValues(values)}
           />
           <p className="sr-only">

@@ -25,26 +25,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 
 export default function CreateImportPage() {
-  const [data, setData] = useState<ImportCreateRow[]>([
-    {
-      checkBox: false,
-      productId: "1",
-      name: "Product 1",
-      stock: 100,
-      unit: "Unit 1",
-      quantity: "100",
-      pickQuantity: "",
-    },
-    {
-      checkBox: false,
-      productId: "2",
-      name: "Product 2",
-      stock: 200,
-      unit: "Unit 2",
-      quantity: "200",
-      pickQuantity: "",
-    },
-  ]);
+  const [data, setData] = useState<ImportCreateRow[]>([]);
 
   const handleCheckboxChange = useCallback(
     (productId: string, checked: boolean) => {
@@ -95,16 +76,12 @@ export default function CreateImportPage() {
         key: "name",
       },
       {
-        label: "Stock",
-        key: "stock",
+        label: "Description",
+        key: "description",
       },
       {
         label: "Unit",
         key: "unit",
-      },
-      {
-        label: "Quantity",
-        key: "quantity",
       },
       {
         label: "Pick Quantity",

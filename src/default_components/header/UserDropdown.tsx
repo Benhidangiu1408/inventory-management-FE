@@ -7,7 +7,7 @@ import { logoutAction } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 import { User } from "@/interfaces/userManagementType";
 
-export default function UserDropdown({ userInfo }: { userInfo: User }) {
+export default function UserDropdown({ userInfo }: { userInfo?: User }) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 

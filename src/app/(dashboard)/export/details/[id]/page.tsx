@@ -125,7 +125,7 @@ export default function ExportDetailPage() {
           </div>
           <div className="flex flex-1 flex-col gap-6">
             <ActivityLog />
-            <OrderSummary />
+            <OrderSummary products={0} quantity={0} />
           </div>
         </div>
       </div>

@@ -43,16 +43,12 @@ export default function CreateImportPage() {
       key: "name",
     },
     {
-      label: "Stock",
-      key: "stock",
+      label: "Description",
+      key: "description",
     },
     {
       label: "Unit",
       key: "unit",
-    },
-    {
-      label: "Quantity",
-      key: "quantity",
     },
     {
       label: "Pick Quantity",
@@ -61,26 +57,7 @@ export default function CreateImportPage() {
     },
   ];
 
-  const data: ImportCreateRow[] = [
-    {
-      checkBox: false,
-      productId: "1",
-      name: "Product 1",
-      stock: 100,
-      unit: "Unit 1",
-      quantity: "100",
-      pickQuantity: "",
-    },
-    {
-      checkBox: false,
-      productId: "2",
-      name: "Product 2",
-      stock: 200,
-      unit: "Unit 2",
-      quantity: "200",
-      pickQuantity: "",
-    },
-  ];
+  const data: ImportCreateRow[] = [];
 
   const table: TableProps<ImportCreateRow> = {
     headers: columns,

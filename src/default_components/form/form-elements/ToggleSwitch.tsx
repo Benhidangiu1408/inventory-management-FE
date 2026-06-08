@@ -4,8 +4,8 @@ import ComponentCard from "../../common/ComponentCard";
 import Switch from "../switch/Switch";
 
 export default function ToggleSwitch() {
-  const handleSwitchChange = (checked: boolean) => {
-    console.log("Switch is now:", checked ? "ON" : "OFF");
+  const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Switch is now:", e.target.checked ? "ON" : "OFF");
   };
   return (
     <ComponentCard title="Toggle switch input">

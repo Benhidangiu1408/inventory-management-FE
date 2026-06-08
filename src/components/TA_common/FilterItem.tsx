@@ -81,7 +81,7 @@ export default function FilterItem({
         <Select
           options={safeOptions}
           placeholder={placeholder ?? ""}
-          onChange={handleSelectChange}
+          onChange={(e) => handleSelectChange(e.target.value)}
           className={`pl-12 ${className ?? ""}`}
           aria-label={label ?? ""}
         />

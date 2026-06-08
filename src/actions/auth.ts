@@ -20,7 +20,10 @@ export async function loginAction(data: UserLogin) {
     const payloadBase64 = accessToken.split(".")[1];
     const payloadJson = Buffer.from(payloadBase64, "base64").toString("utf-8");
     const userId = JSON.parse(payloadJson).userId;
-    const permissions = JSON.parse(payloadJson).permissions;
+    const rawPermissions = JSON.parse(payloadJson).permissions;
+    const permissions = Array.isArray(rawPermissions)
+      ? rawPermissions.join(",")
+      : String(rawPermissions ?? "");
 
     // Set the HTTP-only cookie
     const cookieStore = await cookies();
